@@ -4,6 +4,14 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRIPTO-LIVE</title>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#0f1115">
+<link rel="icon" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="CRIPTO-LIVE">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
@@ -222,6 +230,15 @@ body.fs-on .fsbar{display:flex}
 @keyframes lv{50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.live:before{animation:none}}
 .sg-g b.sl2{font-size:11px;font-weight:500;color:var(--mut)}
+.appbar{position:fixed;left:12px;right:12px;bottom:12px;z-index:9999;background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px 14px;box-shadow:0 8px 30px rgba(0,0,0,.55);display:flex;flex-direction:column;gap:6px;font-size:13px;max-width:440px;margin:0 auto;color:var(--txt)}
+.appbar b{font-size:14px}.appbar span{color:var(--mut)}
+.appbar .row{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:4px}
+.appbar button{border:0;border-radius:8px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer}
+.appbar .pri{background:var(--acc);color:#fff}.appbar .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.ntf{display:flex;align-items:center;gap:6px;flex-wrap:wrap;font-size:11px;color:var(--mut);margin:0 0 10px}
+.ntf button{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer}
+.ntf button.on{border-color:var(--up);color:var(--up)}
+.acct-btn.hide{display:none}
 </style>
 </head>
 <body>
@@ -234,7 +251,7 @@ body.fs-on .fsbar{display:flex}
 </div>
 <div class="app">
   <aside>
-    <div class="brand"><span class="dot" id="live"></span>CRIPTO-LIVE<span class="acct" id="acct"></span></div>
+    <div class="brand"><span class="dot" id="live"></span>CRIPTO-LIVE<button class="acct-btn hide" id="instBtn" title="Instalar CRIPTO-LIVE en este dispositivo">⬇ Instalar app</button><span class="acct" id="acct"></span></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
@@ -293,7 +310,7 @@ body.fs-on .fsbar{display:flex}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING sigue tendencias con ADX fuerte; SHOOTER opera rebotes desde extremos. Ninguna es segura: usa siempre el stop.</div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING sigue tendencias con ADX fuerte; SHOOTER opera rebotes desde extremos. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
@@ -1586,9 +1603,9 @@ function buildSignalV2(m,sym,e,fd){
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,
     calTxt:`acierto histórico ${cal.p} % en ${cal.n} casos de ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
-async function scanSignals(){
+async function scanSignals(mm){
   if(scanBusy||!Object.keys(tickers).length)return;
-  const m=mode,cfg=SIGCFG[m];scanBusy=true;lastScan[m]=Date.now();renderSignals();
+  const m=mm||mode,cfg=SIGCFG[m];scanBusy=true;lastScan[m]=Date.now();renderSignals();
   try{
     const fresh=[],U=universe(m),fd=await safe(futData(m,U));
     for(const s of U){
@@ -1641,7 +1658,9 @@ function renderSignals(){
 $('sigList').onclick=e=>{const c=e.target.closest('.sig');if(!c)return;
   if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
   select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});};
-setInterval(()=>{if(Date.now()-lastScan[mode]>SIGCFG[mode].every)scanSignals();},5000);
+/* escanea el modo abierto; si los avisos están activos, también el otro modo */
+setInterval(()=>{const o=mode==='x'?'medio':'x';if(Date.now()-lastScan[mode]>SIGCFG[mode].every)scanSignals(mode);
+  else if(NTF.on&&NTF[o]&&Date.now()-lastScan[o]>SIGCFG[o].every)scanSignals(o);},5000);
 setInterval(checkSignals,2000);
 
 /* ---------- operaciones simuladas e historial ----------
@@ -1659,6 +1678,7 @@ function addSig(m,f){
   const fail=m==='medio'?f.entry*(1-f.dir*c.maxLoss/not):f.sl;
   f.op=f.sym+'-'+f.t;
   OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,conf:f.conf,t:f.t,last:f.t,state:'open',hit:0});saveOps();
+  if(typeof notifySig==='function')notifySig(m,f);
 }
 const pnlAt=(o,px)=>{const c=SIM[o.m];return c.margin*c.lev*o.dir*(px/o.entry-1);};
 function closeOp(o,state,px,ts,why){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=state==='fail'?-SIM[o.m].maxLoss:pnlAt(o,px);}
@@ -1721,6 +1741,61 @@ setInterval(liveOps,2000);setInterval(renderHist,5000);setTimeout(syncOps,4000);
 $('facMore').onclick=()=>{const f=$('factors');f.classList.toggle('open');$('facMore').textContent=f.classList.contains('open')?'Ver menos ▲':'Ver todos los factores ▼';};
 
 
+
+/* ---------- app instalable (PWA) y avisos de señales ---------- */
+const NTF={on:false,asked:false,medio:true,x:true};try{Object.assign(NTF,JSON.parse(localStorage.getItem('cv_ntf')||'{}'));}catch(e){}
+const saveNtf=()=>{try{localStorage.setItem('cv_ntf',JSON.stringify(NTF))}catch(e){}};
+const canNotify='Notification' in window;
+const isStandalone=()=>matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const isIOS=/iphone|ipad|ipod/i.test(navigator.userAgent);
+let swReg=null,instEvt=null;
+if('serviceWorker' in navigator&&location.protocol.startsWith('http'))navigator.serviceWorker.register('sw.js').then(r=>{swReg=r;}).catch(()=>{});
+function appBar(html,btns){const old=document.querySelector('.appbar');if(old)old.remove();
+  const d=document.createElement('div');d.className='appbar';d.innerHTML=html+'<div class="row"></div>';
+  for(const [t,c,fn] of btns){const b=document.createElement('button');b.className=c;b.textContent=t;b.onclick=()=>{d.remove();fn();};d.lastChild.appendChild(b);}
+  document.body.appendChild(d);}
+addEventListener('beforeinstallprompt',e=>{e.preventDefault();instEvt=e;$('instBtn').classList.remove('hide');});
+addEventListener('appinstalled',()=>{instEvt=null;$('instBtn').classList.add('hide');});
+if(isIOS&&!isStandalone())$('instBtn').classList.remove('hide');
+$('instBtn').onclick=async()=>{
+  if(instEvt){instEvt.prompt();try{await instEvt.userChoice;}catch(e){}instEvt=null;$('instBtn').classList.add('hide');}
+  else if(isIOS)appBar('<b>Instalar en iPhone</b><span>En Safari toca Compartir (el cuadrado con la flecha) y luego «Agregar a pantalla de inicio». Después abre CRIPTO-LIVE desde el ícono.</span>',[['Entendido','pri',()=>{}]]);};
+async function askNotif(){
+  if(!canNotify){appBar('<b>Avisos no disponibles</b><span>'+(isIOS?'En iPhone primero instala la app en la pantalla de inicio y ábrela desde el ícono.':'Este navegador no permite notificaciones.')+'</span>',[['Entendido','pri',()=>{}]]);return;}
+  let r='denied';try{r=await Notification.requestPermission();}catch(e){}
+  NTF.on=r==='granted';NTF.asked=true;saveNtf();renderNtf();
+  if(NTF.on)notify('Avisos activados','Te voy a avisar cuando aparezca una señal nueva de TRADING o SHOOTER.','cl-ok',null);
+  else if(r==='denied')appBar('<b>Avisos bloqueados</b><span>Para activarlos, abre los permisos del sitio o de la app y permite las notificaciones.</span>',[['Entendido','pri',()=>{}]]);
+}
+async function notify(title,body,tag,data){
+  try{const reg=swReg||(navigator.serviceWorker&&await navigator.serviceWorker.getRegistration());
+    const o={body,tag:tag||undefined,icon:'icon-192.png',badge:'icon-192.png',data:data||{},vibrate:[120,60,120],renotify:!!tag};
+    if(reg)await reg.showNotification(title,o);else new Notification(title,o);}catch(e){}
+}
+function notifySig(m,f){
+  if(!NTF.on||!NTF[m]||!canNotify||Notification.permission!=='granted')return;
+  const L=f.dir>0,c=f.sym.replace('USDT','');
+  notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
+}
+function renderNtf(){
+  const g=canNotify&&Notification.permission==='granted'&&NTF.on;
+  $('ntfRow').innerHTML=g?`<span>🔔 Avisos:</span><button data-n="medio" class="${NTF.medio?'on':''}">TRADING ${NTF.medio?'✓':'✕'}</button><button data-n="x" class="${NTF.x?'on':''}">SHOOTER ${NTF.x?'✓':'✕'}</button><button data-n="off">Desactivar</button>`
+    :`<button data-n="ask">🔔 Activar avisos de señales</button><span>Te avisa en el celu cuando aparezca una señal nueva.</span>`;
+}
+$('ntfRow').onclick=e=>{const b=e.target.closest('button');if(!b)return;const n=b.dataset.n;
+  if(n==='ask')askNotif();else if(n==='off'){NTF.on=false;saveNtf();renderNtf();}else{NTF[n]=!NTF[n];saveNtf();renderNtf();}};
+renderNtf();
+/* al abrir la app, pide permiso una sola vez */
+setTimeout(()=>{
+  if(canNotify&&Notification.permission==='granted'&&!NTF.asked){NTF.on=true;NTF.asked=true;saveNtf();renderNtf();}
+  else if(canNotify&&Notification.permission==='default'&&!NTF.asked)
+    appBar('<b>¿Querés recibir avisos de señales?</b><span>CRIPTO-LIVE te manda una notificación cuando aparece una señal nueva de TRADING o SHOOTER.</span>',
+      [['Ahora no','sec',()=>{NTF.asked=true;saveNtf();}],['Activar avisos','pri',askNotif]]);
+},2500);
+/* al tocar un aviso se abre la moneda de la señal */
+function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
+if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);});
+{const u=new URLSearchParams(location.search);if(u.get('sym'))setTimeout(()=>openFromNotif({sym:u.get('sym'),tf:u.get('tf'),m:u.get('m')}),1500);}
 </script>
 </body>
 </html>
