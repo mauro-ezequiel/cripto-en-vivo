@@ -1,0 +1,1127 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cripto en Vivo</title>
+<script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root{--bg:#0f1115;--panel:#161a22;--line:#262b36;--txt:#d1d4dc;--mut:#7c8394;--up:#26a69a;--dn:#ef5350;--acc:#2962ff}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--txt);font:14px/1.4 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+.app{display:grid;grid-template-columns:300px 1fr;height:100vh}
+aside{background:var(--panel);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.brand{padding:14px 16px 8px;font-weight:700;font-size:16px;display:flex;align-items:center;gap:8px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--up);box-shadow:0 0 8px var(--up)}
+.dot.off{background:var(--dn);box-shadow:0 0 8px var(--dn)}
+.search{margin:4px 12px 10px;position:relative}
+.search input{width:100%;padding:9px 12px 9px 34px;background:var(--bg);border:1px solid var(--line);border-radius:8px;color:var(--txt);font-size:14px;outline:none}
+.search input:focus{border-color:var(--acc)}
+.search svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);opacity:.5}
+.head{display:grid;grid-template-columns:1fr 1fr 70px;padding:4px 16px;font-size:11px;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+.head span:not(:first-child),.row span:not(:first-child){text-align:right}
+#list{overflow-y:auto;flex:1}
+.row{display:grid;grid-template-columns:1fr 1fr 70px;padding:7px 16px;cursor:pointer;border-left:2px solid transparent;font-variant-numeric:tabular-nums}
+.row:hover{background:#1c212b}
+.row.active{background:#1c2333;border-left-color:var(--acc)}
+.row b{font-weight:600}.row small{color:var(--mut)}
+.up{color:var(--up)}.dn{color:var(--dn)}
+.flash-up{animation:fu .6s}.flash-dn{animation:fd .6s}
+@keyframes fu{from{background:rgba(38,166,154,.25)}}@keyframes fd{from{background:rgba(239,83,80,.25)}}
+main{display:flex;flex-direction:column;min-width:0;min-height:0}
+.top{display:flex;align-items:center;gap:18px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.sym{font-size:20px;font-weight:700}
+.px{font-size:20px;font-weight:600;font-variant-numeric:tabular-nums}
+.stat{font-size:12px;color:var(--mut)}.stat b{display:block;color:var(--txt);font-weight:500;font-variant-numeric:tabular-nums}
+#chartWrap{position:relative;flex:1;display:flex;flex-direction:column;min-height:0;background:var(--bg)}
+.toolbar{display:flex;align-items:center;gap:4px;padding:6px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.toolbar .sep{width:1px;height:20px;background:var(--line);margin:0 6px}
+.btn{background:none;border:1px solid transparent;color:var(--txt);padding:5px 9px;border-radius:6px;cursor:pointer;font-size:13px;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{background:#222836}
+.btn.on{background:#1e2a4a;border-color:var(--acc);color:#fff}
+.btn svg{width:16px;height:16px}
+#chart{flex:1;position:relative;min-height:0}
+#overlay{position:absolute;inset:0;pointer-events:none;z-index:5}
+.hint{margin-left:auto;font-size:12px;color:var(--mut)}
+.loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--mut);z-index:6;pointer-events:none}
+#chartWrap:fullscreen{width:100vw;height:100vh}
+.legend{position:absolute;top:8px;left:10px;z-index:6;display:flex;flex-direction:column;gap:3px;text-shadow:0 0 3px #0f1115;font-size:12px;pointer-events:none;font-variant-numeric:tabular-nums}
+.legend i{display:inline-block;width:10px;height:2px;vertical-align:middle;margin-right:4px}
+.mode-btn{border:1px solid var(--line)!important}
+#start{position:fixed;inset:0;background:rgba(8,10,14,.85);backdrop-filter:blur(4px);z-index:50;display:flex;align-items:center;justify-content:center;padding:16px}
+#start.hide{display:none}
+.start-box{max-width:640px;width:100%}
+.start-box h2{margin:0 0 4px;font-size:22px}
+.start-box p{margin:0 0 18px;color:var(--mut)}
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px;cursor:pointer;text-align:left;color:var(--txt);font:inherit;transition:border-color .15s,transform .15s}
+.card:hover{border-color:var(--acc);transform:translateY(-2px)}
+.card.def{border-color:var(--acc)}
+.card b{display:block;font-size:17px;margin-bottom:4px}
+.card small{color:var(--mut);display:block;margin-bottom:10px}
+.card ul{margin:0;padding-left:18px;color:var(--mut);font-size:13px}
+.tag{display:inline-block;font-size:10px;font-weight:700;background:var(--acc);color:#fff;padding:2px 6px;border-radius:4px;margin-left:6px;vertical-align:middle}
+@media (max-width:600px){.cards{grid-template-columns:1fr}}
+.inds{display:flex;gap:6px;padding:6px 10px;border-bottom:1px solid var(--line);flex-wrap:wrap;align-items:center}
+.inds.hide{display:none}
+.inds .lbl{font-size:12px;color:var(--mut);margin-right:4px}
+.chip{background:none;border:1px solid var(--line);color:var(--mut);padding:3px 10px;border-radius:999px;cursor:pointer;font-size:12px;display:inline-flex;align-items:center;gap:6px}
+.chip i{width:8px;height:8px;border-radius:50%;background:currentColor;opacity:.35}
+.chip.on{color:var(--txt);border-color:#3a4256;background:#1b2130}
+.chip.on i{opacity:1}
+.signal{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--mut)}
+.signal.hide{display:none}
+.signal .big{font-size:15px;font-weight:700;padding:4px 10px;border-radius:6px}
+.big.up{background:rgba(38,166,154,.15)}.big.dn{background:rgba(239,83,80,.15)}.big.neu{background:#222836;color:var(--txt)}
+.chip .bdg{font-size:11px;font-weight:700;margin-left:2px}.chip .bdg.neu{color:var(--mut)}
+.dash{display:grid;grid-template-columns:250px minmax(0,1fr) 340px;border-top:1px solid var(--line);height:250px;background:var(--panel);flex-shrink:0}
+.dash.hide{display:none}
+.dcard{padding:10px 14px;overflow-y:auto;border-right:1px solid var(--line);font-size:12px;min-width:0}
+.dcard:last-child{border-right:0}
+.dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.mut{color:var(--mut)}
+.gauge{display:flex;flex-direction:column;align-items:center;position:relative}
+.g-mid{display:flex;flex-direction:column;align-items:center;margin-top:-4px}
+.g-num{font-size:30px;font-weight:800;font-variant-numeric:tabular-nums;line-height:1}
+.g-lab{font-size:14px;font-weight:700;margin-top:2px}
+.g-num.neu,.g-lab.neu{color:var(--txt)}
+.g-sub{font-size:11px;color:var(--mut);margin-top:6px;text-align:center}
+.fac{display:grid;grid-template-columns:minmax(110px,170px) 96px 70px minmax(0,1fr);gap:10px;align-items:center;padding:3px 0;border-bottom:1px solid #1d222c}
+.fn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.fbar{position:relative;height:8px;background:#0f1115;border-radius:4px}
+.fbar:after{content:"";position:absolute;left:50%;top:-2px;bottom:-2px;width:1px;background:#3a4256}
+.fbar i{position:absolute;top:0;bottom:0;border-radius:4px}
+.fbar i.up{background:var(--up)}.fbar i.dn{background:var(--dn)}.fbar i.neu{background:#5d6475}
+.vp{font-size:11px;font-weight:700;padding:2px 7px;border-radius:999px;text-align:center;white-space:nowrap}
+.vp.up{background:rgba(38,166,154,.16);color:var(--up)}.vp.dn{background:rgba(239,83,80,.16);color:var(--dn)}.vp.neu{background:#222836;color:var(--mut)}
+.ft{line-height:1.25}.ft.neu{color:var(--mut)}
+.lopts{margin-left:auto;display:flex;gap:8px;align-items:center;text-transform:none;letter-spacing:0}
+.lopts select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:5px;font-size:11px;padding:2px 4px}
+.lopts input{width:70px;vertical-align:middle;accent-color:#ffd166}
+.mh{font-size:12px;color:var(--mut);margin-bottom:4px}.mh b{color:var(--txt)}
+.exr{display:grid;grid-template-columns:78px 1fr 70px;gap:8px;align-items:center;padding:2px 0;font-variant-numeric:tabular-nums}
+.exr span:last-child{text-align:right}
+.exb{height:6px;background:#0f1115;border-radius:3px;overflow:hidden}.exb i{display:block;height:100%;background:#ffd166}
+.exb i.dn{background:#ff3d71}.exb i.up{background:#00d6a3}
+.feed{display:flex;flex-direction:column;gap:2px}
+.lq{display:grid;grid-template-columns:62px 1fr 74px 62px 50px;gap:6px;font-variant-numeric:tabular-nums;font-size:11px}
+.lq b{text-align:right}
+@media (max-width:1200px){.dash{grid-template-columns:1fr 1fr;height:auto;max-height:45vh;overflow-y:auto}.dash .dcard:nth-child(2){grid-column:1/-1;order:3}}
+@media (max-width:800px){.dash{grid-template-columns:1fr}.app{grid-template-columns:1fr;grid-template-rows:240px 1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.hint{display:none}}
+</style>
+</head>
+<body>
+<div id="start">
+  <div class="start-box">
+    <h2>¿Cómo quieres operar?</h2>
+    <p>Elige el modo. Solo cambia cómo se calcula el gráfico; puedes cambiarlo luego desde la barra de herramientas.</p>
+    <div class="cards" id="cards"></div>
+  </div>
+</div>
+<div class="app">
+  <aside>
+    <div class="brand"><span class="dot" id="live"></span>Cripto en Vivo</div>
+    <div class="search">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
+    </div>
+    <div class="head"><span>Par</span><span>Precio</span><span>24h</span></div>
+    <div id="list"></div>
+  </aside>
+  <main>
+    <div class="top">
+      <div><div class="sym" id="sym">BTC/USDT</div></div>
+      <div class="px" id="px">—</div>
+      <span style="font-size:11px;font-weight:700;color:#fff;background:var(--dn);padding:3px 8px;border-radius:4px;letter-spacing:.05em">● EN VIVO</span>
+      <div class="stat">Cambio 24h<b id="s-ch">—</b></div>
+      <div class="stat">Máx 24h<b id="s-hi">—</b></div>
+      <div class="stat">Mín 24h<b id="s-lo">—</b></div>
+      <div class="stat">Volumen 24h (USDT)<b id="s-vol">—</b></div>
+      <div class="signal hide" id="signal" title="Resumen de los 8 indicadores activos. No es consejo financiero."></div>
+    </div>
+    <div id="chartWrap">
+      <div class="toolbar">
+        <button class="btn mode-btn" id="modeBtn" title="Cambiar modo">Modo: —</button>
+        <span class="sep"></span>
+        <span id="tfs"></span>
+        <span class="sep"></span>
+        <button class="btn on" data-tool="cursor" title="Mover / zoom (Esc)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>Cursor</button>
+        <button class="btn" data-tool="ruler" title="Regla de medición (R)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg>Regla</button>
+        <button class="btn" data-tool="hline" title="Línea horizontal (H)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>Línea</button>
+        <button class="btn" id="clear" title="Borrar todas las líneas">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Borrar</button>
+        <span class="sep"></span>
+        <button class="btn" id="fit" title="Restablecer zoom">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Reset</button>
+        <button class="btn" id="fs" title="Pantalla completa (F)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
+        <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span>
+      </div>
+      <div class="inds hide" id="inds"></div>
+      <div id="chart"><div class="legend" id="legend"></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
+    </div>
+    <section class="dash hide" id="dash">
+      <div class="dcard gauge">
+        <div class="dt">Termómetro de tendencia</div>
+        <div id="g-svg"></div>
+        <div class="g-mid"><span class="g-num" id="g-num">—</span><span class="g-lab" id="g-lab"></span></div>
+        <div class="g-sub" id="g-sub"></div>
+      </div>
+      <div class="dcard"><div class="dt">Qué dice cada factor <span class="mut" id="facTf"></span></div><div id="factors"></div></div>
+      <div class="dcard">
+        <div class="dt">Posiciones apalancadas
+          <span class="lopts"><select id="liqView"><option value="zones">Zonas (cajas)</option><option value="heat">Mapa de calor</option><option value="both">Ambas</option></select><select id="liqSide"><option value="both">Longs y shorts</option><option value="L">Solo longs</option><option value="S">Solo shorts</option></select>
+          <label title="Muestra zonas más débiles">Sensibilidad <input type="range" id="liqSens" min="0" max="100"></label></span></div>
+        <div id="market"></div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<script>
+const API = 'https://api.binance.com/api/v3';
+const WS = 'wss://stream.binance.com:9443';
+const TFS = [['1m','1m'],['3m','3m'],['5m','5m'],['15m','15m'],['30m','30m'],['1h','1H'],['2h','2H'],['4h','4H'],['8h','8H'],['12h','12H'],['1d','1D'],['1w','1S'],['1M','1Mes']];
+const TZ = -new Date().getTimezoneOffset()*60;
+const $ = id => document.getElementById(id);
+
+/* ---------- MODOS (solo cambia cómo se calcula el gráfico) ----------
+   Para definir el modo X más adelante, edita su entrada aquí. */
+const MODES = {
+  medio: {
+    name: 'Medio plazo', tag: 'Por defecto',
+    desc: 'Operaciones de 4 h a 1 día o 1 semana',
+    info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Ichimoku, Supertrend, Bollinger, Perfil de volumen, Fibonacci, RSI, MACD, ADX', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
+    tf: '4h', bars: 200,
+    inds: ['liq','ichimoku','supertrend','bollinger','vprofile','fib','rsi','macd','adx']
+  },
+  x: {
+    name: 'X', tag: '',
+    desc: 'Por definir',
+    info: ['Gráfico de velas sin cálculos extra', 'Temporalidad inicial: 15m'],
+    tf: '15m', bars: 150,
+    inds: []
+  }
+};
+let mode = 'medio';
+let tickers = {}, symbol = 'BTCUSDT', tf = MODES[mode].tf, tool = 'cursor';
+let klineWs, candles = [], loadingMore = false, noMore = false;
+let hlines = {}; // symbol -> [{price, line}]
+let ruler = null; // {phase, a:{l,p}, b:{l,p}}
+
+/* ---------- formato ---------- */
+const dec = p => p >= 1000 ? 2 : p >= 1 ? 3 : p >= 0.01 ? 5 : 8;
+const fp = p => (+p).toLocaleString('es-ES',{minimumFractionDigits:dec(p),maximumFractionDigits:dec(p)});
+const fv = v => v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':(+v).toFixed(0);
+const fpct = v => (v>=0?'+':'')+(+v).toFixed(2)+'%';
+
+/* ---------- gráfico ---------- */
+const chart = LightweightCharts.createChart($('chart'), {
+  autoSize: true,
+  layout:{background:{type:'solid',color:'#0f1115'},textColor:'#b2b5be',fontSize:12},
+  grid:{vertLines:{color:'#1b1f29'},horzLines:{color:'#1b1f29'}},
+  crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
+  rightPriceScale:{borderColor:'#262b36'},
+  timeScale:{borderColor:'#262b36',timeVisible:true,secondsVisible:false,rightOffset:8},
+  handleScale:{axisPressedMouseMove:true,mouseWheel:true,pinch:true},
+  handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:true}
+});
+const series = chart.addCandlestickSeries({upColor:'#26a69a',downColor:'#ef5350',borderVisible:false,wickUpColor:'#26a69a',wickDownColor:'#ef5350'});
+const volume = chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol',lastValueVisible:false,priceLineVisible:false});
+
+const toBar = k => ({time:Math.floor(k[0]/1000)+TZ,t:k[0],open:+k[1],high:+k[2],low:+k[3],close:+k[4],v:+k[5],tb:+k[9]});
+const volBar = b => ({time:b.time,value:b.v,color:b.close>=b.open?'rgba(38,166,154,.45)':'rgba(239,83,80,.45)'});
+
+function setPrecision(p){const d=dec(p);series.applyOptions({priceFormat:{type:'price',precision:d,minMove:1/10**d}});}
+
+/* =====================================================================
+   INDICADORES (modo Medio plazo)
+   Superpuestos (dibujados sobre las velas): Ichimoku, Supertrend,
+   Bandas de Bollinger, Perfil de volumen, Fibonacci automático.
+   Paneles inferiores: RSI, MACD, ADX/DMI.
+   ===================================================================== */
+const IND = {
+  ichimoku:  {name:'Ichimoku',            color:'#26a69a', pane:false},
+  supertrend:{name:'Supertrend (10,3)',   color:'#f7c548', pane:false},
+  bollinger: {name:'Bollinger (20,2)',    color:'#42a5f5', pane:false},
+  vprofile:  {name:'Perfil de volumen',   color:'#ff9800', pane:false},
+  fib:       {name:'Fibonacci auto',      color:'#e040fb', pane:false},
+  liq:       {name:'Zonas de liquidación',color:'#ffd166', pane:false},
+  rsi:       {name:'RSI (14)',            color:'#b388ff', pane:true},
+  macd:      {name:'MACD (12,26,9)',      color:'#2962ff', pane:true},
+  adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true}
+};
+let active = new Set();
+let C = {}; // resultados calculados (arrays alineados con candles)
+const lineOpt = (scale,color,w=1.5)=>({priceScaleId:scale,color,lineWidth:w,priceLineVisible:false,lastValueVisible:false,crosshairMarkerVisible:false,visible:false});
+const OS = {
+  rsi:  {rsi:chart.addLineSeries({...lineOpt('rsi','#b388ff'),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})})},
+  macd: {hist:chart.addHistogramSeries({priceScaleId:'macd',priceLineVisible:false,lastValueVisible:false,visible:false}),
+         macd:chart.addLineSeries(lineOpt('macd','#2962ff')), sig:chart.addLineSeries(lineOpt('macd','#ff9800'))},
+  adx:  {adx:chart.addLineSeries(lineOpt('adx','#e0e0e0',2)), pdi:chart.addLineSeries(lineOpt('adx','#26a69a',1)), mdi:chart.addLineSeries(lineOpt('adx','#ef5350',1))}
+};
+[70,30].forEach(p=>OS.rsi.rsi.createPriceLine({price:p,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false}));
+OS.adx.adx.createPriceLine({price:25,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false});
+
+/* ---- matemáticas ---- */
+const closes=()=>candles.map(b=>b.close);
+function emaArr(v,p){const o=Array(v.length).fill(null),k=2/(p+1);let prev=null,cnt=0,sum=0;
+  for(let i=0;i<v.length;i++){const x=v[i];if(x==null)continue;
+    if(prev===null){sum+=x;cnt++;if(cnt===p){prev=sum/p;o[i]=prev;}}else{prev=x*k+prev*(1-k);o[i]=prev;}}
+  return o;}
+function smaStd(v,p){const m=Array(v.length).fill(null),s=Array(v.length).fill(null);
+  for(let i=p-1;i<v.length;i++){let a=0;for(let j=i-p+1;j<=i;j++)a+=v[j];a/=p;let q=0;for(let j=i-p+1;j<=i;j++)q+=(v[j]-a)**2;m[i]=a;s[i]=Math.sqrt(q/p);}
+  return [m,s];}
+function hhll(i,p){let h=-Infinity,l=Infinity;for(let j=i-p+1;j<=i;j++){h=Math.max(h,candles[j].high);l=Math.min(l,candles[j].low);}return (h+l)/2;}
+function trArr(){return candles.map((b,i)=>i?Math.max(b.high-b.low,Math.abs(b.high-candles[i-1].close),Math.abs(b.low-candles[i-1].close)):b.high-b.low);}
+function wilder(v,p){const o=Array(v.length).fill(null);let s=0;for(let i=0;i<v.length;i++){if(i<p){s+=v[i];if(i===p-1){s/=p;o[i]=s;}}else{s=(s*(p-1)+v[i])/p;o[i]=s;}}return o;}
+
+function calcRSI(p=14){const c=closes(),o=Array(c.length).fill(null);let g=0,l=0;
+  for(let i=1;i<c.length;i++){const d=c[i]-c[i-1],up=Math.max(d,0),dn=Math.max(-d,0);
+    if(i<=p){g+=up;l+=dn;if(i===p){g/=p;l/=p;o[i]=l===0?100:100-100/(1+g/l);}}
+    else{g=(g*(p-1)+up)/p;l=(l*(p-1)+dn)/p;o[i]=l===0?100:100-100/(1+g/l);}}
+  return o;}
+function calcMACD(){const c=closes(),f=emaArr(c,12),s=emaArr(c,26);
+  const m=c.map((_,i)=>f[i]!=null&&s[i]!=null?f[i]-s[i]:null),sig=emaArr(m,9);
+  return {macd:m,sig,hist:m.map((x,i)=>x!=null&&sig[i]!=null?x-sig[i]:null)};}
+function calcADX(p=14){const n=candles.length,pdm=[0],mdm=[0];
+  for(let i=1;i<n;i++){const up=candles[i].high-candles[i-1].high,dn=candles[i-1].low-candles[i].low;
+    pdm.push(up>dn&&up>0?up:0);mdm.push(dn>up&&dn>0?dn:0);}
+  const tr=wilder(trArr(),p),sp=wilder(pdm,p),sm=wilder(mdm,p);
+  const pdi=tr.map((t,i)=>t?100*sp[i]/t:null),mdi=tr.map((t,i)=>t?100*sm[i]/t:null);
+  const dx=pdi.map((x,i)=>x!=null&&(x+mdi[i])>0?100*Math.abs(x-mdi[i])/(x+mdi[i]):null);
+  const adx=Array(n).fill(null);let s=0,c=0,prev=null;
+  for(let i=0;i<n;i++){if(dx[i]==null)continue;if(prev===null){s+=dx[i];c++;if(c===p){prev=s/p;adx[i]=prev;}}else{prev=(prev*(p-1)+dx[i])/p;adx[i]=prev;}}
+  return {adx,pdi,mdi};}
+function calcST(p=10,m=3){const n=candles.length,atr=wilder(trArr(),p),st=Array(n).fill(null),dir=Array(n).fill(null);
+  let fu=null,fl=null,d=1;
+  for(let i=0;i<n;i++){if(atr[i]==null)continue;const b=candles[i],hl=(b.high+b.low)/2,ub=hl+m*atr[i],lb=hl-m*atr[i];
+    if(fu===null){fu=ub;fl=lb;}else{const pc=candles[i-1].close;fu=(ub<fu||pc>fu)?ub:fu;fl=(lb>fl||pc<fl)?lb:fl;}
+    if(d===1&&b.close<fl)d=-1;else if(d===-1&&b.close>fu)d=1;
+    st[i]=d===1?fl:fu;dir[i]=d;}
+  return {st,dir};}
+function calcIchi(){const n=candles.length,t=Array(n).fill(null),k=Array(n).fill(null),a=Array(n+26).fill(null),b=Array(n+26).fill(null);
+  for(let i=0;i<n;i++){if(i>=8)t[i]=hhll(i,9);if(i>=25)k[i]=hhll(i,26);
+    if(t[i]!=null&&k[i]!=null)a[i+26]=(t[i]+k[i])/2;if(i>=51)b[i+26]=hhll(i,52);}
+  return {t,k,a,b};}
+
+function calcInd(full){
+  if(!candles.length) return;
+  liqDirty=true;
+  if(active.has('rsi')) C.rsi=calcRSI();
+  if(active.has('macd')) C.macd=calcMACD();
+  if(active.has('adx')) C.adx=calcADX();
+  if(active.has('supertrend')) C.st=calcST();
+  if(active.has('ichimoku')) C.ichi=calcIchi();
+  if(active.has('bollinger')){const [m,s]=smaStd(closes(),20);C.bb={m,u:m.map((x,i)=>x==null?null:x+2*s[i]),l:m.map((x,i)=>x==null?null:x-2*s[i])};}
+  const push=(ser,arr,colorFn)=>{
+    const pts=[];arr.forEach((v,i)=>{if(v!=null){const p={time:candles[i].time,value:v};if(colorFn)p.color=colorFn(v,i);pts.push(p);}});
+    if(full) ser.setData(pts); else if(pts.length) ser.update(pts.at(-1));
+  };
+  if(active.has('rsi')) push(OS.rsi.rsi,C.rsi);
+  if(active.has('macd')){push(OS.macd.macd,C.macd.macd);push(OS.macd.sig,C.macd.sig);
+    push(OS.macd.hist,C.macd.hist,(v,i)=>{const pr=C.macd.hist[i-1];return v>=0?(pr!=null&&v<pr?'rgba(38,166,154,.45)':'#26a69a'):(pr!=null&&v>pr?'rgba(239,83,80,.45)':'#ef5350');});}
+  if(active.has('adx')){push(OS.adx.adx,C.adx.adx);push(OS.adx.pdi,C.adx.pdi);push(OS.adx.mdi,C.adx.mdi);}
+  renderLegend();
+}
+
+/* ---- distribución de paneles ---- */
+const PANE=.16;
+function oscList(){return ['rsi','macd','adx'].filter(k=>active.has(k));}
+function layout(){
+  const os=oscList(),block=os.length*PANE;
+  series.priceScale().applyOptions({scaleMargins:{top:.06,bottom:block+.1}});
+  chart.priceScale('vol').applyOptions({scaleMargins:{top:1-block-.12,bottom:block+.005}});
+  os.forEach((k,i)=>{const st=1-block+i*PANE;chart.priceScale(k).applyOptions({scaleMargins:{top:st+.03,bottom:Math.max(0,1-st-PANE+.012)}});});
+  for(const k in OS){const on=active.has(k);for(const s in OS[k])OS[k][s].applyOptions({visible:on});}
+}
+
+/* ---- señales: cada indicador activo vota de −1 (bajista) a +1 (alcista) ---- */
+let lastPOC=null,lastFib=null;
+function signals(){
+  const i=candles.length-1;if(i<60)return [];
+  const c=candles[i].close,out=[];
+  const add=(k,s,txt)=>out.push({k,s:clamp(s),txt});
+  if(active.has('ichimoku')&&C.ichi){const a=C.ichi.a[i],b=C.ichi.b[i],t=C.ichi.t[i],k=C.ichi.k[i];
+    if(a!=null&&b!=null){const top=Math.max(a,b),bot=Math.min(a,b),base=c>top?1:c<bot?-1:0,tk=t!=null&&k!=null?(t>k?.3:-.3):0;
+      add('ichimoku',base*.75+tk,c>top?'precio sobre la nube':c<bot?'precio bajo la nube':'precio dentro de la nube');}}
+  if(active.has('supertrend')&&C.st){const d=C.st.dir[i];add('supertrend',d,d===1?'alcista':'bajista');}
+  if(active.has('bollinger')&&C.bb){const m=C.bb.m[i],u=C.bb.u[i];if(m!=null)add('bollinger',(c-m)/((u-m)||1),c>u?'sobre banda sup.':c<C.bb.l[i]?'bajo banda inf.':c>m?'sobre la media':'bajo la media');}
+  if(active.has('vprofile')&&lastPOC!=null)add('vprofile',clamp((c/lastPOC-1)*25),(c>lastPOC?'sobre':'bajo')+' POC '+fp(lastPOC));
+  if(active.has('fib')&&lastFib){const {up,hi,lo}=lastFib,r=(c-lo)/(hi-lo);add('fib',up?(r>.382?.7:-.7):(r<.618?-.7:.7),(up?'tramo alcista':'tramo bajista')+', precio al '+(r*100).toFixed(0)+'%');}
+  if(active.has('liq')&&LIQ&&LIQ.cl){const {wL,wS,longs,shorts}=LIQ.cl;if(wL+wS>0){const s=(wS-wL)/(wS+wL),z=s>=0?shorts[0]:longs[0];
+    add('liq',s*1.2,z?(s>=0?'imán arriba: shorts en '+fp(z.p):'imán abajo: longs en '+fp(z.p)):(s>=0?'más liquidez arriba':'más liquidez abajo'));}}
+  if(active.has('rsi')&&C.rsi){const r=C.rsi[i];if(r!=null)add('rsi',(r-50)/20,r.toFixed(1)+(r>70?' sobrecompra':r<30?' sobreventa':''));}
+  if(active.has('macd')&&C.macd){const m=C.macd.macd[i],s=C.macd.sig[i],h=C.macd.hist[i],hp=C.macd.hist[i-1];
+    if(m!=null&&s!=null)add('macd',(m>s?.7:-.7)+(h!=null&&hp!=null?(h>hp?.3:-.3):0),(m>s?'sobre señal':'bajo señal')+(h>hp?', impulso sube':', impulso baja'));}
+  if(active.has('adx')&&C.adx){const a=C.adx.adx[i],p=C.adx.pdi[i],m=C.adx.mdi[i];
+    if(a!=null)add('adx',((p-m)/((p+m)||1))*2*Math.min(1,a/25),'fuerza '+a.toFixed(0)+(a<20?' (sin tendencia)':p>m?', +DI domina':', −DI domina'));}
+  return out;
+}
+
+/* ---- factores de mercado (futuros): manos grandes, minoristas, funding, flujo, OI ---- */
+function marketFactors(){
+  const out=[];if(!FUT||FUT.none||candles.length<15)return out;
+  const add=(k,name,w,s,txt)=>out.push({k,name,w,s:clamp(s),txt,mk:true});
+  const last=a=>a&&a.length?a[a.length-1]:null;
+  const top=last(FUT.top);if(top){const r=+top.longShortRatio;add('whales','Manos grandes (top traders)',1.5,(r-1)/.6,`${(+top.longAccount*100).toFixed(1)}% long · ratio ${r.toFixed(2)}`);}
+  const gl=last(FUT.glob);if(gl){const r=+gl.longShortRatio;add('retail','Minoristas (contrario)',.75,-(r-1)/1.2,`${(+gl.longAccount*100).toFixed(1)}% de cuentas en long`);}
+  if(FUT.fund!=null&&!isNaN(FUT.fund)){const f=FUT.fund;add('funding','Funding rate (contrario)',.75,-f/.0006,`${(f*100).toFixed(4)}% cada 8 h`);}
+  if(FUT.taker&&FUT.taker.length){const t=FUT.taker.slice(-6),r=t.reduce((a,x)=>a+ +x.buySellRatio,0)/t.length;add('taker','Flujo comprador/vendedor',1,(r-1)*4,`compra/venta ${r.toFixed(2)}`);}
+  if(FUT.oi&&FUT.oi.length>12){const o=FUT.oi,a=o[o.length-12].oi,b=o[o.length-1].oi,dO=b/a-1;
+    const ci=candleIdx(o[o.length-12].t),p0=ci>=0?candles[ci].close:candles[0].close,dP=candles.at(-1).close/p0-1;
+    const s=dO>0?Math.sign(dP)*Math.min(1,dO*20):Math.sign(dP)*.3;
+    add('oi','Interés abierto vs precio',1,s,`OI ${fpct(dO*100)} · precio ${fpct(dP*100)}`+(dO>0?(dP>0?' (entran compradores)':' (entran vendedores)'):' (cierre de posiciones)'));}
+  return out;
+}
+function allFactors(){
+  return signals().map(x=>({...x,name:IND[x.k].name,w:x.k==='liq'?1.5:1,color:IND[x.k].color})).concat(marketFactors());
+}
+function gaugeScore(f){const sw=f.reduce((a,x)=>a+x.w,0);if(!sw)return null;
+  return Math.max(1,Math.min(100,Math.round(50+50*f.reduce((a,x)=>a+x.w*x.s,0)/sw)));}
+const scoreLabel=s=>s>=75?['Muy alcista','up']:s>=58?['Alcista','up']:s>42?['Neutral','neu']:s>25?['Bajista','dn']:['Muy bajista','dn'];
+
+function gaugeSVG(sc){
+  const cx=120,cy=112,R=92,seg=[];
+  const col=v=>{const a=v<50?[239,83,80]:[93,100,117],b=v<50?[93,100,117]:[38,166,154],t=v<50?v/50:(v-50)/50;return `rgb(${a.map((x,i)=>Math.round(x+(b[i]-x)*t)).join(',')})`;};
+  const pt=(v,r)=>{const a=Math.PI*(1-v/100);return [cx+r*Math.cos(a),cy-r*Math.sin(a)];};
+  for(let v=0;v<100;v+=2.5){const [x1,y1]=pt(v+.4,R),[x2,y2]=pt(v+2.1,R);seg.push(`<path d="M${x1.toFixed(1)} ${y1.toFixed(1)}A${R} ${R} 0 0 1 ${x2.toFixed(1)} ${y2.toFixed(1)}" stroke="${col(v+1.25)}" stroke-width="14" fill="none" opacity="${sc!=null&&v<=sc?1:.28}"/>`);}
+  const ticks=[0,25,50,75,100].map(v=>{const [x,y]=pt(v,R-22);return `<text x="${x.toFixed(1)}" y="${(y+4).toFixed(1)}" font-size="10" fill="#7c8394" text-anchor="middle">${v||1}</text>`;}).join('');
+  let needle='';if(sc!=null){const [x,y]=pt(sc,R-30);needle=`<line x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}" stroke="#e8eaf0" stroke-width="3" stroke-linecap="round"/><circle cx="${cx}" cy="${cy}" r="6" fill="#e8eaf0"/>`;}
+  return `<svg viewBox="0 0 240 132" width="100%" style="max-width:260px">${seg.join('')}${ticks}${needle}</svg>`;
+}
+
+function renderLegend(){
+  const fs=allFactors(),ind=fs.filter(x=>!x.mk);
+  // leyenda sobre el gráfico (indicadores superpuestos)
+  $('legend').innerHTML=ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
+  // flechas en cada botón de indicador
+  document.querySelectorAll('#inds [data-ind]').forEach(b=>{const f=ind.find(x=>x.k===b.dataset.ind),bd=b.querySelector('.bdg');if(!bd)return;
+    if(!f){bd.className='bdg';bd.textContent='';return;}
+    bd.className='bdg '+(f.s>.15?'up':f.s<-.15?'dn':'neu');bd.textContent=f.s>.15?'▲':f.s<-.15?'▼':'●';});
+  const box=$('signal'),dash=$('dash'),sc=gaugeScore(fs);
+  if(!MODES[mode].inds.length||sc==null){box.classList.add('hide');dash.classList.add('hide');return;}
+  const [lab,cl]=scoreLabel(sc),up=fs.filter(x=>x.s>.15).length,dn=fs.filter(x=>x.s<-.15).length;
+  box.innerHTML=`<span>Termómetro ${TFS.find(x=>x[0]===tf)[1]}</span><span class="big ${cl}">${sc}/100 · ${lab}</span>`;
+  box.classList.remove('hide');dash.classList.remove('hide');
+  $('g-svg').innerHTML=gaugeSVG(sc);
+  $('g-num').textContent=sc;$('g-num').className='g-num '+cl;
+  $('g-lab').textContent=lab;$('g-lab').className='g-lab '+cl;
+  $('g-sub').innerHTML=`<b class="up">${up} ▲</b> · ${fs.length-up-dn} ● · <b class="dn">${dn} ▼</b> de ${fs.length} factores · ${TFS.find(x=>x[0]===tf)[1]}`;
+  $('factors').innerHTML=fs.map(x=>{const c=x.s>.15?'up':x.s<-.15?'dn':'neu',w=Math.abs(x.s)*50;
+    const v=x.s>.5?'Muy alcista':x.s>.15?'Alcista':x.s<-.5?'Muy bajista':x.s<-.15?'Bajista':'Neutral',ic=x.s>.15?'▲':x.s<-.15?'▼':'●';
+    return `<div class="fac"><span class="fn">${x.mk?'◆ ':''}${x.name}</span><span class="vp ${c}">${ic} ${v}</span><span class="fbar"><i class="${c}" style="${x.s>=0?'left:50%':'right:50%'};width:${w}%"></i></span><span class="ft ${c}">${x.txt}</span></div>`;}).join('');
+  $('facTf').textContent=`· gráfico ${TFS.find(x=>x[0]===tf)[1]} (◆ = datos de futuros)`;
+  renderMarket();
+}
+function renderMarket(){
+  const el=$('market');
+  if(!FUT){el.innerHTML='<div class="mut">Cargando datos de futuros…</div>';return;}
+  if(FUT.none){el.innerHTML='<div class="mut">Esta moneda no tiene futuros perpetuos en Binance: no hay datos de posiciones apalancadas.</div>';return;}
+  const price=candles.at(-1)?.close||0,su=snapUSD(FUT.snap,price),tot=Object.values(su).reduce((a,b)=>a+b,0);
+  const exs=['Binance','Bybit','OKX','BingX'].map(ex=>{const v=su[ex];
+    return `<div class="exr"><span>${ex}</span><span class="exb"><i style="width:${v&&tot?v/tot*100:0}%"></i></span><span>${v?fusd(v):'<span class="mut">sin datos</span>'}</span></div>`;}).join('');
+  const now=Date.now(),h1=liqEvents.filter(e=>now-e.t<36e5),sL=h1.filter(e=>e.side==='L').reduce((a,e)=>a+e.usd,0),sS=h1.filter(e=>e.side==='S').reduce((a,e)=>a+e.usd,0);
+  const feed=liqEvents.slice(-8).reverse().map(e=>`<div class="lq ${e.side==='L'?'up':'dn'}"><span>${new Date(e.t).toLocaleTimeString('es-ES')}</span><span>${e.side==='L'?'Long liquidado':'Short liquidado'}</span><span>${fp(e.p)}</span><b>${fusd(e.usd)}</b><span class="mut">${e.ex}</span></div>`).join('')||'<div class="mut">Esperando liquidaciones en vivo…</div>';
+  const cl=LIQ&&LIQ.cl;
+  el.innerHTML=`
+    <div class="mh">Interés abierto total <b>${tot?fusd(tot):'—'}</b></div>${exs}
+    ${cl?`<div class="mh" style="margin-top:8px">Liquidez a liquidar (±15 %)</div>
+      <div class="exr"><span class="up">Longs abajo</span><span class="exb"><i class="up" style="width:${cl.tL+cl.tS?cl.tL/(cl.tL+cl.tS)*100:0}%"></i></span><span>${fusd(cl.tL)}</span></div>
+      <div class="exr"><span class="dn">Shorts arriba</span><span class="exb"><i class="dn" style="width:${cl.tL+cl.tS?cl.tS/(cl.tL+cl.tS)*100:0}%"></i></span><span>${fusd(cl.tS)}</span></div>`:''}
+    <div class="mh" style="margin-top:8px">Liquidaciones reales · última hora <span class="up">L ${fusd(sL)}</span> · <span class="dn">S ${fusd(sS)}</span></div>
+    <div class="feed">${feed}</div>`;
+}
+
+/* ---- dibujo de superpuestos en el canvas ---- */
+function drawInd(ctx,w,h){
+  if(!active.size||!candles.length) return;
+  const ts=chart.timeScale(),paneH=h-ts.height(),paneW=w-series.priceScale().width();
+  const os=oscList(),block=os.length*PANE,mainH=paneH*(1-block);
+  const r=ts.getVisibleLogicalRange();if(!r)return;
+  const from=Math.max(0,Math.floor(r.from)-2),to=Math.min(candles.length+26,Math.ceil(r.to)+2);
+  const X=i=>ts.logicalToCoordinate(i),Y=p=>series.priceToCoordinate(p);
+  const poly=(arr,color,lw=1.5,dash)=>{ctx.beginPath();ctx.strokeStyle=color;ctx.lineWidth=lw;ctx.setLineDash(dash||[]);let on=false;
+    for(let i=from;i<to&&i<arr.length;i++){const v=arr[i];if(v==null){on=false;continue;}const x=X(i),y=Y(v);if(x==null||y==null)continue;on?ctx.lineTo(x,y):ctx.moveTo(x,y);on=true;}
+    ctx.stroke();ctx.setLineDash([]);};
+  const band=(A,B,colA,colB)=>{for(let i=from;i<to-1&&i+1<A.length;i++){if(A[i]==null||B[i]==null||A[i+1]==null||B[i+1]==null)continue;
+    const x1=X(i),x2=X(i+1);if(x1==null||x2==null)continue;ctx.fillStyle=A[i]>=B[i]?colA:colB;ctx.beginPath();
+    ctx.moveTo(x1,Y(A[i]));ctx.lineTo(x2,Y(A[i+1]));ctx.lineTo(x2,Y(B[i+1]));ctx.lineTo(x1,Y(B[i]));ctx.closePath();ctx.fill();}};
+
+  if(active.has('liq')&&liqDirty&&performance.now()-liqLast>1500)computeLiq();
+  ctx.save();ctx.beginPath();ctx.rect(0,0,paneW,mainH);ctx.clip();
+  if(active.has('liq'))drawLiq(ctx,{paneW,mainH,X,Y,from,to:Math.min(candles.length-1,Math.ceil(r.to)+2),dpr:devicePixelRatio||1});
+
+  if(active.has('ichimoku')&&C.ichi){const I=C.ichi;
+    band(I.a,I.b,'rgba(38,166,154,.13)','rgba(239,83,80,.13)');
+    poly(I.a,'rgba(38,166,154,.6)',1);poly(I.b,'rgba(239,83,80,.6)',1);
+    poly(I.t,'#2196f3',1.2);poly(I.k,'#c2185b',1.2);}
+  if(active.has('bollinger')&&C.bb){band(C.bb.u,C.bb.l,'rgba(66,165,245,.05)','rgba(66,165,245,.05)');
+    poly(C.bb.u,'rgba(66,165,245,.8)',1);poly(C.bb.l,'rgba(66,165,245,.8)',1);poly(C.bb.m,'rgba(66,165,245,.6)',1,[4,4]);}
+  if(active.has('supertrend')&&C.st){const {st,dir}=C.st;ctx.lineWidth=2;
+    for(let i=Math.max(from,1);i<to&&i<st.length;i++){if(st[i]==null||st[i-1]==null||dir[i]!==dir[i-1])continue;
+      const x1=X(i-1),x2=X(i);if(x1==null||x2==null)continue;ctx.strokeStyle=dir[i]===1?'#26a69a':'#ef5350';
+      ctx.beginPath();ctx.moveTo(x1,Y(st[i-1]));ctx.lineTo(x2,Y(st[i]));ctx.stroke();
+      if(i>1&&dir[i-1]!==dir[i-2]){ctx.fillStyle=dir[i]===1?'#26a69a':'#ef5350';ctx.beginPath();ctx.arc(x1,Y(st[i-1]),3.5,0,7);ctx.fill();}}}
+
+  // rango de velas visibles reales
+  const v0=Math.max(0,Math.floor(r.from)),v1=Math.min(candles.length-1,Math.ceil(r.to));
+  if(v1-v0>5){
+    let hi=-Infinity,lo=Infinity,hiI=v0,loI=v0;
+    for(let i=v0;i<=v1;i++){if(candles[i].high>hi){hi=candles[i].high;hiI=i;}if(candles[i].low<lo){lo=candles[i].low;loI=i;}}
+
+    if(active.has('vprofile')){
+      const N=48,rows=Array.from({length:N},()=>({u:0,d:0})),step=(hi-lo)/N||1;
+      for(let i=v0;i<=v1;i++){const b=candles[i],a=Math.max(0,Math.floor((b.low-lo)/step)),z=Math.min(N-1,Math.floor((b.high-lo)/step)),part=b.v/(z-a+1);
+        for(let j=a;j<=z;j++)b.close>=b.open?rows[j].u+=part:rows[j].d+=part;}
+      const tot=rows.map(x=>x.u+x.d),max=Math.max(...tot),poc=tot.indexOf(max),sum=tot.reduce((a,b)=>a+b,0);
+      let va=new Set([poc]),acc=tot[poc],lo_=poc,hi_=poc;
+      while(acc<sum*.7&&(lo_>0||hi_<N-1)){const dn=lo_>0?tot[lo_-1]:-1,up=hi_<N-1?tot[hi_+1]:-1;if(up>=dn){hi_++;acc+=up;va.add(hi_);}else{lo_--;acc+=dn;va.add(lo_);}}
+      const W=paneW*.22,vpL=active.has('liq');
+      rows.forEach((x,j)=>{const y1=Y(lo+(j+1)*step),y2=Y(lo+j*step);if(y1==null||y2==null)return;const hh=Math.max(1,y2-y1-1),wu=W*x.u/max,wd=W*x.d/max,a=va.has(j)?.45:.2;
+        ctx.fillStyle=`rgba(38,166,154,${a})`;vpL?ctx.fillRect(0,y1,wu,hh):ctx.fillRect(paneW-wu,y1,wu,hh);ctx.fillStyle=`rgba(239,83,80,${a})`;vpL?ctx.fillRect(wu,y1,wd,hh):ctx.fillRect(paneW-wu-wd,y1,wd,hh);});
+      lastPOC=lo+(poc+.5)*step;const py=Y(lastPOC);
+      ctx.strokeStyle='#ff9800';ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(paneW,py);ctx.stroke();ctx.setLineDash([]);
+      ctx.fillStyle='#ff9800';ctx.font='600 11px system-ui,sans-serif';ctx.textAlign=vpL?'left':'right';ctx.textBaseline='bottom';ctx.fillText('POC '+fp(lastPOC),vpL?4:paneW*(active.has('liq')?1-PROF:1)-4,py-2);
+    }
+    if(active.has('fib')){
+      const up=loI<hiI,LV=[[0,'#9e9e9e'],[.236,'#ef5350'],[.382,'#ff9800'],[.5,'#4caf50'],[.618,'#e040fb'],[.786,'#29b6f6'],[1,'#9e9e9e']];
+      lastFib={up,hi,lo};const x0=X(Math.min(hiI,loI));
+      ctx.font='11px system-ui,sans-serif';ctx.textAlign='right';ctx.textBaseline='bottom';const fx=paneW-(active.has('liq')?paneW*PROF:active.has('vprofile')?paneW*.22:0)-6;
+      LV.forEach(([l,col])=>{const p=up?hi-(hi-lo)*l:lo+(hi-lo)*l,y=Y(p);if(y==null)return;
+        ctx.strokeStyle=col;ctx.globalAlpha=l===.618?.95:.6;ctx.lineWidth=l===.618?1.5:1;ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(paneW,y);ctx.stroke();
+        ctx.fillStyle=col;ctx.fillText(`${l} (${fp(p)})`,fx,y-1);ctx.globalAlpha=1;});
+    }
+  }
+  ctx.restore();
+
+  // paneles inferiores: separadores y etiquetas
+  const i=candles.length-1;
+  os.forEach((k,n)=>{const y=paneH*(1-block+n*PANE);
+    ctx.strokeStyle='#2a3040';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();
+    let txt=IND[k].name;
+    if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
+    if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
+    if(k==='adx'&&C.adx)txt+=`  ADX ${(C.adx.adx[i]??0).toFixed(1)}  +DI ${(C.adx.pdi[i]??0).toFixed(1)}  −DI ${(C.adx.mdi[i]??0).toFixed(1)}`;
+    ctx.font='12px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle=IND[k].color;ctx.fillText(txt,10,y+5);});
+}
+
+/* =====================================================================
+   MAPA DE LIQUIDACIONES
+   Estima dónde están acumuladas las posiciones apalancadas (long y short)
+   y en qué precio se liquidarían. Modelo:
+   - Interés abierto (OI) histórico de Binance Futures: cuando sube, se abren
+     posiciones nuevas en el precio de esa vela; cuando baja, se cierran.
+   - El OI se escala al total del mercado con el OI actual de
+     Binance + Bybit + OKX + BingX.
+   - Reparto long/short según el volumen comprador/vendedor (taker) de la vela.
+   - Apalancamientos 5x, 10x, 25x, 50x y 100x con margen de mantenimiento 0,5 %.
+   - Cuando el precio toca un nivel, esas posiciones se liquidan y la zona
+     desaparece (igual que en los mapas de calor profesionales).
+   - Liquidaciones reales en vivo: Binance y Bybit (burbujas en el gráfico).
+   ===================================================================== */
+const FAPI='https://fapi.binance.com';
+const OI_PERIOD={'1m':'5m','3m':'5m','5m':'5m','15m':'15m','30m':'30m','1h':'1h','2h':'2h','4h':'4h','8h':'6h','12h':'12h','1d':'1d','1w':'1d','1M':'1d'};
+const TF_MS={'1m':6e4,'3m':18e4,'5m':3e5,'15m':9e5,'30m':18e5,'1h':36e5,'2h':72e5,'4h':144e5,'8h':288e5,'12h':432e5,'1d':864e5,'1w':6048e5,'1M':2592e6};
+const BIN_STEP={'1m':.0008,'3m':.001,'5m':.0012,'15m':.0015,'30m':.002,'1h':.0025,'2h':.003,'4h':.0035,'8h':.0045,'12h':.005,'1d':.006,'1w':.01,'1M':.015};
+const LEV=[[100,.10],[50,.15],[25,.25],[10,.30],[5,.20]];
+const MMR=.005;
+let FUT=null, LIQ=null, liqDirty=true, liqLast=0, liqVer=0, liqEvents=[], liqWs=[], futTimer=null, hover=null;
+let liqOpts={side:'both',sens:55,view:'zones'};
+try{Object.assign(liqOpts,JSON.parse(localStorage.getItem('cv_liqopts')||'{}'))}catch(e){}
+const saveLiqOpts=()=>{try{localStorage.setItem('cv_liqopts',JSON.stringify(liqOpts))}catch(e){}};
+
+const getJ=async(u,ms=9000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
+  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error(r.status);return await r.json();}finally{clearTimeout(t);}};
+const safe=p=>p.then(v=>v,()=>null);
+const clamp=(x,a=-1,b=1)=>Math.max(a,Math.min(b,x));
+const fusd=v=>'$'+fv(v);
+
+async function resolveFutSym(sym){
+  const base=sym.replace(/USDT$/,'');
+  for(const [fs,mult] of [[sym,1],['1000'+base+'USDT',1000],['1000000'+base+'USDT',1e6]]){
+    const r=await safe(getJ(`${FAPI}/fapi/v1/premiumIndex?symbol=${fs}`));
+    if(r&&r.symbol) return {fs,mult,base,fund:+r.lastFundingRate};
+  }
+  return null;
+}
+async function oiSnapshots(f){
+  const {fs,mult,base}=f;
+  const [bn,by,ok,bx]=await Promise.all([
+    safe(getJ(`${FAPI}/fapi/v1/openInterest?symbol=${fs}`)),
+    safe(getJ(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${fs}`)),
+    safe(getJ(`https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=${base}-USDT-SWAP`)),
+    safe(getJ(`https://open-api.bingx.com/openApi/swap/v2/quote/openInterest?symbol=${base}-USDT`))
+  ]);
+  const s={};
+  if(bn&&bn.openInterest) s.Binance={u:+bn.openInterest,m:mult};
+  const byt=by&&by.result&&by.result.list&&by.result.list[0];
+  if(byt&&byt.openInterest){s.Bybit={u:+byt.openInterest,m:mult};s.BybitFund=+byt.fundingRate;}
+  const okd=ok&&ok.data&&ok.data[0];
+  if(okd) s.OKX=okd.oiUsd?{usd:+okd.oiUsd}:{u:+okd.oiCcy,m:1};
+  const bxd=bx&&bx.data;
+  if(bxd&&bxd.openInterest) s.BingX={usd:+bxd.openInterest};
+  return s;
+}
+function snapUSD(s,price){
+  const out={};
+  for(const ex of ['Binance','Bybit','OKX','BingX']){const x=s[ex];if(!x)continue;out[ex]=x.usd!=null?x.usd:x.u*x.m*price;}
+  // BingX a veces devuelve unidades en vez de USDT: corrección si el valor es absurdo
+  if(out.BingX!=null&&out.Binance&&out.BingX<out.Binance*.001) out.BingX*=price*(FUT?.mult||1);
+  return out;
+}
+
+async function loadFutures(){
+  const sym=symbol,t=tf;
+  clearInterval(futTimer);closeLiqWs();
+  FUT=null;LIQ=null;liqEvents=[];liqDirty=true;hmKey='';
+  const f=await resolveFutSym(sym);
+  if(sym!==symbol||t!==tf) return;
+  if(!f){FUT={none:true};renderLegend();return;}
+  FUT={...f,oi:[],snap:{},top:null,glob:null,taker:null};
+  await refreshFutures(sym,t,true);
+  if(sym!==symbol||t!==tf) return;
+  openLiqWs(f,sym);
+  futTimer=setInterval(()=>refreshFutures(sym,t,false),60000);
+}
+async function refreshFutures(sym,t,first){
+  if(!FUT||FUT.none||sym!==symbol||t!==tf) return;
+  const p=OI_PERIOD[t],fs=FUT.fs;
+  const [oi,snap,top,glob,taker,prem]=await Promise.all([
+    safe(getJ(`${FAPI}/futures/data/openInterestHist?symbol=${fs}&period=${p}&limit=500`)),
+    oiSnapshots(FUT),
+    safe(getJ(`${FAPI}/futures/data/topLongShortPositionRatio?symbol=${fs}&period=${p}&limit=30`)),
+    safe(getJ(`${FAPI}/futures/data/globalLongShortAccountRatio?symbol=${fs}&period=${p}&limit=30`)),
+    safe(getJ(`${FAPI}/futures/data/takerlongshortRatio?symbol=${fs}&period=${p}&limit=30`)),
+    first?null:safe(getJ(`${FAPI}/fapi/v1/premiumIndex?symbol=${fs}`))]);
+  if(!FUT||sym!==symbol||t!==tf) return;
+  if(Array.isArray(oi)) FUT.oi=oi.map(x=>({t:+x.timestamp,oi:+x.sumOpenInterest})).sort((a,b)=>a.t-b.t);
+  FUT.snap=snap||{};
+  FUT.top=Array.isArray(top)?top:null;FUT.glob=Array.isArray(glob)?glob:null;FUT.taker=Array.isArray(taker)?taker:null;
+  if(prem&&prem.lastFundingRate!=null) FUT.fund=+prem.lastFundingRate;
+  liqDirty=true;renderLegend();
+}
+
+/* ---- liquidaciones reales en vivo ---- */
+function openLiqWs(f,sym){
+  const m=f.mult;
+  const push=ev=>{if(sym!==symbol)return;liqEvents.push(ev);if(liqEvents.length>500)liqEvents.shift();};
+  const bn=()=>{const w=new WebSocket(`wss://fstream.binance.com/ws/${f.fs.toLowerCase()}@forceOrder`);
+    w.onmessage=e=>{const o=JSON.parse(e.data).o;if(!o)return;const p=+o.ap||+o.p,q=+o.z||+o.q;
+      push({t:+o.T,p:p/m,usd:p*q,side:o.S==='SELL'?'L':'S',ex:'Binance'});};
+    w.onclose=()=>{if(sym===symbol&&liqWs.includes(w))setTimeout(()=>{if(sym===symbol){liqWs=liqWs.filter(x=>x!==w);liqWs.push(bn());}},4000);};
+    return w;};
+  const by=()=>{const w=new WebSocket('wss://stream.bybit.com/v5/public/linear');
+    w.onopen=()=>{w.send(JSON.stringify({op:'subscribe',args:['allLiquidation.'+f.fs]}));
+      w._pi=setInterval(()=>{try{w.send('{"op":"ping"}')}catch(e){}},20000);};
+    w.onmessage=e=>{const d=JSON.parse(e.data);if(!d.data||!String(d.topic||'').startsWith('allLiquidation'))return;
+      for(const x of [].concat(d.data))push({t:+x.T,p:+x.p/m,usd:+x.p*+x.v,side:x.S==='Buy'?'L':'S',ex:'Bybit'});};
+    w.onclose=()=>{clearInterval(w._pi);if(sym===symbol&&liqWs.includes(w))setTimeout(()=>{if(sym===symbol){liqWs=liqWs.filter(x=>x!==w);liqWs.push(by());}},4000);};
+    return w;};
+  liqWs=[bn(),by()];
+}
+function closeLiqWs(){const ws=liqWs;liqWs=[];ws.forEach(w=>{try{clearInterval(w._pi);w.close()}catch(e){}});}
+
+/* ---- cálculo del mapa ---- */
+function candleIdx(tms){let a=0,b=candles.length-1,r=-1;while(a<=b){const m=(a+b)>>1;if(candles[m].t<=tms){r=m;a=m+1;}else b=m-1;}return r;}
+function computeLiq(){
+  liqDirty=false;liqLast=performance.now();
+  const n=candles.length;
+  if(!FUT||FUT.none||n<20){LIQ=null;return;}
+  const mult=FUT.mult,price=candles[n-1].close;
+  let mn=Infinity,mx=-Infinity;for(const b of candles){if(b.low<mn)mn=b.low;if(b.high>mx)mx=b.high;}
+  const lo=mn*.75,hi=mx*1.25;
+  let step=BIN_STEP[tf]||.003,nb=Math.ceil(Math.log(hi/lo)/step);
+  while(nb*n>1.2e6){step*=1.4;nb=Math.ceil(Math.log(hi/lo)/step);}
+  const lnLo=Math.log(lo),bin=p=>Math.max(0,Math.min(nb-1,Math.floor((Math.log(p)-lnLo)/step)));
+
+  // Escala al mercado total (Binance + Bybit + OKX + BingX)
+  const su=snapUSD(FUT.snap,price),tot=Object.values(su).reduce((a,b)=>a+b,0);
+  const scale=su.Binance?clamp(tot/su.Binance,1,5):2.2;
+
+  // Variación de OI (en USD) repartida en las velas
+  const dOI=new Float64Array(n),hasOI=new Uint8Array(n),oi=FUT.oi.slice();
+  if(FUT.snap.Binance&&oi.length) oi.push({t:Date.now(),oi:FUT.snap.Binance.u});
+  for(let j=1;j<oi.length;j++){
+    const t0=oi[j-1].t,t1=oi[j].t;
+    let ia=candleIdx(t0-1)+1,ib=candleIdx(t1-1);
+    if(ib<0)continue; if(ia>ib)ia=ib;
+    const d=(oi[j].oi-oi[j-1].oi)*mult;
+    let vs=0;for(let i=ia;i<=ib;i++)vs+=candles[i].v||1e-9;
+    for(let i=ia;i<=ib;i++){const b=candles[i];dOI[i]+=d*((b.v||1e-9)/vs)*b.close;hasOI[i]=1;}
+  }
+  // proporción OI/volumen para estimar velas sin histórico de OI
+  let sa=0,sv=0;for(let i=0;i<n;i++)if(hasOI[i]){sa+=Math.abs(dOI[i]);sv+=candles[i].v*candles[i].close;}
+  const kP=sv>0?clamp(sa/sv,.01,.6):.08;
+
+  const L=new Float64Array(nb),S=new Float64Array(nb),colL=new Array(n),colS=new Array(n);
+  const add=(arr,k,v)=>{arr[k]+=v*.5;if(k>0)arr[k-1]+=v*.25;if(k<nb-1)arr[k+1]+=v*.25;};
+  for(let i=0;i<n;i++){
+    const b=candles[i];
+    // 1) el precio barre niveles → liquidados
+    const bl=bin(b.low),bh=bin(b.high);
+    for(let k=bl;k<nb;k++)L[k]=0;
+    for(let k=0;k<=bh;k++)S[k]=0;
+    // 2) apertura / cierre de posiciones
+    let open=0,close=0;
+    if(hasOI[i]){const d=dOI[i]*scale;if(d>0)open=d;else close=-d;}
+    else{const v=b.v*b.close*kP*scale;open=v;close=v*.92;}
+    if(close>0){let t=0;for(let k=0;k<nb;k++)t+=L[k]+S[k];
+      if(t>0){const f=Math.max(0,1-close/t);for(let k=0;k<nb;k++){L[k]*=f;S[k]*=f;}}}
+    if(open>0){
+      const ls=b.v>0&&b.tb!=null?clamp(b.tb/b.v,.2,.8):.5;
+      for(const [P,we] of [[(b.high+b.low+b.close)/3,.5],[b.high,.25],[b.low,.25]])
+        for(const [lev,wl] of LEV){
+          const lp=P*(1-1/lev+MMR),sp=P*(1+1/lev-MMR);
+          if(lp<b.low)add(L,bin(lp),open*ls*we*wl);
+          if(sp>b.high)add(S,bin(sp),open*(1-ls)*we*wl);
+        }
+    }
+    colL[i]=Float32Array.from(L);colS[i]=Float32Array.from(S);
+  }
+  LIQ={n,nb,step,lnLo,colL,colS,scale,su,tot,ver:++liqVer,
+       pAt:k=>Math.exp(lnLo+(k+.5)*step),pEdge:k=>Math.exp(lnLo+k*step),bin};
+  LIQ.cl=liqClusters();
+  LIQ.zones=buildZones();
+}
+function liqClusters(){
+  if(!LIQ)return null;
+  const {n,nb,colL,colS,pAt}=LIQ,price=candles[n-1].close,Lc=colL[n-1],Sc=colS[n-1];
+  const pick=(arr,dir)=>{
+    const sm=new Float64Array(nb);for(let k=2;k<nb-2;k++)sm[k]=arr[k-2]+arr[k-1]+arr[k]+arr[k+1]+arr[k+2];
+    let mx=0;for(let k=0;k<nb;k++){const p=pAt(k);if((dir<0?p<price:p>price)&&Math.abs(p/price-1)<.3&&sm[k]>mx)mx=sm[k];}
+    const peaks=[];
+    for(let k=2;k<nb-2;k++){const p=pAt(k);if(dir<0?p>=price:p<=price)continue;if(Math.abs(p/price-1)>.3)continue;
+      if(sm[k]>=mx*.18&&sm[k]>=sm[k-1]&&sm[k]>=sm[k+1])peaks.push({k,p,usd:sm[k]});}
+    peaks.sort((a,b)=>b.usd-a.usd);
+    const out=[];for(const pk of peaks){if(out.every(o=>Math.abs(o.p/pk.p-1)>.008))out.push(pk);if(out.length===3)break;}
+    return out;
+  };
+  let wL=0,wS=0,tL=0,tS=0;
+  for(let k=0;k<nb;k++){const p=pAt(k),d=Math.abs(p/price-1);if(d>.15)continue;const w=Math.exp(-d/.04);
+    if(p<price){wL+=Lc[k]*w;tL+=Lc[k];}else{wS+=Sc[k]*w;tS+=Sc[k];}}
+  return {longs:pick(Lc,-1),shorts:pick(Sc,1),wL,wS,tL,tS};
+}
+
+/* ---- zonas de liquidación en cajas (vista principal) ----
+   Cada caja nace en la vela donde se abrieron esas posiciones y se extiende
+   hacia la derecha mientras siguen vivas. Si el precio la toca, queda
+   cortada y marcada como "barrida". */
+const fnum=v=>new Intl.NumberFormat('es-ES',{notation:'compact',maximumFractionDigits:2}).format(v);
+function buildZones(){
+  const {n,nb,colL,colS,pAt,pEdge}=LIQ,out=[];
+  const sm=(a,k)=>(a[k-1]||0)+a[k]+(a[k+1]||0);
+  const band=(a,ka,kb)=>{let t=0;for(let k=ka;k<=kb;k++)t+=a[k];return t;};
+  const peaks=(col,dir,at,max)=>{
+    const ref=candles[at].close,c=col[at],cand=[];let mx=0;
+    for(let k=1;k<nb-1;k++){const p=pAt(k);if((dir<0?p>=ref:p<=ref)||Math.abs(p/ref-1)>.25)continue;const v=sm(c,k);if(v>mx)mx=v;cand.push([k,v]);}
+    const pk=cand.filter(([k,v])=>v>0&&v>=mx*.15&&v>=sm(c,k-1)&&v>=sm(c,k+1)).sort((a,b)=>b[1]-a[1]),res=[];
+    for(const [k,v] of pk){if(res.every(r=>Math.abs(pAt(r.k)/pAt(k)-1)>.012))res.push({k,v});if(res.length===max)break;}
+    return res.map(({k})=>{let ka=k,kb=k;const lim=c[k]*.45;
+      while(ka>0&&k-ka<6&&c[ka-1]>=lim)ka--;while(kb<nb-1&&kb-k<6&&c[kb+1]>=lim)kb++;
+      const tot=band(c,ka,kb);let i=at;while(i>0&&band(col[i-1],ka,kb)>=tot*.2)i--;
+      return {k,ka,kb,p:pAt(k),lo:pEdge(ka),hi:pEdge(kb+1),usd:tot,i0:i};});
+  };
+  for(const [side,col,dir] of [['L',colL,-1],['S',colS,1]]){
+    peaks(col,dir,n-1,4).forEach((z,j)=>out.push({...z,side,i1:null,rank:j}));
+    for(const back of [6,12,24,48,96,192]){const at=n-1-back;if(at<30)break;
+      for(const z of peaks(col,dir,at,2)){
+        let j=-1;for(let i=at+1;i<n;i++){if(side==='L'?candles[i].low<=z.p:candles[i].high>=z.p){j=i;break;}}
+        if(j<0)continue;
+        if(out.some(o=>o.side===side&&Math.abs(o.p/z.p-1)<.012&&(o.i1==null?n:o.i1)>=z.i0&&o.i0<=j))continue;
+        out.push({...z,side,i1:j,swept:true});}}
+  }
+  const mx=Math.max(1,...out.filter(z=>!z.swept).map(z=>z.usd));out.forEach(z=>z.str=Math.min(1,z.usd/mx));
+  return out;
+}
+function drawZones(ctx,o,profX){
+  const {X,Y,mainH}=o;ctx.save();
+  const zs=LIQ.zones.filter(z=>liqOpts.side==='both'||z.side===liqOpts.side).sort((a,b)=>(a.swept?0:1)-(b.swept?0:1)||a.usd-b.usd);
+  for(const z of zs){
+    let x0=X(z.i0),x1=z.i1==null?profX:X(z.i1);if(x0==null||x1==null)continue;x0=Math.max(0,x0);x1=Math.min(profX,x1);if(x1<=x0)continue;
+    let yt=Y(z.hi),yb=Y(z.lo);if(yt==null||yb==null)continue;if(yb-yt<8){const m=(yt+yb)/2;yt=m-4;yb=m+4;}
+    if(yb<0||yt>mainH)continue;
+    const g=z.side==='L'?'0,214,163':'255,61,113',a=z.swept?.06:.12+.28*z.str;
+    ctx.fillStyle=`rgba(${g},${a})`;ctx.fillRect(x0,yt,x1-x0,yb-yt);
+    ctx.strokeStyle=`rgba(${g},${z.swept?.35:.55+.45*z.str})`;ctx.lineWidth=z.swept?1:1+z.str;ctx.setLineDash(z.swept?[4,4]:[]);
+    ctx.strokeRect(x0+.5,yt+.5,x1-x0-1,yb-yt-1);ctx.setLineDash([]);
+    z._box=[x0,x1,yt,yb,g];
+  }
+  // etiquetas: primero las más grandes, sin solaparse
+  const used=[];
+  for(const z of zs.slice().sort((a,b)=>(a.swept?1:0)-(b.swept?1:0)||b.usd-a.usd)){
+    if(!z._box)continue;const [x0,x1,yt,yb,g]=z._box;z._box=null;
+    const b=candles[z.i0],buy=b.tb||0,sell=(b.v||0)-buy,d=buy-sell;
+    const t1=z.side==='L'?'LONG':'SHORT',t2=z.swept?`✕ barrida · ${fusd(z.usd)}`:`${fusd(z.usd)} a liquidar · ${fp(z.p)}`,
+          t3=`Compra ${fnum(buy)} · Venta ${fnum(sell)} · Δ ${d>=0?'+':''}${fnum(d)}`;
+    const ty=yb-yt>=15?(yt+yb)/2:yt-9;
+    if(used.some(u=>Math.abs(u-ty)<15))continue;
+    if(z.swept&&x1-x0<120)continue;
+    ctx.font='700 11px system-ui,sans-serif';const w1=ctx.measureText(t1).width;
+    ctx.font='11px system-ui,sans-serif';
+    let txt=`${t2} · ${t3}`;if(ctx.measureText(txt).width+w1+24>profX*.7)txt=t2;
+    const tw=w1+18+ctx.measureText(txt).width,lx=Math.max(4,Math.min(x0+6,profX-tw-6));
+    used.push(ty);
+    if(lx<x0+6||x1-x0<tw+12){ctx.fillStyle='rgba(15,17,21,.82)';ctx.fillRect(lx-4,ty-8,tw+8,16);}
+    ctx.textBaseline='middle';ctx.textAlign='left';
+    ctx.font='700 11px system-ui,sans-serif';ctx.fillStyle=`rgba(${g},${z.swept?.55:1})`;ctx.fillText(t1,lx,ty);
+    ctx.font='11px system-ui,sans-serif';ctx.fillStyle=z.swept?'rgba(209,212,220,.5)':'#d1d4dc';ctx.fillText(txt,lx+w1+10,ty);
+  }
+  ctx.restore();
+}
+
+/* ---- dibujo ---- */
+
+const hm=document.createElement('canvas'),hctx=hm.getContext('2d');let hmKey='';
+const mkLut=(c0,c1,c2)=>Array.from({length:64},(_,i)=>{const t=i/63,[a,b,u]=t<.6?[c0,c1,t/.6]:[c1,c2,(t-.6)/.4];
+  return `rgba(${a.map((x,j)=>Math.round(x+(b[j]-x)*u)).join(',')},${(.18+.8*Math.sqrt(t)).toFixed(3)})`;});
+const LUT={S:mkLut([110,20,70],[255,61,113],[255,214,102]),L:mkLut([10,90,95],[0,214,163],[200,255,140])};
+const PROF=.16;
+
+function drawLiq(ctx,o){
+  if(!LIQ)return;
+  const {paneW,mainH,X,Y,from,to,dpr}=o,{n,colL,colS,pEdge,bin}=LIQ;
+  const pTop=series.coordinateToPrice(0),pBot=series.coordinateToPrice(mainH);
+  if(pTop==null||pBot==null)return;
+  const x0=X(Math.max(0,from)),key=[from,to,x0&&x0.toFixed(1),(X(Math.min(n-1,to))||0).toFixed(1),(+pTop).toPrecision(7),(+pBot).toPrecision(7),paneW,mainH,dpr,LIQ.ver,liqOpts.side,liqOpts.sens,liqOpts.view].join('|');
+  const profX=paneW*(1-PROF);
+  const showHeat=liqOpts.view!=='zones';
+  if(showHeat&&key!==hmKey){
+    hmKey=key;hm.width=Math.max(1,Math.round(paneW*dpr));hm.height=Math.max(1,Math.round(mainH*dpr));
+    hctx.setTransform(dpr,0,0,dpr,0,0);hctx.clearRect(0,0,paneW,mainH);
+    const k0=bin(Math.min(pTop,pBot)),k1=bin(Math.max(pTop,pBot)),i0=Math.max(0,from),i1=Math.min(n-1,to);
+    const sL=liqOpts.side!=='S',sS=liqOpts.side!=='L';
+    let mx=0;for(let i=i0;i<=i1;i++){const a=colL[i],b=colS[i];for(let k=k0;k<=k1;k++){if(sL&&a[k]>mx)mx=a[k];if(sS&&b[k]>mx)mx=b[k];}}
+    if(mx>0){
+      const thr=mx*(.42-.4*liqOpts.sens/100),rng=mx-thr;
+      const ys=[];for(let k=k0;k<=k1+1;k++)ys.push(Y(pEdge(k)));
+      const cell=(i,xa,xb,fade)=>{const a=colL[i],b=colS[i];
+        for(let k=k0;k<=k1;k++){const vl=sL?a[k]:0,vs=sS?b[k]:0,v=Math.max(vl,vs);if(v<=thr)continue;
+          const t=Math.pow((v-thr)/rng,.65),lut=vl>=vs?LUT.L:LUT.S;
+          hctx.fillStyle=lut[Math.min(63,Math.floor(t*63*fade))];
+          const ya=ys[k+1-k0],yb=ys[k-k0];hctx.fillRect(xa,ya,xb-xa,Math.max(1,yb-ya));}};
+      for(let i=i0;i<=i1;i++){const xc=X(i);if(xc==null)continue;const nx=X(i+1),bw=nx!=null?nx-xc:2;cell(i,xc-bw/2,xc+bw/2+.6,1);}
+      if(i1===n-1){const xc=X(n-1),nx=X(n),bw=(nx!=null&&xc!=null)?nx-xc:2;if(xc!=null&&xc+bw/2<profX)cell(n-1,xc+bw/2,profX,.85);}
+    }
+  }
+  if(showHeat)ctx.drawImage(hm,0,0,paneW,mainH);
+  if(liqOpts.view!=='heat'&&LIQ.zones)drawZones(ctx,o,profX);
+
+  // perfil acumulado de la última vela (derecha)
+  const Lc=colL[n-1],Sc=colS[n-1],k0=bin(Math.min(pTop,pBot)),k1=bin(Math.max(pTop,pBot));
+  let pm=0;for(let k=k0;k<=k1;k++){if(liqOpts.side!=='S')pm=Math.max(pm,Lc[k]);if(liqOpts.side!=='L')pm=Math.max(pm,Sc[k]);}
+  if(pm>0){const W=paneW*PROF-4;
+    ctx.fillStyle='rgba(15,17,21,.55)';ctx.fillRect(profX,0,paneW-profX,mainH);
+    for(let k=k0;k<=k1;k++){const ya=Y(pEdge(k+1)),yb=Y(pEdge(k));if(ya==null||yb==null)continue;const hh=Math.max(1,yb-ya-.5);
+      if(liqOpts.side!=='S'&&Lc[k]>0){ctx.fillStyle='rgba(0,214,163,.85)';const w=W*Lc[k]/pm;ctx.fillRect(paneW-w,ya,w,hh);}
+      if(liqOpts.side!=='L'&&Sc[k]>0){ctx.fillStyle='rgba(255,61,113,.85)';const w=W*Sc[k]/pm;ctx.fillRect(paneW-w,ya,w,hh);}}
+  }
+  // zonas principales (imanes)
+  const cl=LIQ.cl;
+  if(cl&&liqOpts.view==='heat'){ctx.font='600 11px system-ui,sans-serif';ctx.textBaseline='middle';
+    const tag=(z,col,txt,main)=>{const y=Y(z.p);if(y==null||y<0||y>mainH)return;
+      ctx.strokeStyle=col;ctx.globalAlpha=main?.9:.45;ctx.lineWidth=main?1.4:1;ctx.setLineDash(main?[]:[5,4]);
+      ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(profX,y);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+      const s=`${txt} ${fp(z.p)} · ${fusd(z.usd)}`,tw=ctx.measureText(s).width+12,tx=profX-tw-6;
+      ctx.fillStyle=col;rrect(ctx,tx,y-9,tw,18,4);ctx.fill();ctx.fillStyle='#0f1115';ctx.textAlign='left';ctx.fillText(s,tx+6,y+.5);};
+    if(liqOpts.side!=='S')cl.longs.forEach((z,j)=>tag(z,'#00d6a3','▼ Liq. LONGS',j===0));
+    if(liqOpts.side!=='L')cl.shorts.forEach((z,j)=>tag(z,'#ff3d71','▲ Liq. SHORTS',j===0));
+  }
+  // burbujas de liquidaciones reales
+  for(const ev of liqEvents){
+    if(liqOpts.side!=='both'&&ev.side!==liqOpts.side)continue;
+    const i=candleIdx(ev.t);if(i<0||i<from||i>to)continue;
+    const x=X(i),y=Y(ev.p);if(x==null||y==null)continue;
+    const r=clamp(2.5+Math.sqrt(ev.usd)/55,2.5,18);
+    ctx.beginPath();ctx.arc(x,y,r,0,7);ctx.fillStyle=ev.side==='L'?'rgba(0,214,163,.45)':'rgba(255,61,113,.45)';ctx.fill();
+    ctx.lineWidth=1;ctx.strokeStyle=ev.side==='L'?'#00d6a3':'#ff3d71';ctx.stroke();
+  }
+  // lectura bajo el cursor
+  if(hover&&hover.y<mainH&&hover.x<profX){
+    const i=Math.max(0,Math.min(n-1,Math.round(hover.l))),k=bin(hover.p);
+    let vl=0,vs=0;for(let d=-1;d<=1;d++){if(k+d<0||k+d>=LIQ.nb)continue;vl+=colL[i][k+d];vs+=colS[i][k+d];}
+    if(vl+vs>0){const s1=`Precio ${fp(hover.p)}`,s2=`Liq. longs: ${fusd(vl)}`,s3=`Liq. shorts: ${fusd(vs)}`;
+      ctx.font='12px system-ui,sans-serif';const tw=Math.max(...[s1,s2,s3].map(s=>ctx.measureText(s).width))+16;
+      let tx=hover.x+14,ty=hover.y+14;if(tx+tw>profX)tx=hover.x-tw-14;if(ty+62>mainH)ty=hover.y-76;
+      ctx.fillStyle='rgba(22,26,34,.95)';ctx.strokeStyle='#3a4256';rrect(ctx,tx,ty,tw,62,6);ctx.fill();ctx.stroke();
+      ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle='#d1d4dc';ctx.fillText(s1,tx+8,ty+6);
+      ctx.fillStyle='#00d6a3';ctx.fillText(s2,tx+8,ty+24);ctx.fillStyle='#ff3d71';ctx.fillText(s3,tx+8,ty+42);}
+  }
+}
+function rrect(c,x,y,w,h,r){c.beginPath();c.moveTo(x+r,y);c.arcTo(x+w,y,x+w,y+h,r);c.arcTo(x+w,y+h,x,y+h,r);c.arcTo(x,y+h,x,y,r);c.arcTo(x,y,x+w,y,r);c.closePath();}
+chart.subscribeCrosshairMove(p=>{
+  if(!p.point||p.logical==null){hover=null;return;}
+  const pr=series.coordinateToPrice(p.point.y);hover=pr==null?null:{x:p.point.x,y:p.point.y,l:p.logical,p:pr};
+});
+
+/* ---- barra de indicadores ---- */
+function renderChips(){
+  const M=MODES[mode];
+  $('inds').classList.toggle('hide',!M.inds.length);
+  $('inds').innerHTML='<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('');
+}
+$('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
+  active.has(k)?active.delete(k):active.add(k);
+  try{localStorage.setItem('cv_ind2_'+mode,JSON.stringify([...active]))}catch(e){}
+  renderChips();layout();calcInd(true);hmKey='';};
+
+function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:8)});series.priceScale().applyOptions({autoScale:true});}
+function applyMode(m){
+  mode=m;const M=MODES[m];
+  let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind2_'+m))}catch(e){}
+  active=new Set((saved||M.inds).filter(k=>M.inds.includes(k)));
+  renderChips();layout();
+  $('modeBtn').textContent='Modo: '+M.name;
+  tf=M.tf;
+  [...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));
+  try{localStorage.setItem('cv_mode',m)}catch(e){}
+  loadChart();
+}
+function showStart(){
+  let last='medio';try{last=localStorage.getItem('cv_mode')||'medio'}catch(e){}
+  $('cards').innerHTML=Object.entries(MODES).map(([k,M])=>`<button class="card${k===last?' def':''}" data-m="${k}">
+    <b>${M.name}${M.tag?`<span class="tag">${M.tag}</span>`:''}</b><small>${M.desc}</small>
+    <ul>${M.info.map(i=>`<li>${i}</li>`).join('')}</ul></button>`).join('');
+  $('start').classList.remove('hide');
+}
+$('cards').onclick=e=>{const c=e.target.closest('[data-m]');if(!c)return;$('start').classList.add('hide');applyMode(c.dataset.m);};
+$('modeBtn').onclick=showStart;
+
+async function loadChart(){
+  $('loading').style.display='flex';
+  if(klineWs){klineWs.onclose=null;klineWs.close();}
+  ruler=null; noMore=false;
+  const sym=symbol, t=tf;
+  if(MODES[mode].inds.length) loadFutures(); else {clearInterval(futTimer);closeLiqWs();FUT=null;LIQ=null;}
+  try{
+    const r=await fetch(`${API}/klines?symbol=${sym}&interval=${t}&limit=1000`);
+    const d=await r.json();
+    if(sym!==symbol||t!==tf) return;
+    candles=d.map(toBar);
+    if(candles.length) setPrecision(candles.at(-1).close);
+    series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
+    fitView();
+    restoreLines();
+  }catch(e){$('loading').textContent='No se pudo cargar el gráfico';return;}
+  $('loading').style.display='none';
+  klineWs=new WebSocket(`${WS}/ws/${sym.toLowerCase()}@kline_${t}`);
+  klineWs.onmessage=e=>{
+    const k=JSON.parse(e.data).k;
+    const b={time:Math.floor(k.t/1000)+TZ,t:k.t,open:+k.o,high:+k.h,low:+k.l,close:+k.c,v:+k.v,tb:+k.V};
+    const last=candles.at(-1);
+    if(last&&last.time===b.time) candles[candles.length-1]=b; else if(!last||b.time>last.time) candles.push(b);
+    series.update(b); volume.update(volBar(b)); calcInd(false);
+  };
+  klineWs.onclose=()=>setTimeout(()=>{if(sym===symbol&&t===tf)loadChart();},3000);
+}
+
+// cargar más historial al desplazarse a la izquierda
+chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
+  if(!r||r.from>20||loadingMore||noMore||!candles.length) return;
+  loadingMore=true;
+  const sym=symbol,t=tf,end=(candles[0].time-TZ)*1000-1;
+  try{
+    const d=await (await fetch(`${API}/klines?symbol=${sym}&interval=${t}&limit=1000&endTime=${end}`)).json();
+    if(sym===symbol&&t===tf){
+      if(!d.length) noMore=true;
+      else{
+        const older=d.map(toBar), n=older.length;
+        const range=chart.timeScale().getVisibleLogicalRange();
+        candles=older.concat(candles);
+        series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
+        if(range) chart.timeScale().setVisibleLogicalRange({from:range.from+n,to:range.to+n});
+        if(ruler){ruler.a.l+=n;ruler.b.l+=n;}
+      }
+    }
+  }catch(e){}
+  loadingMore=false;
+});
+
+/* ---------- temporalidades ---------- */
+$('tfs').innerHTML=TFS.map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');
+$('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dataset.tf;
+  [...$('tfs').children].forEach(x=>x.classList.toggle('on',x===b));loadChart();};
+
+/* ---------- herramientas ---------- */
+const hints={cursor:'Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla',
+  ruler:'Clic para empezar a medir, clic otra vez para fijar · Esc para salir',
+  hline:'Clic en el gráfico para colocar una línea horizontal'};
+function setTool(t){
+  tool=t;
+  document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
+  $('hint').textContent=hints[t];
+  chart.applyOptions({handleScroll:{pressedMouseMove:t==='cursor'}});
+  $('chart').style.cursor=t==='cursor'?'':'crosshair';
+  if(t!=='ruler'&&ruler&&ruler.phase===1) ruler=null;
+}
+document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
+
+chart.subscribeClick(p=>{
+  if(!p.point) return;
+  const price=series.coordinateToPrice(p.point.y);
+  const l=chart.timeScale().coordinateToLogical(p.point.x);
+  if(price==null||l==null) return;
+  if(tool==='hline'){ addLine(price); setTool('cursor'); }
+  else if(tool==='ruler'){
+    if(!ruler||ruler.phase===2) ruler={phase:1,a:{l,p:price},b:{l,p:price}};
+    else { ruler.b={l,p:price}; ruler.phase=2; }
+  } else if(ruler&&ruler.phase===2) ruler=null;
+});
+chart.subscribeCrosshairMove(p=>{
+  if(tool==='ruler'&&ruler&&ruler.phase===1&&p.point){
+    const price=series.coordinateToPrice(p.point.y), l=chart.timeScale().coordinateToLogical(p.point.x);
+    if(price!=null&&l!=null) ruler.b={l,p:price};
+  }
+});
+chart.subscribeDblClick(p=>{
+  if(!p.point) return;
+  const arr=hlines[symbol]||[];
+  const i=arr.findIndex(h=>Math.abs(series.priceToCoordinate(h.price)-p.point.y)<6);
+  if(i>-1){series.removePriceLine(arr[i].line);arr.splice(i,1);saveLines();}
+});
+
+/* líneas horizontales */
+function addLine(price,save=true){
+  const line=series.createPriceLine({price,color:'#2962ff',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Solid,axisLabelVisible:true,title:''});
+  (hlines[symbol]=hlines[symbol]||[]).push({price,line});
+  if(save) saveLines();
+}
+function saveLines(){try{const o={};for(const s in hlines)o[s]=hlines[s].map(h=>h.price);localStorage.setItem('cv_lines',JSON.stringify(o));}catch(e){}}
+function restoreLines(){
+  for(const s in hlines) hlines[s].forEach(h=>{try{series.removePriceLine(h.line)}catch(e){}});
+  let saved={};try{saved=JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){}
+  hlines={};(saved[symbol]||[]).forEach(p=>addLine(p,false));
+  for(const s in saved) if(s!==symbol) hlines[s]=saved[s].map(p=>({price:p,line:null}));
+}
+$('clear').onclick=()=>{(hlines[symbol]||[]).forEach(h=>h.line&&series.removePriceLine(h.line));hlines[symbol]=[];ruler=null;saveLines();};
+$('fit').onclick=fitView;
+
+/* pantalla completa */
+$('fs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():$('chartWrap').requestFullscreen();};
+
+/* atajos */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT') return;
+  const k=e.key.toLowerCase();
+  if(k==='escape'){ruler=null;setTool('cursor');}
+  else if(k==='r') setTool('ruler');
+  else if(k==='h') setTool('hline');
+  else if(k==='f') $('fs').click();
+});
+
+/* ---------- dibujo de la regla ---------- */
+const cv=$('overlay'), ctx=cv.getContext('2d');
+function tfSeconds(){const n=parseInt(tf),u=tf.slice(-1);return n*({m:60,h:3600,d:86400,w:604800,M:2592000}[u]);}
+function dur(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
+  return [d&&d+'d',h&&h+'h',m&&m+'m'].filter(Boolean).join(' ')||'0m';}
+function draw(){
+  const w=$('chart').clientWidth,h=$('chart').clientHeight,dpr=devicePixelRatio||1;
+  if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';}
+  ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
+  try{drawInd(ctx,w,h);}catch(e){console.error(e);}
+  if(ruler){
+    const ts=chart.timeScale();
+    const x1=ts.logicalToCoordinate(ruler.a.l),x2=ts.logicalToCoordinate(ruler.b.l);
+    const y1=series.priceToCoordinate(ruler.a.p),y2=series.priceToCoordinate(ruler.b.p);
+    if(x1!=null&&x2!=null&&y1!=null&&y2!=null){
+      const up=ruler.b.p>=ruler.a.p, col=up?'38,166,154':'239,83,80';
+      ctx.fillStyle=`rgba(${col},.18)`;ctx.fillRect(Math.min(x1,x2),Math.min(y1,y2),Math.abs(x2-x1),Math.abs(y2-y1));
+      ctx.strokeStyle=`rgb(${col})`;ctx.lineWidth=1.5;
+      const mx=(x1+x2)/2,my=(y1+y2)/2;
+      arrow(mx,y1,mx,y2);arrow(x1,my,x2,my);
+      const dp=ruler.b.p-ruler.a.p,pct=dp/ruler.a.p*100,bars=Math.round(ruler.b.l-ruler.a.l);
+      const lines=[`${dp>=0?'+':''}${fp(dp)} (${fpct(pct)})`,`${bars} velas, ${dur(Math.abs(bars)*tfSeconds())}`];
+      ctx.font='600 12px system-ui,sans-serif';
+      const bw=Math.max(...lines.map(s=>ctx.measureText(s).width))+20,bh=44;
+      let bx=mx-bw/2,by=up?Math.min(y1,y2)-bh-8:Math.max(y1,y2)+8;
+      bx=Math.max(4,Math.min(w-bw-4,bx));by=Math.max(4,Math.min(h-bh-4,by));
+      ctx.fillStyle=`rgb(${col})`;rr(bx,by,bw,bh,6);ctx.fill();
+      ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(lines[0],bx+bw/2,by+14);ctx.font='12px system-ui,sans-serif';ctx.fillText(lines[1],bx+bw/2,by+31);
+    }
+  }
+  requestAnimationFrame(draw);
+}
+function arrow(x1,y1,x2,y2){
+  ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();
+  const a=Math.atan2(y2-y1,x2-x1);if(Math.hypot(x2-x1,y2-y1)<10)return;
+  ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(a-.5),y2-7*Math.sin(a-.5));
+  ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(a+.5),y2-7*Math.sin(a+.5));ctx.stroke();
+}
+function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+requestAnimationFrame(draw);
+
+/* ---------- lista y buscador ---------- */
+async function loadTickers(){
+  try{
+    const d=await (await fetch(`${API}/ticker/24hr`)).json();
+    d.filter(t=>t.symbol.endsWith('USDT')&&+t.quoteVolume>0&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol))
+     .forEach(t=>tickers[t.symbol]={s:t.symbol,c:+t.lastPrice,p:+t.priceChangePercent,h:+t.highPrice,l:+t.lowPrice,q:+t.quoteVolume});
+  }catch(e){$('list').innerHTML='<div style="padding:16px;color:var(--mut)">No se pudo conectar con Binance.</div>';return;}
+  renderList();updateTop();connectTickers();
+}
+function renderList(){
+  const q=$('q').value.trim().toUpperCase();
+  let arr=Object.values(tickers);
+  if(q) arr=arr.filter(t=>t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||b.q-a.q);
+  else arr.sort((a,b)=>b.q-a.q);
+  arr=arr.slice(0,200);
+  $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
+    <span><b>${t.s.replace('USDT','')}</b><small>/USDT</small></span>
+    <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span></div>`).join('')
+    ||'<div style="padding:16px;color:var(--mut)">Sin resultados</div>';
+}
+let qTimer;
+$('q').oninput=()=>{
+  renderList();clearTimeout(qTimer);
+  // al escribir, abre en vivo la moneda que coincide (o la primera de la lista)
+  qTimer=setTimeout(()=>{
+    const q=$('q').value.trim().toUpperCase();if(!q)return;
+    const s=tickers[q+'USDT']?q+'USDT':($('list').querySelector('.row')||{}).dataset?.s;
+    if(s&&s!==symbol)select(s);
+  },500);
+};
+$('q').onkeydown=e=>{if(e.key==='Enter'){const r=$('list').querySelector('.row');if(r)select(r.dataset.s);}};
+$('list').onclick=e=>{const r=e.target.closest('.row');if(r)select(r.dataset.s);};
+function select(s){
+  symbol=s;document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.s===s));
+  updateTop();loadChart();
+}
+function updateTop(){
+  const t=tickers[symbol];if(!t)return;
+  $('sym').textContent=symbol.replace('USDT','')+'/USDT';
+  $('px').textContent=fp(t.c);$('px').className='px '+(t.p>=0?'up':'dn');
+  $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
+  $('s-hi').textContent=fp(t.h);$('s-lo').textContent=fp(t.l);$('s-vol').textContent=fv(t.q);
+  document.title=`${fp(t.c)} ${symbol.replace('USDT','')} · Cripto en Vivo`;
+}
+function connectTickers(){
+  const ws=new WebSocket(`${WS}/ws/!miniTicker@arr`);
+  ws.onopen=()=>$('live').classList.remove('off');
+  ws.onclose=()=>{$('live').classList.add('off');setTimeout(connectTickers,3000);};
+  ws.onmessage=e=>{
+    for(const m of JSON.parse(e.data)){
+      const t=tickers[m.s];if(!t)continue;
+      const old=t.c;t.c=+m.c;t.h=+m.h;t.l=+m.l;t.q=+m.q;t.p=(+m.c-+m.o)/+m.o*100;
+      const row=$('list').querySelector(`[data-s="${m.s}"]`);
+      if(row&&old!==t.c){
+        const c=row.querySelector('[data-c]'),p=row.querySelector('[data-p]');
+        c.textContent=fp(t.c);p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';
+        row.classList.remove('flash-up','flash-dn');void row.offsetWidth;row.classList.add(t.c>old?'flash-up':'flash-dn');
+      }
+    }
+    updateTop();
+  };
+}
+
+$('liqView').value=liqOpts.view;$('liqView').onchange=e=>{liqOpts.view=e.target.value;saveLiqOpts();hmKey='';};
+$('liqSide').value=liqOpts.side;$('liqSens').value=liqOpts.sens;
+$('liqSide').onchange=e=>{liqOpts.side=e.target.value;saveLiqOpts();hmKey='';};
+$('liqSens').oninput=e=>{liqOpts.sens=+e.target.value;saveLiqOpts();hmKey='';};
+loadTickers();showStart();setInterval(renderLegend,1500);
+</script>
+</body>
+</html>
