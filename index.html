@@ -1508,9 +1508,9 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'mom-a':{p:65,n:364,txt:'impulso con tendencia, volumen y vela fuerte'},'mom-b':{p:61,n:71,txt:'impulso con tendencia y vela fuerte'}},
-           x:{'sh-a+':{p:72,n:56,txt:'rebote en tendencia fuerte sin pánico de volumen'},'sh-a':{p:60,n:145,txt:'rebote en tendencia fuerte'},'sh-b':{p:60,n:298,txt:'rebote sin pánico de volumen'}}};
-const MINCERT={medio:60,x:60};
+const CAL={medio:{'mom-a':{p:66,n:656,txt:'impulso con tendencia, volumen y vela fuerte'}},
+           x:{'sh-a+':{p:66,n:80,txt:'rebote en tendencia fuerte sin pánico de volumen'},'sh-a':{p:58,n:203,txt:'rebote en tendencia fuerte'},'sh-b':{p:58,n:431,txt:'rebote sin pánico de volumen'}}};
+const MINCERT={medio:60,x:56};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
