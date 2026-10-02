@@ -411,6 +411,7 @@ function calcIchi(){const n=candles.length,t=Array(n).fill(null),k=Array(n).fill
 function calcInd(full){
   if(!candles.length) return;
   liqDirty=true;
+  if(full)for(const k in OS)if(!active.has(k))for(const s in OS[k])OS[k][s].setData([]);
   if(active.has('rsi')) C.rsi=calcRSI(PRM[mode].rsi);
   if(active.has('macd')) C.macd=calcMACD();
   if(active.has('adx')) C.adx=calcADX();
@@ -1095,7 +1096,7 @@ document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.data
 let rDrag=null,noClick=0;const chartEl=$('chart');
 const ptLP=e=>{const r=chartEl.getBoundingClientRect(),x=e.clientX-r.left,y=e.clientY-r.top,p=series.coordinateToPrice(y),l=chart.timeScale().coordinateToLogical(x);return p==null||l==null?null:{l,p,x,y};};
 chartEl.addEventListener('pointerdown',e=>{
-  if(tool!=='ruler'||e.button>0||e.target.closest('.fsbar,.fsind,.fs-exit'))return;
+  if(tool!=='ruler'||e.pointerType==='touch'||e.button>0||e.target.closest('.fsbar,.fsind,.fs-exit'))return;
   const pt=ptLP(e);if(!pt)return;e.preventDefault();e.stopPropagation();
   if(ruler&&ruler.phase===1&&!rDrag){ruler.b={l:pt.l,p:pt.p};ruler.phase=2;noClick=performance.now()+500;setTool('cursor');return;}
   ruler={phase:1,a:{l:pt.l,p:pt.p},b:{l:pt.l,p:pt.p}};rDrag={x:pt.x,y:pt.y,id:e.pointerId,moved:false};
@@ -1107,6 +1108,21 @@ const rEnd=e=>{if(!rDrag||e.pointerId!==rDrag.id)return;e.stopPropagation();cons
   try{chartEl.releasePointerCapture(e.pointerId)}catch(_){}noClick=performance.now()+500;
   if(mv){ruler.phase=2;setTool('cursor');}};
 chartEl.addEventListener('pointerup',rEnd,true);chartEl.addEventListener('pointercancel',rEnd,true);
+/* regla en celular: tocar un extremo, arrastrar el dedo y soltar en el otro extremo */
+let tDrag=null;
+const tPt=t=>{const r=chartEl.getBoundingClientRect(),x=t.clientX-r.left,y=t.clientY-r.top,p=series.coordinateToPrice(y),l=chart.timeScale().coordinateToLogical(x);return p==null||l==null?null:{l,p,x,y};};
+chartEl.addEventListener('touchstart',e=>{
+  if(tool!=='ruler'||e.touches.length!==1||e.target.closest('.fsbar,.fsind,.fs-exit'))return;
+  const pt=tPt(e.touches[0]);if(!pt)return;e.preventDefault();e.stopPropagation();
+  ruler={phase:1,a:{l:pt.l,p:pt.p},b:{l:pt.l,p:pt.p}};tDrag={x:pt.x,y:pt.y,moved:false};
+},{capture:true,passive:false});
+chartEl.addEventListener('touchmove',e=>{
+  if(!tDrag)return;e.preventDefault();e.stopPropagation();const pt=tPt(e.touches[0]);if(!pt)return;
+  if(Math.hypot(pt.x-tDrag.x,pt.y-tDrag.y)>6)tDrag.moved=true;ruler.b={l:pt.l,p:pt.p};
+},{capture:true,passive:false});
+const tEnd=e=>{if(!tDrag)return;e.preventDefault();e.stopPropagation();const mv=tDrag.moved;tDrag=null;noClick=performance.now()+600;
+  if(mv){ruler.phase=2;setTool('cursor');}else ruler=null;};
+chartEl.addEventListener('touchend',tEnd,{capture:true,passive:false});chartEl.addEventListener('touchcancel',tEnd,{capture:true,passive:false});
 
 
 chart.subscribeClick(p=>{
