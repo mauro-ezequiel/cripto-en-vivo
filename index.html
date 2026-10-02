@@ -165,6 +165,15 @@ body.fs-on .fsbar{display:flex}
 .fsind .sw{width:32px;height:18px;border-radius:999px;background:#2a3040;position:relative;flex-shrink:0}
 .fsind .sw:after{content:"";position:absolute;top:3px;left:3px;width:12px;height:12px;border-radius:50%;background:#7c8394;transition:left .15s}
 .fsind button.on .sw{background:var(--acc)}.fsind button.on .sw:after{left:17px;background:#fff}
+/* noticias */
+.news{padding:10px 14px 16px;border-top:1px solid var(--line);background:var(--bg);flex-shrink:0}
+.nw{display:grid;grid-template-columns:78px 160px minmax(0,1fr) 190px 92px;gap:10px;align-items:center;padding:6px 0;border-bottom:1px solid #1d222c;font-size:12.5px}
+.nw a{color:var(--txt);text-decoration:none}.nw a:hover{text-decoration:underline}
+.nt,.nsrc{color:var(--mut);font-size:11px}
+.ntags{display:flex;gap:4px;flex-wrap:wrap}.ntags i{font-style:normal;font-size:10px;border:1px solid;border-radius:999px;padding:1px 6px}
+@media (min-width:801px) and (min-height:521px){main{overflow-y:auto}#chartWrap{flex:none;height:calc(100vh - 330px);min-height:400px}.dash{flex:none}}
+@media (min-width:1001px){.dash{grid-template-columns:230px minmax(0,1fr) 300px}.fac{grid-template-columns:minmax(100px,150px) 96px 50px minmax(0,1fr)}.ft{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
+@media (max-width:1000px){.nw{grid-template-columns:64px minmax(0,1fr) 86px}.nw .ntags,.nw .nsrc{display:none}}
 </style>
 </head>
 <body>
@@ -236,6 +245,7 @@ body.fs-on .fsbar{display:flex}
         <div id="market"></div>
       </div>
     </section>
+    <section class="news" id="newsBox"><div class="dt">Noticias globales que pueden mover las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
 
@@ -258,10 +268,10 @@ const MODES = {
   },
   x: {
     name: 'SHOOTER', tag: '',
-    desc: 'Gráfico limpio para operaciones rápidas',
-    info: ['Gráfico de velas sin cálculos extra', 'Temporalidad inicial: 15m'],
-    tf: '15m', bars: 150,
-    inds: []
+    desc: 'Scalping e intradía de 1 a 30 minutos',
+    info: ['Temporalidad inicial: 5m', 'VWAP, EMA 9/21, Supertrend rápido, Bollinger, RSI 7, Stoch RSI, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
+    tf: '5m', bars: 180,
+    inds: ['liq','vwap','ema','supertrend','bollinger','rsi','stochrsi','cvd']
   }
 };
 let mode = 'medio';
@@ -301,7 +311,12 @@ function setPrecision(p){const d=dec(p);series.applyOptions({priceFormat:{type:'
    Bandas de Bollinger, Perfil de volumen, Fibonacci automático.
    Paneles inferiores: RSI, MACD, ADX/DMI.
    ===================================================================== */
+const PRM={medio:{rsi:14,st:[10,3]},x:{rsi:7,st:[7,2]}};
 const IND = {
+  vwap:      {name:'VWAP diario ±σ',      color:'#ff9f43', pane:false},
+  ema:       {name:'EMA 9 / 21',          color:'#4dd0e1', pane:false},
+  stochrsi:  {name:'Stoch RSI (14,14,3,3)',color:'#26c6da', pane:true},
+  cvd:       {name:'CVD (flujo de órdenes)',color:'#ffd166', pane:true},
   ichimoku:  {name:'Ichimoku',            color:'#26a69a', pane:false},
   supertrend:{name:'Supertrend (10,3)',   color:'#f7c548', pane:false},
   bollinger: {name:'Bollinger (20,2)',    color:'#42a5f5', pane:false},
@@ -319,9 +334,12 @@ const OS = {
   rsi:  {rsi:chart.addLineSeries({...lineOpt('rsi','#b388ff'),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})})},
   macd: {hist:chart.addHistogramSeries({priceScaleId:'macd',priceLineVisible:false,lastValueVisible:false,visible:false}),
          macd:chart.addLineSeries(lineOpt('macd','#2962ff')), sig:chart.addLineSeries(lineOpt('macd','#ff9800'))},
+  stochrsi:{k:chart.addLineSeries({...lineOpt('stochrsi','#26c6da'),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})}), d:chart.addLineSeries({...lineOpt('stochrsi','#ff7043',1),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})})},
+  cvd:  {cvd:chart.addLineSeries(lineOpt('cvd','#ffd166'))},
   adx:  {adx:chart.addLineSeries(lineOpt('adx','#e0e0e0',2)), pdi:chart.addLineSeries(lineOpt('adx','#26a69a',1)), mdi:chart.addLineSeries(lineOpt('adx','#ef5350',1))}
 };
 [70,30].forEach(p=>OS.rsi.rsi.createPriceLine({price:p,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false}));
+[80,20].forEach(p=>OS.stochrsi.k.createPriceLine({price:p,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false}));
 OS.adx.adx.createPriceLine({price:25,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false});
 
 /* ---- matemáticas ---- */
@@ -369,12 +387,16 @@ function calcIchi(){const n=candles.length,t=Array(n).fill(null),k=Array(n).fill
 function calcInd(full){
   if(!candles.length) return;
   liqDirty=true;
-  if(active.has('rsi')) C.rsi=calcRSI();
+  if(active.has('rsi')) C.rsi=calcRSI(PRM[mode].rsi);
   if(active.has('macd')) C.macd=calcMACD();
   if(active.has('adx')) C.adx=calcADX();
-  if(active.has('supertrend')) C.st=calcST();
+  if(active.has('supertrend')) C.st=calcST(...PRM[mode].st);
   if(active.has('ichimoku')) C.ichi=calcIchi();
   if(active.has('bollinger')){const [m,s]=smaStd(closes(),20);C.bb={m,u:m.map((x,i)=>x==null?null:x+2*s[i]),l:m.map((x,i)=>x==null?null:x-2*s[i])};}
+  if(active.has('ema')){const cl=closes();C.ema={f:emaArr(cl,9),s:emaArr(cl,21)};}
+  if(active.has('vwap'))C.vwap=calcVWAP();
+  if(active.has('stochrsi'))C.srsi=calcStochRSI();
+  if(active.has('cvd'))C.cvd=calcCVD();
   const push=(ser,arr,colorFn)=>{
     const pts=[];arr.forEach((v,i)=>{if(v!=null){const p={time:candles[i].time,value:v};if(colorFn)p.color=colorFn(v,i);pts.push(p);}});
     if(full) ser.setData(pts); else if(pts.length) ser.update(pts.at(-1));
@@ -383,12 +405,24 @@ function calcInd(full){
   if(active.has('macd')){push(OS.macd.macd,C.macd.macd);push(OS.macd.sig,C.macd.sig);
     push(OS.macd.hist,C.macd.hist,(v,i)=>{const pr=C.macd.hist[i-1];return v>=0?(pr!=null&&v<pr?'rgba(38,166,154,.45)':'#26a69a'):(pr!=null&&v>pr?'rgba(239,83,80,.45)':'#ef5350');});}
   if(active.has('adx')){push(OS.adx.adx,C.adx.adx);push(OS.adx.pdi,C.adx.pdi);push(OS.adx.mdi,C.adx.mdi);}
+  if(active.has('stochrsi')){push(OS.stochrsi.k,C.srsi.k);push(OS.stochrsi.d,C.srsi.d);}
+  if(active.has('cvd'))push(OS.cvd.cvd,C.cvd);
   renderLegend();
 }
 
 /* ---- distribución de paneles ---- */
 const PANE=.16;
-function oscList(){return ['rsi','macd','adx'].filter(k=>active.has(k));}
+
+function calcVWAP(){const n=candles.length,v=Array(n).fill(null),u1=Array(n).fill(null),l1=Array(n).fill(null),u2=Array(n).fill(null),l2=Array(n).fill(null);let day=-1,spv=0,sv=0,sp2v=0;
+  for(let i=0;i<n;i++){const b=candles[i],d=Math.floor(b.t/864e5);if(d!==day){day=d;spv=sv=sp2v=0;}const tp=(b.high+b.low+b.close)/3,vol=b.v||0;spv+=tp*vol;sv+=vol;sp2v+=tp*tp*vol;
+    if(sv>0){const m=spv/sv,sd=Math.sqrt(Math.max(0,sp2v/sv-m*m));v[i]=m;u1[i]=m+sd;l1[i]=m-sd;u2[i]=m+2*sd;l2[i]=m-2*sd;}}
+  return {v,u1,l1,u2,l2};}
+function calcStochRSI(){const r=calcRSI(14),n=r.length,st=Array(n).fill(null);
+  for(let i=27;i<n;i++){let mn=Infinity,mx=-Infinity,ok=true;for(let j=i-13;j<=i;j++){if(r[j]==null){ok=false;break;}mn=Math.min(mn,r[j]);mx=Math.max(mx,r[j]);}if(ok)st[i]=mx>mn?(r[i]-mn)/(mx-mn)*100:50;}
+  const sma=(a,p)=>a.map((_,i)=>{if(i<p-1)return null;let s=0;for(let j=i-p+1;j<=i;j++){if(a[j]==null)return null;s+=a[j];}return s/p;});
+  const k=sma(st,3);return {k,d:sma(k,3)};}
+function calcCVD(){let c=0;return candles.map(b=>{const tb=b.tb!=null&&!isNaN(b.tb)?b.tb:b.v/2;c+=2*tb-b.v;return c;});}
+function oscList(){return ['rsi','stochrsi','macd','adx','cvd'].filter(k=>active.has(k));}
 function layout(){
   const os=oscList(),block=os.length*PANE;
   series.priceScale().applyOptions({scaleMargins:{top:.06,bottom:block+.1}});
@@ -417,6 +451,11 @@ function signals(){
     if(m!=null&&s!=null)add('macd',(m>s?.7:-.7)+(h!=null&&hp!=null?(h>hp?.3:-.3):0),(m>s?'sobre señal':'bajo señal')+(h>hp?', impulso sube':', impulso baja'));}
   if(active.has('adx')&&C.adx){const a=C.adx.adx[i],p=C.adx.pdi[i],m=C.adx.mdi[i];
     if(a!=null)add('adx',((p-m)/((p+m)||1))*2*Math.min(1,a/25),'fuerza '+a.toFixed(0)+(a<20?' (sin tendencia)':p>m?', +DI domina':', −DI domina'));}
+  if(active.has('vwap')&&C.vwap){const v=C.vwap.v[i],u=C.vwap.u1[i];if(v!=null){const z=(c-v)/((u-v)||1);add('vwap',z*.6,c>v?(z>2?'muy por encima del VWAP':'sobre el VWAP'):(z<-2?'muy por debajo del VWAP':'bajo el VWAP'));}}
+  if(active.has('ema')&&C.ema){const f=C.ema.f[i],s=C.ema.s[i],f0=C.ema.f[i-1],s0=C.ema.s[i-1];
+    if(f!=null&&s!=null){const cross=f0!=null&&s0!=null&&((f0<=s0)!==(f<=s));add('ema',(f>s?.6:-.6)+(c>f?.4:-.4),(f>s?'EMA 9 sobre 21':'EMA 9 bajo 21')+(cross?' (cruce reciente)':''));}}
+  if(active.has('stochrsi')&&C.srsi){const k=C.srsi.k[i],d=C.srsi.d[i];if(k!=null&&d!=null){let s=k>d?.5:-.5;if(k<20&&k>d)s=1;if(k>80&&k<d)s=-1;add('stochrsi',s,`K ${k.toFixed(0)} / D ${d.toFixed(0)}`+(k>80?' sobrecompra':k<20?' sobreventa':''));}}
+  if(active.has('cvd')&&C.cvd&&i>20){const dc=C.cvd[i]-C.cvd[i-20];let av=0;for(let j=i-19;j<=i;j++)av+=candles[j].v;const s=av?dc/av*3:0;add('cvd',s,s>.15?'compradores agresivos dominan':s<-.15?'vendedores agresivos dominan':'flujo equilibrado');}
   return out;
 }
 
@@ -436,7 +475,7 @@ function marketFactors(){
   return out;
 }
 function allFactors(){
-  return signals().map(x=>({...x,name:IND[x.k].name,w:x.k==='liq'?1.5:1,color:IND[x.k].color})).concat(marketFactors());
+  return signals().map(x=>({...x,name:IND[x.k].name,w:x.k==='liq'?1.5:1,color:IND[x.k].color})).concat(marketFactors()).concat(newsFactors());
 }
 function gaugeScore(f){const sw=f.reduce((a,x)=>a+x.w,0);if(!sw)return null;
   return Math.max(1,Math.min(100,Math.round(50+50*f.reduce((a,x)=>a+x.w*x.s,0)/sw)));}
@@ -472,7 +511,7 @@ function renderLegend(){
   $('factors').innerHTML=fs.map(x=>{const c=x.s>.15?'up':x.s<-.15?'dn':'neu',w=Math.abs(x.s)*50;
     const v=x.s>.5?'Muy alcista':x.s>.15?'Alcista':x.s<-.5?'Muy bajista':x.s<-.15?'Bajista':'Neutral',ic=x.s>.15?'▲':x.s<-.15?'▼':'●';
     return `<div class="fac"><span class="fn">${x.mk?'◆ ':''}${x.name}</span><span class="vp ${c}">${ic} ${v}</span><span class="fbar"><i class="${c}" style="${x.s>=0?'left:50%':'right:50%'};width:${w}%"></i></span><span class="ft ${c}">${x.txt}</span></div>`;}).join('');
-  $('facTf').textContent=`· gráfico ${TFS.find(x=>x[0]===tf)[1]} (◆ = datos de futuros)`;
+  $('facTf').textContent=`· gráfico ${TFS.find(x=>x[0]===tf)[1]} (◆ = futuros y noticias)`;
   renderMarket();
 }
 function renderMarket(){
@@ -519,6 +558,8 @@ function drawInd(ctx,w,h){
     poly(I.t,'#2196f3',1.2);poly(I.k,'#c2185b',1.2);}
   if(active.has('bollinger')&&C.bb){band(C.bb.u,C.bb.l,'rgba(66,165,245,.05)','rgba(66,165,245,.05)');
     poly(C.bb.u,'rgba(66,165,245,.8)',1);poly(C.bb.l,'rgba(66,165,245,.8)',1);poly(C.bb.m,'rgba(66,165,245,.6)',1,[4,4]);}
+  if(active.has('vwap')&&C.vwap){const V=C.vwap;band(V.u1,V.l1,'rgba(255,159,67,.06)','rgba(255,159,67,.06)');poly(V.u2,'rgba(255,159,67,.35)',1,[3,4]);poly(V.l2,'rgba(255,159,67,.35)',1,[3,4]);poly(V.u1,'rgba(255,159,67,.55)',1);poly(V.l1,'rgba(255,159,67,.55)',1);poly(V.v,'#ff9f43',2);}
+  if(active.has('ema')&&C.ema){poly(C.ema.f,'#4dd0e1',1.6);poly(C.ema.s,'#ab47bc',1.6);}
   if(active.has('supertrend')&&C.st){const {st,dir}=C.st;ctx.lineWidth=2;
     for(let i=Math.max(from,1);i<to&&i<st.length;i++){if(st[i]==null||st[i-1]==null||dir[i]!==dir[i-1])continue;
       const x1=X(i-1),x2=X(i);if(x1==null||x2==null)continue;ctx.strokeStyle=dir[i]===1?'#26a69a':'#ef5350';
@@ -563,6 +604,8 @@ function drawInd(ctx,w,h){
     let txt=IND[k].name;
     if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
     if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
+    if(k==='stochrsi'&&C.srsi)txt+=`  K ${(C.srsi.k[i]??0).toFixed(1)}  D ${(C.srsi.d[i]??0).toFixed(1)}`;
+    if(k==='cvd'&&C.cvd)txt+=`  ${fnum(C.cvd[i]??0)} ${symbol.replace('USDT','')}`;
     if(k==='adx'&&C.adx)txt+=`  ADX ${(C.adx.adx[i]??0).toFixed(1)}  +DI ${(C.adx.pdi[i]??0).toFixed(1)}  −DI ${(C.adx.mdi[i]??0).toFixed(1)}`;
     ctx.font='12px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle=IND[k].color;ctx.fillText(txt,10,y+5);});
 }
@@ -925,14 +968,15 @@ function renderChips(){
 }
 $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
   active.has(k)?active.delete(k):active.add(k);
-  try{localStorage.setItem('cv_ind2_'+mode,JSON.stringify([...active]))}catch(e){}
+  try{localStorage.setItem('cv_ind3_'+mode,JSON.stringify([...active]))}catch(e){}
   renderChips();layout();calcInd(true);hmKey='';};
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:8)});series.priceScale().applyOptions({autoScale:true});}
 function applyMode(m){
   mode=m;const M=MODES[m];
-  let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind2_'+m))}catch(e){}
+  const pr=PRM[m];IND.rsi.name=`RSI (${pr.rsi})`;IND.supertrend.name=`Supertrend (${pr.st.join(',')})`;
+  let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind3_'+m))}catch(e){}
   active=new Set((saved||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
@@ -1243,6 +1287,57 @@ function initCloud(){
     cloudReady=true;restoreLines();renderList();cloudSave();});
 }
 loadTickers();applyMode('medio');initCloud();setInterval(renderLegend,1500);
+
+/* ---------- noticias globales (cripto, macro, regulación, geopolítica) ---------- */
+const NEWS={items:[],fng:null,upd:0};
+const FEEDS=[['CoinDesk','https://www.coindesk.com/arc/outboundfeeds/rss/'],['Cointelegraph','https://cointelegraph.com/rss'],
+ ['Google News','https://news.google.com/rss/search?q=bitcoin+OR+crypto+OR+stablecoin+when:1d&hl=en-US&gl=US&ceid=US:en'],
+ ['Google News','https://news.google.com/rss/search?q=%22federal+reserve%22+OR+inflation+OR+CPI+OR+tariffs+OR+SEC+OR+recession+when:1d&hl=en-US&gl=US&ceid=US:en'],
+ ['CNBC','https://www.cnbc.com/id/100003114/device/rss/rss.html']];
+const CATS=[['Macro','#42a5f5',2,/\b(fed|fomc|powell|rate (hike|cut)s?|interest rates?|inflation|cpi|ppi|payrolls?|jobs report|unemployment|recession|gdp|treasur(y|ies)|yields?|dollar|ecb|boj|stimulus|shutdown|debt ceiling|central bank)\b/i],
+ ['Regulación','#ab47bc',2,/\b(sec|cftc|regulat\w*|lawsuits?|sues?|ban(s|ned)?|etfs?|bill|senate|congress|legislation|lawmakers?|tax(es)?|custody|approv\w*)\b/i],
+ ['Geopolítica','#ef5350',1.5,/\b(war|attacks?|sanctions?|conflict|missiles?|military|israel|iran|russia|ukraine|china|taiwan|tariffs?|trade war)\b/i],
+ ['Cripto','#f7c548',1,/\b(bitcoin|btc|ethereum|ether|eth|crypto\w*|stablecoins?|blockchain|binance|coinbase|tether|usdt|solana|xrp|defi|liquidat\w*|whales?|microstrategy|blackrock)\b/i]];
+const POS=/\b(approv\w*|inflows?|rall(y|ies|ied)|surg\w*|soar\w*|jump\w*|gains?|record high|all-time high|adopt\w*|rate cuts?|cuts? rates|eas(e|es|ing)|dovish|bullish|buys?|bought|accumulat\w*|partnership|rebound\w*|recover\w*|upgrade\w*|clarity|green light|wins?|optimis\w*|reserve|higher)\b/ig;
+const NEG=/\b(hack\w*|exploit\w*|attack\w*|lawsuits?|sues?|sued|bans?|banned|crackdown|reject\w*|delay\w*|outflows?|crash\w*|plung\w*|tumbl\w*|drops?|dropped|falls?|fell|slump\w*|sell-?offs?|liquidations?|rate hikes?|hikes?|hawkish|recession|war|sanctions?|tariffs?|fraud|bankrupt\w*|collaps\w*|warns?|warning|fears?|bearish|vulnerab\w*|investigat\w*|probes?|shutdown|default\w*|lower|losses?|panic|risks?)\b/ig;
+function scoreNews(title){let imp=0;const tags=[];for(const [n,c,w,re] of CATS)if(re.test(title)){imp+=w;tags.push([n,c]);}
+  const p=(title.match(POS)||[]).length,ng=(title.match(NEG)||[]).length;if(/\b(breaking|urgent|record|historic|emergency)\b/i.test(title))imp+=1;
+  return {imp,tags,sent:clamp((p-ng)/2)};}
+let newsBusy=false;
+async function loadNews(){
+  if(newsBusy)return;newsBusy=true;const all=[];
+  for(const [src,url] of FEEDS){
+    try{const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),10000);
+      for(const it of (j.items||[])){let title=(it.title||'').trim(),source=src;const m=title.match(/^(.*) - ([^-]{2,40})$/);if(src==='Google News'&&m){title=m[1];source=m[2];}
+        const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');const link=/^https?:\/\//.test(it.link||'')?it.link:'';
+        if(!title||isNaN(t))continue;all.push({title,source,link,t,...scoreNews(title)});}}catch(e){}
+    await new Promise(r=>setTimeout(r,700));}
+  const fg=await safe(getJ('https://api.alternative.me/fng/?limit=1'));
+  if(fg&&fg.data&&fg.data[0]){const L={'Extreme Fear':'miedo extremo','Fear':'miedo','Neutral':'neutral','Greed':'codicia','Extreme Greed':'codicia extrema'};
+    NEWS.fng={v:+fg.data[0].value,lab:L[fg.data[0].value_classification]||fg.data[0].value_classification};}
+  if(all.length){const seen=new Set();
+    NEWS.items=all.filter(n=>{const k=n.title.replace(/ - [^-]{2,40}$/,'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,60);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>b.t-a.t);NEWS.upd=Date.now();}
+  newsBusy=false;renderNews();renderLegend();
+}
+function newsFactors(){
+  const out=[],now=Date.now();
+  if(NEWS.items.length){let sw=0,ss=0,pos=0,neg=0;
+    for(const n of NEWS.items){const age=(now-n.t)/36e5;if(age>12||age<-1||n.imp<1)continue;const w=n.imp*Math.exp(-Math.max(0,age)/6);sw+=w;ss+=w*n.sent;if(n.sent>0)pos++;else if(n.sent<0)neg++;}
+    if(sw>0)out.push({k:'news',name:'Noticias globales (12 h)',w:1.2,s:clamp(ss/sw*1.5),txt:`${pos} positivas · ${neg} negativas`,mk:true});}
+  if(NEWS.fng){const v=NEWS.fng.v;out.push({k:'fng',name:'Miedo y codicia (contrario)',w:.5,s:clamp(-(v-50)/40),txt:`${v}/100 · ${NEWS.fng.lab}`,mk:true});}
+  return out;
+}
+function ago(t){const m=Math.max(0,Math.round((Date.now()-t)/6e4));return m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`;}
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+function renderNews(){
+  const list=NEWS.items.filter(n=>n.imp>=1).slice(0,25);
+  $('newsUpd').textContent=NEWS.upd?`· actualizado ${new Date(NEWS.upd).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`:'· cargando…';
+  $('newsList').innerHTML=list.map(n=>{const c=n.sent>0?'up':n.sent<0?'dn':'neu',lab=n.sent>0?'▲ Alcista':n.sent<0?'▼ Bajista':'● Neutral',imp=n.imp>=4?'alto':n.imp>=2?'medio':'bajo';
+    const ttl=n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:`<span>${esc(n.title)}</span>`;
+    return `<div class="nw"><span class="nt">${ago(n.t)}</span><span class="ntags">${n.tags.map(([t,col])=>`<i style="color:${col};border-color:${col}66">${t}</i>`).join('')}</span>${ttl}<span class="nsrc">${esc(n.source)} · impacto ${imp}</span><span class="vp ${c}">${lab}</span></div>`;}).join('')
+    ||`<div class="mut">${NEWS.upd?'No hay noticias relevantes en este momento.':'Cargando noticias…'}</div>`;
+}
+loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
 </script>
 </body>
 </html>
