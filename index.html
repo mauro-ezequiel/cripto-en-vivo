@@ -217,6 +217,11 @@ body.fs-on .fsbar{display:flex}
   .srow{grid-template-columns:70px 44px 48px minmax(0,1fr) 84px}.srow .mut{display:none}
   .hrow{grid-template-columns:70px 58px 48px minmax(0,1fr)}
 }
+.live{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:#fff;background:var(--dn);border-radius:4px;padding:1px 6px;letter-spacing:.04em}
+.live:before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;animation:lv 1.2s infinite}
+@keyframes lv{50%{opacity:.25}}
+@media (prefers-reduced-motion:reduce){.live:before{animation:none}}
+.sg-g b.sl2{font-size:11px;font-weight:500;color:var(--mut)}
 </style>
 </head>
 <body>
@@ -1539,7 +1544,7 @@ function renderSignals(){
         ${s.tp0?`<span>Objetivo corto</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 1</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
         <span>Objetivo 2</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
         <span>Stop</span><b class="stp">${fp(s.sl)} (${pc(s.sl)})</b>
-        <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b>${(()=>{const o=OPS.find(x=>x.id===s.op);if(!o)return SIM[s.m].label;const v=o.state==='open'?(p?pnlAt(o,p):0):o.pnl;return `<span class="${v>=0?'up':'dn'}">${fusd2(v)}</span>`;})()}</b></div>
+        <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <div class="sg-f">${ago(s.t)} · sigue activa mientras el precio esté cerca de la entrada</div></div>`;}).join('');
 }
@@ -1595,6 +1600,14 @@ async function syncOps(){
 }
 const fusd2=v=>(v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
 const fdate=t=>new Date(t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
+/* resultado si hubieras entrado en el precio de la señal */
+function liveRes(s,p){
+  const o=OPS.find(x=>x.id===s.op);
+  if(o&&o.state!=='open')return `<span class="${o.pnl>=0?'up':'dn'}">${fusd2(o.pnl)} · ${o.state==='fail'?'liquidada 0/3':'cerrada '+o.hit+'/3'}</span>`;
+  if(!p)return '—';
+  const v=pnlAt({m:s.m,dir:s.dir,entry:s.entry},p),pct=s.dir*(p/s.entry-1)*100;
+  return `<span class="${v>=0?'up':'dn'}">${fusd2(v)} (${fpct(pct)})</span>${o&&o.hit?` · ${o.hit}/3`:''}`;
+}
 function renderHist(){
   const m=mode,c=SIM[m],now=new Date(),mStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   const mine=OPS.filter(o=>o.m===m),month=mine.filter(o=>o.t>=mStart),closed=month.filter(o=>o.state!=='open');
@@ -1602,7 +1615,10 @@ function renderHist(){
   const open=month.filter(o=>o.state==='open');
   $('histSum').textContent=`${mine.filter(o=>o.state!=='open').length} terminadas · ${open.length} en curso`;
   $('simSum').textContent=eff==null?'sin operaciones cerradas este mes':`efectividad ${eff} % · ${fusd2(tot)}`;
-  const resTxt=o=>o.state==='open'?`<span class="neu">● En curso${o.hit?' · ya tocó el '+TGT[o.hit-1]:''}</span>`:o.state==='win'?`<span class="up">✓ ${o.hit===3?'Llegó al objetivo 2':'Llegó al '+TGT[o.hit-1]}</span>`:o.state==='fail'?`<span class="dn">✕ Fracasó: ${o.why}</span>`:`<span class="${o.pnl>=0?'up':'dn'}">• ${o.why}</span>`;
+  const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
+    if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó al objetivo 2':'Llegó al '+TGT[o.hit-1]} · ${o.hit}/3 · ${fusd2(o.pnl)}</span>`;
+    if(o.state==='fail')return `<span class="dn">✕ Liquidada 0/3 · ${fusd2(o.pnl)}</span> <span class="neu">(${o.why})</span>`;
+    return `<span class="${o.pnl>=0?'up':'dn'}">• ${o.why} · ${fusd2(o.pnl)}</span>`;};
   const rowH=o=>`<div class="hrow"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)}</span></div>`;
   const hist=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
   $('histList').innerHTML=hist.length?hist.map(rowH).join(''):'<div class="mut">Todavía no hay señales en el historial de este modo.</div>';
