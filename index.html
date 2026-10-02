@@ -266,7 +266,7 @@ body.fs-on .fsbar{display:flex}
       </div>
     </section>
     <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales automáticas que combinan los indicadores, los datos de futuros y las noticias de esta página. Ninguna es segura al 100 %: usa siempre el stop.</div><div class="siglist" id="sigList"></div></section>
-    <section class="news" id="newsBox"><div class="dt">Noticias globales que pueden mover las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
+    <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
 
@@ -332,12 +332,15 @@ function setPrecision(p){const d=dec(p);series.applyOptions({priceFormat:{type:'
    Bandas de Bollinger, Perfil de volumen, Fibonacci automático.
    Paneles inferiores: RSI, MACD, ADX/DMI.
    ===================================================================== */
-const PRM={medio:{rsi:14,st:[10,3]},x:{rsi:7,st:[7,2]}};
+// SHOOTER: parámetros calibrados para cada temporalidad (más lentos en 1m para filtrar ruido)
+const PRM_X={'1m':{rsi:9,st:[10,3],ema:[9,21],bb:2.2},'3m':{rsi:9,st:[10,2.5],ema:[9,21],bb:2},'5m':{rsi:7,st:[10,2],ema:[9,21],bb:2},'15m':{rsi:9,st:[10,2.5],ema:[9,21],bb:2},'30m':{rsi:14,st:[10,3],ema:[20,50],bb:2}};
+const PRM={medio:{rsi:14,st:[10,3],ema:[9,21],bb:2},get x(){return PRM_X[tf]||PRM_X['5m'];}};
+function setNames(){const pr=PRM[mode];IND.rsi.name=`RSI (${pr.rsi})`;IND.supertrend.name=`Supertrend (${pr.st.join(',')})`;IND.ema.name=`EMA ${pr.ema.join(' / ')}`;IND.bollinger.name=`Bollinger (20,${pr.bb})`;}
 const IND = {
   vwap:      {name:'VWAP diario ±σ',      color:'#ff9f43', pane:false},
   ema:       {name:'EMA 9 / 21',          color:'#4dd0e1', pane:false},
   stochrsi:  {name:'Stoch RSI (14,14,3,3)',color:'#26c6da', pane:true},
-  cvd:       {name:'CVD (flujo de órdenes)',color:'#ffd166', pane:true},
+  cvd:       {name:'CVD del día (flujo de órdenes)',color:'#ffd166', pane:true},
   ichimoku:  {name:'Ichimoku',            color:'#26a69a', pane:false},
   supertrend:{name:'Supertrend (10,3)',   color:'#f7c548', pane:false},
   bollinger: {name:'Bollinger (20,2)',    color:'#42a5f5', pane:false},
@@ -413,8 +416,8 @@ function calcInd(full){
   if(active.has('adx')) C.adx=calcADX();
   if(active.has('supertrend')) C.st=calcST(...PRM[mode].st);
   if(active.has('ichimoku')) C.ichi=calcIchi();
-  if(active.has('bollinger')){const [m,s]=smaStd(closes(),20);C.bb={m,u:m.map((x,i)=>x==null?null:x+2*s[i]),l:m.map((x,i)=>x==null?null:x-2*s[i])};}
-  if(active.has('ema')){const cl=closes();C.ema={f:emaArr(cl,9),s:emaArr(cl,21)};}
+  if(active.has('bollinger')){const [m,s]=smaStd(closes(),20);const kb=PRM[mode].bb;C.bb={m,u:m.map((x,i)=>x==null?null:x+kb*s[i]),l:m.map((x,i)=>x==null?null:x-kb*s[i])};}
+  if(active.has('ema')){const cl=closes();const pe=PRM[mode].ema;C.ema={f:emaArr(cl,pe[0]),s:emaArr(cl,pe[1])};}
   if(active.has('vwap'))C.vwap=calcVWAP();
   if(active.has('stochrsi'))C.srsi=calcStochRSI();
   if(active.has('cvd'))C.cvd=calcCVD();
@@ -435,14 +438,16 @@ function calcInd(full){
 const PANE=.16;
 
 function calcVWAP(){const n=candles.length,v=Array(n).fill(null),u1=Array(n).fill(null),l1=Array(n).fill(null),u2=Array(n).fill(null),l2=Array(n).fill(null);let day=-1,spv=0,sv=0,sp2v=0;
-  for(let i=0;i<n;i++){const b=candles[i],d=Math.floor(b.t/864e5);if(d!==day){day=d;spv=sv=sp2v=0;}const tp=(b.high+b.low+b.close)/3,vol=b.v||0;spv+=tp*vol;sv+=vol;sp2v+=tp*tp*vol;
-    if(sv>0){const m=spv/sv,sd=Math.sqrt(Math.max(0,sp2v/sv-m*m));v[i]=m;u1[i]=m+sd;l1[i]=m-sd;u2[i]=m+2*sd;l2[i]=m-2*sd;}}
+  for(let i=0;i<n;i++){const b=candles[i],d=Math.floor(b.t/864e5);const nd=d!==day;if(nd){day=d;spv=sv=sp2v=0;}const tp=(b.high+b.low+b.close)/3,vol=b.v||0;spv+=tp*vol;sv+=vol;sp2v+=tp*tp*vol;
+    if(sv>0&&!(nd&&i>0&&i<n-1)){const m=spv/sv,sd=Math.sqrt(Math.max(0,sp2v/sv-m*m));v[i]=m;u1[i]=m+sd;l1[i]=m-sd;u2[i]=m+2*sd;l2[i]=m-2*sd;}}
   return {v,u1,l1,u2,l2};}
 function calcStochRSI(){const r=calcRSI(14),n=r.length,st=Array(n).fill(null);
   for(let i=27;i<n;i++){let mn=Infinity,mx=-Infinity,ok=true;for(let j=i-13;j<=i;j++){if(r[j]==null){ok=false;break;}mn=Math.min(mn,r[j]);mx=Math.max(mx,r[j]);}if(ok)st[i]=mx>mn?(r[i]-mn)/(mx-mn)*100:50;}
   const sma=(a,p)=>a.map((_,i)=>{if(i<p-1)return null;let s=0;for(let j=i-p+1;j<=i;j++){if(a[j]==null)return null;s+=a[j];}return s/p;});
   const k=sma(st,3);return {k,d:sma(k,3)};}
-function calcCVD(){let c=0;return candles.map(b=>{const tb=b.tb!=null&&!isNaN(b.tb)?b.tb:b.v/2;c+=2*tb-b.v;return c;});}
+const barDelta=b=>{const tb=b.tb!=null&&!isNaN(b.tb)?b.tb:b.v/2;return 2*tb-b.v;};
+function calcCVD(){let c=0,day=-1;return candles.map(b=>{const d=Math.floor(b.t/864e5);if(d!==day){day=d;c=0;}c+=barDelta(b);return c;});}
+function flowScore(cs,i,n){let ds=0,av=0;for(let j=Math.max(0,i-n+1);j<=i;j++){ds+=barDelta(cs[j]);av+=cs[j].v;}return av?ds/av*2.5:0;}
 function oscList(){return ['rsi','stochrsi','macd','adx','cvd'].filter(k=>active.has(k));}
 function layout(){
   const os=oscList(),block=os.length*PANE;
@@ -474,9 +479,9 @@ function signals(){
     if(a!=null)add('adx',((p-m)/((p+m)||1))*2*Math.min(1,a/25),'fuerza '+a.toFixed(0)+(a<20?' (sin tendencia)':p>m?', +DI domina':', −DI domina'));}
   if(active.has('vwap')&&C.vwap){const v=C.vwap.v[i],u=C.vwap.u1[i];if(v!=null){const z=(c-v)/((u-v)||1);add('vwap',z*.6,c>v?(z>2?'muy por encima del VWAP':'sobre el VWAP'):(z<-2?'muy por debajo del VWAP':'bajo el VWAP'));}}
   if(active.has('ema')&&C.ema){const f=C.ema.f[i],s=C.ema.s[i],f0=C.ema.f[i-1],s0=C.ema.s[i-1];
-    if(f!=null&&s!=null){const cross=f0!=null&&s0!=null&&((f0<=s0)!==(f<=s));add('ema',(f>s?.6:-.6)+(c>f?.4:-.4),(f>s?'EMA 9 sobre 21':'EMA 9 bajo 21')+(cross?' (cruce reciente)':''));}}
+    if(f!=null&&s!=null){const cross=f0!=null&&s0!=null&&((f0<=s0)!==(f<=s));add('ema',(f>s?.6:-.6)+(c>f?.4:-.4),(f>s?`EMA ${PRM[mode].ema[0]} sobre ${PRM[mode].ema[1]}`:`EMA ${PRM[mode].ema[0]} bajo ${PRM[mode].ema[1]}`)+(cross?' (cruce reciente)':''));}}
   if(active.has('stochrsi')&&C.srsi){const k=C.srsi.k[i],d=C.srsi.d[i];if(k!=null&&d!=null){let s=k>d?.5:-.5;if(k<20&&k>d)s=1;if(k>80&&k<d)s=-1;add('stochrsi',s,`K ${k.toFixed(0)} / D ${d.toFixed(0)}`+(k>80?' sobrecompra':k<20?' sobreventa':''));}}
-  if(active.has('cvd')&&C.cvd&&i>20){const dc=C.cvd[i]-C.cvd[i-20];let av=0;for(let j=i-19;j<=i;j++)av+=candles[j].v;const s=av?dc/av*3:0;add('cvd',s,s>.15?'compradores agresivos dominan':s<-.15?'vendedores agresivos dominan':'flujo equilibrado');}
+  if(active.has('cvd')&&C.cvd&&i>20){const s=flowScore(candles,i,20);add('cvd',s,s>.15?'compradores agresivos dominan':s<-.15?'vendedores agresivos dominan':'flujo equilibrado');}
   return out;
 }
 
@@ -996,7 +1001,7 @@ $('fsInd').onclick=e=>$('inds').onclick(e);
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:8)});series.priceScale().applyOptions({autoScale:true});}
 function applyMode(m){
   mode=m;const M=MODES[m];
-  const pr=PRM[m];IND.rsi.name=`RSI (${pr.rsi})`;IND.supertrend.name=`Supertrend (${pr.st.join(',')})`;
+  setNames();
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind3_'+m))}catch(e){}
   active=new Set((saved||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
@@ -1018,6 +1023,7 @@ $('modeSeg').onclick=e=>{const b=e.target.closest('[data-mode]');if(b&&b.dataset
 
 async function loadChart(){
   $('loading').style.display='flex';
+  setNames();if(typeof renderChips==='function')renderChips();
   if(klineWs){klineWs.onclose=null;klineWs.close();}
   ruler=null; noMore=false;
   const sym=symbol, t=tf;
@@ -1350,12 +1356,36 @@ function newsFactors(){
 }
 function ago(t){const m=Math.max(0,Math.round((Date.now()-t)/6e4));return m<60?`hace ${m} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`;}
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* las 5 noticias más relevantes: se renuevan cada 8 h; una muy relevante reemplaza a la menos relevante */
+const TOPN=5,TOP_MS=8*36e5;
+let NTOP={items:[],since:0};try{const s=JSON.parse(localStorage.getItem('cv_newstop')||'null');if(s&&Array.isArray(s.items))NTOP=s;}catch(e){}
+const relOf=n=>n.imp+Math.abs(n.sent)+((Date.now()-n.t)<3*36e5?1:0);
+const nKey=n=>n.title.replace(/ - [^-]{2,40}$/,'').toLowerCase().replace(/[^a-z0-9]/g,'').slice(0,60);
+function updateTop(){
+  const now=Date.now(),pool=NEWS.items.filter(n=>n.imp>=1&&now-n.t<24*36e5).map(n=>({...n,rel:relOf(n)}));
+  if(!pool.length)return;
+  if(!NTOP.items.length||now-NTOP.since>=TOP_MS){
+    const recent=pool.filter(n=>now-n.t<TOP_MS),src=recent.length>=TOPN?recent:pool;
+    NTOP={items:src.sort((a,b)=>b.rel-a.rel||b.t-a.t).slice(0,TOPN),since:now};
+  }else{
+    const have=new Set(NTOP.items.map(nKey));
+    for(const c of pool.filter(n=>!have.has(nKey(n))&&n.t>NTOP.since-36e5).sort((a,b)=>b.rel-a.rel)){
+      const worst=NTOP.items.reduce((a,b)=>a.rel<=b.rel?a:b);
+      if(NTOP.items.length<TOPN){NTOP.items.push(c);have.add(nKey(c));}
+      else if(c.imp>=4&&c.rel>=worst.rel+1.5){NTOP.items.splice(NTOP.items.indexOf(worst),1,{...c,hot:true});have.add(nKey(c));}
+    }
+  }
+  try{localStorage.setItem('cv_newstop',JSON.stringify(NTOP))}catch(e){}
+}
 function renderNews(){
-  const list=NEWS.items.filter(n=>n.imp>=1).slice(0,25);
-  $('newsUpd').textContent=NEWS.upd?`· actualizado ${new Date(NEWS.upd).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`:'· cargando…';
+  updateTop();
+  const list=NTOP.items.slice().sort((a,b)=>b.rel-a.rel);
+  const next=NTOP.since?new Date(NTOP.since+TOP_MS).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):'';
+  $('newsUpd').textContent=NEWS.upd?`· se renuevan cada 8 h (próximo cambio ${next}) · si sale una muy importante reemplaza a la menos relevante`:'· cargando…';
   $('newsList').innerHTML=list.map(n=>{const c=n.sent>0?'up':n.sent<0?'dn':'neu',lab=n.sent>0?'▲ Alcista':n.sent<0?'▼ Bajista':'● Neutral',imp=n.imp>=4?'alto':n.imp>=2?'medio':'bajo';
     const ttl=n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:`<span>${esc(n.title)}</span>`;
-    return `<div class="nw"><span class="nt">${ago(n.t)}</span><span class="ntags">${n.tags.map(([t,col])=>`<i style="color:${col};border-color:${col}66">${t}</i>`).join('')}</span>${ttl}<span class="nsrc">${esc(n.source)} · impacto ${imp}</span><span class="vp ${c}">${lab}</span></div>`;}).join('')
+    return `<div class="nw"><span class="nt">${ago(n.t)}</span><span class="ntags">${n.tags.map(([t,col])=>`<i style="color:${col};border-color:${col}66">${t}</i>`).join('')}</span>${ttl}<span class="nsrc">${n.hot?'<b class="dn">NUEVA · </b>':''}${esc(n.source)} · impacto ${imp}</span><span class="vp ${c}">${lab}</span></div>`;}).join('')
     ||`<div class="mut">${NEWS.upd?'No hay noticias relevantes en este momento.':'Cargando noticias…'}</div>`;
 }
 loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
@@ -1392,10 +1422,10 @@ function evalCoin(m,cs,hc){
     }else{
       const ef=emaArr(cl,9),es=emaArr(cl,21);if(ef[i]!=null&&es[i]!=null)add(1.1,(ef[i]>es[i]?.6:-.6)+(c>ef[i]?.4:-.4),ef[i]>es[i]?'EMA 9 sobre 21':'EMA 9 bajo 21');
       const V=calcVWAP();if(V.v[i]!=null){const z=(c-V.v[i])/((V.u1[i]-V.v[i])||1);add(1,z*.6,c>V.v[i]?'sobre el VWAP':'bajo el VWAP');if(Math.abs(z)>2.2)add(.6,-Math.sign(z),'muy estirado del VWAP');}
-      const st=calcST(7,2);add(1.1,st.dir[i],st.dir[i]===1?'Supertrend alcista':'Supertrend bajista');
+      const st=calcST(10,2);add(1.1,st.dir[i],st.dir[i]===1?'Supertrend alcista':'Supertrend bajista');
       const r=calcRSI(7)[i];if(r!=null)add(.7,r>80?-.4:r<20?.4:(r-50)/20,'RSI '+r.toFixed(0));
       const S=calcStochRSI(),k=S.k[i],d=S.d[i];if(k!=null&&d!=null){let s=k>d?.5:-.5;if(k<20&&k>d)s=1;if(k>80&&k<d)s=-1;add(.8,s,'Stoch RSI '+k.toFixed(0));}
-      const cv=calcCVD();let av=0;for(let j=i-19;j<=i;j++)av+=cs[j].v;const s=av?(cv[i]-cv[i-20])/av*3:0;add(1,s,s>0?'compradores agresivos':'vendedores agresivos');
+      const s=flowScore(cs,i,20);add(1,s,s>0?'compradores agresivos':'vendedores agresivos');
     }
     let sw=0,ss=0;for(const x of v){sw+=x.w;ss+=x.w*x.s;}const score=sw?ss/sw:0;
     let htf=0;const hcl=hc.map(b=>b.close),he=emaArr(hcl,21),hi=hc.length-1;
