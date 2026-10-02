@@ -1299,7 +1299,7 @@ $('liqSide').onchange=e=>{liqOpts.side=e.target.value;saveLiqOpts();hmKey='';};
 $('liqSens').oninput=e=>{liqOpts.sens=+e.target.value;saveLiqOpts();hmKey='';};
 
 /* ---------- cuenta con Google y sincronización ---------- */
-const FIREBASE_CONFIG=null;
+const FIREBASE_CONFIG={apiKey:"AIzaSyCbK7FDwl1eZ27JdWbJrjK9nxcFhKFPchU",authDomain:"cripto-live.firebaseapp.com",projectId:"cripto-live",storageBucket:"cripto-live.firebasestorage.app",messagingSenderId:"285654931397",appId:"1:285654931397:web:67421ee243d02dba6e1dac"};
 let favs=new Set(),favOnly=false,fbUser=null,fbDb=null,cloudTimer=null,cloudReady=false;
 try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
