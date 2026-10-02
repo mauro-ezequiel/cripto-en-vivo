@@ -108,6 +108,19 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .lq b{text-align:right}
 @media (max-width:1200px){.dash{grid-template-columns:1fr 1fr;height:auto;max-height:45vh;overflow-y:auto}.dash .dcard:nth-child(2){grid-column:1/-1;order:3}}
 @media (max-width:800px){.dash{grid-template-columns:1fr}.app{grid-template-columns:1fr;grid-template-rows:240px 1fr}aside{border-right:0;border-bottom:1px solid var(--line)}.hint{display:none}}
+@media (max-width:800px){
+  html,body{height:auto}
+  .app{display:block;height:auto}
+  aside{height:260px}
+  main{display:block}
+  #chartWrap{height:78vh;min-height:460px}
+  .top{gap:10px 16px;padding:10px 12px}
+  .dash{grid-template-columns:1fr!important;height:auto;max-height:none;overflow:visible}
+  .dash .dcard{border-right:0;border-bottom:1px solid var(--line);overflow:visible}
+  .fac{grid-template-columns:minmax(0,1fr) 92px;row-gap:3px}
+  .fac .fbar{grid-column:1/-1}
+  .fac .ft{grid-column:1/-1;font-size:11px}
+}
 </style>
 </head>
 <body>
