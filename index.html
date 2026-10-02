@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Cripto en Vivo</title>
+<title>CRIPTO-LIVE</title>
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root{--bg:#0f1115;--panel:#161a22;--line:#262b36;--txt:#d1d4dc;--mut:#7c8394;--up:#26a69a;--dn:#ef5350;--acc:#2962ff}
@@ -121,10 +121,31 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
   .fac .fbar{grid-column:1/-1}
   .fac .ft{grid-column:1/-1;font-size:11px}
 }
+[hidden]{display:none!important}
+.btn{white-space:nowrap}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:8px;padding:2px;gap:2px}
+.seg .btn{padding:4px 10px}
+.fs-exit{position:absolute;top:8px;right:72px;z-index:8;width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(22,26,34,.88);color:var(--txt);font-size:16px;cursor:pointer}
+body.fs-on{overflow:hidden}
+body.fs-on #chartWrap{position:fixed;inset:0;z-index:40;width:100vw;height:100vh;height:100dvh;min-height:0}
+body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{display:none!important}
+@media (max-width:800px){.legend{display:none!important}}
+@media (orientation:landscape) and (max-height:520px){
+  html,body{height:auto}
+  .app{display:block;height:auto}
+  aside,.top,.inds,.legend{display:none!important}
+  main{display:block}
+  #chartWrap{height:100vh;height:100dvh;min-height:0}
+  .toolbar{flex-wrap:nowrap;overflow-x:auto;padding:3px 6px}
+  .toolbar>*{flex-shrink:0}
+  #tfs{display:inline-flex}
+  .toolbar .hint{display:none}
+  .dash{grid-template-columns:1fr 1fr!important;height:auto;max-height:none;overflow:visible}
+}
 </style>
 </head>
 <body>
-<div id="start">
+<div id="start" class="hide">
   <div class="start-box">
     <h2>¿Cómo quieres operar?</h2>
     <p>Elige el modo. Solo cambia cómo se calcula el gráfico; puedes cambiarlo luego desde la barra de herramientas.</p>
@@ -133,7 +154,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
 </div>
 <div class="app">
   <aside>
-    <div class="brand"><span class="dot" id="live"></span>Cripto en Vivo</div>
+    <div class="brand"><span class="dot" id="live"></span>CRIPTO-LIVE</div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
@@ -154,7 +175,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
     </div>
     <div id="chartWrap">
       <div class="toolbar">
-        <button class="btn mode-btn" id="modeBtn" title="Cambiar modo">Modo: —</button>
+        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">Largo plazo</button><button class="btn" data-mode="x">Corto plazo</button></span>
         <span class="sep"></span>
         <span id="tfs"></span>
         <span class="sep"></span>
@@ -174,7 +195,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span>
       </div>
       <div class="inds hide" id="inds"></div>
-      <div id="chart"><div class="legend" id="legend"></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
+      <div id="chart"><div class="legend" id="legend"></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
     </div>
     <section class="dash hide" id="dash">
       <div class="dcard gauge">
@@ -205,15 +226,15 @@ const $ = id => document.getElementById(id);
    Para definir el modo X más adelante, edita su entrada aquí. */
 const MODES = {
   medio: {
-    name: 'Medio plazo', tag: 'Por defecto',
+    name: 'Largo plazo', tag: 'Por defecto',
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Ichimoku, Supertrend, Bollinger, Perfil de volumen, Fibonacci, RSI, MACD, ADX', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
     inds: ['liq','ichimoku','supertrend','bollinger','vprofile','fib','rsi','macd','adx']
   },
   x: {
-    name: 'X', tag: '',
-    desc: 'Por definir',
+    name: 'Corto plazo', tag: '',
+    desc: 'Gráfico limpio para operaciones rápidas',
     info: ['Gráfico de velas sin cálculos extra', 'Temporalidad inicial: 15m'],
     tf: '15m', bars: 150,
     inds: []
@@ -887,7 +908,7 @@ function applyMode(m){
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind2_'+m))}catch(e){}
   active=new Set((saved||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
-  $('modeBtn').textContent='Modo: '+M.name;
+  document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   tf=M.tf;
   [...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));
   try{localStorage.setItem('cv_mode',m)}catch(e){}
@@ -901,7 +922,7 @@ function showStart(){
   $('start').classList.remove('hide');
 }
 $('cards').onclick=e=>{const c=e.target.closest('[data-m]');if(!c)return;$('start').classList.add('hide');applyMode(c.dataset.m);};
-$('modeBtn').onclick=showStart;
+$('modeSeg').onclick=e=>{const b=e.target.closest('[data-mode]');if(b&&b.dataset.mode!==mode)applyMode(b.dataset.mode);};
 
 async function loadChart(){
   $('loading').style.display='flex';
@@ -1013,7 +1034,15 @@ $('clear').onclick=()=>{(hlines[symbol]||[]).forEach(h=>h.line&&series.removePri
 $('fit').onclick=fitView;
 
 /* pantalla completa */
-$('fs').onclick=()=>{document.fullscreenElement?document.exitFullscreen():$('chartWrap').requestFullscreen();};
+function setFs(on){document.body.classList.toggle('fs-on',on);$('fsExit').hidden=!on;}
+$('fs').onclick=async()=>{
+  if(document.body.classList.contains('fs-on')){$('fsExit').click();return;}
+  const el=$('chartWrap');setFs(true);
+  try{if(el.requestFullscreen)await el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
+  try{await screen.orientation.lock('landscape')}catch(e){}
+};
+$('fsExit').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}try{screen.orientation.unlock()}catch(e){}setFs(false);};
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('fs-on')){try{screen.orientation.unlock()}catch(e){}setFs(false);}});
 
 /* atajos */
 document.addEventListener('keydown',e=>{
@@ -1109,7 +1138,7 @@ function updateTop(){
   $('px').textContent=fp(t.c);$('px').className='px '+(t.p>=0?'up':'dn');
   $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
   $('s-hi').textContent=fp(t.h);$('s-lo').textContent=fp(t.l);$('s-vol').textContent=fv(t.q);
-  document.title=`${fp(t.c)} ${symbol.replace('USDT','')} · Cripto en Vivo`;
+  document.title=`${fp(t.c)} ${symbol.replace('USDT','')} · CRIPTO-LIVE`;
 }
 function connectTickers(){
   const ws=new WebSocket(`${WS}/ws/!miniTicker@arr`);
@@ -1134,7 +1163,7 @@ $('liqView').value=liqOpts.view;$('liqView').onchange=e=>{liqOpts.view=e.target.
 $('liqSide').value=liqOpts.side;$('liqSens').value=liqOpts.sens;
 $('liqSide').onchange=e=>{liqOpts.side=e.target.value;saveLiqOpts();hmKey='';};
 $('liqSens').oninput=e=>{liqOpts.sens=+e.target.value;saveLiqOpts();hmKey='';};
-loadTickers();showStart();setInterval(renderLegend,1500);
+loadTickers();applyMode('medio');setInterval(renderLegend,1500);
 </script>
 </body>
 </html>
