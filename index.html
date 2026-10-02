@@ -199,7 +199,7 @@ body.fs-on .fsbar{display:flex}
     </div>
     <div id="chartWrap">
       <div class="toolbar">
-        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">Largo plazo</button><button class="btn" data-mode="x">Corto plazo</button></span>
+        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button></span>
         <span class="sep"></span>
         <span id="tfs"></span>
         <span class="sep"></span>
@@ -250,14 +250,14 @@ const $ = id => document.getElementById(id);
    Para definir el modo X más adelante, edita su entrada aquí. */
 const MODES = {
   medio: {
-    name: 'Largo plazo', tag: 'Por defecto',
+    name: 'TRADING', tag: 'Por defecto',
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Ichimoku, Supertrend, Bollinger, Perfil de volumen, Fibonacci, RSI, MACD, ADX', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
     inds: ['liq','ichimoku','supertrend','bollinger','vprofile','fib','rsi','macd','adx']
   },
   x: {
-    name: 'Corto plazo', tag: '',
+    name: 'SHOOTER', tag: '',
     desc: 'Gráfico limpio para operaciones rápidas',
     info: ['Gráfico de velas sin cálculos extra', 'Temporalidad inicial: 15m'],
     tf: '15m', bars: 150,
