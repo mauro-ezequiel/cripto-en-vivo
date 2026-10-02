@@ -311,16 +311,16 @@ const MODES = {
   medio: {
     name: 'TRADING', tag: 'Por defecto',
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
-    info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Ichimoku, Supertrend, Bollinger, Perfil de volumen, Fibonacci, RSI, MACD, ADX', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
+    info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','ichimoku','supertrend','bollinger','vprofile','fib','rsi','macd','adx']
+    inds: ['liq','supertrend','ema','vprofile','fib','rsi','adx','cvd']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
-    info: ['Temporalidad inicial: 5m', 'VWAP, EMA 9/21, Supertrend rápido, Bollinger, RSI 7, Stoch RSI, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
+    info: ['Temporalidad inicial: 5m', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '5m', bars: 180,
-    inds: ['liq','vwap','ema','supertrend','bollinger','rsi','stochrsi','cvd']
+    inds: ['liq','bollinger','vwap','rsi','adx','cvd']
   }
 };
 let mode = 'medio';
@@ -361,8 +361,8 @@ function setPrecision(p){const d=dec(p);series.applyOptions({priceFormat:{type:'
    Paneles inferiores: RSI, MACD, ADX/DMI.
    ===================================================================== */
 // SHOOTER: parámetros calibrados para cada temporalidad (más lentos en 1m para filtrar ruido)
-const PRM_X={'1m':{rsi:9,st:[10,3],ema:[9,21],bb:2.2},'3m':{rsi:9,st:[10,2.5],ema:[9,21],bb:2},'5m':{rsi:7,st:[10,2],ema:[9,21],bb:2},'15m':{rsi:9,st:[10,2.5],ema:[9,21],bb:2},'30m':{rsi:14,st:[10,3],ema:[20,50],bb:2}};
-const PRM={medio:{rsi:14,st:[10,3],ema:[9,21],bb:2},get x(){return PRM_X[tf]||PRM_X['5m'];}};
+const PRM_X={'1m':{rsi:7,st:[10,3],ema:[9,21],bb:2},'3m':{rsi:7,st:[10,2.5],ema:[9,21],bb:2},'5m':{rsi:7,st:[10,2],ema:[9,21],bb:2},'15m':{rsi:7,st:[10,2.5],ema:[9,21],bb:2},'30m':{rsi:7,st:[10,3],ema:[20,50],bb:2}};
+const PRM={medio:{rsi:14,st:[10,3],ema:[21,50,200],bb:2},get x(){return PRM_X[tf]||PRM_X['5m'];}};
 function setNames(){const pr=PRM[mode];IND.rsi.name=`RSI (${pr.rsi})`;IND.supertrend.name=`Supertrend (${pr.st.join(',')})`;IND.ema.name=`EMA ${pr.ema.join(' / ')}`;IND.bollinger.name=`Bollinger (20,${pr.bb})`;}
 const IND = {
   vwap:      {name:'VWAP diario ±σ',      color:'#ff9f43', pane:false},
@@ -446,7 +446,7 @@ function calcInd(full){
   if(active.has('supertrend')) C.st=calcST(...PRM[mode].st);
   if(active.has('ichimoku')) C.ichi=calcIchi();
   if(active.has('bollinger')){const [m,s]=smaStd(closes(),20);const kb=PRM[mode].bb;C.bb={m,u:m.map((x,i)=>x==null?null:x+kb*s[i]),l:m.map((x,i)=>x==null?null:x-kb*s[i])};}
-  if(active.has('ema')){const cl=closes();const pe=PRM[mode].ema;C.ema={f:emaArr(cl,pe[0]),s:emaArr(cl,pe[1])};}
+  if(active.has('ema')){const cl=closes();const pe=PRM[mode].ema;C.ema={f:emaArr(cl,pe[0]),s:emaArr(cl,pe[1]),t:pe[2]?emaArr(cl,pe[2]):null};}
   if(active.has('vwap'))C.vwap=calcVWAP();
   if(active.has('stochrsi'))C.srsi=calcStochRSI();
   if(active.has('cvd'))C.cvd=calcCVD();
@@ -614,7 +614,7 @@ function drawInd(ctx,w,h){
   if(active.has('bollinger')&&C.bb){band(C.bb.u,C.bb.l,'rgba(66,165,245,.05)','rgba(66,165,245,.05)');
     poly(C.bb.u,'rgba(66,165,245,.8)',1);poly(C.bb.l,'rgba(66,165,245,.8)',1);poly(C.bb.m,'rgba(66,165,245,.6)',1,[4,4]);}
   if(active.has('vwap')&&C.vwap){const V=C.vwap;band(V.u1,V.l1,'rgba(255,159,67,.06)','rgba(255,159,67,.06)');poly(V.u2,'rgba(255,159,67,.35)',1,[3,4]);poly(V.l2,'rgba(255,159,67,.35)',1,[3,4]);poly(V.u1,'rgba(255,159,67,.55)',1);poly(V.l1,'rgba(255,159,67,.55)',1);poly(V.v,'#ff9f43',2);}
-  if(active.has('ema')&&C.ema){poly(C.ema.f,'#4dd0e1',1.6);poly(C.ema.s,'#ab47bc',1.6);}
+  if(active.has('ema')&&C.ema){poly(C.ema.f,'#4dd0e1',1.6);poly(C.ema.s,'#ab47bc',1.6);if(C.ema.t)poly(C.ema.t,'#ffb74d',2);}
   if(active.has('supertrend')&&C.st){const {st,dir}=C.st;ctx.lineWidth=2;
     for(let i=Math.max(from,1);i<to&&i<st.length;i++){if(st[i]==null||st[i-1]==null||dir[i]!==dir[i-1])continue;
       const x1=X(i-1),x2=X(i);if(x1==null||x2==null)continue;ctx.strokeStyle=dir[i]===1?'#26a69a':'#ef5350';
@@ -1023,7 +1023,7 @@ function renderChips(){
 }
 $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
   active.has(k)?active.delete(k):active.add(k);
-  try{localStorage.setItem('cv_ind3_'+mode,JSON.stringify([...active]))}catch(e){}
+  try{localStorage.setItem('cv_ind4_'+mode,JSON.stringify([...active]))}catch(e){}
   renderChips();layout();calcInd(true);hmKey='';};
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
@@ -1031,12 +1031,12 @@ function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalR
 function applyMode(m){
   mode=m;const M=MODES[m];
   setNames();
-  let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind3_'+m))}catch(e){}
+  let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
   active=new Set((saved||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   tf=M.tf;
-  [...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));
+  renderTfs();
   try{localStorage.setItem('cv_mode',m)}catch(e){}
   loadChart();
 }
@@ -1102,7 +1102,9 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
 });
 
 /* ---------- temporalidades ---------- */
-$('tfs').innerHTML=TFS.map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');
+const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m']};
+function renderTfs(){$('tfs').innerHTML=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');}
+renderTfs();
 $('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dataset.tf;
   [...$('tfs').children].forEach(x=>x.classList.toggle('on',x===b));loadChart();};
 
@@ -1446,7 +1448,7 @@ const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX'
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[]},scanBusy=false,lastScan={medio:0,x:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
-for(const k of ['medio','x'])SIG[k]=SIG[k].filter(x=>x.setup); // descarta señales del sistema anterior (sin calibrar)
+for(const k of ['medio','x'])SIG[k]=SIG[k].filter(x=>['mom-a','mom-b','sh-a+','sh-a','sh-b'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];
@@ -1506,28 +1508,54 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'tend-fuerte':{p:57,n:946,txt:'tendencia fuerte (ADX ≥ 25)'},'tend-debil':{p:54,n:231,txt:'tendencia con ADX bajo'}},
-           x:{'mr-ext':{p:58,n:179,txt:'rebote con RSI extremo'},'mr-htf':{p:63,n:68,txt:'rebote a favor de la temporalidad mayor'}}};
-const MINCERT={medio:55,x:58};
+const CAL={medio:{'mom-a':{p:65,n:364,txt:'impulso con tendencia, volumen y vela fuerte'},'mom-b':{p:61,n:71,txt:'impulso con tendencia y vela fuerte'}},
+           x:{'sh-a+':{p:72,n:56,txt:'rebote en tendencia fuerte sin pánico de volumen'},'sh-a':{p:60,n:145,txt:'rebote en tendencia fuerte'},'sh-b':{p:60,n:298,txt:'rebote sin pánico de volumen'}}};
+const MINCERT={medio:60,x:60};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
   const w=mine.filter(o=>o.hit>0).length,n=mine.length,k=Math.min(c.n,60);
   return {p:Math.round((c.p/100*k+w)/(k+n)*100),n:c.n+n,mine:n};
 }
+/* tendencia de la temporalidad mayor, solo con velas cerradas */
+function htfTrend(hc){const h=hc.slice(0,-1),cl=h.map(b=>b.close),e=emaArr(cl,21),i=h.length-1;if(i<4||e[i]==null||e[i-3]==null)return 0;return (cl[i]>e[i]?.5:-.5)+(e[i]>e[i-3]?.5:-.5);}
+function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDelta(cc[j]);vv+=cc[j].v;}for(let j=Math.max(0,i-19);j<=i;j++)vs+=cc[j].v;
+  const b=cc[i];return {flow:vv?fl/vv:0,vr:b.v/((vs/Math.min(i+1,20))||1),body:(b.close-b.open)/((b.high-b.low)||1)};}
+/* SHOOTER v3 (5m): rebote desde el extremo de Bollinger (20,2) con RSI 7 ≤30/≥70, SOLO a favor de la tendencia de 15m.
+   Backtest 42 días × 8 criptos: con ADX ≥30 y sin pico de volumen 75 % (56 casos); ADX ≥25 60 %; ADX <25 sin pico de volumen 60 %.
+   Con pico de volumen (pánico) o contra la tendencia de 15m se descarta (≤55 %). */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
     const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i];
-    const [bm,bs]=smaStd(cl,20),lo=bm[i]-2*bs[i],up=bm[i]+2*bs[i],r7=calcRSI(7)[i],adx=calcADX().adx[i];
-    const hcl=hc.map(b=>b.close),he=emaArr(hcl,21),hi=hc.length-1,htf=(hcl[hi]>he[hi]?.5:-.5)+(he[hi]>he[hi-3]?.5:-.5);
-    let dir=0;if(cb<lo&&r7<25)dir=1;else if(cb>up&&r7>75)dir=-1;
-    const out={keep:true,score:dir,dir,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
-    if(!dir)return out;
-    const ext=dir>0?r7<15:r7>85;
-    if(ext)out.setup='mr-ext';else if(Math.sign(htf)===dir)out.setup='mr-htf';else{out.dir=0;return out;}
-    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0)+(ext?' (extremo)':''));
-    if(Math.sign(htf)===dir)out.reasons.push('temporalidad 15m a favor');
+    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0,L=lastBarStats(cc,i);
+    const out={keep:true,score:0,dir:0,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
+    let dir=0;if(z<-2&&r7<30)dir=1;else if(z>2&&r7>70)dir=-1;
+    if(!dir||Math.sign(htf)!==dir||adx==null)return out;
+    if(adx>=30&&L.vr<1.5)out.setup='sh-a+';else if(adx>=25)out.setup='sh-a';else if(L.vr<1.5)out.setup='sh-b';else return out;
+    out.dir=dir;out.score=dir;
+    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','ADX '+adx.toFixed(0)+(L.vr<1.5?' · sin pánico de volumen':''));
+    return out;
+  });
+}
+/* TRADING v3 (4H): impulso a favor de la tendencia.
+   Tendencia = Supertrend (10,3) + EMA 21 sobre EMA 50 + precio sobre EMA 200 (al revés para short) + tendencia diaria a favor + ADX ≥25.
+   Entrada solo con impulso: RSI 14 ≥70 (≤30 en short) y vela fuerte (cuerpo >50 % del rango).
+   Backtest ~11 meses × 12 criptos: con flujo comprador a favor 65 % (364 casos, estable en las dos mitades); sin flujo 61 %.
+   Los retrocesos y la reversión a la media en 4H dieron 42–52 %: se descartan. */
+function evalTrading(cs,hc){
+  const cc=cs.slice(0,-1);
+  return withCandles(cc,()=>{
+    const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i];
+    const st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],adx=calcADX().adx[i],r14=calcRSI(14)[i],htf=htfTrend(hc),L=lastBarStats(cc,i);
+    const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null};
+    if(e200==null||adx==null||r14==null)return out;
+    const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
+    if(!dir||Math.sign(htf)!==dir||adx<25)return out;
+    if(!(dir>0?r14>=70:r14<=30)||dir*L.body<=.5)return out;
+    out.setup=dir*L.flow>0?'mom-a':'mom-b';out.dir=dir;out.score=dir;
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','tendencia diaria a favor','ADX '+adx.toFixed(0),'RSI 14 en '+r14.toFixed(0)+' y vela fuerte');
+    if(out.setup==='mom-a')out.reasons.push(dir>0?'compradores agresivos':'vendedores agresivos');
     return out;
   });
 }
@@ -1541,10 +1569,7 @@ async function futData(m,syms){
 }
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||atrP>cfg.maxAtr)return null;
-  let dir,setup;
-  if(m==='x'){dir=e.dir;setup=e.setup;if(!dir||!setup)return null;}
-  else{dir=e.score>0?1:-1;if(Math.abs(e.score)<cfg.thr||Math.sign(e.htf)!==dir||e.adx==null)return null;
-    if(e.adx>=25)setup='tend-fuerte';else if(e.adx<20)setup='tend-debil';else return null;}
+  const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
   const reach=atrP*Math.sqrt(cfg.H)*1.3;if(reach<cfg.min)return null;
   let slD,t1;
   if(m==='x'){slD=Math.min(.035,Math.max(2.5*atrP,cfg.min*.8));t1=cfg.min;}
@@ -1568,7 +1593,7 @@ async function scanSignals(){
     const fresh=[],U=universe(m),fd=await safe(futData(m,U));
     for(const s of U){
       try{const [cs,hc]=await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
-        const e=m==='x'?evalShooter(cs,hc):evalCoin(m,cs,hc),ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
+        const e=m==='x'?evalShooter(cs,hc):evalTrading(cs,hc),ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
         if(ex){ex.score=e.score;if(!e.keep&&(Math.sign(e.score)!==ex.dir||Math.abs(e.score)<.2))lose(ex,'los indicadores ya no confirman la dirección');}
         else{const sg=buildSignalV2(m,s,e,fd);if(sg)fresh.push(sg);}
       }catch(err){}
