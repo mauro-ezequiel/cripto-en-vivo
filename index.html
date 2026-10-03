@@ -2155,7 +2155,7 @@ async function loadChartStk(){
   try{const b=await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
     candles=aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
     series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();restoreLines();
-    const q=STK[sym],lb=b.at(-1);if(q&&lb&&lb.date===artDay()){q.h=Math.max(q.h||0,lb.high);q.l=Math.min(q.l||Infinity,lb.low);}updateTop();
+    const q=STK[sym],lb=b.at(-1);if(q&&lb&&(lb.date===artDay()||!mktOpen())&&Math.abs(lb.close/q.c-1)<.02){q.h=Math.max(lb.date===artDay()?q.h||0:0,lb.high);q.l=Math.min(lb.date===artDay()?q.l||Infinity:Infinity,lb.low);}updateTop();
   }catch(e){if(id===stkLoadId)$('loading').textContent='No se pudo cargar el historial de '+sym;return;}
   $('loading').style.display='none';
   loadStkOptions(sym);loadCoNews(sym);if(!STKH.SPY)safe(stkHist('SPY'));
@@ -2163,30 +2163,32 @@ async function loadChartStk(){
 function stkLiveBar(){if(mode!=='a'||!STKH[symbol]||!candles.length)return;const b=aggBars(withLive(symbol,STKH[symbol].b),tf),last=b.at(-1),cl=candles.at(-1);
   if(b.length===candles.length&&last.time===cl.time){candles[candles.length-1]=last;series.update(last);volume.update(volBar(last));calcInd(false);}
   else if(b.length===candles.length+1&&last.time>cl.time){candles.push(last);series.update(last);volume.update(volBar(last));stkLiqCompute();calcInd(false);}}
-/* zonas de liquidez: stops acumulados debajo de mínimos (longs) y encima de máximos (shorts) que el precio todavía no barrió */
+/* zonas de liquidez para acciones (mismo modelo que el mapa de cripto, adaptado):
+   en cada vela se abren posiciones compradoras y vendedoras (según dónde cerró la vela) y sus stops quedan
+   a 1, 1,6 y 2,5 ATR; también se suman los stops debajo de mínimos y encima de máximos de swing.
+   Cuando el precio pasa por un nivel, esos stops se ejecutan y la zona desaparece. */
 function stkLiqCompute(){
-  const n=candles.length;if(n<30){LIQ=null;return;}
-  const atr=wilder(trArr(),14)[n-1]||candles[n-1].close*.02,c=candles[n-1].close,piv=[],L=3;
-  for(let i=Math.max(L,n-300);i<n-L;i++){const b=candles[i];let H=true,Lo=true;
-    for(let j=i-L;j<=i+L;j++){if(j===i)continue;if(candles[j].high>=b.high)H=false;if(candles[j].low<=b.low)Lo=false;}
-    const w=(b.v||1)*b.close*Math.exp(-(n-1-i)/150);
-    if(H){let ok=true;for(let j=i+1;j<n;j++)if(candles[j].high>b.high){ok=false;break;}if(ok)piv.push({side:'S',p:b.high,w,i});}
-    if(Lo){let ok=true;for(let j=i+1;j<n;j++)if(candles[j].low<b.low){ok=false;break;}if(ok)piv.push({side:'L',p:b.low,w,i});}}
-  const zones=[];
-  for(const q of piv.sort((a,b)=>a.p-b.p)){const z=zones.find(z=>z.side===q.side&&Math.abs(z.p-q.p)<=atr*.6);
-    if(z){z.p=(z.p*z.w+q.p*q.w)/(z.w+q.w);z.w+=q.w;z.n++;z.i=Math.min(z.i,q.i);}else zones.push({...q,n:1});}
-  for(const z of zones)z.p=z.side==='L'?z.p-atr*.15:z.p+atr*.15;
-  const near=zones.filter(z=>Math.abs(z.p/c-1)<.3);
-  const longs=near.filter(z=>z.side==='L'&&z.p<c).sort((a,b)=>b.w-a.w),shorts=near.filter(z=>z.side==='S'&&z.p>c).sort((a,b)=>b.w-a.w);
-  const wL=longs.reduce((a,z)=>a+z.w,0),wS=shorts.reduce((a,z)=>a+z.w,0);
-  LIQ={stk:true,atr,zones:near,cl:{wL,wS,tL:wL,tS:wS,longs:longs.map(z=>({p:z.p,usd:z.w})),shorts:shorts.map(z=>({p:z.p,usd:z.w}))}};
+  const n=candles.length;if(n<40){LIQ=null;return;}
+  const ATR=wilder(trArr(),14),atr=ATR[n-1]||candles[n-1].close*.02,c=candles[n-1].close,step=atr*.25,B=new Map();
+  const minA=Array(n+1).fill(Infinity),maxA=Array(n+1).fill(-Infinity);
+  for(let i=n-1;i>=0;i--){minA[i]=Math.min(minA[i+1],candles[i].low);maxA[i]=Math.max(maxA[i+1],candles[i].high);}
+  const put=(side,p,w,i)=>{const k=side+Math.round(p/step);let o=B.get(k);if(!o){o={side,p:Math.round(p/step)*step,w:0,i};B.set(k,o);}o.w+=w;o.i=Math.min(o.i,i);};
+  for(let i=Math.max(15,n-250);i<n;i++){const b=candles[i],a=ATR[i]||atr,rec=Math.exp(-(n-1-i)/120),tb=b.tb??b.v/2,buy=tb*b.close*rec,sell=(b.v-tb)*b.close*rec;
+    for(const [k,w] of [[1,.4],[1.6,.35],[2.5,.25]]){const ls=b.close-k*a,ss=b.close+k*a;if(minA[i+1]>ls)put('L',ls,buy*w,i);if(maxA[i+1]<ss)put('S',ss,sell*w,i);}
+    if(i>=3&&i<n-3){let H=true,Lo=true;for(let j=i-3;j<=i+3;j++){if(j===i)continue;if(candles[j].high>=b.high)H=false;if(candles[j].low<=b.low)Lo=false;}
+      if(H&&maxA[i+1]<b.high+.15*a)put('S',b.high+.15*a,b.v*b.close*rec,i);
+      if(Lo&&minA[i+1]>b.low-.15*a)put('L',b.low-.15*a,b.v*b.close*rec,i);}}
+  const bins=[...B.values()].filter(z=>Math.abs(z.p/c-1)<.3&&(z.side==='L'?z.p<c:z.p>c));
+  const peaks=sd=>{const L=bins.filter(z=>z.side===sd).sort((x,y)=>y.w-x.w),out=[];for(const z of L){if(out.every(o=>Math.abs(o.p-z.p)>=atr))out.push(z);if(out.length>=4)break;}return out;};
+  const longs=peaks('L'),shorts=peaks('S'),wL=bins.filter(z=>z.side==='L').reduce((x,z)=>x+z.w,0),wS=bins.filter(z=>z.side==='S').reduce((x,z)=>x+z.w,0);
+  LIQ={stk:true,atr,step,zones:bins,peaks:[...longs,...shorts],cl:{wL,wS,tL:wL,tS:wS,longs:longs.map(z=>({p:z.p,usd:z.w})),shorts:shorts.map(z=>({p:z.p,usd:z.w}))}};
 }
-function drawStkLiq(ctx,o){if(!LIQ||!LIQ.stk)return;const {paneW,X,Y}=o,a=LIQ.atr,max=Math.max(1,...LIQ.zones.map(z=>z.w));
-  ctx.font='600 10px system-ui,sans-serif';ctx.textBaseline='middle';
-  for(const z of LIQ.zones){const y1=Y(z.p+a*.12),y2=Y(z.p-a*.12);if(y1==null||y2==null)continue;const x0=X(z.i),xs=x0==null?0:Math.max(0,x0);
-    const r=z.w/max,al=.1+.42*Math.sqrt(r),col=z.side==='L'?'0,214,163':'255,61,113';
-    ctx.fillStyle=`rgba(${col},${al.toFixed(2)})`;ctx.fillRect(xs,Math.min(y1,y2),Math.max(0,paneW-xs),Math.max(2,Math.abs(y2-y1)));
-    if(r>.2){ctx.fillStyle=`rgba(${col},.95)`;ctx.textAlign='right';ctx.fillText(`${z.side==='L'?'Liquidez longs (stops)':'Liquidez shorts (stops)'} ${fp(z.p)}`,paneW-6,(y1+y2)/2);}}
+function drawStkLiq(ctx,o){if(!LIQ||!LIQ.stk)return;const {paneW,X,Y}=o,h=LIQ.step/2,max=Math.max(1,...LIQ.zones.map(z=>z.w));
+  for(const z of LIQ.zones){const y1=Y(z.p+h),y2=Y(z.p-h);if(y1==null||y2==null)continue;const x0=X(z.i),xs=x0==null?0:Math.max(0,x0),r=z.w/max;if(r<.04)continue;
+    ctx.fillStyle=`rgba(${z.side==='L'?'0,214,163':'255,61,113'},${(.05+.5*Math.sqrt(r)).toFixed(2)})`;ctx.fillRect(xs,Math.min(y1,y2),Math.max(0,paneW-xs),Math.max(1,Math.abs(y2-y1)));}
+  ctx.font='600 10px system-ui,sans-serif';ctx.textBaseline='middle';ctx.textAlign='right';
+  for(const z of LIQ.peaks){if(z.w/max<.15)continue;const y=Y(z.p);if(y==null)continue;ctx.fillStyle=z.side==='L'?'#00d6a3':'#ff3d71';
+    ctx.fillText(`${z.side==='L'?'Liquidez longs (stops)':'Liquidez shorts (stops)'} ${fp(z.p)}`,paneW-6,y);}
   if(STKOPT&&STKOPT.sym===symbol)for(const w of STKOPT.walls){const y=Y(w.p);if(y==null)continue;
     ctx.strokeStyle=w.type==='call'?'#ff9f43':'#4dd0e1';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(paneW,y);ctx.stroke();ctx.setLineDash([]);
     ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(`${w.type==='call'?'Muro de calls':'Muro de puts'} ${fp(w.p)} · ${fv(w.oi)} contratos`,6,y-8);}
@@ -2239,7 +2241,7 @@ function renderStkMarket(){const el=$('market'),q=STK[symbol];if(!q){el.innerHTM
     <div class="exr"><span>Spread</span><span></span><span>${spr!=null?spr.toFixed(2)+' %':'—'}</span></div>
     <div class="exr"><span>Volumen</span><span class="mut">${fv(q.v)} nominales · ${fv(q.ops)} operaciones</span><span>$${fv(q.q)}</span></div>
     <div class="exr"><span>Amplitud</span><span class="exb"><i class="up" style="width:${up+dn?up/(up+dn)*100:0}%"></i></span><span>${up}▲ ${dn}▼</span></div>
-    ${cl?`<div class="mh" style="margin-top:8px">Zonas de liquidez (stops acumulados, ±30 %)</div>
+    ${cl?`<div class="mh" style="margin-top:8px">Zonas de liquidez (stops sin ejecutar, ±30 %)</div>
       <div class="exr"><span class="up">Longs abajo</span><span class="mut">${cl.longs.slice(0,2).map(z=>fp(z.p)).join(' · ')||'—'}</span><span>${tot?Math.round(cl.wL/tot*100):0} %</span></div>
       <div class="exr"><span class="dn">Shorts arriba</span><span class="mut">${cl.shorts.slice(0,2).map(z=>fp(z.p)).join(' · ')||'—'}</span><span>${tot?Math.round(cl.wS/tot*100):0} %</span></div>`:''}
     ${o&&!o.none?`<div class="mh" style="margin-top:8px">Opciones de ${o.us} en EE. UU. · vencimientos ${o.exp.map(e=>e.slice(5)).join(', ')}</div>
