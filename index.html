@@ -309,6 +309,9 @@ body.fs-on .fsbar{display:flex}
 .cu-f{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap}
 .cu-f button{border:0;border-radius:8px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer}
 .cu-f .pri{background:var(--acc);color:#fff}.cu-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.ind-tog{display:none;align-items:center;gap:6px;width:100%;justify-content:space-between;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 12px;font-size:13px;font-weight:600;cursor:pointer}
+.ind-tog i{font-style:normal;color:var(--mut);transition:transform .15s}.inds.open .ind-tog i{transform:rotate(180deg)}
+@media (max-width:800px){.ind-tog{display:flex}.inds .lbl{display:none}.inds:not(.open) .chip{display:none}}
 </style>
 </head>
 <body>
@@ -1050,17 +1053,18 @@ function drawZones(ctx,o,profX){
   }
   // etiquetas: primero las más grandes, sin solaparse
   const used=[];
+  const big={};for(const z of zs)if(!z.swept&&z._box&&(!big[z.side]||z.usd>big[z.side].usd))big[z.side]=z;
   for(const z of zs.slice().sort((a,b)=>(a.swept?1:0)-(b.swept?1:0)||b.usd-a.usd)){
-    if(!z._box)continue;const [x0,x1,yt,yb,g]=z._box;z._box=null;
+    if(!z._box)continue;const [x0,x1,yt,yb,g]=z._box;z._box=null;if(big[z.side]!==z)continue;
     const b=candles[z.i0],buy=b.tb||0,sell=(b.v||0)-buy,d=buy-sell;
-    const t1=z.side==='L'?'LONG':'SHORT',t2=z.swept?`✕ barrida · ${fusd(z.usd)}`:`${fusd(z.usd)} a liquidar · ${fp(z.p)}`,
+    const t1=z.side==='L'?'LONG':'SHORT',t2=`${fusd(z.usd)} · ${fp(z.p)}`,
           t3=`Compra ${fnum(buy)} · Venta ${fnum(sell)} · Δ ${d>=0?'+':''}${fnum(d)}`;
     const ty=yb-yt>=15?(yt+yb)/2:yt-9;
     if(used.some(u=>Math.abs(u-ty)<15))continue;
     if(z.swept&&x1-x0<120)continue;
     ctx.font='700 11px system-ui,sans-serif';const w1=ctx.measureText(t1).width;
     ctx.font='11px system-ui,sans-serif';
-    let txt=`${t2} · ${t3}`;if(ctx.measureText(txt).width+w1+24>profX*.7)txt=t2;
+    let txt=t2;
     const tw=w1+18+ctx.measureText(txt).width,lx=Math.max(4,Math.min(x0+6,profX-tw-6));
     used.push(ty);
     if(lx<x0+6||x1-x0<tw+12){ctx.fillStyle='rgba(15,17,21,.82)';ctx.fillRect(lx-4,ty-8,tw+8,16);}
@@ -1125,8 +1129,8 @@ function drawLiq(ctx,o){
       ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(profX,y);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
       const s=`${txt} ${fp(z.p)} · ${fusd(z.usd)}`,tw=ctx.measureText(s).width+12,tx=profX-tw-6;
       ctx.fillStyle=col;rrect(ctx,tx,y-9,tw,18,4);ctx.fill();ctx.fillStyle='#0f1115';ctx.textAlign='left';ctx.fillText(s,tx+6,y+.5);};
-    if(liqOpts.side!=='S')cl.longs.forEach((z,j)=>tag(z,'#00d6a3','▼ Liq. LONGS',j===0));
-    if(liqOpts.side!=='L')cl.shorts.forEach((z,j)=>tag(z,'#ff3d71','▲ Liq. SHORTS',j===0));
+    if(liqOpts.side!=='S')cl.longs.slice(0,1).forEach((z,j)=>tag(z,'#00d6a3','▼ Liq. LONGS',j===0));
+    if(liqOpts.side!=='L')cl.shorts.slice(0,1).forEach((z,j)=>tag(z,'#ff3d71','▲ Liq. SHORTS',j===0));
   }
   // burbujas de liquidaciones reales
   for(const ev of liqEvents){
@@ -1159,7 +1163,7 @@ chart.subscribeCrosshairMove(p=>{
 function renderChips(){
   const M=MODES[mode];
   $('inds').classList.toggle('hide',!M.inds.length);
-  $('inds').innerHTML='<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
+  $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
   $('fsInd').innerHTML=M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
   $('fsIndBtn').hidden=!M.inds.length;
 }
@@ -2187,11 +2191,11 @@ function drawStkLiq(ctx,o){if(!LIQ||!LIQ.stk)return;const {paneW,X,Y}=o,h=LIQ.st
   for(const z of LIQ.zones){const y1=Y(z.p+h),y2=Y(z.p-h);if(y1==null||y2==null)continue;const x0=X(z.i),xs=x0==null?0:Math.max(0,x0),r=z.w/max;if(r<.04)continue;
     ctx.fillStyle=`rgba(${z.side==='L'?'0,214,163':'255,61,113'},${(.05+.5*Math.sqrt(r)).toFixed(2)})`;ctx.fillRect(xs,Math.min(y1,y2),Math.max(0,paneW-xs),Math.max(1,Math.abs(y2-y1)));}
   ctx.font='600 10px system-ui,sans-serif';ctx.textBaseline='middle';ctx.textAlign='right';
-  for(const z of LIQ.peaks){if(z.w/max<.15)continue;const y=Y(z.p);if(y==null)continue;ctx.fillStyle=z.side==='L'?'#00d6a3':'#ff3d71';
-    ctx.fillText(`${z.side==='L'?'Liquidez longs (stops)':'Liquidez shorts (stops)'} ${fp(z.p)}`,paneW-6,y);}
-  if(STKOPT&&STKOPT.sym===symbol)for(const w of STKOPT.walls){const y=Y(w.p);if(y==null)continue;
+  for(const sd of ['L','S']){const z=LIQ.peaks.find(x=>x.side===sd);if(!z)continue;const y=Y(z.p);if(y==null)continue;ctx.fillStyle=sd==='L'?'#00d6a3':'#ff3d71';
+    ctx.fillText(`${sd==='L'?'▼ Liq. longs':'▲ Liq. shorts'} ${fp(z.p)}`,paneW-6,y);}
+  if(STKOPT&&STKOPT.sym===symbol)for(const w of STKOPT.walls){const y=Y(w.p);if(y==null)continue;const top=STKOPT.walls.filter(x=>x.type===w.type).every(x=>x.oi<=w.oi);
     ctx.strokeStyle=w.type==='call'?'#ff9f43':'#4dd0e1';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(paneW,y);ctx.stroke();ctx.setLineDash([]);
-    ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(`${w.type==='call'?'Muro de calls':'Muro de puts'} ${fp(w.p)} · ${fv(w.oi)} contratos`,6,y-8);}
+    if(top){ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(`${w.type==='call'?'Calls':'Puts'} ${fp(w.p)}`,6,y-8);}}
 }
 /* opciones de EE. UU.: muros de interés abierto pasados a pesos con el precio del CEDEAR o de la acción */
 async function usQuotes(){if(USQ&&Date.now()-USQt<10*6e4)return USQ;const [u,a]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000))]);
@@ -2304,6 +2308,7 @@ function switchMarket(toA){
   STKOPT=null;NEWS.items=[];NTOP={items:[],since:0};renderNews();setTimeout(loadNews,50);
   renderList();updateTop();
 }
+document.addEventListener('click',e=>{if(e.target.closest('#indTog'))$('inds').classList.toggle('open');});
 </script>
 </body>
 </html>
