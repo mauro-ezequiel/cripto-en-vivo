@@ -239,6 +239,46 @@ body.fs-on .fsbar{display:flex}
 .ntf button{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:999px;padding:4px 10px;font-size:11px;font-weight:600;cursor:pointer}
 .ntf button.on{border-color:var(--up);color:var(--up)}
 .acct-btn.hide{display:none}
+.hamb{background:none;border:0;color:var(--txt);font-size:20px;line-height:1;padding:2px 6px 2px 0;cursor:pointer}
+.drw{position:fixed;inset:0;z-index:9000;pointer-events:none}
+.drw-bg{position:absolute;inset:0;background:rgba(0,0,0,.55);opacity:0;transition:opacity .2s}
+.drw-p{position:absolute;top:0;left:0;bottom:0;width:min(340px,88vw);background:var(--panel);border-right:1px solid var(--line);transform:translateX(-102%);transition:transform .22s ease;overflow-y:auto;padding:14px 14px 40px;display:flex;flex-direction:column;gap:18px;box-shadow:8px 0 30px rgba(0,0,0,.45)}
+.drw.open{pointer-events:auto}.drw.open .drw-bg{opacity:1}.drw.open .drw-p{transform:none}
+@media (prefers-reduced-motion:reduce){.drw-p,.drw-bg{transition:none}}
+.drw h4{margin:0 0 8px;font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--mut)}
+.drw-h{display:flex;align-items:center;justify-content:space-between;font-weight:700;font-size:16px}
+.drw-x{background:none;border:0;color:var(--mut);font-size:22px;cursor:pointer;padding:4px 8px}
+.mcard{display:block;width:100%;text-align:left;background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px;color:var(--txt);cursor:pointer;font:inherit}
+.mcard b{display:block;font-size:14px;margin-bottom:2px}.mcard small{color:var(--mut);font-size:11px}
+.mcard.on{border-color:var(--acc);box-shadow:inset 3px 0 0 var(--acc)}
+.tg{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:10px 0;border-bottom:1px solid var(--line);font-size:13px}
+.tg small{display:block;color:var(--mut);font-size:11px}
+.sw{position:relative;width:42px;height:24px;flex-shrink:0;border-radius:999px;background:#2a303c;border:0;cursor:pointer;transition:background .15s}
+.sw:after{content:"";position:absolute;top:3px;left:3px;width:18px;height:18px;border-radius:50%;background:#fff;transition:transform .15s}
+.sw.on{background:var(--up)}.sw.on:after{transform:translateX(18px)}
+.alr-d{margin-top:6px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
+.alr-d summary{list-style:none;display:flex;align-items:center;gap:8px;padding:8px 10px;cursor:pointer;font-size:12px;font-weight:600}
+.alr-d summary::-webkit-details-marker{display:none}
+.alr-d summary:before{content:'▸';color:var(--mut)}.alr-d[open] summary:before{content:'▾'}
+.alr-d .plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
+.alr-in{padding:0 10px 10px;display:flex;flex-direction:column;gap:6px}
+.alr{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px}
+.alr b{font-size:13px}.alr small{color:var(--mut)}
+.alr .del{grid-row:1/3;grid-column:2;align-self:center;background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer;padding:4px}
+.alr.done{border-color:var(--up)}.alr.done small{color:var(--up)}
+.alr-f{display:flex;flex-direction:column;gap:6px;background:var(--panel);border:1px solid var(--acc);border-radius:8px;padding:10px}
+.alr-f input{background:var(--bg);border:1px solid var(--line);border-radius:6px;color:var(--txt);padding:9px 10px;font-size:15px;width:100%;box-sizing:border-box}
+.alr-f .row{display:flex;gap:6px;justify-content:flex-end}
+.alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
+.alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
+.alr-f .err{color:var(--dn);font-size:12px}
+.hrow{cursor:pointer;border-radius:6px}.hrow:hover{background:#1a1f29}
+.hdet{background:#141922;border:1px solid var(--line);border-radius:8px;margin:4px 0 10px;padding:10px 12px;font-size:12px}
+.hdet .st{font-weight:800;margin-bottom:8px;font-size:13px}
+.hdet .g{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 14px;font-variant-numeric:tabular-nums}
+.hdet .g>span{color:var(--mut)}
+.hdet .rs{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}.hdet .rs i{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--mut)}
+.hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -251,7 +291,7 @@ body.fs-on .fsbar{display:flex}
 </div>
 <div class="app">
   <aside>
-    <div class="brand"><span class="dot" id="live"></span>CRIPTO-LIVE<button class="acct-btn hide" id="instBtn" title="Instalar CRIPTO-LIVE en este dispositivo">⬇ Instalar app</button><span class="acct" id="acct"></span></div>
+    <div class="brand"><button class="hamb" id="hamb" aria-label="Abrir menú" title="Menú">☰</button><span class="dot" id="live"></span>CRIPTO-LIVE<button class="acct-btn hide" id="instBtn" title="Instalar CRIPTO-LIVE en este dispositivo">⬇ Instalar app</button><span class="acct" id="acct"></span></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
@@ -285,6 +325,8 @@ body.fs-on .fsbar{display:flex}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>Línea</button>
         <button class="btn" id="clear" title="Borrar todas las líneas">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Borrar</button>
+        <button class="btn" id="alertBtn" title="Crear una alerta de precio para esta moneda">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerta</button>
         <span class="sep"></span>
         <button class="btn" id="fit" title="Restablecer zoom">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Reset</button>
@@ -315,6 +357,15 @@ body.fs-on .fsbar{display:flex}
   </main>
 </div>
 
+<div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
+  <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
+  <section><h4>Modo de inversión</h4><div id="drwModes">
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 5 % o más · simulación 300 USD × 4</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 1 a 30 min · movimientos de 0,5 % o más · simulación 10 USD × 15</small></button></div></section>
+  <section><h4>Notificaciones</h4><div id="drwNtf"></div>
+    <details class="alr-d" id="alrD" open><summary>Mis alertas de precio <span class="mut" id="alrN"></span><button class="plus" id="alrPlus" title="Nueva alerta" aria-label="Nueva alerta">+</button></summary>
+      <div class="alr-in"><div id="alrForm"></div><div id="alrBox"></div></div></details></section>
+</div></div>
 <script>
 const API = 'https://api.binance.com/api/v3';
 const WS = 'wss://stream.binance.com:9443';
@@ -1352,7 +1403,7 @@ try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
 function cloudSave(){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{
-  fbDb.collection('users').doc(fbUser.uid).set({lines:readLocalLines(),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},800);}
+  fbDb.collection('users').doc(fbUser.uid).set({lines:readLocalLines(),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
@@ -1372,7 +1423,7 @@ function initCloud(){
       const local=readLocalLines(),merged={...local};
       for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];
       try{localStorage.setItem('cv_lines',JSON.stringify(merged))}catch(e){}
-      (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
+      (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
     }catch(e){console.warn('No se pudo leer la nube',e);}
     cloudReady=true;restoreLines();renderList();cloudSave();});
 }
@@ -1677,7 +1728,7 @@ function addSig(m,f){
   SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev;
   const fail=m==='medio'?f.entry*(1-f.dir*c.maxLoss/not):f.sl;
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,conf:f.conf,t:f.t,last:f.t,state:'open',hit:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
 const pnlAt=(o,px)=>{const c=SIM[o.m];return c.margin*c.lev*o.dir*(px/o.entry-1);};
@@ -1718,6 +1769,27 @@ function liveRes(s,p){
   const v=pnlAt({m:s.m,dir:s.dir,entry:s.entry},p),pct=s.dir*(p/s.entry-1)*100;
   return `<span class="${v>=0?'up':'dn'}">${fusd2(v)} (${fpct(pct)})</span>${o&&o.hit?` · ${o.hit}/3`:''}`;
 }
+var HOPEN=window.HOPEN||(window.HOPEN=new Set());
+function opDetail(o){
+  const p=tickers[o.sym]?.c,open=o.state==='open',L=o.dir>0,cfg=SIGCFG[o.m];
+  const px=open?p:o.px,pnl=open?(p?pnlAt(o,p):0):o.pnl,pct=px?o.dir*(px/o.entry-1)*100:0;
+  const st=open?`<span class="live">EN VIVO</span> <span class="up">Operación activa${o.hit?' · ya tocó el '+TGT[o.hit-1]:''}</span>`
+    :o.state==='win'?`<span class="up">✓ Terminada · ganada (${o.hit}/3)</span>`:o.state==='fail'?`<span class="dn">✕ Terminada · liquidada (0/3)</span>`:`<span class="neu">• Terminada · ${esc(o.why||'cerrada')}</span>`;
+  const T=[o.tp0,o.tp1,o.tp2],tg=(i,n)=>T[i]?`<span>${n}</span><b class="${o.hit>i?'up':''}">${fp(T[i])} (${fpct((T[i]/o.entry-1)*100)})${o.hit>i?' ✓':''}</b>`:'';
+  return `<div class="hdet"><div class="st">${st}</div><div class="g">
+    <span>Modo</span><b>${cfg.name} · ${L?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}/USDT</b>
+    ${o.setup&&CAL[o.m][o.setup]?`<span>Tipo de señal</span><b>${CAL[o.m][o.setup].txt}</b>`:''}
+    ${o.conf?`<span>Acierto hist.</span><b>${o.conf} %</b>`:''}
+    <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
+    <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
+    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo corto')}${tg(1,'Objetivo 1')}${tg(2,'Objetivo 2')}
+    <span>${o.m==='medio'?'Liquidación':'Stop'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
+    <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
+    <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
+    <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
+  </div>${o.reasons&&o.reasons.length?`<div class="rs">${o.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>`:''}
+  <button class="go" data-go="${o.sym}" data-tf="${cfg.tf}" data-m="${o.m}">Ver en el gráfico</button></div>`;
+}
 function renderHist(){
   const m=mode,c=SIM[m],now=new Date(),mStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   const mine=OPS.filter(o=>o.m===m),month=mine.filter(o=>o.t>=mStart),closed=month.filter(o=>o.state!=='open');
@@ -1729,7 +1801,7 @@ function renderHist(){
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó al objetivo 2':'Llegó al '+TGT[o.hit-1]} · ${o.hit}/3 · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Liquidada 0/3 · ${fusd2(o.pnl)}</span> <span class="neu">(${o.why})</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${o.why} · ${fusd2(o.pnl)}</span>`;};
-  const rowH=o=>`<div class="hrow"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)}</span></div>`;
+  const rowH=o=>`<div class="hrow" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
   const hist=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
   $('histList').innerHTML=hist.length?hist.map(rowH).join(''):'<div class="mut">Todavía no hay señales en el historial de este modo.</div>';
   $('simStats').innerHTML=`<div class="sst"><div><small>Efectividad del mes</small><b class="${eff==null?'':eff>=50?'up':'dn'}">${eff==null?'—':eff+' %'}</b></div><div><small>Resultado del mes</small><b class="${tot>=0?'up':'dn'}">${closed.length?fusd2(tot):'—'}</b></div><div><small>Ganadas / cerradas</small><b>${wins} / ${closed.length}</b></div><div><small>Simulación</small><b class="sl">${c.label}</b></div></div>`;
@@ -1796,6 +1868,88 @@ setTimeout(()=>{
 function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
 if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);});
 {const u=new URLSearchParams(location.search);if(u.get('sym'))setTimeout(()=>openFromNotif({sym:u.get('sym'),tf:u.get('tf'),m:u.get('m')}),1500);}
+
+/* ---------- menú lateral, alertas de precio manuales e historial desplegable ---------- */
+if(NTF.alert===undefined)NTF.alert=true;
+var ALR=[];try{const a=JSON.parse(localStorage.getItem('cv_alr')||'[]');if(Array.isArray(a))ALR=a;}catch(e){}
+const MAXALR=20;let alrForm=null,alrMsg=null;
+const saveAlr=()=>{try{localStorage.setItem('cv_alr',JSON.stringify(ALR))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
+function mergeAlr(arr){const have=new Map(ALR.map(a=>[a.id,a]));for(const a of arr){const h=have.get(a.id);if(!h){ALR.push(a);have.set(a.id,a);}else if(a.done&&!h.done)Object.assign(h,a);}
+  ALR.sort((a,b)=>a.t-b.t);if(ALR.length>MAXALR)ALR=ALR.slice(-MAXALR);try{localStorage.setItem('cv_alr',JSON.stringify(ALR))}catch(e){}}
+const permOK=()=>canNotify&&Notification.permission==='granted';
+const fdur=ms=>{const m=Math.max(0,Math.round(ms/6e4));return m<60?m+' min':m<1440?Math.floor(m/60)+' h '+(m%60)+' min':Math.floor(m/1440)+' d '+Math.floor(m%1440/60)+' h';};
+function drawer(open){$('drw').classList.toggle('open',open);if(open)renderDrw();}
+$('hamb').onclick=()=>drawer(true);$('drwBg').onclick=$('drwX').onclick=()=>drawer(false);
+addEventListener('keydown',e=>{if(e.key==='Escape'&&$('drw').classList.contains('open'))drawer(false);});
+function renderDrw(){
+  document.querySelectorAll('#drwModes .mcard').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
+  const on=k=>permOK()&&NTF.on&&NTF[k];
+  $('drwNtf').innerHTML=(permOK()?'':`<button class="mcard" data-t="ask" style="text-align:center"><b>🔔 Permitir notificaciones</b><small>${canNotify?'Hace falta para que el celu te muestre los avisos':(isIOS?'En iPhone primero instala la app en la pantalla de inicio':'Este navegador no permite avisos')}</small></button>`)+
+    [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
+    .map(([k,t,d])=>`<div class="tg"><div>${t}<small>${d}</small></div><button class="sw${on(k)?' on':''}" data-t="${k}" role="switch" aria-checked="${on(k)}" aria-label="${t}"></button></div>`).join('');
+  renderAlrList();
+}
+$('drwNtf').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.t;
+  if(k==='ask'){await askNotif();renderDrw();return;}
+  if(permOK()&&NTF.on&&NTF[k])NTF[k]=false;
+  else{if(!permOK()){await askNotif();if(!permOK()){renderDrw();return;}}NTF.on=true;NTF[k]=true;}
+  saveNtf();renderNtf();renderDrw();};
+$('drwModes').onclick=e=>{const b=e.target.closest('.mcard');if(!b)return;if(b.dataset.m!==mode)applyMode(b.dataset.m);renderDrw();renderHist();setTimeout(()=>drawer(false),250);};
+/* alertas de precio */
+function parsePx(str,ref){let t=String(str||'').trim().replace(/\s|\$/g,'');if(!t)return NaN;
+  if(t.includes(',')&&t.includes('.'))t=t.replace(/\./g,'').replace(',','.');
+  else if(t.includes(','))t=t.replace(',','.');
+  else if((t.match(/\./g)||[]).length>1)t=t.replace(/\./g,'');
+  else if(/^\d{1,3}\.\d{3}$/.test(t)&&ref&&+t<ref/100)t=t.replace('.','');
+  return +t;}
+const symOf=v=>{let s=String(v||'').toUpperCase().replace(/\/?USDT$/,'').replace(/[^A-Z0-9]/g,'');return s?s+'USDT':'';};
+function renderAlrForm(){
+  if(!alrForm){$('alrForm').innerHTML='';return;}
+  const opts=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');
+  $('alrForm').innerHTML=`<div class="alr-f"><input id="alrSym" list="alrList" placeholder="Activo (BTC, ETH, SOL…)" autocomplete="off" autocapitalize="characters" value="${esc(alrForm.sym||'')}"><datalist id="alrList">${opts}</datalist>
+    <input id="alrPx" type="text" inputmode="decimal" placeholder="Precio de la alerta (ej. 65000)" autocomplete="off" value="${esc(alrForm.px||'')}">
+    <small class="mut" id="alrNow"></small><span class="err" id="alrErr"></span>
+    <div class="row"><button class="sec" data-a="cancel">Cancelar</button><button class="pri" data-a="save">Guardar alerta</button></div></div>`;
+  const upd=()=>{const s=symOf($('alrSym').value),t=tickers[s],v=parsePx($('alrPx').value,t&&t.c);
+    $('alrNow').textContent=t?`${s.replace('USDT','')} ahora: ${fp(t.c)}`+(v>0?` · avisa cuando ${v>t.c?'suba':'baje'} a ${fp(v)} (${fpct((v/t.c-1)*100)})`:''):'';};
+  $('alrSym').oninput=$('alrPx').oninput=upd;upd();
+}
+$('alrForm').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;
+  if(b.dataset.a==='cancel'){alrForm=null;renderAlrForm();return;}
+  const s=symOf($('alrSym').value),t=tickers[s],v=parsePx($('alrPx').value,t&&t.c);let err='';
+  if(!t)err='No encontré ese activo. Escribe por ejemplo BTC, ETH o SOL.';
+  else if(!(v>0))err='Pon un precio válido.';
+  else if(ALR.length>=MAXALR)err=`Llegaste al tope de ${MAXALR} alertas. Borra alguna para crear otra.`;
+  else if(Math.abs(v/t.c-1)<.0003)err='Ese precio es casi el actual: pon uno un poco más arriba o más abajo.';
+  if(err){$('alrErr').textContent=err;return;}
+  ALR.push({id:s+'-'+Date.now(),sym:s,price:v,dir:v>t.c?1:-1,from:t.c,t:Date.now(),done:false});saveAlr();
+  alrForm=null;renderAlrForm();renderAlrList();
+  alrMsg={t:Date.now(),s:(!permOK()||!NTF.on||!NTF.alert)?'Alerta guardada. Activa «Alertas de precio» arriba para que también te llegue al celu.':'Alerta guardada: te aviso cuando llegue.'};renderAlrList();};
+function renderAlrList(){
+  $('alrN').textContent=`${ALR.length}/${MAXALR}`;
+  const act=ALR.filter(a=>!a.done),done=ALR.filter(a=>a.done).sort((a,b)=>b.hitAt-a.hitAt);
+  $('alrBox').innerHTML=(alrMsg&&Date.now()-alrMsg.t<8000?`<small class="up">${alrMsg.s}</small>`:'')+(ALR.length?[...act,...done].map(a=>{const c=a.sym.replace('USDT',''),p=tickers[a.sym]?.c;
+    return `<div class="alr${a.done?' done':''}"><div><b>${c}</b> ${a.dir>0?'sube a':'baja a'} <b>${fp(a.price)}</b></div><button class="del" data-del="${a.id}" title="Borrar alerta" aria-label="Borrar alerta">✕</button>
+      <small>${a.done?`✓ Llegó el ${fdate(a.hitAt)} (${fp(a.hitPx)})`:p?`Ahora ${fp(p)} · falta ${fpct((a.price/p-1)*100)}`:'esperando precio…'}</small></div>`;}).join('')
+    :'<small class="mut">No tienes alertas. Toca + para crear una: eliges el activo y el precio, y te aviso cuando llegue.</small>');
+}
+$('alrBox').onclick=e=>{const b=e.target.closest('[data-del]');if(!b)return;ALR=ALR.filter(a=>a.id!==b.dataset.del);saveAlr();renderAlrList();};
+function openAlrForm(sym){$('alrD').open=true;const t=tickers[sym];alrForm={sym:sym?sym.replace('USDT',''):'',px:t?String(t.c):''};renderAlrForm();renderAlrList();setTimeout(()=>{const i=$(sym?'alrPx':'alrSym');if(i){i.focus();i.select&&i.select();}},260);}
+$('alrPlus').onclick=e=>{e.preventDefault();e.stopPropagation();openAlrForm('');};
+$('alertBtn').onclick=()=>{drawer(true);openAlrForm(symbol);};
+function fireAlert(a,p){const c=a.sym.replace('USDT',''),msg=`${c} ${a.dir>0?'subió a':'bajó a'} ${fp(a.price)} · ahora ${fp(p)}`;
+  try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}
+  if(permOK()&&NTF.on&&NTF.alert)notify('🔔 Alerta de precio: '+c,msg,'alr-'+a.id,{sym:a.sym});
+  appBar(`<b>🔔 Alerta de precio</b><span>${esc(msg)}</span>`,[['Cerrar','sec',()=>{}],['Ver gráfico','pri',()=>openFromNotif({sym:a.sym})]]);}
+function checkAlerts(){let ch=false;
+  for(const a of ALR){if(a.done)continue;const p=tickers[a.sym]?.c;if(!p)continue;
+    if(a.dir>0?p>=a.price:p<=a.price){a.done=true;a.hitAt=Date.now();a.hitPx=p;ch=true;fireAlert(a,p);}}
+  if(ch)saveAlr();if($('drw').classList.contains('open'))renderAlrList();}
+setInterval(checkAlerts,1500);
+/* historial: tocar una señal despliega sus datos */
+$('histList').onclick=e=>{const g=e.target.closest('[data-go]');
+  if(g){openFromNotif({sym:g.dataset.go,tf:g.dataset.tf,m:g.dataset.m});$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const r=e.target.closest('.hrow');if(!r)return;const id=r.dataset.op;HOPEN.has(id)?HOPEN.delete(id):HOPEN.add(id);renderHist();};
 </script>
 </body>
 </html>
