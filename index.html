@@ -1005,7 +1005,7 @@ async function refreshFutures(sym,t,first){
 function openLiqWs(f,sym){
   const m=f.mult;
   const push=ev=>{if(sym!==symbol)return;liqEvents.push(ev);if(liqEvents.length>500)liqEvents.shift();};
-  const bn=()=>{const w=new WebSocket(`wss://fstream.binance.com/ws/${f.fs.toLowerCase()}@forceOrder`);
+  const bn=()=>{const w=new WebSocket(`wss://fstream.binance.com/market/ws/${f.fs.toLowerCase()}@forceOrder`);
     w.onmessage=e=>{const o=JSON.parse(e.data).o;if(!o)return;const p=+o.ap||+o.p,q=+o.z||+o.q;
       push({t:+o.T,p:p/m,usd:p*q,side:o.S==='SELL'?'L':'S',ex:'Binance'});};
     w.onclose=()=>{if(sym===symbol&&liqWs.includes(w))setTimeout(()=>{if(sym===symbol){liqWs=liqWs.filter(x=>x!==w);liqWs.push(bn());}},4000);};
@@ -2508,7 +2508,7 @@ const LQX={ev:[],okv:{},px:{key:'',t:0,d:[]},chart:null,sL:null,sS:null,sP:null,
 const lqBase=s=>String(s||'').toUpperCase().replace(/[-_](USDT|USDC|USD)(-SWAP)?$/,'').replace(/(USDT|USDC|BUSD)$/,'').replace(/^1000+/,'');
 function lqAdd(e){if(!(e.usd>0)||!e.t)return;LQX.ev.push(e);if(LQX.ev.length>30000)LQX.ev.splice(0,LQX.ev.length-30000);}
 function lqConn(){
-  const bn=()=>{const w=new WebSocket('wss://fstream.binance.com/ws/!forceOrder@arr');
+  const bn=()=>{const w=new WebSocket('wss://fstream.binance.com/market/ws/!forceOrder@arr');
     w.onmessage=e=>{try{const o=JSON.parse(e.data).o;if(!o)return;const p=+o.ap||+o.p,q=+o.z||+o.q;lqAdd({t:+o.T,sym:lqBase(o.s),p,usd:p*q,side:o.S==='SELL'?'L':'S',ex:'Binance'});}catch(x){}};
     w.onclose=()=>setTimeout(bn,5000);};
   const ok=()=>{const w=new WebSocket('wss://ws.okx.com:8443/ws/v5/public');
@@ -2866,7 +2866,7 @@ const BIG={sym:null,ws:null,tr:[],mins:{},th:0};
 function bigConn(){if(mode==='a')return;const s=symbol;if(BIG.sym===s&&BIG.ws&&BIG.ws.readyState<2)return;
   if(BIG.ws){const o=BIG.ws;BIG.ws=null;try{o.onclose=null;o.close();}catch(e){}}
   BIG.sym=s;BIG.tr=[];BIG.mins={};BIG.th=Math.max(2.5e4,Math.min(1e6,(tickers[s]?.q||1e8)*2e-5));
-  try{const ws=new WebSocket(`wss://fstream.binance.com/ws/${s.toLowerCase()}@aggTrade`);BIG.ws=ws;
+  try{const ws=new WebSocket(`wss://fstream.binance.com/market/ws/${s.toLowerCase()}@aggTrade`);BIG.ws=ws;
     ws.onmessage=e=>{const d=JSON.parse(e.data),usd=+d.p*+d.q,buy=!d.m,mi=Math.floor(d.T/6e4),b=BIG.mins[mi]||(BIG.mins[mi]={b:0,s:0,bb:0,bs:0});
       if(buy)b.b+=usd;else b.s+=usd;if(usd>=BIG.th){if(buy)b.bb+=usd;else b.bs+=usd;BIG.tr.unshift({t:d.T,p:+d.p,usd,buy});if(BIG.tr.length>30)BIG.tr.pop();}};
     ws.onclose=()=>{if(BIG.ws===ws){BIG.ws=null;setTimeout(()=>{if(INT_T==='big')bigConn();},5000);}};}catch(e){}}
