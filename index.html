@@ -289,7 +289,16 @@ body.fs-on .fsbar{display:flex}
 .pil-s.ok{background:#1c212b;color:var(--txt);border:1px solid var(--line)}.pil-g{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px}.pil-g span{color:var(--mut)}
 .pil-r{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.pil-r i{font-style:normal;font-size:11px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:2px 8px}
 .pil-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-a button{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:5px 10px;cursor:pointer}
-.pil-note{font-size:10px;color:var(--mut);margin-top:6px}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
+.pil-note{font-size:10px;color:var(--mut);margin-top:6px}
+.int{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.int .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.int-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.int-tabs button,.int-p button,.int-a button,.int-go{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}
+.int-tabs button.on,.int-p button.on{background:#26c6da;color:#0f1115;border-color:#26c6da;font-weight:700}.int-p,.int-a{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:8px 0}.int-p .mut{margin-left:6px;font-size:11px}
+.int-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0}.int-g>div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--mut)}
+.int-g b{display:block;font-size:16px;color:var(--txt);font-variant-numeric:tabular-nums}.int-g small{display:block;color:var(--mut)}.int-v{background:var(--bg);border-left:4px solid #26c6da;border-radius:6px;padding:8px 10px;font-size:13px;margin:6px 0;line-height:1.4}
+.int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
+.int-n{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}.pil-cl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-cl input{background:var(--bg);color:var(--txt);border:1px solid #ff9100;border-radius:6px;padding:6px 8px;font-size:13px;min-width:0;flex:1 1 160px}
+.pil-cl button{background:#ff9100;color:#14171d;border:0;border-radius:6px;font-size:12px;padding:6px 10px;font-weight:700;cursor:pointer}.pil-cl button[data-a=cancel]{background:var(--panel);color:var(--txt);border:1px solid var(--line)}.jrn{margin-top:12px}
+@media (max-width:800px){.int-tabs{margin-left:0}.int-t{font-size:11px}}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
 @media (max-width:800px){.pil-f{grid-template-columns:1fr 1fr}.pil-f .pri{grid-column:1/-1}}
 .sig.nr{border-color:rgba(239,83,80,.6);border-left-color:var(--dn);background:rgba(239,83,80,.08)}
 .sig.nr .sg-dir,.sig.nr .sg-conf{color:var(--dn)}
@@ -454,8 +463,9 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <label>Apalancamiento (X)<input id="pilX" type="number" inputmode="numeric" min="1" max="125" value="10"></label>
         <label>Margen (USD)<input id="pilM" type="number" inputmode="decimal" min="1" value="100"></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
-      <div id="pilCards"></div>
+      <div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
       <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</div></section>
+    <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="led" class="on">📊 Registro en vivo</button><button data-t="reg">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span></div><div id="intBody"></div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -1868,7 +1878,7 @@ function renderSignals(){
         <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>${llInfo(op,pc)}
         <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
-      <div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}</div></div>`;}).join('');
+      <div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
 $('sigList').onclick=e=>{const c=e.target.closest('.sig');if(!c)return;
   if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
@@ -2747,7 +2757,7 @@ async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
       if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
     savePil();pilRender();}finally{pilBusy=false;}}
 function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cnt=$('pilCnt');if(cnt){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;cnt.textContent=PIL.length?`(${PIL.length}${n?` · ${n} con aviso`:''})`:'';}
-  const el=$('pilCards');if(!el)return;
+  const el=$('pilCards');if(!el)return;if(el.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
   if(!PIL.length){el.innerHTML='<div class="mut">Todavía no estás piloteando ninguna operación.</div>';return;}
   el.innerHTML=PIL.map(p=>{const a=p.a,L=p.dir>0,pc=v=>fpct((v/p.entry-1)*100);
     return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}"><div class="pil-h"><b class="${L?'up':'dn'}">${L?'▲ LONG':'▼ SHORT'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev} · margen ${p.margin} USD${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · desde ${fdate(p.t)}</span></div>
@@ -2758,7 +2768,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cn
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
-      <div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
+      ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
 function pilFill(){$('pilList').innerHTML=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');}
 function pilOpen(){const b=$('pilBox');b.hidden=false;pilFill();pilRender();b.scrollIntoView({behavior:'smooth',block:'start'});}
 $('pilDrw').onclick=()=>{drawer(false);if(mode==='a')applyMode('medio');setTimeout(pilOpen,260);};
@@ -2775,8 +2785,127 @@ $('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pil
 $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.pil-c').dataset.id,p=PIL.find(x=>x.id===id);if(!p)return;
   if(b.dataset.a==='go'){if(symbol!==p.sym)select(p.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}
   else if(b.dataset.a==='ll'){const t=tickers[p.sym];if(t){p.ll={px:t.c,margin:p.margin/2,t:Date.now()};p.state=null;savePil();pilTick();}}
+  else if(b.dataset.a==='close'){p.closing=true;pilRender();const i=document.querySelector(`.pil-c[data-id="${id}"] input`);if(i)i.focus();}
+  else if(b.dataset.a==='cancel'){p.closing=false;document.activeElement&&document.activeElement.blur();pilRender();}
+  else if(b.dataset.a==='save'){const t=tickers[p.sym],inp=b.closest('.pil-c').querySelector('input'),raw=inp?inp.value.trim():'',ex=raw?parsePx(raw,t&&t.c):(t&&t.c);if(!(ex>0))return;
+    const avg=pilAvg(p),mg=p.margin+(p.ll?p.ll.margin:0),pnl=p.dir*(ex-avg)*pilQty(p);JRN.push({sym:p.sym,dir:p.dir,lev:p.lev,margin:mg,entry:p.entry,avg,exit:ex,pnl,pct:pnl/mg*100,t0:p.t,t1:Date.now(),ll:!!p.ll});saveJrn();
+    PIL=PIL.filter(x=>x.id!==id);savePil();if(inp)inp.blur();pilRender();jrnRender();}
   else if(b.dataset.a==='del'){PIL=PIL.filter(x=>x.id!==id);savePil();pilRender();}};
 setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
+
+/* ---------- INTELIGENCIA DE MERCADO: registro en vivo, régimen, suben solas, órdenes grandes ---------- */
+/* Línea de base "al azar": entradas en momentos y direcciones al azar, con el mismo stop, objetivos, plazo y filtro de volatilidad
+   (40 criptos: 11 meses de 4H para TRADING y 30 días de 5m para SHOOTER). Sirve para saber cuánto aporta la señal de verdad. */
+var AZAR={medio:{p:78,p3:28,n:1309},x:{p:72,p3:23,n:547}};AZAR.p=AZAR.medio;
+let INT_T='led',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'led';}catch(e){}
+const intMoney=v=>{const a=mode==='a';return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
+const pc0=v=>v==null?'—':Math.round(v)+' %';
+function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=OPS.filter(o=>o.m===m&&o.t>=t0),cl=a.filter(o=>o.state!=='open'),n=cl.length;
+  const g=cl.filter(o=>o.pnl>0).reduce((s,o)=>s+o.pnl,0),l=cl.filter(o=>o.pnl<=0).reduce((s,o)=>s+o.pnl,0);
+  return {all:a.length,open:a.length-n,n,o1:n?cl.filter(o=>o.hit>=1).length/n*100:null,o3:n?cl.filter(o=>o.hit>=3).length/n*100:null,win:n?cl.filter(o=>o.pnl>0).length/n*100:null,
+    liq:cl.filter(o=>o.state==='fail').length,ll:a.filter(o=>o.ll).length,llOk:cl.filter(o=>o.ll&&o.state!=='fail').length,g,l,net:g+l,pf:l<0?g/-l:null,avg:n?(g+l)/n:null,cl};}
+function ledHTML(){const m=mode,S=ledStats(m,LEDP),cal=Object.values(CAL[m]||{})[0],az=AZAR[m];
+  const per=[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']].map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
+  let verdict;if(!S.n)verdict='Todavía no hay operaciones cerradas en este período. Las señales se registran solas apenas aparecen.';
+  else if(S.n<20)verdict=`Muestra chica (${S.n} cerradas): con menos de 20 el porcentaje puede moverse decenas de puntos por azar. Todavía no alcanza para sacar conclusiones.`;
+  else if(az)verdict=S.o1-az.p>=5?`En vivo llega al objetivo 1 ${Math.round(S.o1-az.p)} puntos más que operar al azar con el mismo stop y objetivos (${az.p} %): la señal aporta.`:S.o1-az.p>-5?`En vivo está en línea con el azar (${az.p} %): por ahora la señal no muestra ventaja clara.`:`En vivo está ${Math.round(az.p-S.o1)} puntos por debajo del azar (${az.p} %): algo no está funcionando.`;
+  else verdict=`${S.n} operaciones cerradas.`;
+  return `<div class="int-p">${per}<span class="mut">Modo ${SIGCFG[m]?.name||m}</span></div>
+    <div class="int-g"><div>Señales<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
+      <div>Llegó al objetivo 1<b>${pc0(S.o1)}</b><small>backtest ${cal?cal.p+' %':'—'}${az?` · azar ${az.p} %`:''}</small></div>
+      <div>Llegó a los 3 objetivos<b>${pc0(S.o3)}</b><small>backtest ${cal&&cal.p3!=null?cal.p3+' %':'—'}${az?` · azar ${az.p3} %`:''}</small></div>
+      <div>Liquidadas<b class="dn">${S.liq}</b><small>${S.n?Math.round(S.liq/S.n*100)+' % de las cerradas':'—'}</small></div>
+      <div>Salvavidas<b style="color:#ffd600">${S.ll}</b><small>${S.llOk} salvaron la operación</small></div>
+      <div>Ganado / perdido<b><span class="up">${intMoney(S.g)}</span></b><small class="dn">${intMoney(S.l)}</small></div>
+      <div>Resultado neto<b class="${S.net>=0?'up':'dn'}">${intMoney(S.net)}</b><small>${S.avg!=null?intMoney(S.avg)+' por operación':'—'}</small></div>
+      <div>Factor de ganancia<b>${S.pf!=null?S.pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div></div>
+    <div class="int-v">${verdict}</div>
+    <div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>
+    <div class="int-n">Cada señal que aparece se simula sola desde ese momento con su stop, sus 3 objetivos y el salvavidas, usando velas reales que vinieron después (nunca datos del futuro). Se guarda en tu cuenta. Solo cuentan las señales generadas mientras la página estuvo abierta. "Azar" = mismo stop, objetivos y plazo pero entrando en momentos y direcciones al azar.</div>`;}
+function ledExport(kind){const S=ledStats(mode,LEDP),rows=S.cl.map(o=>({modo:o.m,moneda:o.sym,dir:o.dir>0?'LONG':'SHORT',abierta:new Date(o.t).toISOString(),cerrada:o.closeAt?new Date(o.closeAt).toISOString():'',entrada:o.entry,objetivos_tocados:o.hit,salvavidas:o.ll?'si':'no',estado:o.state,resultado:+(o.pnl||0).toFixed(2),motivo:o.why||''}));
+  const txt=kind==='json'?JSON.stringify(rows,null,1):[Object.keys(rows[0]||{modo:1}).join(';'),...rows.map(r=>Object.values(r).map(v=>String(v).replace(/;/g,',')).join(';'))].join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:kind==='json'?'application/json':'text/csv'}));a.download=`registro-${mode}-${new Date().toISOString().slice(0,10)}.${kind}`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
+/* régimen de mercado: dominancias (CoinGecko), amplitud y rotación (Binance 24 h) */
+const REG={t:0,g:null,d:null};
+async function regLoad(){if(Date.now()-REG.t<5*6e4&&REG.d)return;REG.t=Date.now();
+  try{const g=(await getJ('https://api.coingecko.com/api/v3/global')).data,p=g.market_cap_percentage||{};REG.g={btcd:p.btc,ethd:p.eth,usd:(p.usdt||0)+(p.usdc||0),tot:g.total_market_cap.usd,ch:g.market_cap_change_percentage_24h_usd};}catch(e){}
+  const L=Object.values(tickers).filter(t=>t.s.endsWith('USDT')&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>5e6).sort((a,b)=>b.q-a.q);
+  const btc=tickers.BTCUSDT?.p||0,eth=tickers.ETHUSDT?.p||0,alts=L.filter(t=>t.s!=='BTCUSDT'&&t.s!=='ETHUSDT').slice(0,80);if(!alts.length)return;
+  const avg=g=>g.length?g.reduce((s,t)=>s+t.p,0)/g.length:0;
+  REG.d={btc,eth,beat:alts.filter(t=>t.p>btc).length/alts.length*100,up:alts.filter(t=>t.p>0).length/alts.length*100,large:avg(alts.slice(0,10)),mid:avg(alts.slice(10,35)),small:avg(alts.slice(35,80)),n:alts.length};}
+function regHTML(){if(mode==='a')return '<div class="mut">El régimen de mercado es solo para cripto.</div>';const g=REG.g,d=REG.d;if(!d)return '<div class="mut">Calculando el régimen de mercado…</div>';
+  const score=Math.round(Math.min(100,.5*d.beat+.2*d.up+(d.eth>d.btc?10:0)+(g?Math.max(0,Math.min(20,(62-g.btcd)*2)):10)));
+  const st=score>=70?['🚀 Altseason en marcha','La mayoría de las altcoins le gana a BTC: el capital está saliendo de BTC hacia alts.']:score>=50?['📈 Alts ganando terreno','Buena parte de las alts supera a BTC, pero todavía no es amplio.']:score>=30?['⚖️ Neutral','El capital sigue concentrado; no hay confirmación amplia de altcoins.']:['🛡️ Dominio de BTC','Las alts pierden contra BTC: momento de cuidar el riesgo en altcoins.'];
+  const G=[['BTC',d.btc],['ETH',d.eth],['Grandes',d.large],['Medianas',d.mid],['Chicas',d.small]],lead=G.slice().sort((a,b)=>b[1]-a[1])[0];
+  const fng=typeof NEWS!=='undefined'&&NEWS.fng?NEWS.fng.v:null;
+  return `<div class="int-g"><div>Probabilidad de altseason<b>${score}/100</b><small>${st[0]}</small></div>
+      <div>Dominancia BTC<b>${g?g.btcd.toFixed(1)+' %':'—'}</b><small>ETH ${g?g.ethd.toFixed(1)+' %':'—'}</small></div>
+      <div>Dominancia estables<b>${g?g.usd.toFixed(1)+' %':'—'}</b><small>si sube, el dinero se refugia</small></div>
+      <div>Capitalización total<b>${g?'$'+(g.tot/1e12).toFixed(2)+' T':'—'}</b><small class="${g&&g.ch>=0?'up':'dn'}">${g?fpct(g.ch)+' 24 h':''}</small></div>
+      <div>Alts que le ganan a BTC<b>${Math.round(d.beat)} %</b><small>${Math.round(d.up)} % en positivo (24 h)</small></div>
+      ${fng!=null?`<div>Miedo y avaricia<b>${fng}</b><small>${fng>=75?'avaricia extrema':fng>=55?'avaricia':fng>45?'neutral':fng>25?'miedo':'miedo extremo'}</small></div>`:''}</div>
+    <div class="int-v"><b>${st[0]}.</b> ${st[1]}</div>
+    <table class="int-t"><tr><th>Rotación (24 h)</th>${G.map(x=>`<th>${x[0]}</th>`).join('')}</tr><tr><td class="mut">variación media</td>${G.map(x=>`<td class="${x[1]>=0?'up':'dn'}">${fpct(x[1])}${x===lead?' ★':''}</td>`).join('')}</tr></table>
+    <div class="int-n">Ahora lidera ${lead[0]}. La rotación se infiere del rendimiento de 24 h por grupo (grandes = 10 alts con más volumen, medianas = las 25 siguientes, chicas = las 45 siguientes); no son flujos reales de fondos. Dominancias: CoinGecko.</div>`;}
+/* suben solas: monedas que suben con compradores propios aunque BTC y ETH no acompañen (velas de 1 h cerradas) */
+const SOL={t:0,list:null,busy:false};
+async function solLoad(){if(SOL.busy||Date.now()-SOL.t<5*6e4&&SOL.list)return;SOL.busy=true;SOL.t=Date.now();
+  try{const L=Object.values(tickers).filter(t=>t.s.endsWith('USDT')&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7).sort((a,b)=>b.q-a.q).slice(0,60).map(t=>t.s);
+    if(!L.includes('BTCUSDT'))L.unshift('BTCUSDT');if(!L.includes('ETHUSDT'))L.unshift('ETHUSDT');
+    const get=async s=>{const c=(await kl(s,'1h',26)).slice(0,-1),n=c.length;if(n<24)return null;const v4=c.slice(n-4).reduce((a,b)=>a+b.v,0)/4,v20=c.slice(n-24,n-4).reduce((a,b)=>a+b.v,0)/20;return {s,ch:c[n-1].close/c[n-5].close-1,vr:v20?v4/v20:1};};
+    const R=[];for(let i=0;i<L.length;i+=6){const part=await Promise.all(L.slice(i,i+6).map(s=>get(s).catch(()=>null)));R.push(...part.filter(Boolean));}
+    const b=R.find(x=>x.s==='BTCUSDT'),e=R.find(x=>x.s==='ETHUSDT');SOL.btc=b?b.ch:0;SOL.eth=e?e.ch:0;const ref=Math.max(SOL.btc,SOL.eth,0);
+    SOL.list=R.filter(x=>x.s!=='BTCUSDT'&&x.s!=='ETHUSDT').map(x=>({...x,own:x.ch-ref})).filter(x=>x.ch>=.015&&x.own>=.015).sort((a,b)=>b.own-a.own).slice(0,10);}
+  finally{SOL.busy=false;}}
+function solHTML(){if(mode==='a')return '<div class="mut">Esta lectura es solo para cripto.</div>';if(!SOL.list)return '<div class="mut">Revisando las 60 monedas con más volumen…</div>';
+  return `<div class="int-v">Últimas 4 h: BTC ${fpct(SOL.btc*100)} · ETH ${fpct(SOL.eth*100)}. ${Math.max(SOL.btc,SOL.eth)<=.003?'BTC y ETH no están subiendo: lo de abajo sube con compradores propios.':'BTC o ETH también suben: parte del movimiento puede ser arrastre.'}</div>
+    ${SOL.list.length?`<table class="int-t"><tr><th>Moneda</th><th>Sube 4 h</th><th>Fuerza propia</th><th>Volumen</th><th></th></tr>${SOL.list.map(x=>`<tr><td><b>${x.s.replace('USDT','')}</b></td><td class="up">${fpct(x.ch*100)}</td><td class="up">${fpct(x.own*100)}</td><td>${x.vr.toFixed(1)}×${x.vr>=1.5?' 🔥':''}</td><td><button class="int-go" data-sym="${x.s}">Ver</button></td></tr>`).join('')}</table>`:'<div class="mut">Ahora ninguna moneda sube por su cuenta (al menos +1,5 % en 4 h y 1,5 % más que BTC y ETH).</div>'}
+    <div class="int-n">Para entrar en la lista: sube al menos 1,5 % en 4 h y 1,5 % más que BTC y ETH. "Volumen" compara las últimas 4 h con las 20 anteriores (🔥 = 1,5× o más). Si BTC cae fuerte casi todas caen con él, y una suba de una sola vela sin volumen suele devolverse. Es una lectura, no una señal calibrada.</div>`;}
+/* órdenes grandes ejecutadas (futuros de Binance): quién cruza el spread con tamaño, en la moneda del gráfico */
+const BIG={sym:null,ws:null,tr:[],mins:{},th:0};
+function bigConn(){if(mode==='a')return;const s=symbol;if(BIG.sym===s&&BIG.ws&&BIG.ws.readyState<2)return;
+  if(BIG.ws){const o=BIG.ws;BIG.ws=null;try{o.onclose=null;o.close();}catch(e){}}
+  BIG.sym=s;BIG.tr=[];BIG.mins={};BIG.th=Math.max(2.5e4,Math.min(1e6,(tickers[s]?.q||1e8)*2e-5));
+  try{const ws=new WebSocket(`wss://fstream.binance.com/ws/${s.toLowerCase()}@aggTrade`);BIG.ws=ws;
+    ws.onmessage=e=>{const d=JSON.parse(e.data),usd=+d.p*+d.q,buy=!d.m,mi=Math.floor(d.T/6e4),b=BIG.mins[mi]||(BIG.mins[mi]={b:0,s:0,bb:0,bs:0});
+      if(buy)b.b+=usd;else b.s+=usd;if(usd>=BIG.th){if(buy)b.bb+=usd;else b.bs+=usd;BIG.tr.unshift({t:d.T,p:+d.p,usd,buy});if(BIG.tr.length>30)BIG.tr.pop();}};
+    ws.onclose=()=>{if(BIG.ws===ws){BIG.ws=null;setTimeout(()=>{if(INT_T==='big')bigConn();},5000);}};}catch(e){}}
+function bigHTML(){if(mode==='a')return '<div class="mut">Las órdenes grandes son solo para cripto (futuros de Binance).</div>';
+  const now=Math.floor(Date.now()/6e4);for(const k in BIG.mins)if(k<now-30)delete BIG.mins[k];
+  let B=0,S=0,BB=0,BS=0;for(const k in BIG.mins)if(k>=now-15){const x=BIG.mins[k];B+=x.b;S+=x.s;BB+=x.bb;BS+=x.bs;}
+  const imb=B+S?(B-S)/(B+S)*100:0,bimb=BB+BS?(BB-BS)/(BB+BS)*100:0,c=symbol.replace('USDT','');
+  const read=BB+BS<BIG.th?'Todavía no hubo órdenes grandes en los últimos 15 min.':bimb>25?'Las ballenas están comprando con urgencia (pagan el precio de venta para entrar ya).':bimb<-25?'Las ballenas están vendiendo con urgencia (aceptan el precio de compra para salir ya).':'Las órdenes grandes están repartidas entre compras y ventas.';
+  return `<div class="int-g"><div>Compras agresivas (15 min)<b class="up">$${fnum(B)}</b><small>todas las operaciones de ${c}</small></div><div>Ventas agresivas (15 min)<b class="dn">$${fnum(S)}</b><small>${imb>=0?'+':''}${Math.round(imb)} % de desbalance</small></div>
+      <div>Ballenas compran<b class="up">$${fnum(BB)}</b><small>órdenes de $${fnum(BIG.th)} o más</small></div><div>Ballenas venden<b class="dn">$${fnum(BS)}</b><small>${bimb>=0?'+':''}${Math.round(bimb)} % de desbalance</small></div></div>
+    <div class="int-v">${read}</div>
+    ${BIG.tr.length?`<table class="int-t"><tr><th>Hora</th><th>Lado</th><th>Precio</th><th>Monto</th></tr>${BIG.tr.slice(0,12).map(x=>`<tr><td class="mut">${new Date(x.t).toLocaleTimeString('es-ES')}</td><td class="${x.buy?'up':'dn'}">${x.buy?'Compra':'Venta'}</td><td>${fp(x.p)}</td><td><b class="${x.buy?'up':'dn'}">$${fnum(x.usd)}</b></td></tr>`).join('')}</table>`:`<div class="mut">Esperando órdenes de $${fnum(BIG.th)} o más en ${c}…</div>`}
+    <div class="int-n">Operaciones ya ejecutadas en futuros de Binance para la moneda del gráfico (las órdenes del libro se pueden cancelar; estas no). "Compra" = alguien pagó el precio de venta para entrar ya. Se cuenta desde que abriste esta pestaña.</div>`;}
+function intRender(){const box=$('intBox');if(!box)return;document.querySelectorAll('#intTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===INT_T));
+  if(box.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
+  const el=$('intBody');el.innerHTML=INT_T==='led'?ledHTML():INT_T==='reg'?regHTML():INT_T==='sol'?solHTML():bigHTML();}
+let intBusy=false;
+async function intTick(){if(intBusy)return;intBusy=true;try{if(INT_T==='reg')await regLoad();else if(INT_T==='sol')await solLoad();else if(INT_T==='big')bigConn();}catch(e){}finally{intBusy=false;}intRender();}
+$('intTabs').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;INT_T=b.dataset.t;try{localStorage.setItem('cv_intT',INT_T)}catch(e){}intRender();intTick();};
+$('intBody').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;intRender();return;}
+  const x=e.target.closest('[data-x]');if(x){ledExport(x.dataset.x);return;}
+  const g=e.target.closest('[data-sym]');if(g){select(g.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}};
+setInterval(intTick,5000);setTimeout(intTick,4000);
+/* ---------- MI DIARIO: operaciones reales que cerraste desde PILOTEAR ---------- */
+let JRN=[];try{JRN=JSON.parse(localStorage.getItem('cv_jrn')||'[]')||[];}catch(e){}
+const saveJrn=()=>{try{localStorage.setItem('cv_jrn',JSON.stringify(JRN))}catch(e){}};
+let jrnDel=false;
+function jrnRender(){const el=$('jrnBox');if(!el)return;if(!JRN.length){el.innerHTML='<div class="mut">Mi diario: cuando cierres una operación piloteada (botón "Cerré la operación"), se guarda acá y se calcula tu propio porcentaje de aciertos.</div>';return;}
+  const n=JRN.length,w=JRN.filter(j=>j.pnl>0).length,g=JRN.filter(j=>j.pnl>0).reduce((s,j)=>s+j.pnl,0),l=JRN.filter(j=>j.pnl<=0).reduce((s,j)=>s+j.pnl,0);
+  el.innerHTML=`<div class="dt" style="margin-top:4px"><span>📒 Mi diario de operaciones reales</span></div>
+    <div class="int-g"><div>Operaciones<b>${n}</b><small>${JRN.filter(j=>j.ll).length} con salvavidas</small></div><div>Ganadas<b>${Math.round(w/n*100)} %</b><small>${w} de ${n}</small></div>
+      <div>Resultado neto<b class="${g+l>=0?'up':'dn'}">${pilMoney(g+l)}</b><small><span class="up">${pilMoney(g)}</span> · <span class="dn">${pilMoney(l)}</span></small></div><div>Factor de ganancia<b>${l<0?(g/-l).toFixed(2):'—'}</b><small>más de 1 = gana</small></div></div>
+    <table class="int-t"><tr><th>Cierre</th><th>Operación</th><th>Entrada → salida</th><th>Resultado</th></tr>${JRN.slice().reverse().slice(0,10).map(j=>`<tr><td class="mut">${fdate(j.t1)}</td><td><span class="${j.dir>0?'up':'dn'}">${j.dir>0?'LONG':'SHORT'}</span> ${j.sym.replace('USDT','')} × ${j.lev}${j.ll?' 🛟':''}</td><td>${fp(j.avg)} → ${fp(j.exit)}</td><td class="${j.pnl>=0?'up':'dn'}"><b>${pilMoney(j.pnl)}</b> (${fpct(j.pct)})</td></tr>`).join('')}</table>
+    <div class="int-a"><button data-j="csv">Exportar</button><button data-j="del">${jrnDel?'¿Seguro? Tocá de nuevo para borrar':'Borrar diario'}</button></div>`;}
+$('jrnBox').onclick=e=>{const b=e.target.closest('[data-j]');if(!b)return;
+  if(b.dataset.j==='del'){if(jrnDel){JRN=[];saveJrn();jrnDel=false;}else{jrnDel=true;setTimeout(()=>{jrnDel=false;jrnRender();},4000);}jrnRender();}
+  else{const txt=['cierre;moneda;direccion;x;margen;entrada;promedio;salida;resultado;porcentaje;salvavidas',...JRN.map(j=>[new Date(j.t1).toISOString(),j.sym,j.dir>0?'LONG':'SHORT',j.lev,j.margin,j.entry,j.avg,j.exit,j.pnl.toFixed(2),j.pct.toFixed(2),j.ll?'si':'no'].join(';'))].join('\n');
+    const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'text/csv'}));a.download='mi-diario.csv';document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}};
+setTimeout(jrnRender,3000);
 </script>
 </body>
 </html>
