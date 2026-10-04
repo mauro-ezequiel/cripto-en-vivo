@@ -423,30 +423,30 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','supertrend','ema','vprofile','fib','rsi','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 5m', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '5m', bars: 180,
-    inds: ['liq','bollinger','vwap','rsi','adx','cvd']
+    inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','macd','adx','stochrsi','cvd'],
-    def: ['liq','supertrend','ema','vprofile','fib','rsi','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','macd','adx','stochrsi','cvd'],
+    def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd']
   },
   a: {
     name: 'ACCIONES', tag: 'BYMA · pesos',
     desc: 'Acciones argentinas y CEDEARs (acciones de EE. UU. en pesos)',
     info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 10, liquidación en −50.000 ARS'],
     tf: '1d', bars: 160,
-    inds: ['liq','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd'],
-    def: ['liq','supertrend','ema','vprofile','rsi','macd','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd'],
+    def: ['liq','trend','supertrend','ema','vprofile','rsi','macd','adx','cvd']
   }
 };
 let mode = 'medio';
@@ -508,6 +508,7 @@ function setNames(){const pr=PRM[mode];IND.rsi.name=`RSI (${pr.rsi})`;IND.supert
   IND.cvd.name=mode==='a'?'Acumulación / Distribución':'CVD del día (flujo de órdenes)';IND.liq.name=mode==='a'?'Zonas de liquidez (stops y opciones)':'Zonas de liquidación';
   if(typeof applyCuStyles==='function')applyCuStyles();}
 const IND = {
+  trend:     {name:'Línea de tendencia (todos los datos)',color:'#eceff1',pane:false},
   vwap:      {name:'VWAP diario ±σ',      color:'#ff9f43', pane:false},
   ema:       {name:'EMA 9 / 21',          color:'#4dd0e1', pane:false},
   stochrsi:  {name:'Stoch RSI (14,14,3,3)',color:'#26c6da', pane:true},
@@ -593,6 +594,7 @@ function calcInd(full){
   if(active.has('vwap'))C.vwap=calcVWAP();
   if(active.has('stochrsi'))C.srsi=calcStochRSI(...(PRM[mode].srsi||[]));
   if(active.has('cvd'))C.cvd=calcCVD();
+  C.trend=active.has('trend')?calcTrendLine():null;
   const push=(ser,arr,colorFn)=>{
     const pts=[];arr.forEach((v,i)=>{if(v!=null){const p={time:candles[i].time,value:v};if(colorFn)p.color=colorFn(v,i);pts.push(p);}});
     if(full) ser.setData(pts); else if(pts.length) ser.update(pts.at(-1));
@@ -693,12 +695,12 @@ function gaugeSVG(sc){
 function renderLegend(){
   const fs=allFactors(),ind=fs.filter(x=>!x.mk);
   // leyenda sobre el gráfico (indicadores superpuestos)
-  $('legend').innerHTML=ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
+  $('legend').innerHTML=(active.has('trend')&&C.trend&&trendNow()!=null?`<span style="color:${trendCol(trendNow())}"><i style="background:${trendCol(trendNow())}"></i>Línea de tendencia: <b>${trendTxt(trendNow())}</b></span>`:'')+ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
   // flechas en cada botón de indicador
   document.querySelectorAll('#inds [data-ind]').forEach(b=>{const f=ind.find(x=>x.k===b.dataset.ind),bd=b.querySelector('.bdg');if(!bd)return;
     if(!f){bd.className='bdg';bd.textContent='';return;}
     bd.className='bdg '+(f.s>.15?'up':f.s<-.15?'dn':'neu');bd.textContent=f.s>.15?'▲':f.s<-.15?'▼':'●';});
-  const box=$('signal'),dash=$('dash'),sc=gaugeScore(fs);
+  const box=$('signal'),dash=$('dash'),sc=gaugeScore(fs);lastGauge=sc;
   if(!MODES[mode].inds.length||sc==null){box.classList.add('hide');dash.classList.add('hide');return;}
   const [lab,cl]=scoreLabel(sc),up=fs.filter(x=>x.s>.15).length,dn=fs.filter(x=>x.s<-.15).length;
   box.innerHTML=`<span>Termómetro ${TFS.find(x=>x[0]===tf)[1]}</span><span class="big ${cl}">${sc}/100 · ${lab}</span>`;
@@ -760,6 +762,7 @@ function drawInd(ctx,w,h){
     poly(C.bb.u,hexA(bc,.8),bw);poly(C.bb.l,hexA(bc,.8),bw);poly(C.bb.m,hexA(bc,.6),bw,[4,4]);}
   if(active.has('vwap')&&C.vwap){const V=C.vwap,[vc,vw]=sty('vwap',0,'#ff9f43',2);band(V.u1,V.l1,hexA(vc,.06),hexA(vc,.06));poly(V.u2,hexA(vc,.35),1,[3,4]);poly(V.l2,hexA(vc,.35),1,[3,4]);poly(V.u1,hexA(vc,.55),1);poly(V.l1,hexA(vc,.55),1);poly(V.v,vc,vw);}
   if(active.has('ema')&&C.ema){poly(C.ema.f,...sty('ema',0,'#4dd0e1',1.6));poly(C.ema.s,...sty('ema',1,'#ab47bc',1.6));if(C.ema.t)poly(C.ema.t,...sty('ema',2,'#ffb74d',2));}
+  if(active.has('trend')&&C.trend)drawTrend(ctx,X,Y,from,to);
   if(active.has('supertrend')&&C.st){const {st,dir}=C.st,[su,sW]=sty('supertrend',0,'#26a69a',2),[sd]=sty('supertrend',1,'#ef5350',2);ctx.lineWidth=sW;
     for(let i=Math.max(from,1);i<to&&i<st.length;i++){if(st[i]==null||st[i-1]==null||dir[i]!==dir[i-1])continue;
       const x1=X(i-1),x2=X(i);if(x1==null||x2==null)continue;ctx.strokeStyle=dir[i]===1?su:sd;
@@ -1041,39 +1044,29 @@ function buildZones(){
 function drawZones(ctx,o,profX){
   const {X,Y,mainH}=o;ctx.save();
   const zs=LIQ.zones.filter(z=>liqOpts.side==='both'||z.side===liqOpts.side).sort((a,b)=>(a.swept?0:1)-(b.swept?0:1)||a.usd-b.usd);
-  for(const z of zs){
+  for(const z of zs){z._box=null;
     let x0=X(z.i0),x1=z.i1==null?profX:X(z.i1);if(x0==null||x1==null)continue;x0=Math.max(0,x0);x1=Math.min(profX,x1);if(x1<=x0)continue;
-    let yt=Y(z.hi),yb=Y(z.lo);if(yt==null||yb==null)continue;if(yb-yt<8){const m=(yt+yb)/2;yt=m-4;yb=m+4;}
-    if(yb<0||yt>mainH)continue;
-    const g=z.side==='L'?'0,214,163':'255,61,113',a=z.swept?.06:.12+.28*z.str;
-    ctx.fillStyle=`rgba(${g},${a})`;ctx.fillRect(x0,yt,x1-x0,yb-yt);
-    ctx.strokeStyle=`rgba(${g},${z.swept?.35:.55+.45*z.str})`;ctx.lineWidth=z.swept?1:1+z.str;ctx.setLineDash(z.swept?[4,4]:[]);
-    ctx.strokeRect(x0+.5,yt+.5,x1-x0-1,yb-yt-1);ctx.setLineDash([]);
-    z._box=[x0,x1,yt,yb,g];
+    const yt=Y(z.hi),yb=Y(z.lo);if(yt==null||yb==null||yb<0||yt>mainH)continue;
+    // intensidad por nivel: más intenso donde hay más liquidez dentro de la zona (donde es más probable el rebote)
+    const col=(z.side==='L'?LIQ.colL:LIQ.colS)[z.i1==null?LIQ.n-1:Math.max(0,z.i1-1)]||[];let pk=0;
+    for(let k=z.ka;k<=z.kb;k++)pk=Math.max(pk,col[k]||0);
+    for(let k=z.ka;k<=z.kb;k++){const ya=Y(LIQ.pEdge(k+1)),yb2=Y(LIQ.pEdge(k));if(ya==null||yb2==null)continue;
+      const d=pk?Math.min(1,(col[k]||0)/pk):(k===z.k?1:.3);ctx.fillStyle=liqCol(z.side,d,z.swept,z.str);ctx.fillRect(x0,Math.min(ya,yb2),x1-x0,Math.max(1.5,Math.abs(yb2-ya)));}
+    ctx.strokeStyle=z.side==='L'?`rgba(105,240,174,${z.swept?.25:.45})`:`rgba(255,138,128,${z.swept?.25:.45})`;ctx.lineWidth=1;ctx.setLineDash(z.swept?[4,4]:[]);
+    ctx.strokeRect(x0+.5,Math.min(yt,yb)+.5,x1-x0-1,Math.max(2,Math.abs(yb-yt))-1);ctx.setLineDash([]);
+    z._box=[x0,x1];
   }
-  // etiquetas: primero las más grandes, sin solaparse
-  const used=[];
-  const big={};for(const z of zs)if(!z.swept&&z._box&&(!big[z.side]||z.usd>big[z.side].usd))big[z.side]=z;
-  for(const z of zs.slice().sort((a,b)=>(a.swept?1:0)-(b.swept?1:0)||b.usd-a.usd)){
-    if(!z._box)continue;const [x0,x1,yt,yb,g]=z._box;z._box=null;if(big[z.side]!==z)continue;
-    const b=candles[z.i0],buy=b.tb||0,sell=(b.v||0)-buy,d=buy-sell;
-    const t1=z.side==='L'?'LONG':'SHORT',t2=`${fusd(z.usd)} · ${fp(z.p)}`,
-          t3=`Compra ${fnum(buy)} · Venta ${fnum(sell)} · Δ ${d>=0?'+':''}${fnum(d)}`;
-    const ty=yb-yt>=15?(yt+yb)/2:yt-9;
-    if(used.some(u=>Math.abs(u-ty)<15))continue;
-    if(z.swept&&x1-x0<120)continue;
-    ctx.font='700 11px system-ui,sans-serif';const w1=ctx.measureText(t1).width;
-    ctx.font='11px system-ui,sans-serif';
-    let txt=t2;
-    const tw=w1+18+ctx.measureText(txt).width,lx=Math.max(4,Math.min(x0+6,profX-tw-6));
-    used.push(ty);
-    if(lx<x0+6||x1-x0<tw+12){ctx.fillStyle='rgba(15,17,21,.82)';ctx.fillRect(lx-4,ty-8,tw+8,16);}
-    ctx.textBaseline='middle';ctx.textAlign='left';
-    ctx.font='700 11px system-ui,sans-serif';ctx.fillStyle=`rgba(${g},${z.swept?.55:1})`;ctx.fillText(t1,lx,ty);
-    ctx.font='11px system-ui,sans-serif';ctx.fillStyle=z.swept?'rgba(209,212,220,.5)':'#d1d4dc';ctx.fillText(txt,lx+w1+10,ty);
-  }
+  // un solo nombre por lado, en la zona con más liquidez
+  for(const sd of ['L','S']){let big=null;for(const z of zs)if(z.side===sd&&!z.swept&&z._box&&(!big||z.usd>big.usd))big=z;if(!big)continue;
+    const y=Y(big.p);if(y==null||y<8||y>mainH-8)continue;const t=sd==='L'?'Zona de liquidez longs':'Zona de liquidez shorts';
+    ctx.font='600 11px system-ui,sans-serif';const tw=ctx.measureText(t).width,lx=Math.max(4,Math.min(big._box[0]+6,profX-tw-10));
+    ctx.fillStyle='rgba(15,17,21,.75)';ctx.fillRect(lx-4,y-8,tw+8,16);ctx.fillStyle=sd==='L'?'#69f0ae':'#ff8a80';ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText(t,lx,y);}
+  for(const z of zs)z._box=null;
   ctx.restore();
 }
+/* colores de las zonas: verde/rojo claro que se intensifica donde se concentra la liquidez */
+function liqCol(side,d,swept,str){const a=side==='L'?[185,246,202]:[255,205,210],b=side==='L'?[0,200,83]:[213,0,0];
+  const c=a.map((x,i)=>Math.round(x+(b[i]-x)*d)),al=swept?.05+.1*d:.1+.6*d*(.55+.45*(str??1));return `rgba(${c.join(',')},${al.toFixed(3)})`;}
 
 /* ---- dibujo ---- */
 
@@ -1127,10 +1120,10 @@ function drawLiq(ctx,o){
     const tag=(z,col,txt,main)=>{const y=Y(z.p);if(y==null||y<0||y>mainH)return;
       ctx.strokeStyle=col;ctx.globalAlpha=main?.9:.45;ctx.lineWidth=main?1.4:1;ctx.setLineDash(main?[]:[5,4]);
       ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(profX,y);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
-      const s=`${txt} ${fp(z.p)} · ${fusd(z.usd)}`,tw=ctx.measureText(s).width+12,tx=profX-tw-6;
+      const s=txt,tw=ctx.measureText(s).width+12,tx=profX-tw-6;
       ctx.fillStyle=col;rrect(ctx,tx,y-9,tw,18,4);ctx.fill();ctx.fillStyle='#0f1115';ctx.textAlign='left';ctx.fillText(s,tx+6,y+.5);};
-    if(liqOpts.side!=='S')cl.longs.slice(0,1).forEach((z,j)=>tag(z,'#00d6a3','▼ Liq. LONGS',j===0));
-    if(liqOpts.side!=='L')cl.shorts.slice(0,1).forEach((z,j)=>tag(z,'#ff3d71','▲ Liq. SHORTS',j===0));
+    if(liqOpts.side!=='S')cl.longs.slice(0,1).forEach((z,j)=>tag(z,'#69f0ae','Zona de liquidez longs',j===0));
+    if(liqOpts.side!=='L')cl.shorts.slice(0,1).forEach((z,j)=>tag(z,'#ff8a80','Zona de liquidez shorts',j===0));
   }
   // burbujas de liquidaciones reales
   for(const ev of liqEvents){
@@ -1179,6 +1172,7 @@ function applyMode(m){
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
   setNames();
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
+  try{if(saved&&!saved.includes('trend')&&!localStorage.getItem('cv_tr_'+m)){saved.push('trend');localStorage.setItem('cv_tr_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   active=new Set((saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
@@ -2189,13 +2183,13 @@ function stkLiqCompute(){
 }
 function drawStkLiq(ctx,o){if(!LIQ||!LIQ.stk)return;const {paneW,X,Y}=o,h=LIQ.step/2,max=Math.max(1,...LIQ.zones.map(z=>z.w));
   for(const z of LIQ.zones){const y1=Y(z.p+h),y2=Y(z.p-h);if(y1==null||y2==null)continue;const x0=X(z.i),xs=x0==null?0:Math.max(0,x0),r=z.w/max;if(r<.04)continue;
-    ctx.fillStyle=`rgba(${z.side==='L'?'0,214,163':'255,61,113'},${(.05+.5*Math.sqrt(r)).toFixed(2)})`;ctx.fillRect(xs,Math.min(y1,y2),Math.max(0,paneW-xs),Math.max(1,Math.abs(y2-y1)));}
+    ctx.fillStyle=liqCol(z.side,Math.sqrt(r),false,1);ctx.fillRect(xs,Math.min(y1,y2),Math.max(0,paneW-xs),Math.max(1,Math.abs(y2-y1)));}
   ctx.font='600 10px system-ui,sans-serif';ctx.textBaseline='middle';ctx.textAlign='right';
-  for(const sd of ['L','S']){const z=LIQ.peaks.find(x=>x.side===sd);if(!z)continue;const y=Y(z.p);if(y==null)continue;ctx.fillStyle=sd==='L'?'#00d6a3':'#ff3d71';
-    ctx.fillText(`${sd==='L'?'▼ Liq. longs':'▲ Liq. shorts'} ${fp(z.p)}`,paneW-6,y);}
+  for(const sd of ['L','S']){const z=LIQ.peaks.find(x=>x.side===sd);if(!z)continue;const y=Y(z.p);if(y==null)continue;const t=sd==='L'?'Zona de liquidez longs':'Zona de liquidez shorts',tw=ctx.measureText(t).width;
+    ctx.fillStyle='rgba(15,17,21,.75)';ctx.fillRect(paneW-tw-14,y-8,tw+8,16);ctx.fillStyle=sd==='L'?'#69f0ae':'#ff8a80';ctx.fillText(t,paneW-10,y);}
   if(STKOPT&&STKOPT.sym===symbol)for(const w of STKOPT.walls){const y=Y(w.p);if(y==null)continue;const top=STKOPT.walls.filter(x=>x.type===w.type).every(x=>x.oi<=w.oi);
     ctx.strokeStyle=w.type==='call'?'#ff9f43':'#4dd0e1';ctx.lineWidth=1.5;ctx.setLineDash([6,4]);ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(paneW,y);ctx.stroke();ctx.setLineDash([]);
-    if(top){ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(`${w.type==='call'?'Calls':'Puts'} ${fp(w.p)}`,6,y-8);}}
+    if(top){ctx.fillStyle=ctx.strokeStyle;ctx.textAlign='left';ctx.fillText(w.type==='call'?'Muro de calls':'Muro de puts',6,y-8);}}
 }
 /* opciones de EE. UU.: muros de interés abierto pasados a pesos con el precio del CEDEAR o de la acción */
 async function usQuotes(){if(USQ&&Date.now()-USQt<10*6e4)return USQ;const [u,a]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000))]);
@@ -2309,6 +2303,39 @@ function switchMarket(toA){
   renderList();updateTop();
 }
 document.addEventListener('click',e=>{if(e.target.closest('#indTog'))$('inds').classList.toggle('open');});
+
+/* ---------- línea de tendencia con todos los datos ----------
+   Recorrido: media de Hull sobre el precio típico. Color de cada tramo: promedio de Supertrend, EMAs, RSI, MACD,
+   ADX/DMI, flujo de órdenes y pendiente de la propia línea; en el tramo actual se mezcla con el termómetro
+   (que además suma liquidaciones, futuros, opciones, amplitud y noticias).
+   Rojo intenso = caída fuerte · rojo claro = bajista · blanco = neutral · verde claro = alcista · verde intenso = subida fuerte */
+function wmaArr(v,p){const o=Array(v.length).fill(null),den=p*(p+1)/2;for(let i=p-1;i<v.length;i++){let s=0,ok=true;for(let j=0;j<p;j++){const x=v[i-j];if(x==null){ok=false;break;}s+=x*(p-j);}if(ok)o[i]=s/den;}return o;}
+function hmaArr(v,p){const h=wmaArr(v,Math.max(2,Math.round(p/2))),f=wmaArr(v,p);return wmaArr(v.map((_,i)=>h[i]!=null&&f[i]!=null?2*h[i]-f[i]:null),Math.max(2,Math.round(Math.sqrt(p))));}
+function calcTrendLine(){
+  const n=candles.length;if(n<60)return null;const pr=PRM[mode],cl=closes(),tp=candles.map(b=>(b.high+b.low+b.close)/3);
+  const line=hmaArr(tp,mode==='x'?14:21),st=calcST(...pr.st).dir,ef=emaArr(cl,pr.ema[0]),es=emaArr(cl,pr.ema[1]),r=calcRSI(pr.rsi),M=calcMACD(...(pr.macd||[])),A=calcADX(pr.adx||14),atr=wilder(trArr(),14);
+  const raw=Array(n).fill(null);
+  for(let i=21;i<n;i++){const v=[],c=cl[i];
+    if(st[i]!=null)v.push(st[i]);
+    if(ef[i]!=null&&es[i]!=null)v.push((ef[i]>es[i]?.6:-.6)+(c>ef[i]?.4:-.4));
+    if(r[i]!=null)v.push(clamp((r[i]-50)/20));
+    const m=M.macd[i],sg=M.sig[i],h=M.hist[i],hp=M.hist[i-1];if(m!=null&&sg!=null)v.push((m>sg?.7:-.7)+(h!=null&&hp!=null?(h>hp?.3:-.3):0));
+    const a=A.adx[i];if(a!=null)v.push(clamp(((A.pdi[i]-A.mdi[i])/((A.pdi[i]+A.mdi[i])||1))*2*Math.min(1,a/25)));
+    v.push(clamp(flowScore(candles,i,20)));
+    if(line[i]!=null&&line[i-3]!=null&&atr[i])v.push(clamp((line[i]-line[i-3])/(1.5*atr[i])));
+    raw[i]=v.length>=4?v.reduce((x,y)=>x+y,0)/v.length:null;}
+  const s=Array(n).fill(null);let prev=null;for(let i=0;i<n;i++){if(raw[i]==null)continue;prev=prev==null?raw[i]:prev+(raw[i]-prev)*.5;s[i]=prev;}
+  return {line,s};
+}
+const trendCol=s=>s>=.5?'#00e676':s>=.15?'#a5f3c4':s<=-.5?'#ff1744':s<=-.15?'#ff9e9e':'#eceff1';
+const trendTxt=s=>s>=.5?'subida fuerte':s>=.15?'alcista':s<=-.5?'caída fuerte':s<=-.15?'bajista':'neutral';
+var lastGauge=null;
+function trendNow(){const T=C.trend;if(!T)return null;const v=T.s[T.s.length-1];if(v==null)return null;return lastGauge==null?v:(v+(lastGauge-50)/50)/2;}
+function drawTrend(ctx,X,Y,from,to){const T=C.trend;if(!T)return;const n=T.line.length,now=trendNow();
+  ctx.save();ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+  for(let i=Math.max(from,1);i<to&&i<n;i++){const a=T.line[i-1],b=T.line[i];if(a==null||b==null)continue;const x1=X(i-1),x2=X(i),y1=Y(a),y2=Y(b);if(x1==null||x2==null||y1==null||y2==null)continue;
+    const sv=i>=n-2&&now!=null?now:T.s[i];if(sv==null)continue;ctx.strokeStyle=trendCol(sv);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+  ctx.restore();}
 </script>
 </body>
 </html>
