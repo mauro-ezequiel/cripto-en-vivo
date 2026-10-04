@@ -331,12 +331,16 @@ body.fs-on .fsbar{display:flex}
 .lqx-tip{position:absolute;z-index:3;background:rgba(15,17,21,.94);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;display:flex;flex-direction:column;gap:2px;pointer-events:none;min-width:140px}
 .lqx-leg{position:absolute;left:8px;top:6px;display:flex;gap:10px;font-size:10px;color:#c9ccd4;pointer-events:none;background:rgba(15,17,21,.6);padding:3px 6px;border-radius:6px}
 .lqx-leg span{display:flex;align-items:center;gap:5px}.lqx-leg i{display:inline-block;width:46px;height:7px;border-radius:3px}
-.lqx-chart{height:320px}
+.lqx-chart{height:340px}
+.lqx-chart canvas{touch-action:pan-y;cursor:grab}.lqx.big .lqx-chart canvas{touch-action:none}.lqx-chart.draw canvas{cursor:crosshair}
+.lqx-tools{position:absolute;right:68px;top:6px;display:flex;gap:4px;z-index:2}
+.lqx-tools button{background:rgba(15,17,21,.85);color:#e8eaf0;border:1px solid var(--line);border-radius:6px;font-size:13px;min-width:30px;height:28px;padding:0 6px;cursor:pointer}
+.lqx-tools button.on{background:#ffd166;color:#0f1115;border-color:#ffd166}
 .lqx-x{display:none}
 .lqx.big{position:fixed;inset:0;z-index:9400;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
 .lqx.big .lqx-chart{height:calc(100vh - 250px);height:calc(100dvh - 250px);min-height:300px}
 .lqx.big .lqx-x{display:inline-block}
-@media (max-width:800px){.lqx-sum{grid-template-columns:repeat(2,minmax(0,1fr))}.lqx-body{grid-template-columns:1fr}.lqx-chart{height:230px}.lqx.big .lqx-chart{height:60vh}}
+@media (max-width:800px){.lqx-sum{grid-template-columns:repeat(2,minmax(0,1fr))}.lqx-body{grid-template-columns:1fr}.lqx-chart{height:230px}.lqx.big .lqx-chart{height:60vh}.lqx-leg i{width:20px}.lqx-tools button{min-width:28px;height:26px;font-size:12px}}
 .mnav{display:none}
 @media (max-width:800px){
   .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:8500;background:rgba(22,26,34,.97);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom));backdrop-filter:blur(6px)}
@@ -421,7 +425,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING sigue tendencias con ADX fuerte; SHOOTER opera rebotes desde extremos. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes y rupturas con la tendencia de 15m. El % es cuántas veces llegó al primer objetivo antes de la liquidación. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -446,8 +450,8 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 5 % o más · simulación 300 USD × 4</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 1 a 30 min · movimientos de 0,5 % o más · simulación 10 USD × 15</small></button>
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 5 % o más · simulación 350 USD × 5</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 1 a 30 min · movimientos de 0,5 % o más · simulación 50 USD × 20</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 10</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button></section>
@@ -1633,20 +1637,22 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    la moneda tiene volatilidad para recorrer el movimiento mínimo y el riesgo/beneficio es ≥ 1,4.
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
-  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.05,maxAtr:.06,H:18,every:180e3,uni:'top',n:20,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.005,maxAtr:.008,H:12,every:45e3,uni:'safe',n:12,thr:.5,maxAge:36e5*1.5}};
+  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.05,maxAtr:.02,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
+  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.005,maxAtr:.004,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
-if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['mom-a','mom-b','sh-a+','sh-a','sh-b','cu','a-mom','a-rev','c-mom'].includes(x.setup)); // descarta señales de versiones anteriores
+if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
   if(cfg.uni==='safe')return SAFE.filter(s=>tickers[s]);
-  return Object.values(tickers).filter(t=>!STABLE.test(t.s)&&t.q>2e7).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
+  /* todas las líquidas menos las impredecibles: sin estables ni tokens apalancados, con volumen real y sin pumps/dumps de ±25 % en 24 h
+     (la volatilidad excesiva se descarta después con el ATR de cada regla) */
+  return Object.values(tickers).filter(t=>!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
 const kl=(s,t,n)=>getJ(`${API}/klines?symbol=${s}&interval=${t}&limit=${n}`).then(d=>d.map(toBar));
 function evalCoin(m,cs,hc){
   return withCandles(cs,()=>{
@@ -1701,9 +1707,9 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'mom-a':{p:66,n:656,txt:'impulso con tendencia, volumen y vela fuerte'}},
-           x:{'sh-a+':{p:66,n:80,txt:'rebote en tendencia fuerte sin pánico de volumen'},'sh-a':{p:58,n:203,txt:'rebote en tendencia fuerte'},'sh-b':{p:58,n:431,txt:'rebote sin pánico de volumen'}}};
-const MINCERT={medio:60,x:56,p:0,a:57};CAL.a={'a-mom':{p:59,n:495,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:62,n:290,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:65,n:489,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const CAL={medio:{'t-pb':{p:56,n:617,txt:'retroceso dentro de la tendencia con volumen bajo'}},
+           x:{'sh-r':{p:56,n:709,txt:'rebote desde el extremo con la tendencia de 15m a favor'},'sh-k':{p:52,n:681,txt:'ruptura de máximo/mínimo con tendencia fuerte'}}};
+const MINCERT={medio:52,x:50,p:0,a:57};CAL.a={'a-mom':{p:59,n:495,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:62,n:290,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:65,n:489,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1714,41 +1720,47 @@ function calCert(m,setup){
 function htfTrend(hc){const h=hc.slice(0,-1),cl=h.map(b=>b.close),e=emaArr(cl,21),i=h.length-1;if(i<4||e[i]==null||e[i-3]==null)return 0;return (cl[i]>e[i]?.5:-.5)+(e[i]>e[i-3]?.5:-.5);}
 function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDelta(cc[j]);vv+=cc[j].v;}for(let j=Math.max(0,i-19);j<=i;j++)vs+=cc[j].v;
   const b=cc[i];return {flow:vv?fl/vv:0,vr:b.v/((vs/Math.min(i+1,20))||1),body:(b.close-b.open)/((b.high-b.low)||1)};}
-/* SHOOTER v3 (5m): rebote desde el extremo de Bollinger (20,2) con RSI 7 ≤30/≥70, SOLO a favor de la tendencia de 15m.
-   Backtest 42 días × 8 criptos: con ADX ≥30 y sin pico de volumen 75 % (56 casos); ADX ≥25 60 %; ADX <25 sin pico de volumen 60 %.
-   Con pico de volumen (pánico) o contra la tendencia de 15m se descarta (≤55 %). */
+/* SHOOTER v4 (5m) · simulación 50 USD × 20 con liquidación en −5 USD (el precio solo puede ir 0,5 % en contra).
+   Backtest 30 días × 60 criptos (todas las líquidas, sin filtrar por "confiables"), validado en el último 40 % del período:
+   - sh-r: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65), tendencia de 15m a favor, ADX 20–30 → 1.er objetivo antes de la liquidación 56 %.
+   - sh-k: ruptura del máximo/mínimo de 20 velas con EMA 9/21 y vela fuerte, tendencia de 15m a favor, ADX > 30 → 52 %.
+   Solo monedas con ATR de 5m entre 0,2 % y 0,4 %: con menos no llegan al objetivo; con más (impredecibles) el ruido liquida. */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
-    const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i];
-    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0,L=lastBarStats(cc,i);
+    const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
+    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0,L=lastBarStats(cc,i),e9=emaArr(cl,9)[i],e21=emaArr(cl,21)[i];
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
-    let dir=0;if(z<-2&&r7<30)dir=1;else if(z>2&&r7>70)dir=-1;
-    if(!dir||Math.sign(htf)!==dir||adx==null)return out;
-    if(adx>=30&&L.vr<1.5)out.setup='sh-a+';else if(adx>=25)out.setup='sh-a';else if(L.vr<1.5)out.setup='sh-b';else return out;
-    out.dir=dir;out.score=dir;
-    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','ADX '+adx.toFixed(0)+(L.vr<1.5?' · sin pánico de volumen':''));
+    if(adx==null||r7==null||e21==null||!(atrP>=.002&&atrP<=.004))return out;
+    let dir=0,setup=null;
+    if(Math.abs(z)>=2&&(z<0?r7<=35:r7>=65)){dir=z<0?1:-1;if(adx>=20&&adx<=30)setup='sh-r';}
+    else{let hh=-Infinity,ll=Infinity;for(let j=i-20;j<i;j++){hh=Math.max(hh,cc[j].high);ll=Math.min(ll,cc[j].low);}
+      if(cb>hh&&e9>e21&&L.body>.5)dir=1;else if(cb<ll&&e9<e21&&L.body<-.5)dir=-1;if(dir&&adx>30)setup='sh-k';}
+    if(!setup||Math.sign(htf)!==dir)return out;
+    out.dir=dir;out.score=dir;out.setup=setup;
+    if(setup==='sh-r')out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','ADX '+adx.toFixed(0)+' (tendencia moderada)');
+    else out.reasons.push(dir>0?'rompió el máximo de 20 velas':'rompió el mínimo de 20 velas','EMA 9 '+(dir>0?'sobre':'bajo')+' EMA 21 y vela fuerte','tendencia de 15m a favor','ADX '+adx.toFixed(0)+' (tendencia fuerte)');
+    out.reasons.push('volatilidad justa para la liquidación de −5 USD');
     return out;
   });
 }
-/* TRADING v3 (4H): impulso a favor de la tendencia.
-   Tendencia = Supertrend (10,3) + EMA 21 sobre EMA 50 + precio sobre EMA 200 (al revés para short) + tendencia diaria a favor + ADX ≥25.
-   Entrada solo con impulso: RSI 14 ≥70 (≤30 en short) y vela fuerte (cuerpo >50 % del rango).
-   Backtest ~11 meses × 12 criptos: con flujo comprador a favor 65 % (364 casos, estable en las dos mitades); sin flujo 61 %.
-   Los retrocesos y la reversión a la media en 4H dieron 42–52 %: se descartan. */
+/* TRADING v4 (4H) · simulación 350 USD × 5 con liquidación en −45 USD (el precio puede ir 2,57 % en contra).
+   Backtest ~11 meses × 60 criptos, validado en el último 40 %: retroceso dentro de la tendencia
+   (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 por debajo de 50 en long / por encima en short),
+   con volumen bajo en el retroceso y ATR de 4H entre 1,2 % y 2 % → 1.er objetivo (3 %) antes de la liquidación 56 %.
+   El impulso (RSI ≥ 70) con este stop más corto quedó casi sin ventaja y se descarta. */
 function evalTrading(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
-    const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i];
+    const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
     const st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],adx=calcADX().adx[i],r14=calcRSI(14)[i],htf=htfTrend(hc),L=lastBarStats(cc,i);
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null};
-    if(e200==null||adx==null||r14==null)return out;
+    if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
-    if(!dir||Math.sign(htf)!==dir||adx<25)return out;
-    if(!(dir>0?r14>=70:r14<=30)||dir*L.body<=.5)return out;
-    out.setup=dir*L.flow>0?'mom-a':'mom-b';out.dir=dir;out.score=dir;
-    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','tendencia diaria a favor','ADX '+adx.toFixed(0),'RSI 14 en '+r14.toFixed(0)+' y vela fuerte');
-    if(out.setup==='mom-a')out.reasons.push(dir>0?'compradores agresivos':'vendedores agresivos');
+    if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>=.012&&atrP<.02))return out;
+    out.setup='t-pb';out.dir=dir;out.score=dir;
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para la liquidación de −45 USD');
+    if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;
   });
 }
@@ -1760,15 +1772,15 @@ async function futData(m,syms){
     if(Array.isArray(t)&&t.length)out[s].taker=t.reduce((a,x)=>a+ +x.buySellRatio,0)/t.length;}
   return out;
 }
+const TGTS={'t-pb':[.03,.05,.08],'sh-r':[.005,.0075,.012],'sh-k':[.005,.01,.015]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||atrP>cfg.maxAtr)return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
-  const reach=atrP*Math.sqrt(cfg.H)*1.3;if(reach<cfg.min)return null;
-  let slD,t1;
-  if(m==='x'){slD=Math.min(.035,Math.max(2.5*atrP,cfg.min*.8));t1=cfg.min;}
-  else{slD=Math.max(1.2*atrP,cfg.min*.35);if(m==='a')slD=Math.min(slD,.045);t1=Math.max(cfg.min,slD*1.6);if(t1>reach)return null;}
-  const far=m==='x'?Math.max(t1*1.8,Math.abs(e.mid/c-1)):Math.max(t1*1.6,reach*.9);
-  const tp0=c*(1+dir*t1*.5),tp1=c*(1+dir*t1),tp2=c*(1+dir*far),sl=c*(1-dir*slD);
+  const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
+  if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
+  else{const reach=atrP*Math.sqrt(cfg.H)*1.3;if(reach<cfg.min)return null;
+    const slD=Math.min(Math.max(1.2*atrP,cfg.min*.35),.045),t1=Math.max(cfg.min,slD*1.6);if(t1>reach)return null;
+    tp0=c*(1+dir*t1*.5);tp1=c*(1+dir*t1);tp2=c*(1+dir*Math.max(t1*1.6,reach*.9));sl=c*(1-dir*slD);}
   const cal=calCert(m,setup);let conf=cal.p;const reasons=e.reasons.slice(0,4);
   const f=fd&&fd[sym];
   if(f){if(f.taker!=null){if(dir*(f.taker-1)>.05){conf+=2;reasons.push('futuros: compras/ventas a favor');}else if(dir*(f.taker-1)<-.05){conf-=3;reasons.push('futuros: flujo en contra');}}
@@ -1777,7 +1789,7 @@ function buildSignalV2(m,sym,e,fd){
   if(m==='p')conf=e.str;conf=Math.round(clamp(conf,1,99));if(conf<MINCERT[m])return null;
   const zone=c*Math.min(cfg.min*.15,atrP*.5);
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,
-    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`acierto histórico ${cal.p} % en ${cal.n} casos de ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
+    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':m==='a'?`acierto histórico ${cal.p} % en ${cal.n} casos de ${CAL[m][setup].txt}`:`acierto histórico ${cal.p} % (llegó al primer objetivo antes de la liquidación) en ${cal.n} casos de ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
 async function scanSignals(mm){
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
@@ -1815,7 +1827,7 @@ function checkSignals(){
 }
 function renderSignals(){
   const m=mode,cfg=SIGCFG[m],now=Date.now();
-  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${m==='x'?'solo criptos líquidas y confiables':m==='a'?'las 30 acciones y CEDEARs con más volumen de BYMA':'las '+cfg.n+' con más volumen'}`;
+  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${m==='x'?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones y CEDEARs con más volumen de BYMA':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales calibradas con 6 años de velas diarias de BYMA (acciones argentinas y CEDEARs): el % es el acierto en acciones que no se usaron para elegir las reglas. Solo aparecen si el termómetro, la amplitud del mercado y las noticias no están en contra. Ninguna es segura: usa siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
@@ -1841,11 +1853,11 @@ setInterval(()=>{const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode
 setInterval(checkSignals,2000);
 
 /* ---------- operaciones simuladas e historial ----------
-   TRADING: 300 USD × 4 (posición de 1.200 USD), se liquida si pierde 200 USD.
-   SHOOTER: 10 USD × 15 (posición de 150 USD), se liquida (−10 USD) si toca el stop sin llegar a un objetivo.
+   TRADING: 350 USD × 5 (posición de 1.750 USD), se liquida si pierde 45 USD (2,57 % en contra).
+   SHOOTER: 50 USD × 20 (posición de 1.000 USD), se liquida si pierde 5 USD (0,5 % en contra).
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:300,lev:4,maxLoss:200,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'300 USD × 4 · liquidación en −200 USD'},
-           x:{margin:10,lev:15,maxLoss:10,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'10 USD × 15 · liquidada si no llega a un objetivo'}};
+const SIM={medio:{margin:350,lev:5,maxLoss:45,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 5 · liquidación en −45 USD'},
+           x:{margin:50,lev:20,maxLoss:5,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 20 · liquidación en −5 USD'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:100000,lev:10,maxLoss:50000,maxAge:30*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 10 · liquidación en −50.000 ARS'};
 const TGT=['objetivo corto','objetivo 1','objetivo 2'];
@@ -1853,25 +1865,24 @@ let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
 function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
 function addSig(m,f){
-  SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev;
-  const fail=m!=='x'?f.entry*(1-f.dir*c.maxLoss/not):f.sl;
+  SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,fail=f.entry*(1-f.dir*c.maxLoss/not);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:c.maxLoss,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
-const pnlAt=(o,px)=>{const c=SIM[o.m];return c.margin*c.lev*o.dir*(px/o.entry-1);};
-function closeOp(o,state,px,ts,why){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=state==='fail'?-SIM[o.m].maxLoss:pnlAt(o,px);}
+/* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada */
+const notOf=o=>o.not||SIM[o.m].margin*SIM[o.m].lev,lossOf=o=>o.loss||SIM[o.m].maxLoss;
+function realOf(o){if(o.real!=null)return o.real;let r=0;const T=[o.tp0,o.tp1,o.tp2];for(let k=0;k<(o.hit||0);k++)r+=notOf(o)/3*o.dir*(T[k]/o.entry-1);return r;}
+const pnlAt=(o,px)=>realOf(o)+(1-(o.hit||0)/3)*notOf(o)*o.dir*(px/o.entry-1);
+function closeOp(o,state,px,ts,why,pnl){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=pnl!=null?pnl:state==='fail'?-lossOf(o):pnlAt(o,px);}
 function stepOp(o,hi,lo,ts){
-  if(o.state!=='open')return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];
-  if(o.hit===0&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,o.m==='a'?'liquidada en −50.000 ARS':o.m!=='x'?'liquidada en −200 USD':'tocó el stop: liquidada');return true;}
-  if(o.hit>0&&d*(adv-o.entry)<=0){closeOp(o,'win',T[o.hit-1],ts,'llegó al '+TGT[o.hit-1]+' y volvió a la entrada');return true;}
-  for(let k=2;k>=0;k--)if(d*(fav-T[k])>=0){o.hit=Math.max(o.hit,k+1);break;}
-  if(o.hit===3){closeOp(o,'win',o.tp2,ts,'llegó al objetivo 2');return true;}
-  if(ts-o.t>SIM[o.m].maxAge){
-    if(o.hit>0)closeOp(o,'win',T[o.hit-1],ts,'llegó al '+TGT[o.hit-1]);
-    else if(o.m==='x')closeOp(o,'fail',o.fail,ts,'no llegó a ningún objetivo: liquidada');
-    else closeOp(o,'exp',(lo+hi)/2,ts,'venció el plazo sin llegar a un objetivo');
-    return true;}
+  if(o.state!=='open')return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];o.hit=o.hit||0;
+  if(!o.hit&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,o.m==='a'?'liquidada en −50.000 ARS':`liquidada en −${lossOf(o)} USD`,-lossOf(o));return true;}
+  if(o.hit>0&&d*(adv-o.entry)<=0){closeOp(o,'win',o.entry,ts,'llegó al '+TGT[o.hit-1]+' y el resto se cerró en la entrada',realOf(o));return true;}
+  while(o.hit<3&&d*(fav-T[o.hit])>=0){o.real=realOf(o)+notOf(o)/3*d*(T[o.hit]/o.entry-1);o.hit++;}
+  if(o.hit===3){closeOp(o,'win',o.tp2,ts,'llegó al objetivo 2',realOf(o));return true;}
+  if(ts-o.t>SIM[o.m].maxAge){const px=(lo+hi)/2,v=Math.max(-lossOf(o),pnlAt(o,px));
+    closeOp(o,o.hit>0?'win':'exp',px,ts,o.hit>0?'llegó al '+TGT[o.hit-1]+' y venció el plazo':'venció el plazo sin llegar a un objetivo',v);return true;}
   return false;
 }
 function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;const t=tickers[o.sym];if(!t)continue;if(stepOp(o,t.c,t.c,now))ch=true;o.last=now;}if(ch)saveOps();}
@@ -1911,7 +1922,7 @@ function opDetail(o){
     <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
     <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
     <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo corto')}${tg(1,'Objetivo 1')}${tg(2,'Objetivo 2')}
-    <span>${o.m!=='x'?'Liquidación':'Stop'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
+    <span>Liquidación</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
     <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
     <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
@@ -2454,64 +2465,109 @@ async function lqInit(){
 const mkRamp=st=>{const out=[];for(let i=0;i<256;i++){const t=i/255;let j=0;while(j<st.length-2&&t>st[j+1][0])j++;const [t0,c0]=st[j],[t1,c1]=st[j+1],u=(t-t0)/((t1-t0)||1);out.push(c0.map((v,q)=>Math.round(v+(c1[q]-v)*Math.min(1,Math.max(0,u)))));}return out;};
 const RAMP={L:mkRamp([[0,[14,34,26]],[.25,[6,92,52]],[.55,[0,170,88]],[.8,[0,230,118]],[1,[150,255,195]]]),
             S:mkRamp([[0,[38,14,20]],[.25,[110,16,36]],[.55,[200,22,52]],[.8,[255,23,68]],[1,[255,150,160]]])};
-let lqGeo=null;
+/* vista del mapa: se puede mover (arrastrar), hacer zoom (rueda / pellizco) y marcar líneas */
+let lqGeo=null,LV={key:'',span:0,r:0,auto:true,a:0,b:0},LT='move',LTP=null,lqRaf=0;
+let LL={};try{LL=JSON.parse(localStorage.getItem('cv_lqlines')||'{}')||{};}catch(e){}
+const saveLL=()=>{try{localStorage.setItem('cv_lqlines',JSON.stringify(LL))}catch(e){}};
+const lqReq=()=>{if(!lqRaf)lqRaf=requestAnimationFrame(()=>{lqRaf=0;drawLqHeat();});};
+const lqIdx=t=>{const n=candles.length;if(!n)return 0;const ms=TF_MS[tf]||36e5;if(t>=candles[n-1].t)return n-1+(t-candles[n-1].t)/ms;if(t<=candles[0].t)return (t-candles[0].t)/ms;
+  let a=0,b=n-1;while(a<b){const m=(a+b+1)>>1;if(candles[m].t<=t)a=m;else b=m-1;}return a+(t-candles[a].t)/ms;};
+const lqTime=x=>{const n=candles.length,ms=TF_MS[tf]||36e5,i=Math.floor(x);if(i>=n-1)return candles[n-1].t+(x-(n-1))*ms;if(i<0)return candles[0].t+x*ms;return candles[i].t+(x-i)*ms;};
 function drawLqHeat(){
   const wrap=$('lqChart');if(!wrap)return;let cv=$('lqCanvas');
-  if(!cv){wrap.innerHTML='<canvas id="lqCanvas"></canvas><div class="lqx-tip" id="lqTip" hidden></div><div class="lqx-leg"><span><i style="background:linear-gradient(90deg,#0e221a,#00aa58,#00e676,#96ffc3)"></i>Liquidez longs</span><span><i style="background:linear-gradient(90deg,#260e14,#c81634,#ff1744,#ff96a0)"></i>Liquidez shorts</span></div>';cv=$('lqCanvas');lqHover(cv);}
+  if(!cv){wrap.innerHTML='<canvas id="lqCanvas"></canvas><div class="lqx-tip" id="lqTip" hidden></div><div class="lqx-leg"><span><i style="background:linear-gradient(90deg,#0e221a,#00aa58,#00e676,#96ffc3)"></i>Longs</span><span><i style="background:linear-gradient(90deg,#260e14,#c81634,#ff1744,#ff96a0)"></i>Shorts</span></div>'+
+    '<div class="lqx-tools"><button data-t="move" class="on" title="Mover y hacer zoom">✋</button><button data-t="h" title="Línea horizontal">─</button><button data-t="t" title="Línea de tendencia (2 toques)">╱</button><button data-t="clr" title="Borrar mis líneas de esta moneda">🗑</button><button data-t="rst" title="Volver a la vista inicial">↺</button></div>';
+    cv=$('lqCanvas');lqHover(cv);
+    wrap.querySelector('.lqx-tools').onclick=e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset.t;
+      if(t==='clr'){delete LL[lqBase(symbol)];saveLL();}else if(t==='rst'){LV.key='';}else{LT=t;LTP=null;}
+      wrap.querySelectorAll('.lqx-tools button').forEach(x=>x.classList.toggle('on',x.dataset.t===LT));wrap.classList.toggle('draw',LT!=='move');lqReq();};}
   const W=wrap.clientWidth,H=wrap.clientHeight;if(W<50||H<50)return;const dpr=Math.min(2,devicePixelRatio||1);
   if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';}
-  const g=cv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.fillStyle='#0f1115';g.fillRect(0,0,cv.width,cv.height);g.setTransform(dpr,0,0,dpr,0,0);
+  const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#0f1115';g.fillRect(0,0,W,H);
   const msg=t=>{g.fillStyle='#7c8394';g.font='13px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(t,W/2,H/2);lqGeo=null;};
   if(!LIQ||!LIQ.colL){msg(FUT&&FUT.none?'Esta moneda no tiene futuros: no hay liquidaciones que mapear.':'Calculando el mapa de liquidaciones…');return;}
   const n=Math.min(LIQ.n,candles.length);if(n<20){msg('Cargando velas…');return;}
-  const padR=62,padB=18,pw=W-padR,ph=H-padB,cols=Math.min(n,Math.max(40,Math.floor(pw*.86/4))),i0=n-cols,plotW=pw*.86,colW=plotW/cols;
-  let lo=Infinity,hi=-Infinity;for(let i=i0;i<n;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}
-  lo*=.955;hi*=1.045;const lnA=Math.log(lo),lnB=Math.log(hi),Y=p=>ph*(1-(Math.log(p)-lnA)/(lnB-lnA)),P=y=>Math.exp(lnB-(y/ph)*(lnB-lnA));
-  const {colL,colS,bin,nb}=LIQ,kLo=bin(lo),kHi=bin(hi),KW=[.25,.6,1,.6,.25];
-  const sm=(c,k)=>{let s=0;for(let d=-2;d<=2;d++){const kk=k+d;if(kk>=0&&kk<nb)s+=c[kk]*KW[d+2];}return s/2.7;};
-  const SL=new Map(),SS=new Map();for(let i=i0;i<n;i++){const a=new Float32Array(kHi-kLo+1),b=new Float32Array(kHi-kLo+1);for(let k=kLo;k<=kHi;k++){a[k-kLo]=sm(colL[i],k);b[k-kLo]=sm(colS[i],k);}SL.set(i,a);SS.set(i,b);}
-  let mx=0;for(const a of SL.values())for(const v of a)if(v>mx)mx=v;for(const b of SS.values())for(const v of b)if(v>mx)mx=v;
-  const IW=Math.round(pw*dpr),IH=Math.round(ph*dpr);
-  if(mx>0&&IW>0&&IH>0){const img=g.createImageData(IW,IH),d=img.data,kr=new Int32Array(IH),ic=new Int32Array(IW);
-    for(let y=0;y<IH;y++)kr[y]=bin(P(y/dpr));for(let x=0;x<IW;x++){const xx=x/dpr;ic[x]=xx>=plotW?n-1:Math.min(n-1,i0+Math.floor(xx/colW));}
-    const pr=new Float64Array(IH);for(let y=0;y<IH;y++)pr[y]=P(y/dpr);
-    for(let y=0;y<IH;y++){const k=Math.min(kHi,Math.max(kLo,kr[y]))-kLo;for(let x=0;x<IW;x++){const i=ic[x],vl=SL.get(i)[k],vs=SS.get(i)[k],v=vl>vs?vl:vs,o=(y*IW+x)*4;
-        const side=v>mx*.004?(vl>=vs?RAMP.L:RAMP.S):(pr[y]>candles[i].close?RAMP.S:RAMP.L),t=Math.max(.04,Math.pow(v/mx,.5)),c=side[Math.min(255,Math.round(t*255))];
-        d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];d[o+3]=255;}}
-    g.setTransform(1,0,0,1,0,0);g.putImageData(img,0,0);g.setTransform(dpr,0,0,dpr,0,0);}
-  // separación entre pasado y presente
-  g.strokeStyle='rgba(255,255,255,.12)';g.setLineDash([3,4]);g.beginPath();g.moveTo(plotW,0);g.lineTo(plotW,ph);g.stroke();g.setLineDash([]);
-  // precio
-  g.strokeStyle='#e8eaf0';g.lineWidth=1.6;g.beginPath();for(let i=i0;i<n;i++){const x=(i-i0+.5)*colW,y=Y(candles[i].close);i===i0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+  const padR=62,padB=18,pw=W-padR,ph=H-padB,key=symbol+'|'+tf;
+  if(LV.key!==key){const sp=Math.min(n,Math.max(30,Math.floor(pw/7)));LV={key,span:sp,r:sp*.14,auto:true,a:0,b:0};}
+  LV.span=Math.max(15,Math.min(n+40,LV.span));LV.r=Math.max(-n+10,Math.min(LV.span*.8,LV.r));
+  const x1=n-1+LV.r,x0=x1-LV.span,cw=pw/LV.span,X=i=>(i-x0)*cw;
+  const vi0=Math.max(0,Math.floor(x0)),vi1=Math.min(n-1,Math.ceil(x1));
+  if(LV.auto){let lo=Infinity,hi=-Infinity;for(let i=vi0;i<=vi1;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}if(!isFinite(lo)){lo=candles[n-1].low;hi=candles[n-1].high;}LV.a=Math.log(lo*.96);LV.b=Math.log(hi*1.04);}
+  const A=LV.a,B=LV.b,Y=p=>ph*(1-(Math.log(p)-A)/(B-A)),P=y=>Math.exp(B-(y/ph)*(B-A));
+  // celdas ("cubitos"): una columna por vela y filas del mismo alto que el ancho
+  const {colL,colS,step,lnLo,nb}=LIQ,binPx=step/(B-A)*ph,gk=Math.max(1,Math.round(Math.max(4,Math.min(cw,14))/binPx)),rowPx=gk*binPx;
+  const kA=Math.max(0,Math.floor((A-lnLo)/step/gk)*gk),kB=Math.min(nb-1,Math.ceil((B-lnLo)/step));
+  const ci0=Math.max(0,Math.floor(x0)),ci1=Math.ceil(x1),cell=(c,k)=>{let v=0;for(let q=k;q<k+gk&&q<nb;q++)if(c[q]>v)v=c[q];return v;};
+  let mx=0;for(let i=ci0;i<=ci1;i++){const ii=Math.min(n-1,i),a=colL[ii],b=colS[ii];for(let k=kA;k<=kB;k+=gk){const vl=cell(a,k),vs=cell(b,k);if(vl>mx)mx=vl;if(vs>mx)mx=vs;}}
+  const gap=cw>=5&&rowPx>=5?1:0,LV7=8;
+  if(mx>0)for(let i=ci0;i<=ci1;i++){const ii=Math.min(n-1,i),a=colL[ii],b=colS[ii],cx=X(i),fut=i>n-1,cl=candles[ii].close;
+    for(let k=kA;k<=kB;k+=gk){const vl=cell(a,k),vs=cell(b,k),v=Math.max(vl,vs),pTop=Math.exp(lnLo+(k+gk)*step),pBot=Math.exp(lnLo+k*step),yT=Y(pTop),yB=Y(pBot);if(yB<0||yT>ph)continue;
+      let lev=Math.ceil(Math.sqrt(v/mx)*LV7)/LV7,side;
+      if(v<mx*.01){side=Math.sqrt(pTop*pBot)>cl?RAMP.S:RAMP.L;lev=.035;}else side=vl>=vs?RAMP.L:RAMP.S;
+      const c=side[Math.min(255,Math.round(lev*255*(fut?.85:1)))];g.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;g.fillRect(cx+gap*.5,yT+gap*.5,cw-gap,yB-yT-gap);}}
+  g.strokeStyle='rgba(255,255,255,.14)';g.setLineDash([3,4]);g.beginPath();g.moveTo(X(n),0);g.lineTo(X(n),ph);g.stroke();g.setLineDash([]);
+  // velas
+  const bw=Math.max(1,cw*.62);
+  for(let i=vi0;i<=vi1;i++){const b=candles[i],x=X(i)+cw/2,up=b.close>=b.open,yo=Y(b.open),yc=Y(b.close);
+    g.strokeStyle=up?'#f5f7fa':'#cfd3dc';g.lineWidth=1;g.beginPath();g.moveTo(Math.round(x)+.5,Y(b.high));g.lineTo(Math.round(x)+.5,Y(b.low));g.stroke();
+    if(cw>=3){const yT=Math.min(yo,yc),hh=Math.max(1,Math.abs(yc-yo));g.fillStyle=up?'#f5f7fa':'#14171d';g.fillRect(x-bw/2,yT,bw,hh);if(!up){g.strokeStyle='#cfd3dc';g.strokeRect(x-bw/2+.5,yT+.5,bw-1,Math.max(0,hh-1));}}}
   const cp=candles[n-1].close,cy=Y(cp);g.strokeStyle='rgba(232,234,240,.55)';g.setLineDash([4,4]);g.beginPath();g.moveTo(0,cy);g.lineTo(pw,cy);g.stroke();g.setLineDash([]);
   // liquidaciones reales (burbujas)
-  const base=lqBase(symbol),t0=candles[i0].t,evs=LQX.ev.filter(e=>e.sym===base&&e.t>=t0);let bm=0;for(const e of evs)bm=Math.max(bm,e.usd);
-  const ci=t=>{let a2=i0,b2=n-1;while(a2<b2){const m=(a2+b2+1)>>1;if(candles[m].t<=t)a2=m;else b2=m-1;}return a2;};
-  for(const e of evs){if(e.p<lo||e.p>hi)continue;const i=ci(e.t),frac=Math.min(1,(e.t-candles[i].t)/(TF_MS[tf]||36e5)),x=(i-i0+frac)*colW,y=Y(e.p),r=2+12*Math.sqrt(e.usd/(bm||1));
-    g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=e.side==='L'?'rgba(0,230,118,.55)':'rgba(255,23,68,.55)';g.fill();g.strokeStyle='rgba(255,255,255,.75)';g.lineWidth=1;g.stroke();}
+  const base=lqBase(symbol),tA=lqTime(x0),evs=LQX.ev.filter(e=>e.sym===base&&e.t>=tA);let bm=0;for(const e of evs)bm=Math.max(bm,e.usd);
+  for(const e of evs){const x=X(lqIdx(e.t)+.5),y=Y(e.p);if(x<0||x>pw||y<0||y>ph)continue;const r=2+11*Math.sqrt(e.usd/(bm||1));
+    g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=e.side==='L'?'rgba(0,230,118,.6)':'rgba(255,23,68,.6)';g.fill();g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1;g.stroke();}
   // nombres de las zonas más grandes
-  const cl=LIQ.cl;g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
-  for(const [z,t,c] of [[cl&&cl.longs[0],'Zona de liquidez longs','#69f0ae'],[cl&&cl.shorts[0],'Zona de liquidez shorts','#ff8a80']]){if(!z||z.p<lo||z.p>hi)continue;
-    const y=Y(z.p),tw=g.measureText(t).width;g.fillStyle='rgba(15,17,21,.78)';g.fillRect(plotW-tw-14,y-8,tw+8,16);g.fillStyle=c;g.textAlign='right';g.fillText(t,plotW-10,y);}
+  const cz=LIQ.cl;g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
+  for(const [z,t,c] of [[cz&&cz.longs[0],'Zona de liquidez longs','#69f0ae'],[cz&&cz.shorts[0],'Zona de liquidez shorts','#ff8a80']]){if(!z)continue;const y=Y(z.p);if(y<8||y>ph-8)continue;
+    const tw=g.measureText(t).width,xr=Math.min(pw-6,X(n)-6);g.fillStyle='rgba(15,17,21,.8)';g.fillRect(xr-tw-8,y-8,tw+8,16);g.fillStyle=c;g.textAlign='right';g.fillText(t,xr-4,y);}
+  // líneas del usuario
+  const ls=LL[base]||[],tmp=LTP&&LTP.p2?[{type:'t',t1:LTP.t1,p1:LTP.p1,t2:LTP.t2,p2:LTP.p2,tmp:1}]:[];
+  g.lineWidth=1.6;g.font='700 10px system-ui,sans-serif';
+  for(const L of ls.concat(tmp)){g.strokeStyle=L.tmp?'rgba(255,209,102,.6)':'#ffd166';g.fillStyle='#ffd166';
+    if(L.type==='h'){const y=Y(L.p);if(y<0||y>ph)continue;g.beginPath();g.moveTo(0,y);g.lineTo(pw,y);g.stroke();g.fillRect(pw+1,y-8,padR-2,16);}
+    else{const xa=X(lqIdx(L.t1)+.5),ya=Y(L.p1),xb=X(lqIdx(L.t2)+.5),yb=Y(L.p2);g.beginPath();g.moveTo(xa,ya);g.lineTo(xb,yb);g.stroke();for(const [x,y] of [[xa,ya],[xb,yb]]){g.beginPath();g.arc(x,y,3,0,7);g.fill();}}}
+  if(LTP&&!LTP.p2){g.fillStyle='#ffd166';g.beginPath();g.arc(X(lqIdx(LTP.t1)+.5),Y(LTP.p1),4,0,7);g.fill();}
   // ejes
-  g.fillStyle='#0f1115';g.fillRect(pw,0,padR,H);g.fillRect(0,ph,W,padB);g.font='10px system-ui,sans-serif';g.fillStyle='#9aa0ae';g.textAlign='left';
-  for(let j=0;j<=5;j++){const y=ph*j/5,pp=P(y);g.fillText(fp(pp),pw+4,Math.min(ph-6,Math.max(6,y)));}
-  g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);
+  g.fillStyle='#0f1115';g.fillRect(pw,0,padR,H);g.fillRect(0,ph,W,padB);g.font='10px system-ui,sans-serif';g.fillStyle='#9aa0ae';g.textAlign='left';g.textBaseline='middle';
+  for(let j=0;j<=5;j++){const y=ph*j/5;g.fillText(fp(P(y)),pw+4,Math.min(ph-6,Math.max(6,y)));}
+  for(const L of ls)if(L.type==='h'){const y=Y(L.p);if(y<0||y>ph)continue;g.fillStyle='#ffd166';g.fillRect(pw+1,y-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(L.p),pw+4,y);}
+  if(cy>=0&&cy<=ph){g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);}
   g.fillStyle='#9aa0ae';g.font='10px system-ui,sans-serif';g.textAlign='center';
-  const intra=['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf),nL=Math.max(2,Math.min(5,Math.floor((plotW-40)/95))),p2=v=>String(v).padStart(2,'0');
-  for(let j=0;j<nL;j++){const i=i0+Math.round((cols-1)*j/nL),dt=new Date(candles[i].t),lab=`${dt.getDate()}/${dt.getMonth()+1}`+(intra?` ${p2(dt.getHours())}:${p2(dt.getMinutes())}`:'');g.fillText(lab,Math.max(30,Math.min(plotW-70,(i-i0+.5)*colW)),ph+10);}
-  g.textAlign='right';g.fillText('ahora →',pw-4,ph+10);
-  lqGeo={i0,n,colW,plotW,pw,ph,P};
+  const intra=['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf),nL=Math.max(2,Math.min(6,Math.floor(pw/100))),p2=v=>String(v).padStart(2,'0');
+  for(let j=0;j<nL;j++){const xi=x0+LV.span*(j+.5)/nL,dt=new Date(lqTime(xi)),lab=`${dt.getDate()}/${dt.getMonth()+1}`+(intra?` ${p2(dt.getHours())}:${p2(dt.getMinutes())}`:'');g.fillText(lab,X(xi),ph+10);}
+  lqGeo={x0,cw,pw,ph,P,n,X};
 }
-function lqHover(cv){const tip=$('lqTip');
-  const show=(cx,cy)=>{if(!lqGeo||!LIQ){tip.hidden=true;return;}const r=cv.getBoundingClientRect(),x=cx-r.left,y=cy-r.top,G=lqGeo;if(x<0||y<0||x>G.pw||y>G.ph){tip.hidden=true;return;}
-    const i=x>=G.plotW?G.n-1:Math.min(G.n-1,G.i0+Math.floor(x/G.colW)),p=G.P(y),k=LIQ.bin(p);let vl=0,vs=0;for(let d=-1;d<=1;d++){const kk=k+d;if(kk<0||kk>=LIQ.nb)continue;vl+=LIQ.colL[i][kk];vs+=LIQ.colS[i][kk];}
+function lqHover(cv){const tip=$('lqTip'),wrap=$('lqChart'),pts=new Map();let drag=null,pinch=null,moved=false;
+  const loc=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+  const show=(x,y)=>{const G=lqGeo;if(!G||!LIQ||x<0||y<0||x>G.pw||y>G.ph){tip.hidden=true;return;}
+    const i=Math.min(G.n-1,Math.max(0,Math.floor(G.x0+x/G.cw))),p=G.P(y),k=LIQ.bin(p);let vl=0,vs=0;for(let d=-1;d<=1;d++){const kk=k+d;if(kk<0||kk>=LIQ.nb)continue;vl+=LIQ.colL[i][kk];vs+=LIQ.colS[i][kk];}
     tip.innerHTML=`<b>${fp(p)}</b><span class="up">Longs a liquidar ≈ ${fusdS(vl)}</span><span class="dn">Shorts a liquidar ≈ ${fusdS(vs)}</span>`;tip.hidden=false;
-    tip.style.left=Math.min(x+12,G.pw-150)+'px';tip.style.top=Math.max(4,Math.min(y+12,G.ph-60))+'px';};
-  cv.addEventListener('mousemove',e=>show(e.clientX,e.clientY));cv.addEventListener('mouseleave',()=>{tip.hidden=true;});
-  cv.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)show(t.clientX,t.clientY);},{passive:true});
-  cv.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)show(t.clientX,t.clientY);},{passive:true});
-  cv.addEventListener('touchend',()=>setTimeout(()=>{tip.hidden=true;},1500));}
+    tip.style.left=Math.max(4,Math.min(x+12,G.pw-150))+'px';tip.style.top=Math.max(4,Math.min(y+12,G.ph-60))+'px';};
+  const zoomT=(f,x)=>{const G=lqGeo;if(!G)return;const xi=G.x0+x/G.cw,ns=Math.max(15,Math.min(G.n+40,LV.span*f)),nx0=xi-(x/G.pw)*ns;LV.span=ns;LV.r=nx0+ns-(G.n-1);};
+  const zoomP=(f,y)=>{const G=lqGeo;if(!G)return;const lp=Math.log(G.P(y));LV.auto=false;LV.a=lp-(lp-LV.a)*f;LV.b=lp+(LV.b-lp)*f;};
+  cv.addEventListener('wheel',e=>{if(!lqGeo)return;e.preventDefault();const {x,y}=loc(e),f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*.0015)));
+    if(x>lqGeo.pw||e.shiftKey)zoomP(f,y);else zoomT(f,x);tip.hidden=true;lqReq();},{passive:false});
+  cv.addEventListener('dblclick',()=>{LV.key='';lqReq();});
+  cv.addEventListener('pointerdown',e=>{const G=lqGeo;if(!G)return;const p=loc(e);pts.set(e.pointerId,p);moved=false;
+    if(LT!=='move'&&pts.size===1){const t=lqTime(G.x0+p.x/G.cw-.5),pr=G.P(p.y),b=lqBase(symbol);
+      if(LT==='h'){(LL[b]=LL[b]||[]).push({type:'h',p:pr});if(LL[b].length>30)LL[b].shift();saveLL();LT='move';}
+      else if(!LTP)LTP={t1:t,p1:pr};else{(LL[b]=LL[b]||[]).push({type:'t',t1:LTP.t1,p1:LTP.p1,t2:t,p2:pr});if(LL[b].length>30)LL[b].shift();saveLL();LTP=null;LT='move';}
+      wrap.querySelectorAll('.lqx-tools button').forEach(x=>x.classList.toggle('on',x.dataset.t===LT));wrap.classList.toggle('draw',LT!=='move');lqReq();return;}
+    try{cv.setPointerCapture(e.pointerId);}catch(_){}
+    if(pts.size===2){const [a,b]=[...pts.values()];pinch={dx:Math.max(20,Math.abs(a.x-b.x)),dy:Math.max(20,Math.abs(a.y-b.y)),span:LV.span,r:LV.r,a:LV.a,b:LV.b,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2};drag=null;}
+    else drag={x:p.x,y:p.y,r:LV.r,a:LV.a,b:LV.b,axis:p.x>G.pw};});
+  cv.addEventListener('pointermove',e=>{const G=lqGeo;if(!G)return;const p=loc(e);
+    if(LTP&&LT==='t'){LTP.t2=lqTime(G.x0+p.x/G.cw-.5);LTP.p2=G.P(p.y);lqReq();return;}
+    if(!pts.has(e.pointerId)){if(e.pointerType==='mouse')show(p.x,p.y);return;}
+    pts.set(e.pointerId,p);
+    if(pinch&&pts.size>=2){const [a,b]=[...pts.values()],fx=pinch.dx/Math.max(20,Math.abs(a.x-b.x)),fy=pinch.dy/Math.max(20,Math.abs(a.y-b.y));
+      LV.span=pinch.span;LV.r=pinch.r;zoomT(fx,pinch.cx);if(Math.abs(fy-1)>.15){LV.a=pinch.a;LV.b=pinch.b;zoomP(fy,pinch.cy);}moved=true;tip.hidden=true;lqReq();return;}
+    if(!drag)return;const dx=p.x-drag.x,dy=p.y-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;if(!moved)return;tip.hidden=true;
+    if(drag.axis){LV.a=drag.a;LV.b=drag.b;zoomP(Math.exp(dy*.006),G.ph/2);}
+    else{LV.r=drag.r-dx/G.cw;if(Math.abs(dy)>2||!LV.auto){const s=dy/G.ph*(drag.b-drag.a);LV.auto=false;LV.a=drag.a+s;LV.b=drag.b+s;}}
+    lqReq();});
+  const up=e=>{const p=pts.get(e.pointerId);pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){if(!moved&&p&&e.pointerType!=='mouse'){show(p.x,p.y);setTimeout(()=>{tip.hidden=true;},1800);}drag=null;}};
+  cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);cv.addEventListener('mouseleave',()=>{tip.hidden=true;});}
 const fusdS=v=>'$'+(v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':v.toFixed(0));
 async function renderLqx(force){
   const box=$('lqBox');if(!box)return;box.hidden=mode==='a';if(mode==='a')return;
