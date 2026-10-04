@@ -279,6 +279,7 @@ body.fs-on .fsbar{display:flex}
 .hdet .g>span{color:var(--mut)}
 .hdet .rs{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}.hdet .rs i{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--mut)}
 .hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
+.sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{background:rgba(255,214,0,.13)}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
 .sig.nr{border-color:rgba(239,83,80,.6);border-left-color:var(--dn);background:rgba(239,83,80,.08)}
 .sig.nr .sg-dir,.sig.nr .sg-conf{color:var(--dn)}
 .sg-nr{background:var(--dn);color:#fff;font-weight:800;font-size:11px;letter-spacing:.05em;border-radius:6px;padding:4px 8px;text-align:center}
@@ -426,7 +427,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces la operación simulada terminó en ganancia (con comisiones); las ganadoras ganan más de lo que pierden las liquidadas. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -451,10 +452,10 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 4,5 % o más · simulación 350 USD × 20, liquidación al 3 %</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · movimientos de 3,75 % o más · simulación 50 USD × 25, liquidación al 2,5 %</small></button>
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · objetivos +1,25 / +2,5 / +3,75 % · simulación 350 USD × 15, stop al 5 %, salvavidas 175 USD</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · objetivos +1,6 / +3,2 / +4,8 % · simulación 50 USD × 18, stop al 4 %, salvavidas 25 USD</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
-    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 10</small></button></div>
+    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 8, stop al 7 %, salvavidas 50.000 ARS</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
     <details class="alr-d" id="alrD" open><summary>Mis alertas de precio <span class="mut" id="alrN"></span><button class="plus" id="alrPlus" title="Nueva alerta" aria-label="Nueva alerta">+</button></summary>
@@ -495,7 +496,7 @@ const MODES = {
   a: {
     name: 'ACCIONES', tag: 'BYMA · pesos',
     desc: 'Acciones argentinas y CEDEARs (acciones de EE. UU. en pesos)',
-    info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 10, liquidación en −50.000 ARS'],
+    info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 8, stop al 7 % (−56.000 ARS), salvavidas 50.000 ARS'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd'],
     def: ['liq','trend','supertrend','ema','vprofile','rsi','macd','adx','cvd']
@@ -1638,8 +1639,8 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    la moneda tiene volatilidad para recorrer el movimiento mínimo y el riesgo/beneficio es ≥ 1,4.
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
-  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.045,maxAtr:.02,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.0375,maxAtr:.017,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
+  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
+  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.016,maxAtr:.027,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
@@ -1708,45 +1709,43 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'t-pb':{p:51,n:697,txt:'retroceso dentro de la tendencia con volumen bajo'}},
-           x:{'sh-r':{p:53,n:391,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
-const MINCERT={medio:45,x:45,p:0,a:57};CAL.a={'a-mom':{p:61,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:62,n:290,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:66,n:677,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const CAL={medio:{'t-pb':{p:87,p3:36,n:370,txt:'retroceso dentro de la tendencia con volumen bajo'}},
+           x:{'sh-r':{p:80,p3:37,n:152,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
+const MINCERT={medio:75,x:70,p:0,a:70};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
-  const w=mine.filter(o=>o.pnl>0).length,n=mine.length,k=Math.min(c.n,60);
+  const w=mine.filter(o=>o.hit>0).length,n=mine.length,k=Math.min(c.n,60);
   return {p:Math.round((c.p/100*k+w)/(k+n)*100),n:c.n+n,mine:n};
 }
 /* tendencia de la temporalidad mayor, solo con velas cerradas */
 function htfTrend(hc){const h=hc.slice(0,-1),cl=h.map(b=>b.close),e=emaArr(cl,21),i=h.length-1;if(i<4||e[i]==null||e[i-3]==null)return 0;return (cl[i]>e[i]?.5:-.5)+(e[i]>e[i-3]?.5:-.5);}
 function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDelta(cc[j]);vv+=cc[j].v;}for(let j=Math.max(0,i-19);j<=i;j++)vs+=cc[j].v;
   const b=cc[i];return {flow:vv?fl/vv:0,vr:b.v/((vs/Math.min(i+1,20))||1),body:(b.close-b.open)/((b.high-b.low)||1)};}
-/* SHOOTER v5 (5m) · 50 USD × 25 · liquidación al 2,5 % en contra (−31,25 USD), objetivos +3,75 / +6,25 / +10 %, plazo 4 h.
-   Se probaron liquidaciones de 0,5 % a 4 % y objetivos de 0,4 a 4 veces la liquidación en 60 criptos (30 días de velas de 5m):
-   2,5 % fue la que más ganó de forma estable (positiva en longs y shorts y en las dos mitades del período).
-   Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65) con la tendencia de 15m a favor,
-   solo en monedas con ATR de 5m entre 0,83 % y 1,67 % (con menos no llega a los objetivos; con más es impredecible).
-   Resultado: ganó el 53 % de 391 casos, +4,4 USD por operación a × 20 (≈ +5,5 USD a × 25), con comisiones. */
+/* SHOOTER v6 (5m) · prioridad: tocar los 3 objetivos. 50 USD × 18 · stop/liquidación al 4 % (−36 USD).
+   Objetivos +1,6 / +3,2 / +4,8 % (0,4 / 0,8 / 1,2 veces el stop), plazo 4 h. × 18 es el máximo con el que el stop salta antes
+   que la liquidación real del exchange (≈ 5 %). Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65)
+   con la tendencia de 15m a favor, en monedas con ATR de 5m entre 1,33 % y 2,67 %.
+   Backtest 30 días × 60 criptos (con salvavidas): objetivo 1 el 80 %, los 3 objetivos el 37 %, +12,6 % del margen por operación. */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
     const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
     const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0;
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
-    if(r7==null||!(atrP>.025/3&&atrP<=.025/1.5))return out;
+    if(r7==null||!(atrP>.04/3&&atrP<=.04/1.5))return out;
     if(!(Math.abs(z)>=2&&(z<0?r7<=35:r7>=65)))return out;
     const dir=z<0?1:-1;if(Math.sign(htf)!==dir)return out;
     out.dir=dir;out.score=dir;out.setup='sh-r';
-    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','volatilidad justa para la liquidación al 2,5 %');
+    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','volatilidad justa para el stop al 4 %');
     return out;
   });
 }
-/* TRADING v5 (4H) · 350 USD × 20 · liquidación al 3 % en contra (−210 USD), objetivos +4,5 / +7,5 / +12 %, plazo 7 días.
-   Se probaron liquidaciones de 2 % a 15 % en 60 criptos (~11 meses de velas de 4H). Con 10–15 % el impulso ganaba más
-   en total, pero dependía de la fase del mercado (meses de −40.000 USD sumando todas las operaciones): se descartó.
-   3 % fue la mejor relación ganancia/riesgo y la más estable (11 de 15 meses positivos).
-   Regla: retroceso dentro de la tendencia (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 bajo 50 en long /
-   sobre 50 en short), volumen bajo en el retroceso y ATR de 4H entre 1 % y 2 %. Ganó el 51 % de 697 casos, +13 USD por operación a × 5 (≈ +52 USD a × 20). */
+/* TRADING v6 (4H) · prioridad: tocar los 3 objetivos. 350 USD × 15 · stop/liquidación al 5 % (−262,50 USD).
+   Objetivos +1,25 / +2,5 / +3,75 %, plazo 7 días. × 15 es el máximo con el que el stop salta antes que la liquidación real (≈ 6,2 %).
+   Regla: retroceso dentro de la tendencia (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 bajo 50 en long / sobre 50 en short),
+   volumen bajo en el retroceso y ATR de 4H entre 1 % y 1,67 %.
+   Backtest ~11 meses × 60 criptos (con salvavidas): objetivo 1 el 87 %, los 3 objetivos el 36 %, +6,5 % del margen por operación. */
 function evalTrading(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
@@ -1755,9 +1754,9 @@ function evalTrading(cs,hc){
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null};
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
-    if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.02))return out;
+    if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.05/3))return out;
     out.setup='t-pb';out.dir=dir;out.score=dir;
-    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para la liquidación al 3 %');
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para el stop al 5 %');
     if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;
   });
@@ -1770,7 +1769,7 @@ async function futData(m,syms){
     if(Array.isArray(t)&&t.length)out[s].taker=t.reduce((a,x)=>a+ +x.buySellRatio,0)/t.length;}
   return out;
 }
-const TGTS={'t-pb':[.045,.075,.12],'sh-r':[.0375,.0625,.1],'a-mom':[.05,.1,.15],'c-mom':[.05,.1,.15]};
+const TGTS={'t-pb':[.0125,.025,.0375],'sh-r':[.016,.032,.048],'a-mom':[.0175,.035,.0525],'c-mom':[.0175,.035,.0525],'a-rev':[.028,.056,.084]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||atrP>cfg.maxAtr)return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
@@ -1787,7 +1786,7 @@ function buildSignalV2(m,sym,e,fd){
   if(m==='p')conf=e.str;conf=Math.round(clamp(conf,1,99));if(conf<MINCERT[m])return null;
   const zone=c*Math.min(cfg.min*.15,atrP*.5);
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,
-    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`ganó en el ${cal.p} % de ${cal.n} casos del backtest (con comisiones) · ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
+    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`llegó al objetivo 1 en el ${cal.p} % y a los 3 objetivos en el ${CAL[m][setup].p3??'—'} % de ${cal.n} casos (backtest con salvavidas) · ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
 async function scanSignals(mm){
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
@@ -1830,14 +1829,14 @@ function renderSignals(){
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
-  $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live';
-    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}" data-sym="${s.sym}" data-tf="${s.tf}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
-      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (ARS)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}
+  $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
+    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
+      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (ARS)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.m==='a'?Math.round(op.ll.margin).toLocaleString('es-ES')+' ARS':op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. Se quita en ${Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))} s.</div>`:''}
       <div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
-        ${s.tp0?`<span>Objetivo corto</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 1</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
-        <span>Objetivo 2</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
-        <span>Stop</span><b class="stp">${fp(s.sl)} (${pc(s.sl)})</b>
+        ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
+        <span>Objetivo 3</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
+        <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>
         <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}</div></div>`;}).join('');
@@ -1856,44 +1855,73 @@ setInterval(checkSignals,2000);
    SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:20,maxLoss:210,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 20 · liquidación al 3 % (−210 USD)'},
-           x:{margin:50,lev:25,maxLoss:31.25,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 25 · liquidación al 2,5 % (−31,25 USD)'}};
+const SIM={medio:{margin:350,lev:15,maxLoss:262.5,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 15 · stop al 5 % (−262,50 USD) · salvavidas 175 USD'},
+           x:{margin:50,lev:18,maxLoss:36,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 18 · stop al 4 % (−36 USD) · salvavidas 25 USD'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:100000,lev:10,maxLoss:50000,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 10 · liquidación en −50.000 ARS'};
-const TGT=['objetivo corto','objetivo 1','objetivo 2'];
+SIM.a={margin:100000,lev:8,maxLoss:56000,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 8 · stop al 7 % (−56.000 ARS) · salvavidas 50.000 ARS'};
+const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
 function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
+/* SALVAVIDAS: si el precio llega al 65 % del camino al stop sin tocar ningún objetivo y los datos siguen confirmando la señal,
+   se suma media posición (la mitad del margen, mismas X). La entrada pasa a ser el promedio y el stop se recalcula a la misma
+   distancia desde el promedio (lo máximo que permite el apalancamiento antes de la liquidación real). Una sola vez por señal.
+   Confirmación: SHOOTER = tendencia de 15m a favor y RSI 7 todavía extremo · TRADING = precio todavía del lado correcto de la EMA 200
+   · ACCIONES = precio todavía del lado correcto de la EMA 50. En el backtest mejoró el acierto y el resultado en los tres modos. */
+const LLTH=.65;
 function addSig(m,f){
-  SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,fail=f.entry*(1-f.dir*c.maxLoss/not);
+  SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,liqD=c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:c.maxLoss,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:c.maxLoss,liqD,llAt:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
-/* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada */
-const notOf=o=>o.not||SIM[o.m].margin*SIM[o.m].lev,lossOf=o=>o.loss||SIM[o.m].maxLoss;
-function realOf(o){if(o.real!=null)return o.real;let r=0;const T=[o.tp0,o.tp1,o.tp2];for(let k=0;k<(o.hit||0);k++)r+=notOf(o)/3*o.dir*(T[k]/o.entry-1);return r;}
-const pnlAt=(o,px)=>realOf(o)+(1-(o.hit||0)/3)*notOf(o)*o.dir*(px/o.entry-1);
+/* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada (promedio si hubo salvavidas) */
+const notOf=o=>o.not||SIM[o.m].margin*SIM[o.m].lev,lossOf=o=>o.loss||SIM[o.m].maxLoss,aeOf=o=>o.ae||o.entry,szOf=o=>o.sz||1;
+function realOf(o){if(o.real!=null)return o.real;let r=0;const T=[o.tp0,o.tp1,o.tp2];for(let k=0;k<(o.hit||0);k++)r+=szOf(o)*notOf(o)/3*o.dir*(T[k]/aeOf(o)-1);return r;}
+const pnlAt=(o,px)=>realOf(o)+(1-(o.hit||0)/3)*szOf(o)*notOf(o)*o.dir*(px/aeOf(o)-1);
 function closeOp(o,state,px,ts,why,pnl){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=pnl!=null?pnl:state==='fail'?-lossOf(o):pnlAt(o,px);}
+const lossTxt=o=>o.m==='a'?`−${Math.round(lossOf(o)).toLocaleString('es-ES')} ARS`:`−${lossOf(o).toLocaleString('es-ES',{maximumFractionDigits:2})} USD`;
 function stepOp(o,hi,lo,ts){
-  if(o.state!=='open')return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];o.hit=o.hit||0;
-  if(!o.hit&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,o.m==='a'?'liquidada en −50.000 ARS':`liquidada en −${lossOf(o).toLocaleString('es-ES')} USD`,-lossOf(o));return true;}
-  if(o.hit>0&&d*(adv-o.entry)<=0){closeOp(o,'win',o.entry,ts,'llegó al '+TGT[o.hit-1]+' y el resto se cerró en la entrada',realOf(o));return true;}
-  while(o.hit<3&&d*(fav-T[o.hit])>=0){o.real=realOf(o)+notOf(o)/3*d*(T[o.hit]/o.entry-1);o.hit++;}
-  if(o.hit===3){closeOp(o,'win',o.tp2,ts,'llegó al objetivo 2',realOf(o));return true;}
+  if(o.state!=='open'||o.llPend)return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];o.hit=o.hit||0;
+  if(!o.hit&&o.llAt&&!o.ll&&!o.llNo&&d*(adv-o.llAt)<=0){o.llPend=ts;return 'll';}
+  if(!o.hit&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,(o.ll?'con salvavidas · ':'')+'liquidada en '+lossTxt(o),-lossOf(o));return true;}
+  if(o.hit>0&&d*(adv-aeOf(o))<=0){closeOp(o,'win',aeOf(o),ts,'llegó al '+TGT[o.hit-1]+' y el resto se cerró en la entrada',realOf(o));return true;}
+  while(o.hit<3&&d*(fav-T[o.hit])>=0){o.real=realOf(o)+szOf(o)*notOf(o)/3*d*(T[o.hit]/aeOf(o)-1);o.hit++;}
+  if(o.hit===3){closeOp(o,'win',o.tp2,ts,'llegó a los 3 objetivos',realOf(o));return true;}
   if(ts-o.t>SIM[o.m].maxAge){const px=(lo+hi)/2,v=Math.max(-lossOf(o),pnlAt(o,px));
     closeOp(o,o.hit>0?'win':'exp',px,ts,o.hit>0?'llegó al '+TGT[o.hit-1]+' y venció el plazo':'venció el plazo sin llegar a un objetivo',v);return true;}
   return false;
 }
-function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;const t=tickers[o.sym];if(!t)continue;if(stepOp(o,t.c,t.c,now))ch=true;o.last=now;}if(ch)saveOps();}
+/* ¿los datos siguen apoyando la señal? (solo velas cerradas antes del momento del salvavidas) */
+function llOk(m,dir,cs,hc){return withCandles(cs,()=>{const i=cs.length-1,cl=closes(),c=cs[i].close;
+  if(m==='x'){const r7=calcRSI(7)[i];return Math.sign(htfTrend(hc))===dir&&r7!=null&&(dir>0?r7<35:r7>65);}
+  const e=emaArr(cl,m==='a'?50:200)[i];return e!=null&&(dir>0?c>e:c<e);});}
+const llWhy=m=>m==='x'?'la tendencia de 15m sigue a favor y el RSI sigue en extremo':m==='a'?'el precio sigue del lado correcto de la EMA 50':'el precio sigue del lado correcto de la EMA 200';
+async function llResolve(o){if(o.llBusy||!o.llPend)return;o.llBusy=true;
+  try{const ts=o.llPend,cfg=SIGCFG[o.m],ms=TF_MS[cfg.tf]||36e5;let cs,hc;
+    if(o.m==='a'){cs=(await stkHist(o.sym)).filter(b=>b.t+864e5<=ts).slice(-320);hc=aggBars(cs,'1w');}
+    else{const [a,b]=await Promise.all([getJ(`${API}/klines?symbol=${o.sym}&interval=${cfg.tf}&limit=300&endTime=${ts}`),getJ(`${API}/klines?symbol=${o.sym}&interval=${cfg.htf}&limit=120&endTime=${ts}`)]);
+      cs=a.map(toBar).filter(x=>x.t+ms<=ts);hc=b.map(toBar);}
+    if(cs.length>=60&&llOk(o.m,o.dir,cs,hc))applyLL(o,ts);else o.llNo=true;
+  }catch(e){o.llTry=(o.llTry||0)+1;if(o.llTry>=3)o.llNo=true;}
+  finally{if(o.ll||o.llNo)o.llPend=null;o.llBusy=false;saveOps();renderSignals();renderHist();}}
+function applyLL(o,ts){const d=o.dir,px=o.llAt,s=o.liqD||lossOf(o)/notOf(o);
+  o.ae=(o.entry+.5*px)/1.5;o.sz=1.5;o.fail=o.ae*(1-d*s);o.loss=1.5*notOf(o)*s;o.ll={t:ts,px,why:llWhy(o.m),margin:o.llMargin||SIM[o.m].margin/2};
+  const sg=(SIG[o.m]||[]).find(x=>x.op===o.id);if(sg){sg.ll=true;sg.sl=o.fail;saveSig();}
+  notifyLL(o);}
+function notifyLL(o){if(typeof NTF==='undefined'||!NTF.on||!NTF[o.m]||!canNotify||Notification.permission!=='granted')return;
+  const c=o.sym.replace('USDT',''),mg=o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD';
+  notify(`🟡🛟 SALVAVIDAS · ${SIGCFG[o.m].name} ${o.dir>0?'▲ LONG':'▼ SHORT'} ${c}`,`Se suman ${mg} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)}: ${o.ll.why}. Entrada promedio ${fp(o.ae)} · nuevo stop ${fp(o.fail)}.`,'ll-'+o.id,{sym:o.sym,tf:SIGCFG[o.m].tf,m:o.m});}
+function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;if(o.llPend){llResolve(o);continue;}const t=tickers[o.sym];if(!t)continue;const r=stepOp(o,t.c,t.c,now);if(r==='ll')llResolve(o);else if(r)ch=true;o.last=now;}if(ch)saveOps();}
 let syncBusy=false;
 async function syncOps(){
   if(syncBusy)return;syncBusy=true;let ch=false;
   try{for(const o of OPS.filter(x=>x.state==='open')){
     const c=SIM[o.m];try{
       const d=o.m==='a'?await stkKlines(o.sym):await getJ(`${API}/klines?symbol=${o.sym}&interval=${c.kl}&startTime=${Math.max(o.t,o.last-c.klMs)}&limit=1000`);
-      for(const k of d){const ts=+k[0];if(o.m==='a'?ts<=o.t:ts+c.klMs<o.t)continue;if(stepOp(o,+k[2],+k[3],Math.max(ts,o.t))){ch=true;break;}}
-      if(o.state==='open'){o.last=Date.now();const lp=(tickers[o.sym]&&tickers[o.sym].c)||(d.length?+d[d.length-1][4]:o.entry);if(stepOp(o,lp,lp,Date.now()))ch=true;}
+      if(o.llPend)await llResolve(o);
+      for(const k of d){const ts=+k[0];if(o.m==='a'?ts<=o.t:ts+c.klMs<o.t)continue;let r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));if(r==='ll'){await llResolve(o);if(o.llPend)break;r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));}if(r){ch=true;break;}}
+      if(o.state==='open'&&!o.llPend){o.last=Date.now();const lp=(tickers[o.sym]&&tickers[o.sym].c)||(d.length?+d[d.length-1][4]:o.entry);let r=stepOp(o,lp,lp,Date.now());if(r==='ll'){await llResolve(o);r=stepOp(o,lp,lp,Date.now());}if(r)ch=true;}
     }catch(e){}
     await new Promise(r=>setTimeout(r,150));}
   }finally{syncBusy=false;if(ch)saveOps();renderHist();}
@@ -1905,7 +1933,7 @@ function liveRes(s,p){
   const o=OPS.find(x=>x.id===s.op);
   if(o&&o.state!=='open')return `<span class="${o.pnl>=0?'up':'dn'}">${fusd2(o.pnl)} · ${o.state==='fail'?'liquidada 0/3':'cerrada '+o.hit+'/3'}</span>`;
   if(!p)return '—';
-  const v=pnlAt({m:s.m,dir:s.dir,entry:s.entry},p),pct=s.dir*(p/s.entry-1)*100;
+  const v=o&&o.state==='open'?pnlAt(o,p):pnlAt({m:s.m,dir:s.dir,entry:s.entry},p),pct=s.dir*(p/s.entry-1)*100;
   return `<span class="${v>=0?'up':'dn'}">${fusd2(v)} (${fpct(pct)})</span>${o&&o.hit?` · ${o.hit}/3`:''}`;
 }
 var HOPEN=window.HOPEN||(window.HOPEN=new Set());
@@ -1915,14 +1943,14 @@ function opDetail(o){
   const st=open?`<span class="live">EN VIVO</span> <span class="up">Operación activa${o.hit?' · ya tocó el '+TGT[o.hit-1]:''}</span>`
     :o.state==='win'?`<span class="up">✓ Terminada · ganada (${o.hit}/3)</span>`:o.state==='fail'?`<span class="dn">✕ Terminada · liquidada (0/3)</span>`:`<span class="neu">• Terminada · ${esc(o.why||'cerrada')}</span>`;
   const T=[o.tp0,o.tp1,o.tp2],tg=(i,n)=>T[i]?`<span>${n}</span><b class="${o.hit>i?'up':''}">${fp(T[i])} (${fpct((T[i]/o.entry-1)*100)})${o.hit>i?' ✓':''}</b>`:'';
-  return `<div class="hdet"><div class="st">${st}</div><div class="g">
+  return `<div class="hdet${o.ll?' ll':''}"><div class="st">${st}${o.ll?' <span class="llt">🛟 con salvavidas</span>':''}</div><div class="g">
     <span>Modo</span><b>${cfg.name} · ${L?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}/USDT</b>
     ${o.setup&&CAL[o.m][o.setup]?`<span>Tipo de señal</span><b>${CAL[o.m][o.setup].txt}</b>`:''}
     ${o.conf?`<span>${o.m==='p'?'Fuerza (sin calibrar)':'Acierto hist.'}</span><b>${o.conf} %</b>`:''}
     <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
     <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
-    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo corto')}${tg(1,'Objetivo 1')}${tg(2,'Objetivo 2')}
-    <span>Liquidación</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
+    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
+    <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
     <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
     <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
@@ -1937,15 +1965,15 @@ function renderHist(){
   $('histSum').textContent=`${mine.filter(o=>o.state!=='open').length} terminadas · ${open.length} en curso`;
   $('simSum').textContent=eff==null?'sin operaciones cerradas este mes':`efectividad ${eff} % · ${fusd2(tot)}`;
   const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
-    if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó al objetivo 2':'Llegó al '+TGT[o.hit-1]} · ${o.hit}/3 · ${fusd2(o.pnl)}</span>`;
+    if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${o.hit}/3 · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Liquidada 0/3 · ${fusd2(o.pnl)}</span> <span class="neu">(${o.why})</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${o.why} · ${fusd2(o.pnl)}</span>`;};
-  const rowH=o=>`<div class="hrow" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
+  const rowH=o=>`<div class="hrow${o.ll?' ll':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
   const hist=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
   $('histList').innerHTML=hist.length?hist.map(rowH).join(''):'<div class="mut">Todavía no hay señales en el historial de este modo.</div>';
   $('simStats').innerHTML=`<div class="sst"><div><small>Efectividad del mes</small><b class="${eff==null?'':eff>=50?'up':'dn'}">${eff==null?'—':eff+' %'}</b></div><div><small>Resultado del mes</small><b class="${tot>=0?'up':'dn'}">${closed.length?fusd2(tot):'—'}</b></div><div><small>Ganadas / cerradas</small><b>${wins} / ${closed.length}</b></div><div><small>Simulación</small><b class="sl">${c.label}</b></div></div>`;
   const rowS=o=>{const p=o.state==='open'?(tickers[o.sym]?pnlAt(o,tickers[o.sym].c):0):o.pnl;
-    return `<div class="srow"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'LONG':'SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="mut">entrada ${fp(o.entry)}</span><span class="${o.state==='open'?'neu':o.pnl>0?'up':'dn'}">${o.state==='open'?'en curso':o.pnl>0?'ganada':'perdida'}</span><b class="${p>=0?'up':'dn'}">${fusd2(p)}</b></div>`;};
+    return `<div class="srow${o.ll?' ll':''}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'LONG':'SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="mut">entrada ${fp(o.entry)}</span><span class="${o.state==='open'?'neu':o.pnl>0?'up':'dn'}">${o.state==='open'?'en curso':o.pnl>0?'ganada':'perdida'}</span><b class="${p>=0?'up':'dn'}">${fusd2(p)}</b></div>`;};
   $('simList').innerHTML=month.length?month.slice().sort((a,b)=>b.t-a.t).slice(0,30).map(rowS).join(''):'<div class="mut">Este mes todavía no hay operaciones simuladas en este modo.</div>';
 }
 setInterval(liveOps,2000);setInterval(renderHist,5000);setTimeout(syncOps,4000);setInterval(syncOps,180e3);
