@@ -695,12 +695,12 @@ function gaugeSVG(sc){
 function renderLegend(){
   const fs=allFactors(),ind=fs.filter(x=>!x.mk);
   // leyenda sobre el gráfico (indicadores superpuestos)
-  $('legend').innerHTML=(active.has('trend')&&C.trend&&trendNow()!=null?`<span style="color:${trendCol(trendNow())}"><i style="background:${trendCol(trendNow())}"></i>Línea de tendencia: <b>${trendTxt(trendNow())}</b></span>`:'')+ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
+  $('legend').innerHTML=(active.has('trend')&&C.trend&&trendNow()!=null?`<span style="color:${trendCol(trendNow())}"><i style="background:${trendCol(trendNow())}"></i>Línea de tendencia: <b>${trendTxt(trendNow())}</b> · hacia adelante: <b>${fwdSym(TFWD)} ${fwdTxt(TFWD)}</b></span>`:'')+ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
   // flechas en cada botón de indicador
   document.querySelectorAll('#inds [data-ind]').forEach(b=>{const f=ind.find(x=>x.k===b.dataset.ind),bd=b.querySelector('.bdg');if(!bd)return;
     if(!f){bd.className='bdg';bd.textContent='';return;}
     bd.className='bdg '+(f.s>.15?'up':f.s<-.15?'dn':'neu');bd.textContent=f.s>.15?'▲':f.s<-.15?'▼':'●';});
-  const box=$('signal'),dash=$('dash'),sc=gaugeScore(fs);lastGauge=sc;
+  const box=$('signal'),dash=$('dash'),sc=gaugeScore(fs);lastGauge=sc;trendFwd(fs);
   if(!MODES[mode].inds.length||sc==null){box.classList.add('hide');dash.classList.add('hide');return;}
   const [lab,cl]=scoreLabel(sc),up=fs.filter(x=>x.s>.15).length,dn=fs.filter(x=>x.s<-.15).length;
   box.innerHTML=`<span>Termómetro ${TFS.find(x=>x[0]===tf)[1]}</span><span class="big ${cl}">${sc}/100 · ${lab}</span>`;
@@ -1166,7 +1166,7 @@ $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const 
   renderChips();layout();calcInd(true);hmKey='';};
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
-function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:8)});series.priceScale().applyOptions({autoScale:true});}
+function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 function applyMode(m){
   const wasA=mode==='a';mode=m;const M=MODES[m];
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
@@ -2325,16 +2325,51 @@ function calcTrendLine(){
     if(line[i]!=null&&line[i-3]!=null&&atr[i])v.push(clamp((line[i]-line[i-3])/(1.5*atr[i])));
     raw[i]=v.length>=4?v.reduce((x,y)=>x+y,0)/v.length:null;}
   const s=Array(n).fill(null);let prev=null;for(let i=0;i<n;i++){if(raw[i]==null)continue;prev=prev==null?raw[i]:prev+(raw[i]-prev)*.5;s[i]=prev;}
-  return {line,s};
+  return {line,s,atr:atr[n-1]};
 }
 const trendCol=s=>s>=.5?'#00e676':s>=.15?'#a5f3c4':s<=-.5?'#ff1744':s<=-.15?'#ff9e9e':'#eceff1';
 const trendTxt=s=>s>=.5?'subida fuerte':s>=.15?'alcista':s<=-.5?'caída fuerte':s<=-.15?'bajista':'neutral';
 var lastGauge=null;
 function trendNow(){const T=C.trend;if(!T)return null;const v=T.s[T.s.length-1];if(v==null)return null;return lastGauge==null?v:(v+(lastGauge-50)/50)/2;}
+/* color continuo: rojo intenso → rojo claro → blanco → verde claro → verde intenso */
+const TR_ST=[[-1,[255,23,68]],[-.5,[255,23,68]],[-.15,[255,158,158]],[0,[236,239,241]],[.15,[165,243,196]],[.5,[0,230,118]],[1,[0,230,118]]];
+function trendColC(s){s=clamp(s);for(let i=1;i<TR_ST.length;i++){const [x1,c1]=TR_ST[i],[x0,c0]=TR_ST[i-1];if(s<=x1){const t=(s-x0)/((x1-x0)||1);return `rgb(${c0.map((v,j)=>Math.round(v+(c1[j]-v)*t)).join(',')})`;}}return 'rgb(0,230,118)';}
+/* lectura hacia adelante: dirección, fuerza (1, 2 o 3 flechas) y acuerdo de todos los factores */
+var TFWD=null;
+function trendFwd(fs){const s=trendNow();if(s==null){TFWD=null;return;}
+  const dir=s>=.15?1:s<=-.15?-1:0;let lvl=0,agree=0,sig=false;
+  if(dir){const vs=fs.filter(x=>Math.abs(x.s)>.15);agree=vs.length?vs.filter(x=>Math.sign(x.s)===dir).length/vs.length:0;
+    lvl=Math.abs(s)>=.5?2:1;sig=(SIG[mode]||[]).some(g=>g.sym===symbol&&g.state==='live'&&g.dir===dir);
+    if(lvl===2&&agree>=.7&&(sig||Math.abs(s)>=.7))lvl=3;}
+  TFWD={s,dir,lvl,agree,sig};}
+const fwdSym=F=>!F?'':F.dir===0?'●':(F.dir>0?'▲':'▼').repeat(F.lvl);
+const fwdTxt=F=>!F?'':F.dir===0?'neutral':(F.dir>0?(F.lvl>=2?'subida fuerte':'subida'):(F.lvl>=2?'caída fuerte':'caída'))+(F.lvl===3?' · alta confianza':'');
 function drawTrend(ctx,X,Y,from,to){const T=C.trend;if(!T)return;const n=T.line.length,now=trendNow();
-  ctx.save();ctx.lineWidth=3;ctx.lineCap='round';ctx.lineJoin='round';
+  ctx.save();ctx.lineCap='round';ctx.lineJoin='round';
+  // línea con color continuo y un leve brillo
   for(let i=Math.max(from,1);i<to&&i<n;i++){const a=T.line[i-1],b=T.line[i];if(a==null||b==null)continue;const x1=X(i-1),x2=X(i),y1=Y(a),y2=Y(b);if(x1==null||x2==null||y1==null||y2==null)continue;
-    const sv=i>=n-2&&now!=null?now:T.s[i];if(sv==null)continue;ctx.strokeStyle=trendCol(sv);ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+    const s0=i-1>=n-2&&now!=null?now:T.s[i-1],s1=i>=n-2&&now!=null?now:T.s[i];if(s1==null)continue;
+    const g=ctx.createLinearGradient(x1,0,x2,0);g.addColorStop(0,trendColC(s0??s1));g.addColorStop(1,trendColC(s1));
+    ctx.strokeStyle=g;ctx.lineWidth=3.2;ctx.shadowColor=trendColC(s1);ctx.shadowBlur=6;ctx.beginPath();ctx.moveTo(x1,y1);ctx.lineTo(x2,y2);ctx.stroke();}
+  ctx.shadowBlur=0;
+  // proyección hacia adelante y marca en la punta
+  const F=TFWD,p0=T.line[n-1];
+  if(F&&p0!=null&&T.atr&&to>=n-1){const k=6,p3=T.line[n-4]??p0,slope=(p0-p3)/3,tgt=F.dir===0?p0:p0+F.s*2.2*T.atr*(F.lvl===3?1.3:1);
+    const xs=X(n-1),xe=X(n-1+k),xm=X(n-1+k/2);
+    if(xs!=null&&xe!=null&&xm!=null){const ys=Y(p0),ye=Y(tgt),ym=Y(p0+slope*k/2*.5+(tgt-p0)*.35);
+      if(ys!=null&&ye!=null&&ym!=null){const col=trendColC(F.s);
+        ctx.strokeStyle=col;ctx.lineWidth=2.4;ctx.setLineDash([6,5]);ctx.globalAlpha=.9;ctx.beginPath();ctx.moveTo(xs,ys);ctx.quadraticCurveTo(xm,ym,xe,ye);ctx.stroke();ctx.setLineDash([]);ctx.globalAlpha=1;
+        const mx=xe+8;
+        if(F.dir===0){ctx.fillStyle='#eceff1';ctx.strokeStyle='#0f1115';ctx.lineWidth=2;ctx.beginPath();ctx.arc(mx,ye,6,0,7);ctx.fill();ctx.stroke();}
+        else{const up=F.dir>0,clr=up?'#00e676':'#ff1744',sz=8;ctx.fillStyle=clr;ctx.strokeStyle='#0f1115';ctx.lineWidth=1.5;ctx.shadowColor=clr;ctx.shadowBlur=8;
+          for(let j=0;j<F.lvl;j++){const cy=ye+(up?-1:1)*(j*(sz+2));ctx.beginPath();
+            if(up){ctx.moveTo(mx,cy-sz);ctx.lineTo(mx+sz,cy+sz*.4);ctx.lineTo(mx-sz,cy+sz*.4);}else{ctx.moveTo(mx,cy+sz);ctx.lineTo(mx+sz,cy-sz*.4);ctx.lineTo(mx-sz,cy-sz*.4);}
+            ctx.closePath();ctx.fill();ctx.stroke();}
+          ctx.shadowBlur=0;}
+        const lab=fwdTxt(F),ly=F.dir>0?ye-(F.lvl*(10)+14):F.dir<0?ye+(F.lvl*10+14):ye-16;
+        ctx.font='700 10px system-ui,sans-serif';ctx.textAlign='center';ctx.textBaseline='middle';const tw=ctx.measureText(lab).width;
+        const lx=Math.min(mx,(series.priceScale().width()?chart.timeScale().width():mx+tw)-tw/2-4);
+        ctx.fillStyle='rgba(15,17,21,.8)';ctx.fillRect(lx-tw/2-4,ly-7,tw+8,14);ctx.fillStyle=F.dir===0?'#eceff1':F.dir>0?'#00e676':'#ff1744';ctx.fillText(lab,lx,ly);}}}
   ctx.restore();}
 </script>
 </body>
