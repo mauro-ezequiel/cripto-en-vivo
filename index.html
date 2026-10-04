@@ -426,7 +426,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
       <div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div>
-      <div class="lqx-src">Mapa: liquidez estimada a liquidar con el interés abierto y el volumen de Binance, Bybit, OKX y BingX (verde = longs, rojo = shorts; más intenso = más liquidez junta). Burbujas y paneles: liquidaciones reales en vivo de Binance, OKX y Bybit. Toca o pasa el mouse sobre el mapa para ver los montos.</div></section>
+      <div class="lqx-src">Mapa: liquidez estimada a liquidar con el interés abierto y el volumen de Binance, Bybit y OKX (verde = longs, rojo = shorts; más intenso = más liquidez junta). Burbujas y paneles: liquidaciones reales en vivo de Binance, OKX y Bybit. Toca o pasa el mouse sobre el mapa para ver los montos.</div></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
@@ -468,7 +468,7 @@ const MODES = {
   medio: {
     name: 'TRADING', tag: 'Por defecto',
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
-    info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX, BingX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
+    info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
     inds: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd']
   },
@@ -768,7 +768,7 @@ function renderMarket(){
   if(!FUT){el.innerHTML='<div class="mut">Cargando datos de futuros…</div>';return;}
   if(FUT.none){el.innerHTML='<div class="mut">Esta moneda no tiene futuros perpetuos en Binance: no hay datos de posiciones apalancadas.</div>';return;}
   const price=candles.at(-1)?.close||0,su=snapUSD(FUT.snap,price),tot=Object.values(su).reduce((a,b)=>a+b,0);
-  const exs=['Binance','Bybit','OKX','BingX'].map(ex=>{const v=su[ex];
+  const exs=['Binance','Bybit','OKX',...(window.BX_OFF?[]:['BingX'])].map(ex=>{const v=su[ex];
     return `<div class="exr"><span>${ex}</span><span class="exb"><i style="width:${v&&tot?v/tot*100:0}%"></i></span><span>${v?fusd(v):'<span class="mut">sin datos</span>'}</span></div>`;}).join('');
   const now=Date.now(),h1=liqEvents.filter(e=>now-e.t<36e5),sL=h1.filter(e=>e.side==='L').reduce((a,e)=>a+e.usd,0),sS=h1.filter(e=>e.side==='S').reduce((a,e)=>a+e.usd,0);
   const feed=liqEvents.slice(-8).reverse().map(e=>`<div class="lq ${e.side==='L'?'up':'dn'}"><span>${new Date(e.t).toLocaleTimeString('es-ES')}</span><span>${e.side==='L'?'Long liquidado':'Short liquidado'}</span><span>${fp(e.p)}</span><b>${fusd(e.usd)}</b><span class="mut">${e.ex}</span></div>`).join('')||'<div class="mut">Esperando liquidaciones en vivo…</div>';
@@ -905,7 +905,7 @@ async function oiSnapshots(f){
     safe(getJ(`${FAPI}/fapi/v1/openInterest?symbol=${fs}`)),
     safe(getJ(`https://api.bybit.com/v5/market/tickers?category=linear&symbol=${fs}`)),
     safe(getJ(`https://www.okx.com/api/v5/public/open-interest?instType=SWAP&instId=${base}-USDT-SWAP`)),
-    safe(getJ(`https://open-api.bingx.com/openApi/swap/v2/quote/openInterest?symbol=${base}-USDT`))
+    window.BX_OFF?null:safe(getJ(`https://open-api.bingx.com/openApi/swap/v2/quote/openInterest?symbol=${base}-USDT`)).then(r=>{if(!r)window.BX_OFF=true;return r;})
   ]);
   const s={};
   if(bn&&bn.openInterest) s.Binance={u:+bn.openInterest,m:mult};
@@ -2467,14 +2467,17 @@ function drawLqHeat(){
   const padR=62,padB=18,pw=W-padR,ph=H-padB,cols=Math.min(n,Math.max(40,Math.floor(pw*.86/4))),i0=n-cols,plotW=pw*.86,colW=plotW/cols;
   let lo=Infinity,hi=-Infinity;for(let i=i0;i<n;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}
   lo*=.955;hi*=1.045;const lnA=Math.log(lo),lnB=Math.log(hi),Y=p=>ph*(1-(Math.log(p)-lnA)/(lnB-lnA)),P=y=>Math.exp(lnB-(y/ph)*(lnB-lnA));
-  const {colL,colS,bin}=LIQ,kLo=bin(lo),kHi=bin(hi);let mx=0;
-  for(let i=i0;i<n;i++){const a=colL[i],b=colS[i];for(let k=kLo;k<=kHi;k++){if(a[k]>mx)mx=a[k];if(b[k]>mx)mx=b[k];}}
+  const {colL,colS,bin,nb}=LIQ,kLo=bin(lo),kHi=bin(hi),KW=[.25,.6,1,.6,.25];
+  const sm=(c,k)=>{let s=0;for(let d=-2;d<=2;d++){const kk=k+d;if(kk>=0&&kk<nb)s+=c[kk]*KW[d+2];}return s/2.7;};
+  const SL=new Map(),SS=new Map();for(let i=i0;i<n;i++){const a=new Float32Array(kHi-kLo+1),b=new Float32Array(kHi-kLo+1);for(let k=kLo;k<=kHi;k++){a[k-kLo]=sm(colL[i],k);b[k-kLo]=sm(colS[i],k);}SL.set(i,a);SS.set(i,b);}
+  let mx=0;for(const a of SL.values())for(const v of a)if(v>mx)mx=v;for(const b of SS.values())for(const v of b)if(v>mx)mx=v;
   const IW=Math.round(pw*dpr),IH=Math.round(ph*dpr);
   if(mx>0&&IW>0&&IH>0){const img=g.createImageData(IW,IH),d=img.data,kr=new Int32Array(IH),ic=new Int32Array(IW);
     for(let y=0;y<IH;y++)kr[y]=bin(P(y/dpr));for(let x=0;x<IW;x++){const xx=x/dpr;ic[x]=xx>=plotW?n-1:Math.min(n-1,i0+Math.floor(xx/colW));}
-    for(let y=0;y<IH;y++){const k=kr[y];for(let x=0;x<IW;x++){const i=ic[x],vl=colL[i][k],vs=colS[i][k],v=vl>vs?vl:vs,o=(y*IW+x)*4;
-        let c;if(v>0){const t=Math.pow(v/mx,.5),r=(vl>=vs?RAMP.L:RAMP.S)[Math.min(255,Math.round(t*255))];c=r;}else c=null;
-        if(c){d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];}else{d[o]=15;d[o+1]=17;d[o+2]=21;}d[o+3]=255;}}
+    const pr=new Float64Array(IH);for(let y=0;y<IH;y++)pr[y]=P(y/dpr);
+    for(let y=0;y<IH;y++){const k=Math.min(kHi,Math.max(kLo,kr[y]))-kLo;for(let x=0;x<IW;x++){const i=ic[x],vl=SL.get(i)[k],vs=SS.get(i)[k],v=vl>vs?vl:vs,o=(y*IW+x)*4;
+        const side=v>mx*.004?(vl>=vs?RAMP.L:RAMP.S):(pr[y]>candles[i].close?RAMP.S:RAMP.L),t=Math.max(.04,Math.pow(v/mx,.5)),c=side[Math.min(255,Math.round(t*255))];
+        d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];d[o+3]=255;}}
     g.setTransform(1,0,0,1,0,0);g.putImageData(img,0,0);g.setTransform(dpr,0,0,dpr,0,0);}
   // separación entre pasado y presente
   g.strokeStyle='rgba(255,255,255,.12)';g.setLineDash([3,4]);g.beginPath();g.moveTo(plotW,0);g.lineTo(plotW,ph);g.stroke();g.setLineDash([]);
@@ -2495,7 +2498,8 @@ function drawLqHeat(){
   for(let j=0;j<=5;j++){const y=ph*j/5,pp=P(y);g.fillText(fp(pp),pw+4,Math.min(ph-6,Math.max(6,y)));}
   g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);
   g.fillStyle='#9aa0ae';g.font='10px system-ui,sans-serif';g.textAlign='center';
-  for(let j=0;j<4;j++){const i=i0+Math.round((cols-1)*j/3),dt=new Date(candles[i].t);g.fillText(['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf)?dt.toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):dt.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),Math.max(30,Math.min(plotW-30,(i-i0+.5)*colW)),ph+10);}
+  const intra=['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf),nL=Math.max(2,Math.min(5,Math.floor((plotW-40)/95))),p2=v=>String(v).padStart(2,'0');
+  for(let j=0;j<nL;j++){const i=i0+Math.round((cols-1)*j/nL),dt=new Date(candles[i].t),lab=`${dt.getDate()}/${dt.getMonth()+1}`+(intra?` ${p2(dt.getHours())}:${p2(dt.getMinutes())}`:'');g.fillText(lab,Math.max(30,Math.min(plotW-70,(i-i0+.5)*colW)),ph+10);}
   g.textAlign='right';g.fillText('ahora →',pw-4,ph+10);
   lqGeo={i0,n,colW,plotW,pw,ph,P};
 }
