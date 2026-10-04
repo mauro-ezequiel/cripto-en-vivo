@@ -331,16 +331,17 @@ body.fs-on .fsbar{display:flex}
 .lqx-tip{position:absolute;z-index:3;background:rgba(15,17,21,.94);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;display:flex;flex-direction:column;gap:2px;pointer-events:none;min-width:140px}
 .lqx-leg{position:absolute;left:8px;bottom:24px;display:flex;gap:10px;font-size:10px;color:#c9ccd4;pointer-events:none;background:rgba(15,17,21,.6);padding:3px 6px;border-radius:6px}
 .lqx-leg span{display:flex;align-items:center;gap:5px}.lqx-leg i{display:inline-block;width:46px;height:7px;border-radius:3px}
-.lqx-chart{height:340px}
+.lqx-chart{height:380px}
+.lqx-read{display:grid;grid-template-columns:1fr 1fr 1.3fr;gap:8px;margin:8px 0}.lqr{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--mut);display:flex;flex-direction:column;gap:2px}.lqr>b{font-size:17px;color:var(--txt)}.lqr span b{color:var(--txt)}.lqr.s{border-left:4px solid #ff1744}.lqr.l{border-left:4px solid #00e676}.lqr.s>b{color:#ff8a80}.lqr.l>b{color:#69f0ae}.lqr.r span{color:var(--txt);font-size:12px;line-height:1.35}
 .lqx-chart canvas{touch-action:pan-y;cursor:grab}.lqx.big .lqx-chart canvas{touch-action:none}.lqx-chart.draw canvas{cursor:crosshair}
-.lqx-tools{position:absolute;right:68px;top:6px;display:flex;gap:4px;z-index:2}
+.lqx-tools{position:absolute;left:6px;bottom:24px;display:flex;gap:4px;z-index:2}
 .lqx-tools button{background:rgba(15,17,21,.85);color:#e8eaf0;border:1px solid var(--line);border-radius:6px;font-size:13px;min-width:30px;height:28px;padding:0 6px;cursor:pointer}
 .lqx-tools button.on{background:#ffd166;color:#0f1115;border-color:#ffd166}
 .lqx-x{display:none}
 .lqx.big{position:fixed;inset:0;z-index:9400;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
 .lqx.big .lqx-chart{height:calc(100vh - 250px);height:calc(100dvh - 250px);min-height:300px}
 .lqx.big .lqx-x{display:inline-block}
-@media (max-width:800px){.lqx-sum{grid-template-columns:repeat(2,minmax(0,1fr))}.lqx-body{grid-template-columns:1fr}.lqx-chart{height:230px}.lqx.big .lqx-chart{height:60vh}.lqx-leg i{width:20px}.lqx-tools button{min-width:28px;height:26px;font-size:12px}}
+@media (max-width:800px){.lqx-sum{grid-template-columns:repeat(2,minmax(0,1fr))}.lqx-body{grid-template-columns:1fr}.lqx-chart{height:230px}.lqx.big .lqx-chart{height:60vh}.lqx-read{grid-template-columns:1fr 1fr}.lqr.r{grid-column:1/-1}.lqx-chart{height:320px}.lqx-leg i{width:20px}.lqx-tools button{min-width:28px;height:26px;font-size:12px}}
 .mnav{display:none}
 @media (max-width:800px){
   .mnav{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:8500;background:rgba(22,26,34,.97);border-top:1px solid var(--line);padding:4px 4px calc(4px + env(safe-area-inset-bottom));backdrop-filter:blur(6px)}
@@ -429,8 +430,8 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
-      <div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div>
-      <div class="lqx-src">Mapa: liquidez estimada a liquidar con el interés abierto y el volumen de Binance, Bybit y OKX (verde = longs, rojo = shorts; más intenso = más liquidez junta). Burbujas y paneles: liquidaciones reales en vivo de Binance, OKX y Bybit. Toca o pasa el mouse sobre el mapa para ver los montos.</div></section>
+      <div class="lqx-read" id="lqRead"></div><div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div>
+      <div class="lqx-src">Cómo leerlo: las barras de la derecha muestran cuánto dinero se liquidaría si el precio llega a ese nivel (rojo = shorts, arriba del precio; verde = longs, abajo). Las bandas sobre las velas marcan los niveles más fuertes: suelen atraer al precio y, una vez barridos, funcionar como techo o piso. Estimado con el interés abierto y el volumen de Binance, Bybit y OKX; los paneles muestran liquidaciones reales en vivo. Toca o pasa el mouse para ver montos; arrastra y usa la rueda o pellizca para moverte.</div></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
@@ -450,8 +451,8 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 4,5 % o más · simulación 350 USD × 5, liquidación al 3 %</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · movimientos de 3,75 % o más · simulación 50 USD × 20, liquidación al 2,5 %</small></button>
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 4,5 % o más · simulación 350 USD × 20, liquidación al 3 %</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · movimientos de 3,75 % o más · simulación 50 USD × 25, liquidación al 2,5 %</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 10</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button></section>
@@ -1720,12 +1721,12 @@ function calCert(m,setup){
 function htfTrend(hc){const h=hc.slice(0,-1),cl=h.map(b=>b.close),e=emaArr(cl,21),i=h.length-1;if(i<4||e[i]==null||e[i-3]==null)return 0;return (cl[i]>e[i]?.5:-.5)+(e[i]>e[i-3]?.5:-.5);}
 function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDelta(cc[j]);vv+=cc[j].v;}for(let j=Math.max(0,i-19);j<=i;j++)vs+=cc[j].v;
   const b=cc[i];return {flow:vv?fl/vv:0,vr:b.v/((vs/Math.min(i+1,20))||1),body:(b.close-b.open)/((b.high-b.low)||1)};}
-/* SHOOTER v5 (5m) · 50 USD × 20 · liquidación al 2,5 % en contra (−25 USD), objetivos +3,75 / +6,25 / +10 %, plazo 4 h.
+/* SHOOTER v5 (5m) · 50 USD × 25 · liquidación al 2,5 % en contra (−31,25 USD), objetivos +3,75 / +6,25 / +10 %, plazo 4 h.
    Se probaron liquidaciones de 0,5 % a 4 % y objetivos de 0,4 a 4 veces la liquidación en 60 criptos (30 días de velas de 5m):
    2,5 % fue la que más ganó de forma estable (positiva en longs y shorts y en las dos mitades del período).
    Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65) con la tendencia de 15m a favor,
    solo en monedas con ATR de 5m entre 0,83 % y 1,67 % (con menos no llega a los objetivos; con más es impredecible).
-   Resultado: ganó el 53 % de 391 casos, +4,4 USD por operación con comisiones. */
+   Resultado: ganó el 53 % de 391 casos, +4,4 USD por operación a × 20 (≈ +5,5 USD a × 25), con comisiones. */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
@@ -1740,12 +1741,12 @@ function evalShooter(cs,hc){
     return out;
   });
 }
-/* TRADING v5 (4H) · 350 USD × 5 · liquidación al 3 % en contra (−52,50 USD), objetivos +4,5 / +7,5 / +12 %, plazo 7 días.
+/* TRADING v5 (4H) · 350 USD × 20 · liquidación al 3 % en contra (−210 USD), objetivos +4,5 / +7,5 / +12 %, plazo 7 días.
    Se probaron liquidaciones de 2 % a 15 % en 60 criptos (~11 meses de velas de 4H). Con 10–15 % el impulso ganaba más
    en total, pero dependía de la fase del mercado (meses de −40.000 USD sumando todas las operaciones): se descartó.
    3 % fue la mejor relación ganancia/riesgo y la más estable (11 de 15 meses positivos).
    Regla: retroceso dentro de la tendencia (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 bajo 50 en long /
-   sobre 50 en short), volumen bajo en el retroceso y ATR de 4H entre 1 % y 2 %. Ganó el 51 % de 697 casos, +13 USD por operación. */
+   sobre 50 en short), volumen bajo en el retroceso y ATR de 4H entre 1 % y 2 %. Ganó el 51 % de 697 casos, +13 USD por operación a × 5 (≈ +52 USD a × 20). */
 function evalTrading(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
@@ -1850,11 +1851,13 @@ setInterval(()=>{const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode
 setInterval(checkSignals,2000);
 
 /* ---------- operaciones simuladas e historial ----------
-   TRADING: 350 USD × 5 (posición de 1.750 USD), se liquida al 3 % en contra (−52,50 USD).
-   SHOOTER: 50 USD × 20 (posición de 1.000 USD), se liquida al 2,5 % en contra (−25 USD).
+   Apalancamiento: el máximo con el que el stop salta antes que la liquidación real del exchange, con margen para mechas.
+   TRADING: 350 USD × 20 (posición de 7.000 USD), stop/liquidación al 3 % en contra (−210 USD); el exchange liquidaría cerca del 4,5 %.
+   SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
+   ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:5,maxLoss:52.5,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 5 · liquidación al 3 % (−52,50 USD)'},
-           x:{margin:50,lev:20,maxLoss:25,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 20 · liquidación al 2,5 % (−25 USD)'}};
+const SIM={medio:{margin:350,lev:20,maxLoss:210,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 20 · liquidación al 3 % (−210 USD)'},
+           x:{margin:50,lev:25,maxLoss:31.25,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 25 · liquidación al 2,5 % (−31,25 USD)'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:100000,lev:10,maxLoss:50000,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 10 · liquidación en −50.000 ARS'};
 const TGT=['objetivo corto','objetivo 1','objetivo 2'];
@@ -1874,7 +1877,7 @@ const pnlAt=(o,px)=>realOf(o)+(1-(o.hit||0)/3)*notOf(o)*o.dir*(px/o.entry-1);
 function closeOp(o,state,px,ts,why,pnl){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=pnl!=null?pnl:state==='fail'?-lossOf(o):pnlAt(o,px);}
 function stepOp(o,hi,lo,ts){
   if(o.state!=='open')return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];o.hit=o.hit||0;
-  if(!o.hit&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,o.m==='a'?'liquidada en −50.000 ARS':`liquidada en −${lossOf(o)} USD`,-lossOf(o));return true;}
+  if(!o.hit&&d*(adv-o.fail)<=0){closeOp(o,'fail',o.fail,ts,o.m==='a'?'liquidada en −50.000 ARS':`liquidada en −${lossOf(o).toLocaleString('es-ES')} USD`,-lossOf(o));return true;}
   if(o.hit>0&&d*(adv-o.entry)<=0){closeOp(o,'win',o.entry,ts,'llegó al '+TGT[o.hit-1]+' y el resto se cerró en la entrada',realOf(o));return true;}
   while(o.hit<3&&d*(fav-T[o.hit])>=0){o.real=realOf(o)+notOf(o)/3*d*(T[o.hit]/o.entry-1);o.hit++;}
   if(o.hit===3){closeOp(o,'win',o.tp2,ts,'llegó al objetivo 2',realOf(o));return true;}
@@ -2462,7 +2465,9 @@ async function lqInit(){
 const mkRamp=st=>{const out=[];for(let i=0;i<256;i++){const t=i/255;let j=0;while(j<st.length-2&&t>st[j+1][0])j++;const [t0,c0]=st[j],[t1,c1]=st[j+1],u=(t-t0)/((t1-t0)||1);out.push(c0.map((v,q)=>Math.round(v+(c1[q]-v)*Math.min(1,Math.max(0,u)))));}return out;};
 const RAMP={L:mkRamp([[0,[14,34,26]],[.25,[6,92,52]],[.55,[0,170,88]],[.8,[0,230,118]],[1,[150,255,195]]]),
             S:mkRamp([[0,[38,14,20]],[.25,[110,16,36]],[.55,[200,22,52]],[.8,[255,23,68]],[1,[255,150,160]]])};
-/* vista del mapa: se puede mover (arrastrar), hacer zoom (rueda / pellizco) y marcar líneas */
+/* gráfico de liquidaciones fácil de leer: velas a la izquierda y, a la derecha, cuánto se liquidaría en cada precio
+   (rojo = shorts arriba del precio, verde = longs abajo). Los niveles más fuertes se marcan como bandas sobre las velas.
+   Se puede mover (arrastrar), hacer zoom (rueda / pellizco) y marcar líneas. */
 let lqGeo=null,LV={key:'',span:0,r:0,auto:true,a:0,b:0},LT='move',LTP=null,lqRaf=0;
 let LL={};try{LL=JSON.parse(localStorage.getItem('cv_lqlines')||'{}')||{};}catch(e){}
 const saveLL=()=>{try{localStorage.setItem('cv_lqlines',JSON.stringify(LL))}catch(e){}};
@@ -2472,7 +2477,7 @@ const lqIdx=t=>{const n=candles.length;if(!n)return 0;const ms=TF_MS[tf]||36e5;i
 const lqTime=x=>{const n=candles.length,ms=TF_MS[tf]||36e5,i=Math.floor(x);if(i>=n-1)return candles[n-1].t+(x-(n-1))*ms;if(i<0)return candles[0].t+x*ms;return candles[i].t+(x-i)*ms;};
 function drawLqHeat(){
   const wrap=$('lqChart');if(!wrap)return;let cv=$('lqCanvas');
-  if(!cv){wrap.innerHTML='<canvas id="lqCanvas"></canvas><div class="lqx-tip" id="lqTip" hidden></div><div class="lqx-leg"><span><i style="background:linear-gradient(90deg,#0e221a,#00aa58,#00e676,#96ffc3)"></i>Longs</span><span><i style="background:linear-gradient(90deg,#260e14,#c81634,#ff1744,#ff96a0)"></i>Shorts</span></div>'+
+  if(!cv){wrap.innerHTML='<canvas id="lqCanvas"></canvas><div class="lqx-tip" id="lqTip" hidden></div>'+
     '<div class="lqx-tools"><button data-t="move" class="on" title="Mover y hacer zoom">✋</button><button data-t="h" title="Línea horizontal">─</button><button data-t="t" title="Línea de tendencia (2 toques)">╱</button><button data-t="clr" title="Borrar mis líneas de esta moneda">🗑</button><button data-t="rst" title="Volver a la vista inicial">↺</button></div>';
     cv=$('lqCanvas');lqHover(cv);
     wrap.querySelector('.lqx-tools').onclick=e=>{const b=e.target.closest('button');if(!b)return;const t=b.dataset.t;
@@ -2482,71 +2487,89 @@ function drawLqHeat(){
   if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';}
   const g=cv.getContext('2d');g.setTransform(dpr,0,0,dpr,0,0);g.fillStyle='#0f1115';g.fillRect(0,0,W,H);
   const msg=t=>{g.fillStyle='#7c8394';g.font='13px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(t,W/2,H/2);lqGeo=null;};
-  if(!LIQ||!LIQ.colL){msg(FUT&&FUT.none?'Esta moneda no tiene futuros: no hay liquidaciones que mapear.':'Calculando el mapa de liquidaciones…');return;}
+  if(!LIQ||!LIQ.colL){msg(FUT&&FUT.none?'Esta moneda no tiene futuros: no hay liquidaciones que mapear.':'Calculando las liquidaciones…');return;}
   const n=Math.min(LIQ.n,candles.length);if(n<20){msg('Cargando velas…');return;}
-  const padR=62,padB=18,pw=W-padR,ph=H-padB,key=symbol+'|'+tf;
-  if(LV.key!==key){const sp=Math.min(n,Math.max(30,Math.floor(pw/7)));LV={key,span:sp,r:sp*.14,auto:true,a:0,b:0};}
+  const padB=18,padT=20,axW=58,profW=Math.round(Math.max(96,Math.min(250,W*.3))),pw=W-axW-profW,ph=H-padB,xP=pw+axW,key=symbol+'|'+tf;
+  if(LV.key!==key){const sp=Math.min(n,Math.max(25,Math.floor(pw/8)));LV={key,span:sp,r:sp*.04,auto:true,a:0,b:0};}
   LV.span=Math.max(15,Math.min(n+40,LV.span));LV.r=Math.max(-n+10,Math.min(LV.span*.8,LV.r));
-  const x1=n-1+LV.r,x0=x1-LV.span,cw=pw/LV.span,X=i=>(i-x0)*cw;
+  const x1=n-1+LV.r,x0=x1-LV.span,cw=pw/LV.span,X=i=>(i-x0)*cw,cp=candles[n-1].close;
   const vi0=Math.max(0,Math.floor(x0)),vi1=Math.min(n-1,Math.ceil(x1));
-  if(LV.auto){let lo=Infinity,hi=-Infinity;for(let i=vi0;i<=vi1;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}if(!isFinite(lo)){lo=candles[n-1].low;hi=candles[n-1].high;}LV.a=Math.log(lo*.96);LV.b=Math.log(hi*1.04);}
-  const A=LV.a,B=LV.b,Y=p=>ph*(1-(Math.log(p)-A)/(B-A)),P=y=>Math.exp(B-(y/ph)*(B-A));
-  // celdas ("cubitos"): una columna por vela y filas del mismo alto que el ancho
-  const {colL,colS,step,lnLo,nb}=LIQ,binPx=step/(B-A)*ph,gk=Math.max(1,Math.round(Math.max(4,Math.min(cw,14))/binPx)),rowPx=gk*binPx;
-  const kA=Math.max(0,Math.floor((A-lnLo)/step/gk)*gk),kB=Math.min(nb-1,Math.ceil((B-lnLo)/step));
-  const ci0=Math.max(0,Math.floor(x0)),ci1=Math.ceil(x1),cell=(c,k)=>{let v=0;for(let q=k;q<k+gk&&q<nb;q++)if(c[q]>v)v=c[q];return v;};
-  let mx=0;for(let i=ci0;i<=ci1;i++){const ii=Math.min(n-1,i),a=colL[ii],b=colS[ii];for(let k=kA;k<=kB;k+=gk){const vl=cell(a,k),vs=cell(b,k);if(vl>mx)mx=vl;if(vs>mx)mx=vs;}}
-  const gap=cw>=5&&rowPx>=5?1:0,LV7=8;
-  if(mx>0)for(let i=ci0;i<=ci1;i++){const ii=Math.min(n-1,i),a=colL[ii],b=colS[ii],cx=X(i),fut=i>n-1,cl=candles[ii].close;
-    for(let k=kA;k<=kB;k+=gk){const vl=cell(a,k),vs=cell(b,k),v=Math.max(vl,vs),pTop=Math.exp(lnLo+(k+gk)*step),pBot=Math.exp(lnLo+k*step),yT=Y(pTop),yB=Y(pBot);if(yB<0||yT>ph)continue;
-      let lev=Math.ceil(Math.sqrt(v/mx)*LV7)/LV7,side;
-      if(v<mx*.01){side=Math.sqrt(pTop*pBot)>cl?RAMP.S:RAMP.L;lev=.035;}else side=vl>=vs?RAMP.L:RAMP.S;
-      const c=side[Math.min(255,Math.round(lev*255*(fut?.85:1)))];g.fillStyle=`rgb(${c[0]},${c[1]},${c[2]})`;g.fillRect(cx+gap*.5,yT+gap*.5,cw-gap,yB-yT-gap);}}
-  g.strokeStyle='rgba(255,255,255,.14)';g.setLineDash([3,4]);g.beginPath();g.moveTo(X(n),0);g.lineTo(X(n),ph);g.stroke();g.setLineDash([]);
-  // velas
+  if(LV.auto){let lo=cp*.94,hi=cp*1.06;for(let i=vi0;i<=vi1;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}LV.a=Math.log(lo*.99);LV.b=Math.log(hi*1.01);}
+  const A=LV.a,B=LV.b,Y=p=>padT+(ph-padT)*(1-(Math.log(p)-A)/(B-A)),P=y=>Math.exp(B-((y-padT)/(ph-padT))*(B-A)),cy=Y(cp);
+  // cuánto se liquidaría en cada nivel de precio (lo que queda pendiente ahora)
+  const {colL,colS,step,lnLo,nb,bin}=LIQ,cL=colL[n-1],cS=colS[n-1],kTop=bin(P(padT)),kBot=bin(P(ph)),nbv=Math.max(1,kTop-kBot+1);
+  const rows=Math.max(8,Math.min(nbv,Math.floor((ph-padT)/6),70)),rh=(ph-padT)/rows,RL=new Float64Array(rows),RS=new Float64Array(rows);
+  for(let k=kBot;k<=kTop;k++){const pc=Math.exp(lnLo+(k+.5)*step),r=Math.floor((Y(pc)-padT)/rh);if(r<0||r>=rows)continue;if(pc>=cp)RS[r]+=cS[k];else RL[r]+=cL[k];}
+  let mx=0;for(let r=0;r<rows;r++)mx=Math.max(mx,RL[r],RS[r]);
+  const top=(arr,cnt)=>[...arr].map((v,r)=>[v,r]).filter(x=>x[0]>0).sort((a,b)=>b[0]-a[0]).slice(0,cnt);
+  const tS=top(RS,3),tL=top(RL,3);
+  // guías de precio
+  g.strokeStyle='rgba(255,255,255,.05)';g.lineWidth=1;for(let j=1;j<5;j++){const y=padT+(ph-padT)*j/5;g.beginPath();g.moveTo(0,y);g.lineTo(pw,y);g.stroke();}
+  // bandas de los niveles más fuertes sobre las velas
+  g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
+  const band=(r,v,isS,rank)=>{const y=padT+r*rh,col=isS?'255,23,68':'0,230,118',a=rank===0?.22:.12;g.fillStyle=`rgba(${col},${a})`;g.fillRect(0,y,pw,Math.max(3,rh));
+    g.strokeStyle=`rgba(${col},${rank===0?.9:.5})`;g.setLineDash(rank===0?[]:[4,4]);g.beginPath();g.moveTo(0,y+rh/2);g.lineTo(W,y+rh/2);g.stroke();g.setLineDash([]);
+    if(rank<2){const p=P(y+rh/2),t=`${isS?'▲':'▼'} ${fp(p)} (${fpct((p/cp-1)*100)}) · ${fusdS(v)} en ${isS?'shorts':'longs'}`,tw=g.measureText(t).width;
+      g.fillStyle='rgba(15,17,21,.85)';g.fillRect(6,y+rh/2-9,tw+10,18);g.fillStyle=isS?'#ff8a80':'#69f0ae';g.textAlign='left';g.fillText(t,11,y+rh/2);}};
+  tS.forEach(([v,r],i)=>band(r,v,true,i));tL.forEach(([v,r],i)=>band(r,v,false,i));
+  // velas (neutras para no confundir con los colores de liquidación)
   const bw=Math.max(1,cw*.62);
-  for(let i=vi0;i<=vi1;i++){const b=candles[i],x=X(i)+cw/2,up=b.close>=b.open,yo=Y(b.open),yc=Y(b.close);
-    g.strokeStyle=up?'#f5f7fa':'#cfd3dc';g.lineWidth=1;g.beginPath();g.moveTo(Math.round(x)+.5,Y(b.high));g.lineTo(Math.round(x)+.5,Y(b.low));g.stroke();
-    if(cw>=3){const yT=Math.min(yo,yc),hh=Math.max(1,Math.abs(yc-yo));g.fillStyle=up?'#f5f7fa':'#14171d';g.fillRect(x-bw/2,yT,bw,hh);if(!up){g.strokeStyle='#cfd3dc';g.strokeRect(x-bw/2+.5,yT+.5,bw-1,Math.max(0,hh-1));}}}
-  const cp=candles[n-1].close,cy=Y(cp);g.strokeStyle='rgba(232,234,240,.55)';g.setLineDash([4,4]);g.beginPath();g.moveTo(0,cy);g.lineTo(pw,cy);g.stroke();g.setLineDash([]);
-  // liquidaciones reales (burbujas)
+  for(let i=vi0;i<=vi1;i++){const b=candles[i],x=X(i)+cw/2;if(x<-cw||x>pw+cw)continue;const up=b.close>=b.open,yo=Y(b.open),yc=Y(b.close);
+    g.strokeStyle=up?'#f5f7fa':'#9aa0ae';g.lineWidth=1;g.beginPath();g.moveTo(Math.round(x)+.5,Y(b.high));g.lineTo(Math.round(x)+.5,Y(b.low));g.stroke();
+    if(cw>=3){const yT=Math.min(yo,yc),hh=Math.max(1,Math.abs(yc-yo));g.fillStyle=up?'#f5f7fa':'#2a2f3a';g.fillRect(x-bw/2,yT,bw,hh);if(!up){g.strokeStyle='#9aa0ae';g.strokeRect(x-bw/2+.5,yT+.5,bw-1,Math.max(0,hh-1));}}}
+  // liquidaciones reales recientes de esta moneda (puntos chicos)
   const base=lqBase(symbol),tA=lqTime(x0),evs=LQX.ev.filter(e=>e.sym===base&&e.t>=tA);let bm=0;for(const e of evs)bm=Math.max(bm,e.usd);
-  for(const e of evs){const x=X(lqIdx(e.t)+.5),y=Y(e.p);if(x<0||x>pw||y<0||y>ph)continue;const r=2+11*Math.sqrt(e.usd/(bm||1));
-    g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=e.side==='L'?'rgba(0,230,118,.6)':'rgba(255,23,68,.6)';g.fill();g.strokeStyle='rgba(255,255,255,.8)';g.lineWidth=1;g.stroke();}
-  // nombres de las zonas más grandes
-  const cz=LIQ.cl;g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
-  for(const [z,t,c] of [[cz&&cz.longs[0],'Zona de liquidez longs','#69f0ae'],[cz&&cz.shorts[0],'Zona de liquidez shorts','#ff8a80']]){if(!z)continue;const y=Y(z.p);if(y<8||y>ph-8)continue;
-    const tw=g.measureText(t).width,xr=Math.min(pw-6,X(n)-6);g.fillStyle='rgba(15,17,21,.8)';g.fillRect(xr-tw-8,y-8,tw+8,16);g.fillStyle=c;g.textAlign='right';g.fillText(t,xr-4,y);}
+  for(const e of evs){const x=X(lqIdx(e.t)+.5),y=Y(e.p);if(x<0||x>pw||y<padT||y>ph)continue;g.beginPath();g.arc(x,y,2+6*Math.sqrt(e.usd/(bm||1)),0,7);g.fillStyle=e.side==='L'?'rgba(0,230,118,.75)':'rgba(255,23,68,.75)';g.fill();}
   // líneas del usuario
   const ls=LL[base]||[],tmp=LTP&&LTP.p2?[{type:'t',t1:LTP.t1,p1:LTP.p1,t2:LTP.t2,p2:LTP.p2,tmp:1}]:[];
-  g.lineWidth=1.6;g.font='700 10px system-ui,sans-serif';
+  g.lineWidth=1.6;
   for(const L of ls.concat(tmp)){g.strokeStyle=L.tmp?'rgba(255,209,102,.6)':'#ffd166';g.fillStyle='#ffd166';
-    if(L.type==='h'){const y=Y(L.p);if(y<0||y>ph)continue;g.beginPath();g.moveTo(0,y);g.lineTo(pw,y);g.stroke();g.fillRect(pw+1,y-8,padR-2,16);}
+    if(L.type==='h'){const y=Y(L.p);if(y<padT||y>ph)continue;g.beginPath();g.moveTo(0,y);g.lineTo(pw,y);g.stroke();}
     else{const xa=X(lqIdx(L.t1)+.5),ya=Y(L.p1),xb=X(lqIdx(L.t2)+.5),yb=Y(L.p2);g.beginPath();g.moveTo(xa,ya);g.lineTo(xb,yb);g.stroke();for(const [x,y] of [[xa,ya],[xb,yb]]){g.beginPath();g.arc(x,y,3,0,7);g.fill();}}}
   if(LTP&&!LTP.p2){g.fillStyle='#ffd166';g.beginPath();g.arc(X(lqIdx(LTP.t1)+.5),Y(LTP.p1),4,0,7);g.fill();}
-  // ejes
-  g.fillStyle='#0f1115';g.fillRect(pw,0,padR,H);g.fillRect(0,ph,W,padB);g.font='10px system-ui,sans-serif';g.fillStyle='#9aa0ae';g.textAlign='left';g.textBaseline='middle';
-  for(let j=0;j<=5;j++){const y=ph*j/5;g.fillText(fp(P(y)),pw+4,Math.min(ph-6,Math.max(6,y)));}
-  for(const L of ls)if(L.type==='h'){const y=Y(L.p);if(y<0||y>ph)continue;g.fillStyle='#ffd166';g.fillRect(pw+1,y-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(L.p),pw+4,y);}
-  if(cy>=0&&cy<=ph){g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);}
+  // barras de liquidación (derecha)
+  g.fillStyle='#0f1115';g.fillRect(pw,0,W-pw,H);g.fillStyle='#14171d';g.fillRect(xP,padT,profW,ph-padT);
+  if(mx>0)for(let r=0;r<rows;r++){const y=padT+r*rh,hh=Math.max(1,rh-1);
+    if(RS[r]>0){const w=RS[r]/mx*(profW-6),k=.35+.65*RS[r]/mx;g.fillStyle=`rgba(255,23,68,${k})`;g.fillRect(xP,y,w,hh);}
+    if(RL[r]>0){const w=RL[r]/mx*(profW-6),k=.35+.65*RL[r]/mx;g.fillStyle=`rgba(0,230,118,${k})`;g.fillRect(xP,y,w,hh);}}
+  g.font='700 10px system-ui,sans-serif';g.textAlign='right';
+  for(const [v,r] of tS.concat(tL)){const y=padT+r*rh+rh/2,w=v/mx*(profW-6),t=fusdS(v);g.fillStyle='#f5f7fa';if(w>g.measureText(t).width+8)g.fillText(t,xP+w-4,y);else{g.textAlign='left';g.fillText(t,xP+w+4,y);g.textAlign='right';}}
+  // precio actual
+  g.strokeStyle='rgba(232,234,240,.8)';g.setLineDash([4,4]);g.lineWidth=1;g.beginPath();g.moveTo(0,cy);g.lineTo(W,cy);g.stroke();g.setLineDash([]);
+  // ejes y títulos
+  g.font='10px system-ui,sans-serif';g.fillStyle='#9aa0ae';g.textAlign='left';g.textBaseline='middle';
+  for(let j=0;j<=5;j++){const y=padT+(ph-padT)*j/5;g.fillText(fp(P(y)),pw+4,Math.min(ph-6,Math.max(padT+6,y)));}
+  for(const L of ls)if(L.type==='h'){const y=Y(L.p);if(y<padT||y>ph)continue;g.fillStyle='#ffd166';g.fillRect(pw+1,y-8,axW-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(L.p),pw+4,y);g.font='10px system-ui,sans-serif';}
+  if(cy>=padT&&cy<=ph){g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,axW-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);}
+  g.font='600 10px system-ui,sans-serif';g.fillStyle='#ff8a80';g.textAlign='left';g.fillText('▲ shorts si sube',xP+2,9);g.fillStyle='#69f0ae';g.textAlign='left';g.fillText('▼ longs si baja',xP+2,ph+10);
   g.fillStyle='#9aa0ae';g.font='10px system-ui,sans-serif';g.textAlign='center';
-  const intra=['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf),nL=Math.max(2,Math.min(6,Math.floor(pw/100))),p2=v=>String(v).padStart(2,'0');
+  const intra=['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf),nL=Math.max(1,Math.min(5,Math.floor(pw/110))),p2=v=>String(v).padStart(2,'0');
   for(let j=0;j<nL;j++){const xi=x0+LV.span*(j+.5)/nL,dt=new Date(lqTime(xi)),lab=`${dt.getDate()}/${dt.getMonth()+1}`+(intra?` ${p2(dt.getHours())}:${p2(dt.getMinutes())}`:'');g.fillText(lab,X(xi),ph+10);}
-  lqGeo={x0,cw,pw,ph,P,n,X};
+  lqGeo={x0,cw,pw,ph,padT,P,n,X,xP,rows,rh,RL,RS,cp};
 }
+/* resumen en palabras: cuánto hay arriba y abajo y dónde está el nivel más fuerte */
+function lqSummary(){const el=$('lqRead');if(!el)return;if(!LIQ||!LIQ.colL||!candles.length){el.innerHTML='';return;}
+  const n=Math.min(LIQ.n,candles.length),cp=candles[n-1].close,cL=LIQ.colL[n-1],cS=LIQ.colS[n-1],{bin,lnLo,step}=LIQ,up=new Map(),dn=new Map();let tU=0,tD=0;
+  for(let k=bin(cp*.9);k<=bin(cp*1.1);k++){const p=Math.exp(lnLo+(k+.5)*step),d=p/cp-1,b=Math.round(d/.005);
+    if(d>=0){up.set(b,(up.get(b)||0)+cS[k]);if(d<=.05)tU+=cS[k];}else{dn.set(b,(dn.get(b)||0)+cL[k]);if(d>=-.05)tD+=cL[k];}}
+  const best=m=>[...m.entries()].sort((a,b)=>b[1]-a[1])[0]||[0,0],[bu,vu]=best(up),[bd,vd]=best(dn),pu=cp*(1+bu*.005),pd=cp*(1+bd*.005);
+  const rd=tU+tD<1?'Todavía no hay datos suficientes.':tU>tD*1.3?`Hay más liquidez <b class="dn">arriba</b>: el precio suele ir a buscarla, posible subida hacia ${fp(pu)}.`:tD>tU*1.3?`Hay más liquidez <b class="up">abajo</b>: posible barrida hacia ${fp(pd)} antes de seguir.`:'Liquidez pareja arriba y abajo: no hay un imán claro.';
+  el.innerHTML=`<div class="lqr s"><small>▲ Si el precio SUBE 5 %</small><b>${fusdS(tU)}</b><span>en shorts liquidados · nivel más fuerte <b>${fp(pu)}</b> (${fpct(bu*.5)}): ${fusdS(vu)}</span></div>
+    <div class="lqr l"><small>▼ Si el precio BAJA 5 %</small><b>${fusdS(tD)}</b><span>en longs liquidados · nivel más fuerte <b>${fp(pd)}</b> (${fpct(bd*.5)}): ${fusdS(vd)}</span></div>
+    <div class="lqr r"><small>Lectura rápida</small><span>${rd} <i class="mut">No es garantía.</i></span></div>`;}
 function lqHover(cv){const tip=$('lqTip'),wrap=$('lqChart'),pts=new Map();let drag=null,pinch=null,moved=false;
   const loc=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
-  const show=(x,y)=>{const G=lqGeo;if(!G||!LIQ||x<0||y<0||x>G.pw||y>G.ph){tip.hidden=true;return;}
-    const i=Math.min(G.n-1,Math.max(0,Math.floor(G.x0+x/G.cw))),p=G.P(y),k=LIQ.bin(p);let vl=0,vs=0;for(let d=-1;d<=1;d++){const kk=k+d;if(kk<0||kk>=LIQ.nb)continue;vl+=LIQ.colL[i][kk];vs+=LIQ.colS[i][kk];}
-    tip.innerHTML=`<b>${fp(p)}</b><span class="up">Longs a liquidar ≈ ${fusdS(vl)}</span><span class="dn">Shorts a liquidar ≈ ${fusdS(vs)}</span>`;tip.hidden=false;
-    tip.style.left=Math.max(4,Math.min(x+12,G.pw-150))+'px';tip.style.top=Math.max(4,Math.min(y+12,G.ph-60))+'px';};
+  const show=(x,y)=>{const G=lqGeo;if(!G||y<G.padT||y>G.ph||x<0){tip.hidden=true;return;}
+    const p=G.P(y),r=Math.min(G.rows-1,Math.max(0,Math.floor((y-G.padT)/G.rh))),S=p>=G.cp,v=S?G.RS[r]:G.RL[r];
+    tip.innerHTML=`<b>${fp(p)} <span class="mut">(${fpct((p/G.cp-1)*100)})</span></b><span class="${S?'dn':'up'}">Si ${S?'sube':'baja'} hasta acá se liquidan ≈ ${fusdS(v)} en ${S?'shorts':'longs'}</span>`;tip.hidden=false;
+    tip.style.left=Math.max(4,Math.min(x+12,cv.clientWidth-200))+'px';tip.style.top=Math.max(4,Math.min(y+12,G.ph-50))+'px';};
   const zoomT=(f,x)=>{const G=lqGeo;if(!G)return;const xi=G.x0+x/G.cw,ns=Math.max(15,Math.min(G.n+40,LV.span*f)),nx0=xi-(x/G.pw)*ns;LV.span=ns;LV.r=nx0+ns-(G.n-1);};
   const zoomP=(f,y)=>{const G=lqGeo;if(!G)return;const lp=Math.log(G.P(y));LV.auto=false;LV.a=lp-(lp-LV.a)*f;LV.b=lp+(LV.b-lp)*f;};
   cv.addEventListener('wheel',e=>{if(!lqGeo)return;e.preventDefault();const {x,y}=loc(e),f=Math.exp(Math.max(-1,Math.min(1,e.deltaY*.0015)));
     if(x>lqGeo.pw||e.shiftKey)zoomP(f,y);else zoomT(f,x);tip.hidden=true;lqReq();},{passive:false});
   cv.addEventListener('dblclick',()=>{LV.key='';lqReq();});
   cv.addEventListener('pointerdown',e=>{const G=lqGeo;if(!G)return;const p=loc(e);pts.set(e.pointerId,p);moved=false;
-    if(LT!=='move'&&pts.size===1){const t=lqTime(G.x0+p.x/G.cw-.5),pr=G.P(p.y),b=lqBase(symbol);
+    if(LT!=='move'&&pts.size===1&&p.x<=G.pw){const t=lqTime(G.x0+p.x/G.cw-.5),pr=G.P(p.y),b=lqBase(symbol);
       if(LT==='h'){(LL[b]=LL[b]||[]).push({type:'h',p:pr});if(LL[b].length>30)LL[b].shift();saveLL();LT='move';}
       else if(!LTP)LTP={t1:t,p1:pr};else{(LL[b]=LL[b]||[]).push({type:'t',t1:LTP.t1,p1:LTP.p1,t2:t,p2:pr});if(LL[b].length>30)LL[b].shift();saveLL();LTP=null;LT='move';}
       wrap.querySelectorAll('.lqx-tools button').forEach(x=>x.classList.toggle('on',x.dataset.t===LT));wrap.classList.toggle('draw',LT!=='move');lqReq();return;}
@@ -2554,23 +2577,23 @@ function lqHover(cv){const tip=$('lqTip'),wrap=$('lqChart'),pts=new Map();let dr
     if(pts.size===2){const [a,b]=[...pts.values()];pinch={dx:Math.max(20,Math.abs(a.x-b.x)),dy:Math.max(20,Math.abs(a.y-b.y)),span:LV.span,r:LV.r,a:LV.a,b:LV.b,cx:(a.x+b.x)/2,cy:(a.y+b.y)/2};drag=null;}
     else drag={x:p.x,y:p.y,r:LV.r,a:LV.a,b:LV.b,axis:p.x>G.pw};});
   cv.addEventListener('pointermove',e=>{const G=lqGeo;if(!G)return;const p=loc(e);
-    if(LTP&&LT==='t'){LTP.t2=lqTime(G.x0+p.x/G.cw-.5);LTP.p2=G.P(p.y);lqReq();return;}
+    if(LTP&&LT==='t'){LTP.t2=lqTime(G.x0+Math.min(p.x,G.pw)/G.cw-.5);LTP.p2=G.P(p.y);lqReq();return;}
     if(!pts.has(e.pointerId)){if(e.pointerType==='mouse')show(p.x,p.y);return;}
     pts.set(e.pointerId,p);
     if(pinch&&pts.size>=2){const [a,b]=[...pts.values()],fx=pinch.dx/Math.max(20,Math.abs(a.x-b.x)),fy=pinch.dy/Math.max(20,Math.abs(a.y-b.y));
-      LV.span=pinch.span;LV.r=pinch.r;zoomT(fx,pinch.cx);if(Math.abs(fy-1)>.15){LV.a=pinch.a;LV.b=pinch.b;zoomP(fy,pinch.cy);}moved=true;tip.hidden=true;lqReq();return;}
+      LV.span=pinch.span;LV.r=pinch.r;zoomT(fx,Math.min(pinch.cx,G.pw));if(Math.abs(fy-1)>.15){LV.a=pinch.a;LV.b=pinch.b;zoomP(fy,pinch.cy);}moved=true;tip.hidden=true;lqReq();return;}
     if(!drag)return;const dx=p.x-drag.x,dy=p.y-drag.y;if(Math.abs(dx)+Math.abs(dy)>3)moved=true;if(!moved)return;tip.hidden=true;
-    if(drag.axis){LV.a=drag.a;LV.b=drag.b;zoomP(Math.exp(dy*.006),G.ph/2);}
-    else{LV.r=drag.r-dx/G.cw;if(Math.abs(dy)>2||!LV.auto){const s=dy/G.ph*(drag.b-drag.a);LV.auto=false;LV.a=drag.a+s;LV.b=drag.b+s;}}
+    if(drag.axis){LV.a=drag.a;LV.b=drag.b;zoomP(Math.exp(dy*.006),(G.ph+G.padT)/2);}
+    else{LV.r=drag.r-dx/G.cw;if(Math.abs(dy)>2||!LV.auto){const s=dy/(G.ph-G.padT)*(drag.b-drag.a);LV.auto=false;LV.a=drag.a+s;LV.b=drag.b+s;}}
     lqReq();});
-  const up=e=>{const p=pts.get(e.pointerId);pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){if(!moved&&p&&e.pointerType!=='mouse'){show(p.x,p.y);setTimeout(()=>{tip.hidden=true;},1800);}drag=null;}};
+  const up=e=>{const p=pts.get(e.pointerId);pts.delete(e.pointerId);if(pts.size<2)pinch=null;if(!pts.size){if(!moved&&p&&e.pointerType!=='mouse'){show(p.x,p.y);setTimeout(()=>{tip.hidden=true;},2200);}drag=null;}};
   cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);cv.addEventListener('mouseleave',()=>{tip.hidden=true;});}
 const fusdS=v=>'$'+(v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':v.toFixed(0));
 async function renderLqx(force){
   const box=$('lqBox');if(!box)return;box.hidden=mode==='a';if(mode==='a')return;
   if(!force&&Date.now()-LQX.lastR<1800)return;LQX.lastR=Date.now();
   if(FUT&&!FUT.none&&candles.length&&(!LIQ||liqDirty)&&performance.now()-liqLast>1500)computeLiq();
-  drawLqHeat();
+  drawLqHeat();lqSummary();
   const win=+$('lqWin').value,scope=$('lqScope').value,base=scope==='sym'?lqBase(symbol):null,now=Date.now(),t0=now-win*6e4;
   const ev=LQX.ev.filter(e=>e.t>=t0&&(!base||e.sym===base));
   const tL=ev.filter(e=>e.side==='L').reduce((a,e)=>a+e.usd,0),tS=ev.filter(e=>e.side==='S').reduce((a,e)=>a+e.usd,0),tot=tL+tS;
