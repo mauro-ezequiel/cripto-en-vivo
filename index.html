@@ -327,6 +327,11 @@ body.fs-on .fsbar{display:flex}
 .lqx-row{display:grid;grid-template-columns:52px minmax(0,1fr) 64px 64px;gap:6px;align-items:center;font-variant-numeric:tabular-nums;padding:2px 0;border-bottom:1px solid #1d222c}
 .lqx-feed{display:grid;grid-template-columns:58px 44px minmax(0,1fr) 70px;gap:6px;align-items:center;font-variant-numeric:tabular-nums;padding:2px 0;border-bottom:1px solid #1d222c;font-size:11px}
 .lqx-src{font-size:10px;color:var(--mut);margin-top:6px}
+.lqx-chart canvas{display:block}
+.lqx-tip{position:absolute;z-index:3;background:rgba(15,17,21,.94);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;display:flex;flex-direction:column;gap:2px;pointer-events:none;min-width:140px}
+.lqx-leg{position:absolute;left:8px;top:6px;display:flex;gap:10px;font-size:10px;color:#c9ccd4;pointer-events:none;background:rgba(15,17,21,.6);padding:3px 6px;border-radius:6px}
+.lqx-leg span{display:flex;align-items:center;gap:5px}.lqx-leg i{display:inline-block;width:46px;height:7px;border-radius:3px}
+.lqx-chart{height:320px}
 .lqx-x{display:none}
 .lqx.big{position:fixed;inset:0;z-index:9400;overflow:auto;padding:12px 14px 20px;background:var(--bg)}
 .lqx.big .lqx-chart{height:calc(100vh - 250px);height:calc(100dvh - 250px);min-height:300px}
@@ -417,11 +422,11 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       </div>
     </section>
     <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING sigue tendencias con ADX fuerte; SHOOTER opera rebotes desde extremos. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
-    <section class="lqx" id="lqBox"><div class="dt"><span>Liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
+    <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
       <div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div>
-      <div class="lqx-src">Fuentes en vivo: Binance (todo el mercado), OKX (todo el mercado + historial reciente) y Bybit (principales monedas). Verde = shorts liquidados (compras forzadas) · Rojo = longs liquidados (ventas forzadas) · Línea = precio.</div></section>
+      <div class="lqx-src">Mapa: liquidez estimada a liquidar con el interés abierto y el volumen de Binance, Bybit, OKX y BingX (verde = longs, rojo = shorts; más intenso = más liquidez junta). Burbujas y paneles: liquidaciones reales en vivo de Binance, OKX y Bybit. Toca o pasa el mouse sobre el mapa para ver los montos.</div></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span></div><div id="newsList"></div></section>
   </main>
 </div>
@@ -1115,7 +1120,7 @@ function liqCol(side,d,swept,str){const a=side==='L'?[185,246,202]:[255,205,210]
 const hm=document.createElement('canvas'),hctx=hm.getContext('2d');let hmKey='';
 const mkLut=(c0,c1,c2)=>Array.from({length:64},(_,i)=>{const t=i/63,[a,b,u]=t<.6?[c0,c1,t/.6]:[c1,c2,(t-.6)/.4];
   return `rgba(${a.map((x,j)=>Math.round(x+(b[j]-x)*u)).join(',')},${(.18+.8*Math.sqrt(t)).toFixed(3)})`;});
-const LUT={S:mkLut([110,20,70],[255,61,113],[255,214,102]),L:mkLut([10,90,95],[0,214,163],[200,255,140])};
+const LUT={S:mkLut([90,12,28],[215,22,50],[255,110,125]),L:mkLut([6,70,40],[0,190,95],[110,255,175])};
 const PROF=.16;
 
 function drawLiq(ctx,o){
@@ -1133,7 +1138,7 @@ function drawLiq(ctx,o){
     const sL=liqOpts.side!=='S',sS=liqOpts.side!=='L';
     let mx=0;for(let i=i0;i<=i1;i++){const a=colL[i],b=colS[i];for(let k=k0;k<=k1;k++){if(sL&&a[k]>mx)mx=a[k];if(sS&&b[k]>mx)mx=b[k];}}
     if(mx>0){
-      const thr=mx*(.42-.4*liqOpts.sens/100),rng=mx-thr;
+      const thr=mx*(.12-.115*liqOpts.sens/100),rng=mx-thr;
       const ys=[];for(let k=k0;k<=k1+1;k++)ys.push(Y(pEdge(k)));
       const cell=(i,xa,xb,fade)=>{const a=colL[i],b=colS[i];
         for(let k=k0;k<=k1;k++){const vl=sL?a[k]:0,vs=sS?b[k]:0,v=Math.max(vl,vs);if(v<=thr)continue;
@@ -2442,41 +2447,89 @@ async function lqInit(){
     if(r&&r.data)for(const x of r.data)for(const z of x.details||[])lqAdd(lqOkx(x.instId||f+'-SWAP',z));await new Promise(q=>setTimeout(q,250));}
   LQX.ev.sort((a,b)=>a.t-b.t);lqConn();renderLqx(true);
 }
-function lqMake(){if(LQX.chart||!window.LightweightCharts)return;
-  LQX.chart=LightweightCharts.createChart($('lqChart'),{autoSize:true,layout:{background:{type:'solid',color:'#0f1115'},textColor:'#b2b5be',fontSize:11},
-    grid:{vertLines:{color:'#1b1f29'},horzLines:{color:'#1b1f29'}},rightPriceScale:{borderColor:'#262b36'},leftPriceScale:{visible:true,borderColor:'#262b36'},
-    timeScale:{borderColor:'#262b36',timeVisible:true,secondsVisible:false},handleScroll:{vertTouchDrag:false}});
-  const vf={type:'custom',formatter:v=>(v<0?'−':'')+fusdS(Math.abs(v))};
-  LQX.sS=LQX.chart.addHistogramSeries({priceScaleId:'left',color:'#00d6a3',priceFormat:vf,priceLineVisible:false,lastValueVisible:false});
-  LQX.sL=LQX.chart.addHistogramSeries({priceScaleId:'left',color:'#ff3d71',priceFormat:vf,priceLineVisible:false,lastValueVisible:false});
-  LQX.sP=LQX.chart.addLineSeries({priceScaleId:'right',color:'#e0e3eb',lineWidth:2,priceLineVisible:false,lastValueVisible:true});}
+/* ---- mapa de calor de liquidaciones (estilo mapas profesionales): precio vertical, tiempo horizontal ----
+   Cada celda = liquidez estimada a liquidar en ese precio en ese momento (modelo de interés abierto + volumen
+   de Binance, Bybit, OKX y BingX). Verde = longs (debajo del precio) · Rojo = shorts (encima).
+   Cuanto más liquidez junta, más intenso el color. Burbujas = liquidaciones reales que ocurrieron. */
+const mkRamp=st=>{const out=[];for(let i=0;i<256;i++){const t=i/255;let j=0;while(j<st.length-2&&t>st[j+1][0])j++;const [t0,c0]=st[j],[t1,c1]=st[j+1],u=(t-t0)/((t1-t0)||1);out.push(c0.map((v,q)=>Math.round(v+(c1[q]-v)*Math.min(1,Math.max(0,u)))));}return out;};
+const RAMP={L:mkRamp([[0,[14,34,26]],[.25,[6,92,52]],[.55,[0,170,88]],[.8,[0,230,118]],[1,[150,255,195]]]),
+            S:mkRamp([[0,[38,14,20]],[.25,[110,16,36]],[.55,[200,22,52]],[.8,[255,23,68]],[1,[255,150,160]]])};
+let lqGeo=null;
+function drawLqHeat(){
+  const wrap=$('lqChart');if(!wrap)return;let cv=$('lqCanvas');
+  if(!cv){wrap.innerHTML='<canvas id="lqCanvas"></canvas><div class="lqx-tip" id="lqTip" hidden></div><div class="lqx-leg"><span><i style="background:linear-gradient(90deg,#0e221a,#00aa58,#00e676,#96ffc3)"></i>Liquidez longs</span><span><i style="background:linear-gradient(90deg,#260e14,#c81634,#ff1744,#ff96a0)"></i>Liquidez shorts</span></div>';cv=$('lqCanvas');lqHover(cv);}
+  const W=wrap.clientWidth,H=wrap.clientHeight;if(W<50||H<50)return;const dpr=Math.min(2,devicePixelRatio||1);
+  if(cv.width!==Math.round(W*dpr)||cv.height!==Math.round(H*dpr)){cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);cv.style.width=W+'px';cv.style.height=H+'px';}
+  const g=cv.getContext('2d');g.setTransform(1,0,0,1,0,0);g.fillStyle='#0f1115';g.fillRect(0,0,cv.width,cv.height);g.setTransform(dpr,0,0,dpr,0,0);
+  const msg=t=>{g.fillStyle='#7c8394';g.font='13px system-ui,sans-serif';g.textAlign='center';g.textBaseline='middle';g.fillText(t,W/2,H/2);lqGeo=null;};
+  if(!LIQ||!LIQ.colL){msg(FUT&&FUT.none?'Esta moneda no tiene futuros: no hay liquidaciones que mapear.':'Calculando el mapa de liquidaciones…');return;}
+  const n=Math.min(LIQ.n,candles.length);if(n<20){msg('Cargando velas…');return;}
+  const padR=62,padB=18,pw=W-padR,ph=H-padB,cols=Math.min(n,Math.max(40,Math.floor(pw*.86/4))),i0=n-cols,plotW=pw*.86,colW=plotW/cols;
+  let lo=Infinity,hi=-Infinity;for(let i=i0;i<n;i++){lo=Math.min(lo,candles[i].low);hi=Math.max(hi,candles[i].high);}
+  lo*=.955;hi*=1.045;const lnA=Math.log(lo),lnB=Math.log(hi),Y=p=>ph*(1-(Math.log(p)-lnA)/(lnB-lnA)),P=y=>Math.exp(lnB-(y/ph)*(lnB-lnA));
+  const {colL,colS,bin}=LIQ,kLo=bin(lo),kHi=bin(hi);let mx=0;
+  for(let i=i0;i<n;i++){const a=colL[i],b=colS[i];for(let k=kLo;k<=kHi;k++){if(a[k]>mx)mx=a[k];if(b[k]>mx)mx=b[k];}}
+  const IW=Math.round(pw*dpr),IH=Math.round(ph*dpr);
+  if(mx>0&&IW>0&&IH>0){const img=g.createImageData(IW,IH),d=img.data,kr=new Int32Array(IH),ic=new Int32Array(IW);
+    for(let y=0;y<IH;y++)kr[y]=bin(P(y/dpr));for(let x=0;x<IW;x++){const xx=x/dpr;ic[x]=xx>=plotW?n-1:Math.min(n-1,i0+Math.floor(xx/colW));}
+    for(let y=0;y<IH;y++){const k=kr[y];for(let x=0;x<IW;x++){const i=ic[x],vl=colL[i][k],vs=colS[i][k],v=vl>vs?vl:vs,o=(y*IW+x)*4;
+        let c;if(v>0){const t=Math.pow(v/mx,.5),r=(vl>=vs?RAMP.L:RAMP.S)[Math.min(255,Math.round(t*255))];c=r;}else c=null;
+        if(c){d[o]=c[0];d[o+1]=c[1];d[o+2]=c[2];}else{d[o]=15;d[o+1]=17;d[o+2]=21;}d[o+3]=255;}}
+    g.setTransform(1,0,0,1,0,0);g.putImageData(img,0,0);g.setTransform(dpr,0,0,dpr,0,0);}
+  // separación entre pasado y presente
+  g.strokeStyle='rgba(255,255,255,.12)';g.setLineDash([3,4]);g.beginPath();g.moveTo(plotW,0);g.lineTo(plotW,ph);g.stroke();g.setLineDash([]);
+  // precio
+  g.strokeStyle='#e8eaf0';g.lineWidth=1.6;g.beginPath();for(let i=i0;i<n;i++){const x=(i-i0+.5)*colW,y=Y(candles[i].close);i===i0?g.moveTo(x,y):g.lineTo(x,y);}g.stroke();
+  const cp=candles[n-1].close,cy=Y(cp);g.strokeStyle='rgba(232,234,240,.55)';g.setLineDash([4,4]);g.beginPath();g.moveTo(0,cy);g.lineTo(pw,cy);g.stroke();g.setLineDash([]);
+  // liquidaciones reales (burbujas)
+  const base=lqBase(symbol),t0=candles[i0].t,evs=LQX.ev.filter(e=>e.sym===base&&e.t>=t0);let bm=0;for(const e of evs)bm=Math.max(bm,e.usd);
+  const ci=t=>{let a2=i0,b2=n-1;while(a2<b2){const m=(a2+b2+1)>>1;if(candles[m].t<=t)a2=m;else b2=m-1;}return a2;};
+  for(const e of evs){if(e.p<lo||e.p>hi)continue;const i=ci(e.t),frac=Math.min(1,(e.t-candles[i].t)/(TF_MS[tf]||36e5)),x=(i-i0+frac)*colW,y=Y(e.p),r=2+12*Math.sqrt(e.usd/(bm||1));
+    g.beginPath();g.arc(x,y,r,0,7);g.fillStyle=e.side==='L'?'rgba(0,230,118,.55)':'rgba(255,23,68,.55)';g.fill();g.strokeStyle='rgba(255,255,255,.75)';g.lineWidth=1;g.stroke();}
+  // nombres de las zonas más grandes
+  const cl=LIQ.cl;g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
+  for(const [z,t,c] of [[cl&&cl.longs[0],'Zona de liquidez longs','#69f0ae'],[cl&&cl.shorts[0],'Zona de liquidez shorts','#ff8a80']]){if(!z||z.p<lo||z.p>hi)continue;
+    const y=Y(z.p),tw=g.measureText(t).width;g.fillStyle='rgba(15,17,21,.78)';g.fillRect(plotW-tw-14,y-8,tw+8,16);g.fillStyle=c;g.textAlign='right';g.fillText(t,plotW-10,y);}
+  // ejes
+  g.fillStyle='#0f1115';g.fillRect(pw,0,padR,H);g.fillRect(0,ph,W,padB);g.font='10px system-ui,sans-serif';g.fillStyle='#9aa0ae';g.textAlign='left';
+  for(let j=0;j<=5;j++){const y=ph*j/5,pp=P(y);g.fillText(fp(pp),pw+4,Math.min(ph-6,Math.max(6,y)));}
+  g.fillStyle='#e8eaf0';g.fillRect(pw+1,cy-8,padR-2,16);g.fillStyle='#0f1115';g.font='700 10px system-ui,sans-serif';g.fillText(fp(cp),pw+4,cy);
+  g.fillStyle='#9aa0ae';g.font='10px system-ui,sans-serif';g.textAlign='center';
+  for(let j=0;j<4;j++){const i=i0+Math.round((cols-1)*j/3),dt=new Date(candles[i].t);g.fillText(['1m','3m','5m','15m','30m','1h','2h','4h'].includes(tf)?dt.toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'}):dt.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),Math.max(30,Math.min(plotW-30,(i-i0+.5)*colW)),ph+10);}
+  g.textAlign='right';g.fillText('ahora →',pw-4,ph+10);
+  lqGeo={i0,n,colW,plotW,pw,ph,P};
+}
+function lqHover(cv){const tip=$('lqTip');
+  const show=(cx,cy)=>{if(!lqGeo||!LIQ){tip.hidden=true;return;}const r=cv.getBoundingClientRect(),x=cx-r.left,y=cy-r.top,G=lqGeo;if(x<0||y<0||x>G.pw||y>G.ph){tip.hidden=true;return;}
+    const i=x>=G.plotW?G.n-1:Math.min(G.n-1,G.i0+Math.floor(x/G.colW)),p=G.P(y),k=LIQ.bin(p);let vl=0,vs=0;for(let d=-1;d<=1;d++){const kk=k+d;if(kk<0||kk>=LIQ.nb)continue;vl+=LIQ.colL[i][kk];vs+=LIQ.colS[i][kk];}
+    tip.innerHTML=`<b>${fp(p)}</b><span class="up">Longs a liquidar ≈ ${fusdS(vl)}</span><span class="dn">Shorts a liquidar ≈ ${fusdS(vs)}</span>`;tip.hidden=false;
+    tip.style.left=Math.min(x+12,G.pw-150)+'px';tip.style.top=Math.max(4,Math.min(y+12,G.ph-60))+'px';};
+  cv.addEventListener('mousemove',e=>show(e.clientX,e.clientY));cv.addEventListener('mouseleave',()=>{tip.hidden=true;});
+  cv.addEventListener('touchstart',e=>{const t=e.touches[0];if(t)show(t.clientX,t.clientY);},{passive:true});
+  cv.addEventListener('touchmove',e=>{const t=e.touches[0];if(t)show(t.clientX,t.clientY);},{passive:true});
+  cv.addEventListener('touchend',()=>setTimeout(()=>{tip.hidden=true;},1500));}
 const fusdS=v=>'$'+(v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':v.toFixed(0));
-async function lqPrice(base,win){const sym=base+'USDT',iv=win<=15?'1m':win<=60?'1m':'5m',lim=win<=60?Math.max(win,30):Math.ceil(win/5),key=sym+iv;
-  if(LQX.px.key===key&&Date.now()-LQX.px.t<30e3)return LQX.px.d;
-  const d=await safe(getJ(`${API}/klines?symbol=${sym}&interval=${iv}&limit=${lim}`,9000));LQX.px={key,t:Date.now(),d:Array.isArray(d)?d.map(k=>({time:Math.floor(k[0]/1000)+TZ,value:+k[4]})):[]};return LQX.px.d;}
 async function renderLqx(force){
   const box=$('lqBox');if(!box)return;box.hidden=mode==='a';if(mode==='a')return;
-  if(!force&&Date.now()-LQX.lastR<1800)return;LQX.lastR=Date.now();lqMake();
+  if(!force&&Date.now()-LQX.lastR<1800)return;LQX.lastR=Date.now();
+  if(FUT&&!FUT.none&&candles.length&&(!LIQ||liqDirty)&&performance.now()-liqLast>1500)computeLiq();
+  drawLqHeat();
   const win=+$('lqWin').value,scope=$('lqScope').value,base=scope==='sym'?lqBase(symbol):null,now=Date.now(),t0=now-win*6e4;
   const ev=LQX.ev.filter(e=>e.t>=t0&&(!base||e.sym===base));
-  const bs=win*1000,B=new Map();for(const e of ev){const k=Math.floor(e.t/bs)*bs;const o=B.get(k)||{L:0,S:0};o[e.side]+=e.usd;B.set(k,o);}
-  const keys=[...B.keys()].sort((a,b)=>a-b);
-  if(LQX.chart){LQX.sS.setData(keys.map(k=>({time:k/1000+TZ,value:B.get(k).S})));LQX.sL.setData(keys.map(k=>({time:k/1000+TZ,value:-B.get(k).L})));
-    lqPrice(base||'BTC',win).then(d=>{if(LQX.sP)LQX.sP.setData(d);});}
   const tL=ev.filter(e=>e.side==='L').reduce((a,e)=>a+e.usd,0),tS=ev.filter(e=>e.side==='S').reduce((a,e)=>a+e.usd,0),tot=tL+tS;
   const e5=ev.filter(e=>e.t>=now-5*6e4),l5=e5.filter(e=>e.side==='L').reduce((a,e)=>a+e.usd,0),s5=e5.filter(e=>e.side==='S').reduce((a,e)=>a+e.usd,0);
   const big=ev.reduce((m,e)=>!m||e.usd>m.usd?e:m,null);
   const read=tot<1e3?'sin movimiento':tL>tS*1.5?'dominan longs liquidados: presión bajista':tS>tL*1.5?'dominan shorts liquidados: presión alcista':'equilibrado';
-  $('lqSub').textContent=`· ${base?base:'todo el mercado'} · ${win>=60?win/60+' h':win+' min'} · ${read}`;
-  $('lqSum').innerHTML=`<div>Longs liquidados<b class="dn">${fusdS(tL)}</b></div><div>Shorts liquidados<b class="up">${fusdS(tS)}</b></div>
-    <div>Últimos 5 min<b><span class="dn">${fusdS(l5)}</span> · <span class="up">${fusdS(s5)}</span></b></div>
-    <div>Mayor liquidación<b class="${big&&big.side==='L'?'dn':'up'}">${big?fusdS(big.usd)+' '+big.sym:'—'}</b><span class="lqx-bar"><i style="width:${tot?tL/tot*100:50}%;background:#ff3d71"></i><i style="width:${tot?tS/tot*100:50}%;background:#00d6a3"></i></span></div>`;
+  $('lqSub').textContent=`· mapa de ${lqBase(symbol)} en ${TFS.find(x=>x[0]===tf)?.[1]||tf} · liquidaciones reales (${base?base:'todo el mercado'}, ${win>=60?win/60+' h':win+' min'}): ${read}`;
+  $('lqSum').innerHTML=`<div>Longs liquidados<b class="up">${fusdS(tL)}</b></div><div>Shorts liquidados<b class="dn">${fusdS(tS)}</b></div>
+    <div>Últimos 5 min<b><span class="up">${fusdS(l5)}</span> · <span class="dn">${fusdS(s5)}</span></b></div>
+    <div>Mayor liquidación<b class="${big&&big.side==='L'?'up':'dn'}">${big?fusdS(big.usd)+' '+big.sym:'—'}</b><span class="lqx-bar"><i style="width:${tot?tL/tot*100:50}%;background:#00e676"></i><i style="width:${tot?tS/tot*100:50}%;background:#ff1744"></i></span></div>`;
   if(!base){const by=new Map();for(const e of ev){const o=by.get(e.sym)||{L:0,S:0};o[e.side]+=e.usd;by.set(e.sym,o);}
     const top=[...by.entries()].sort((a,b)=>(b[1].L+b[1].S)-(a[1].L+a[1].S)).slice(0,7);
-    $('lqTop').innerHTML=top.map(([k,o])=>`<div class="lqx-row"><b>${esc(k)}</b><span class="lqx-bar" style="margin:0"><i style="width:${(o.L/(o.L+o.S))*100}%;background:#ff3d71"></i><i style="width:${(o.S/(o.L+o.S))*100}%;background:#00d6a3"></i></span><span class="dn">${fusdS(o.L)}</span><span class="up">${fusdS(o.S)}</span></div>`).join('')||'<div class="mut">Sin liquidaciones en esta ventana.</div>';}
+    $('lqTop').innerHTML=top.map(([k,o])=>`<div class="lqx-row"><b>${esc(k)}</b><span class="lqx-bar" style="margin:0"><i style="width:${(o.L/(o.L+o.S))*100}%;background:#00e676"></i><i style="width:${(o.S/(o.L+o.S))*100}%;background:#ff1744"></i></span><span class="up">${fusdS(o.L)}</span><span class="dn">${fusdS(o.S)}</span></div>`).join('')||'<div class="mut">Sin liquidaciones en esta ventana.</div>';}
   else $('lqTop').innerHTML=`<div class="mut">Mostrando solo ${esc(base)}. Cambia a «Todo el mercado» para ver el ranking.</div>`;
   const minU=base?2e3:2e4,feed=ev.filter(e=>e.usd>=minU).slice(-10).reverse();
-  $('lqFeed').innerHTML=feed.map(e=>`<div class="lqx-feed"><span class="mut">${new Date(e.t).toLocaleTimeString('es-ES')}</span><b>${esc(e.sym)}</b><span class="${e.side==='L'?'dn':'up'}">${e.side==='L'?'Long liquidado':'Short liquidado'} <span class="mut">${e.ex}</span></span><b class="${e.side==='L'?'dn':'up'}">${fusdS(e.usd)}</b></div>`).join('')||'<div class="mut">Esperando liquidaciones…</div>';
+  $('lqFeed').innerHTML=feed.map(e=>`<div class="lqx-feed"><span class="mut">${new Date(e.t).toLocaleTimeString('es-ES')}</span><b>${esc(e.sym)}</b><span class="${e.side==='L'?'up':'dn'}">${e.side==='L'?'Long liquidado':'Short liquidado'} <span class="mut">${e.ex}</span></span><b class="${e.side==='L'?'up':'dn'}">${fusdS(e.usd)}</b></div>`).join('')||'<div class="mut">Esperando liquidaciones…</div>';
 }
 $('lqWin').onchange=$('lqScope').onchange=()=>renderLqx(true);
 const lqBigSet=on=>{$('lqBox').classList.toggle('big',on);$('lqBig').hidden=on;document.body.style.overflow=on?'hidden':'';setTimeout(()=>renderLqx(true),60);};
