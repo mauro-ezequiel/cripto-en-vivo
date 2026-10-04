@@ -321,7 +321,7 @@ body.fs-on .fsbar{display:flex}
 .lqx-sum div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--mut)}
 .lqx-sum b{display:block;font-size:15px;color:var(--txt);font-variant-numeric:tabular-nums}
 .lqx-bar{height:6px;border-radius:3px;overflow:hidden;display:flex;margin-top:4px;background:#2a303c}.lqx-bar i{display:block;height:100%}
-.lqx-body{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:10px}
+.lqx-body{display:grid;grid-template-columns:1fr;gap:10px}
 .lqx-chart{height:280px;background:var(--bg);border:1px solid var(--line);border-radius:8px;position:relative;overflow:hidden}
 .lqx-side{font-size:12px;display:flex;flex-direction:column;gap:4px;min-width:0}
 .lqx-row{display:grid;grid-template-columns:52px minmax(0,1fr) 64px 64px;gap:6px;align-items:center;font-variant-numeric:tabular-nums;padding:2px 0;border-bottom:1px solid #1d222c}
@@ -2509,7 +2509,7 @@ function drawLqHeat(){
   g.font='600 11px system-ui,sans-serif';g.textBaseline='middle';
   const band=(r,v,isS,rank)=>{const y=padT+r*rh,col=isS?'255,23,68':'0,230,118',a=rank===0?.22:.12;g.fillStyle=`rgba(${col},${a})`;g.fillRect(0,y,pw,Math.max(3,rh));
     g.strokeStyle=`rgba(${col},${rank===0?.9:.5})`;g.setLineDash(rank===0?[]:[4,4]);g.beginPath();g.moveTo(0,y+rh/2);g.lineTo(W,y+rh/2);g.stroke();g.setLineDash([]);
-    if(rank<2){const p=P(y+rh/2),t=`${isS?'▲':'▼'} ${fp(p)} (${fpct((p/cp-1)*100)}) · ${fusdS(v)} en ${isS?'shorts':'longs'}`,tw=g.measureText(t).width;
+    if(rank===0){const p=P(y+rh/2),t=`${isS?'▲':'▼'} ${fp(p)} (${fpct((p/cp-1)*100)}) · ${fusdS(v)} en ${isS?'shorts':'longs'}`,tw=g.measureText(t).width;
       g.fillStyle='rgba(15,17,21,.85)';g.fillRect(6,y+rh/2-9,tw+10,18);g.fillStyle=isS?'#ff8a80':'#69f0ae';g.textAlign='left';g.fillText(t,11,y+rh/2);}};
   tS.forEach(([v,r],i)=>band(r,v,true,i));tL.forEach(([v,r],i)=>band(r,v,false,i));
   // velas (neutras para no confundir con los colores de liquidación)
@@ -2533,7 +2533,7 @@ function drawLqHeat(){
     if(RS[r]>0){const w=RS[r]/mx*(profW-6),k=.35+.65*RS[r]/mx;g.fillStyle=`rgba(255,23,68,${k})`;g.fillRect(xP,y,w,hh);}
     if(RL[r]>0){const w=RL[r]/mx*(profW-6),k=.35+.65*RL[r]/mx;g.fillStyle=`rgba(0,230,118,${k})`;g.fillRect(xP,y,w,hh);}}
   g.font='700 10px system-ui,sans-serif';g.textAlign='right';
-  for(const [v,r] of tS.concat(tL)){const y=padT+r*rh+rh/2,w=v/mx*(profW-6),t=fusdS(v);g.fillStyle='#f5f7fa';if(w>g.measureText(t).width+8)g.fillText(t,xP+w-4,y);else{g.textAlign='left';g.fillText(t,xP+w+4,y);g.textAlign='right';}}
+  const labs=[];for(const [v,r] of [tS[0],tL[0],tS[1],tL[1],tS[2],tL[2]].filter(Boolean)){const y=padT+r*rh+rh/2;if(labs.some(q=>Math.abs(q-y)<13))continue;labs.push(y);const w=v/mx*(profW-6),t=fusdS(v);g.fillStyle='#f5f7fa';if(w>g.measureText(t).width+8)g.fillText(t,xP+w-4,y);else{g.textAlign='left';g.fillText(t,xP+w+4,y);g.textAlign='right';}}
   // precio actual
   g.strokeStyle='rgba(232,234,240,.8)';g.setLineDash([4,4]);g.lineWidth=1;g.beginPath();g.moveTo(0,cy);g.lineTo(W,cy);g.stroke();g.setLineDash([]);
   // ejes y títulos
@@ -2550,12 +2550,12 @@ function drawLqHeat(){
 /* resumen en palabras: cuánto hay arriba y abajo y dónde está el nivel más fuerte */
 function lqSummary(){const el=$('lqRead');if(!el)return;if(!LIQ||!LIQ.colL||!candles.length){el.innerHTML='';return;}
   const n=Math.min(LIQ.n,candles.length),cp=candles[n-1].close,cL=LIQ.colL[n-1],cS=LIQ.colS[n-1],{bin,lnLo,step}=LIQ,up=new Map(),dn=new Map();let tU=0,tD=0;
-  for(let k=bin(cp*.9);k<=bin(cp*1.1);k++){const p=Math.exp(lnLo+(k+.5)*step),d=p/cp-1,b=Math.round(d/.005);
-    if(d>=0){up.set(b,(up.get(b)||0)+cS[k]);if(d<=.05)tU+=cS[k];}else{dn.set(b,(dn.get(b)||0)+cL[k]);if(d>=-.05)tD+=cL[k];}}
+  for(let k=bin(cp*.92);k<=bin(cp*1.08);k++){const p=Math.exp(lnLo+(k+.5)*step),d=p/cp-1,b=Math.round(d/.005);
+    if(d>=0){up.set(b,(up.get(b)||0)+cS[k]);if(d<=.08)tU+=cS[k];}else{dn.set(b,(dn.get(b)||0)+cL[k]);if(d>=-.08)tD+=cL[k];}}
   const best=m=>[...m.entries()].sort((a,b)=>b[1]-a[1])[0]||[0,0],[bu,vu]=best(up),[bd,vd]=best(dn),pu=cp*(1+bu*.005),pd=cp*(1+bd*.005);
   const rd=tU+tD<1?'Todavía no hay datos suficientes.':tU>tD*1.3?`Hay más liquidez <b class="dn">arriba</b>: el precio suele ir a buscarla, posible subida hacia ${fp(pu)}.`:tD>tU*1.3?`Hay más liquidez <b class="up">abajo</b>: posible barrida hacia ${fp(pd)} antes de seguir.`:'Liquidez pareja arriba y abajo: no hay un imán claro.';
-  el.innerHTML=`<div class="lqr s"><small>▲ Si el precio SUBE 5 %</small><b>${fusdS(tU)}</b><span>en shorts liquidados · nivel más fuerte <b>${fp(pu)}</b> (${fpct(bu*.5)}): ${fusdS(vu)}</span></div>
-    <div class="lqr l"><small>▼ Si el precio BAJA 5 %</small><b>${fusdS(tD)}</b><span>en longs liquidados · nivel más fuerte <b>${fp(pd)}</b> (${fpct(bd*.5)}): ${fusdS(vd)}</span></div>
+  el.innerHTML=`<div class="lqr s"><small>▲ Si el precio SUBE (hasta +8 %)</small><b>${fusdS(tU)}</b><span>en shorts liquidados · nivel más fuerte <b>${fp(pu)}</b> (${fpct(bu*.5)}): ${fusdS(vu)}</span></div>
+    <div class="lqr l"><small>▼ Si el precio BAJA (hasta −8 %)</small><b>${fusdS(tD)}</b><span>en longs liquidados · nivel más fuerte <b>${fp(pd)}</b> (${fpct(bd*.5)}): ${fusdS(vd)}</span></div>
     <div class="lqr r"><small>Lectura rápida</small><span>${rd} <i class="mut">No es garantía.</i></span></div>`;}
 function lqHover(cv){const tip=$('lqTip'),wrap=$('lqChart'),pts=new Map();let drag=null,pinch=null,moved=false;
   const loc=e=>{const r=cv.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
