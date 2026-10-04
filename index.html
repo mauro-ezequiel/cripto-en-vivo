@@ -280,6 +280,17 @@ body.fs-on .fsbar{display:flex}
 .hdet .rs{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}.hdet .rs i{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--mut)}
 .hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
 .sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{background:rgba(255,214,0,.13)}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
+.pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-x{margin-left:auto;background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer}
+.pil-f{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
+.pil-f input,.pil-f select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:13px;min-width:0}
+.pil-f .pri{background:#ff9100;color:#14171d;border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
+.pil-c{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--bg)}.pil-c.act{border-color:#ff9100;background:rgba(255,145,0,.07)}
+.pil-h{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.pil-s{background:#ff9100;color:#14171d;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.4}.pil-s b{display:block;font-size:14px;margin-bottom:2px}
+.pil-s.ok{background:#1c212b;color:var(--txt);border:1px solid var(--line)}.pil-g{display:grid;grid-template-columns:auto 1fr;gap:3px 12px;font-size:12px}.pil-g span{color:var(--mut)}
+.pil-r{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.pil-r i{font-style:normal;font-size:11px;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:2px 8px}
+.pil-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-a button{background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:5px 10px;cursor:pointer}
+.pil-note{font-size:10px;color:var(--mut);margin-top:6px}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
+@media (max-width:800px){.pil-f{grid-template-columns:1fr 1fr}.pil-f .pri{grid-column:1/-1}}
 .sig.nr{border-color:rgba(239,83,80,.6);border-left-color:var(--dn);background:rgba(239,83,80,.08)}
 .sig.nr .sg-dir,.sig.nr .sg-conf{color:var(--dn)}
 .sg-nr{background:var(--dn);color:#fff;font-weight:800;font-size:11px;letter-spacing:.05em;border-radius:6px;padding:4px 8px;text-align:center}
@@ -388,7 +399,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     </div>
     <div id="chartWrap">
       <div class="toolbar">
-        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="p">PERSONALIZADO</button><button class="btn" data-mode="a">ACCIONES</button></span>
+        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="p">PERSONALIZADO</button><button class="btn" id="pilBtn" type="button">🧭 PILOTEAR</button><button class="btn" data-mode="a">ACCIONES</button></span>
         <span class="sep"></span>
         <span id="tfs"></span>
         <span class="sep"></span>
@@ -428,6 +439,15 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       </div>
     </section>
     <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
+    <section class="pil" id="pilBox" hidden><div class="dt"><span>🧭 Pilotear mi operación</span> <span class="mut">cargá tu entrada y te aviso con notificación naranja qué conviene hacer</span><button class="pil-x" id="pilClose" aria-label="Cerrar">✕</button></div>
+      <div class="pil-f"><label>Moneda<input id="pilSym" list="pilList" placeholder="BTC, ETH, SOL…" autocomplete="off" autocapitalize="characters"><datalist id="pilList"></datalist></label>
+        <label>Dirección<select id="pilDir"><option value="1">▲ LONG</option><option value="-1">▼ SHORT</option></select></label>
+        <label>Precio de entrada<input id="pilPx" type="text" inputmode="decimal" placeholder="ej. 85000" autocomplete="off"></label>
+        <label>Apalancamiento (X)<input id="pilX" type="number" inputmode="numeric" min="1" max="125" value="10"></label>
+        <label>Margen (USD)<input id="pilM" type="number" inputmode="decimal" min="1" value="100"></label>
+        <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
+      <div id="pilCards"></div>
+      <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -1836,7 +1856,7 @@ function renderSignals(){
       <div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
         <span>Objetivo 3</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
-        <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>
+        <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>${llInfo(op,pc)}
         <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}</div></div>`;}).join('');
@@ -1869,6 +1889,12 @@ function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of a
    Confirmación: SHOOTER = tendencia de 15m a favor y RSI 7 todavía extremo · TRADING = precio todavía del lado correcto de la EMA 200
    · ACCIONES = precio todavía del lado correcto de la EMA 50. En el backtest mejoró el acierto y el resultado en los tres modos. */
 const LLTH=.65;
+const llMoney=(m,v)=>m==='a'?Math.round(v).toLocaleString('es-ES')+' ARS':v.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+/* fila "Salvavidas si llega a…" para señales y operaciones abiertas que todavía no lo usaron */
+function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
+  if(o.llNo)return `<span>Salvavidas</span><b class="mut">descartado: los datos ya no confirmaban la señal</b>`;
+  const s=o.liqD||lossOf(o)/notOf(o);
+  return `<span>🛟 Salvavidas si llega a</span><b class="llb">${fp(o.llAt)} (${pc(o.llAt)}) · pérdida en ese momento ≈ ${llMoney(o.m,notOf(o)*s*LLTH)} · suma ${llMoney(o.m,o.llMargin||SIM[o.m].margin/2)} (× ${SIM[o.m].lev}) si los datos confirman</b>`;}
 function addSig(m,f){
   SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,liqD=c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
@@ -1950,7 +1976,7 @@ function opDetail(o){
     <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
     <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
     <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
-    <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>
+    <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>${llInfo(o,v=>fpct((v/o.entry-1)*100))}
     <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
     <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
@@ -2014,7 +2040,7 @@ async function notify(title,body,tag,data){
 function notifySig(m,f){
   if(!NTF.on||!NTF[m]||!canNotify||Notification.permission!=='granted')return;
   const L=f.dir>0,c=f.sym.replace('USDT','');
-  notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
+  notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)} · Salvavidas en ${fp(f.entry*(1-f.dir*SIM[m].maxLoss/(SIM[m].margin*SIM[m].lev)*LLTH))} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
 }
 function renderNtf(){
   const g=canNotify&&Notification.permission==='granted'&&NTF.on;
@@ -2650,6 +2676,98 @@ $('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const e
 (function(){const io=new IntersectionObserver(()=>{let best=null,bd=1e9;for(const b of document.querySelectorAll('#mnav [data-go]')){const el=mnavTarget(b.dataset.go);if(!el)continue;const r=el.getBoundingClientRect(),d=Math.abs(r.top-60);if(r.bottom>80&&d<bd){bd=d;best=b;}}
   document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b===best));},{threshold:[0,.25,.5,.75,1]});
   ['chartWrap','dash','sigBox','lqBox','newsBox'].forEach(id=>{const el=$(id);if(el)io.observe(el);});})();
+
+/* ---------- PILOTEAR: seguimiento de una operación propia ----------
+   Cargás moneda, dirección, precio de entrada, X y margen. Cada 15 s se leen velas de 15m, 1h y 4h, soportes/resistencias
+   (pivotes de 1h), las zonas de liquidez del mapa y la distancia a tu liquidación, y se da una indicación con aviso naranja.
+   Reglas probadas con 90 días × 20 criptos (entradas al azar, × 10):
+   · SALIR (perdiendo ≥ 20 % del camino a la liquidación, tendencia 15m/1h/4h en contra y ADX de 1h empujando en contra):
+     acertó el 54 % y ahorró en promedio 6 % del margen frente a aguantar 24 h.
+   · SALVAVIDAS (perdiendo ≥ 30 % del camino, 4h todavía a favor y precio sobre un soporte): volvió al precio promedio
+     el 64 % de las veces en 48 h y liquidó el 18 % (sin filtro: 59 % y 21 %).
+   · DAR VUELTA (tendencia muy en contra también en 4h): acertó el 51 %, +10,8 % del margen en promedio a 24 h.
+   · Con ganancia, cerrar antes de tiempo salió peor que dejarla correr: se aconseja mover el stop a la entrada
+     y cerrar solo si la tendencia gira. */
+let PIL=[];try{PIL=JSON.parse(localStorage.getItem('cv_pil')||'[]')||[];}catch(e){}
+const savePil=()=>{try{localStorage.setItem('cv_pil',JSON.stringify(PIL))}catch(e){}};
+const PILD={};
+const pilQty=p=>p.margin*p.lev/p.entry+(p.ll?p.ll.margin*p.lev/p.ll.px:0);
+const pilAvg=p=>(p.margin+(p.ll?p.ll.margin:0))*p.lev/pilQty(p);
+const pilLiqD=p=>1/p.lev-.005;
+const pilLiqPx=p=>pilAvg(p)*(1-p.dir*pilLiqD(p));
+const pilMoney=v=>(v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+async function pilData(s){const D=PILD[s];if(D&&Date.now()-D.t<60e3)return D;
+  const [m15,h1,h4]=await Promise.all([kl(s,'15m',260),kl(s,'1h',260),kl(s,'4h',260)]);
+  const f=cs=>{const cc=cs.slice(0,-1);return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],A=calcADX(14);
+    return {tr:e200==null?0:((st||0)+Math.sign(e21-e50)+Math.sign(cl[i]-e200))/3,rsi:calcRSI(14)[i],adx:A.adx[i]||0,di:Math.sign((A.pdi[i]||0)-(A.mdi[i]||0)),atrP:wilder(trArr(),14)[i]/cl[i]};});};
+  const cc=h1.slice(0,-1),n=cc.length,lows=[],highs=[];
+  for(let i=Math.max(3,n-123);i<n-3;i++){let L=true,H=true;for(let j=1;j<=3;j++){if(cc[i].low>cc[i-j].low||cc[i].low>cc[i+j].low)L=false;if(cc[i].high<cc[i-j].high||cc[i].high<cc[i+j].high)H=false;}if(L)lows.push(cc[i].low);if(H)highs.push(cc[i].high);}
+  return PILD[s]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),lows,highs};}
+/* análisis: devuelve el estado y los textos que se muestran */
+function pilAnalyze(p,D,c){
+  const d=p.dir,avg=pilAvg(p),liq=pilLiqPx(p),L=pilLiqD(p),pf=d*(c/avg-1),usd=d*(c-avg)*pilQty(p),mg=p.margin+(p.ll?p.ll.margin:0),atr=D.f1.atrP||.01;
+  const fav=d*(.2*D.f15.tr+.4*D.f1.tr+.4*D.f4.tr),against=D.f1.adx>22&&D.f1.di===-d,lossF=pf<0?-pf/L:0,liqDist=d*(c-liq)/c;
+  const sup=(d>0?D.lows.filter(x=>x<=c*1.002).sort((a,b)=>b-a):D.highs.filter(x=>x>=c*.998).sort((a,b)=>a-b))[0];
+  const res=(d>0?D.highs.filter(x=>x>c).sort((a,b)=>a-b):D.lows.filter(x=>x<c).sort((a,b)=>b-a))[0];
+  const supNear=sup!=null&&d*(c-sup)/c<=.7*atr;
+  const z=symbol===p.sym&&LIQ&&LIQ.cl?LIQ.cl:null,zA=z?(d>0?z.longs:z.shorts)[0]:null,zF=z?(d>0?z.shorts:z.longs)[0]:null;
+  const inval=sup!=null?sup*(1-d*.5*atr):null,exitAt=inval!=null&&d*(inval-liq)>0?inval:null;
+  const r=[],why=[];const tdir=v=>v>.33?'a favor':v<-.33?'en contra':'neutral';
+  why.push(`tendencia 15m ${tdir(d*D.f15.tr)} · 1h ${tdir(d*D.f1.tr)} · 4h ${tdir(d*D.f4.tr)}`,`RSI 1h ${D.f1.rsi!=null?D.f1.rsi.toFixed(0):'—'} · ADX 1h ${D.f1.adx.toFixed(0)}${D.f1.adx>22?(D.f1.di===d?' empujando a favor':' empujando en contra'):''}`);
+  if(zA)why.push(`zona de liquidez de ${d>0?'longs':'shorts'} en ${fp(zA.p)} (${fpct((zA.p/c-1)*100)}): el precio puede ir a barrerla`);
+  if(zF)why.push(`zona de liquidez de ${d>0?'shorts':'longs'} en ${fp(zF.p)} (${fpct((zF.p/c-1)*100)}): imán a favor`);
+  let st,title,txt,act=true;
+  if(d*(c-liq)<=0){st='liq';title='💥 LIQUIDADA (simulación)';txt=`El precio cruzó tu liquidación estimada en ${fp(liq)}.`;}
+  else if(pf<0&&liqDist<Math.max(.6*atr,.2*L)){st='peligro';title='🚨 SALÍ YA: estás muy cerca de la liquidación';txt=`Faltan ${fpct(liqDist*100).replace('+','')} para ${fp(liq)}. Cerrar ahora evita perder todo el margen.`;}
+  else if(pf<0&&lossF>=.2&&fav<=-.34&&against){const flip=fav<=-.67&&d*D.f4.tr<0;st=flip?'vuelta':'salir';
+    title=flip?'🔄 SALÍ y evaluá DAR VUELTA la operación':'⛔ SALÍ: el movimiento va en contra';
+    txt=`La tendencia está en contra en varias temporalidades y el ADX empuja en contra. Pérdida ahora ${pilMoney(usd)}; si sigue, el próximo nivel es ${fp(liq)} (liquidación).${flip?` Con la tendencia de 4h también en contra, la operación contraria (${d>0?'SHORT':'LONG'}) tiene a favor el movimiento.`:''}`;}
+  else if(pf<0&&lossF>=.3&&!p.ll&&d*D.f4.tr>0&&supNear){const add=p.margin/2,q2=add*p.lev/c,nq=pilQty(p)+q2,na=(mg+add)*p.lev/nq,nl=na*(1-d*L);st='salvavidas';
+    title='🛟 POSIBLE REBOTE: podés poner un salvavidas';
+    txt=`El precio está sobre ${d>0?'un soporte':'una resistencia'} (${fp(sup)}) y la tendencia de 4h sigue a favor. Si agregás ${pilMoney(add).replace('+','')} a × ${p.lev}, tu entrada promedio pasa a ${fp(na)} y la liquidación a ${fp(nl)}.${d*(sup-nl)>0?'':' Ojo: la nueva liquidación queda cerca del soporte.'}`;}
+  else if(pf>0&&pf>=atr&&fav<=-.34){st='asegurar';title='💰 ASEGURÁ: la tendencia está girando';txt=`Vas ganando ${pilMoney(usd)}. Cerrá una parte o poné el stop en la entrada (${fp(avg)}).`;}
+  else if(pf>0&&pf>=atr){st='stop';title='✅ DEJÁ CORRER: mové el stop a la entrada';txt=`Vas ganando ${pilMoney(usd)} y la tendencia acompaña. Con el stop en ${fp(avg)} ya no podés perder.${res!=null?` Próxima ${d>0?'resistencia':'soporte'}: ${fp(res)}.`:''}`;}
+  else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra.${exitAt?` Salí si pierde ${fp(exitAt)}.`:''}`;}
+  return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt};}
+function pilNotify(p,a){if(!a.act||!NTF.on||!canNotify||Notification.permission!=='granted')return;
+  notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:'1h',m:'medio'});}
+let pilBusy=false;
+async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
+  try{for(const p of PIL){if(p.closed)continue;const t=tickers[p.sym];if(!t)continue;
+    try{const D=await pilData(p.sym),a=pilAnalyze(p,D,t.c);p.a=a;
+      if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
+    savePil();pilRender();}finally{pilBusy=false;}}
+function pilRender(){const btn=$('pilBtn');if(btn){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;btn.classList.toggle('alert',n>0);btn.textContent='🧭 PILOTEAR'+(PIL.length?` (${PIL.length})`:'');}
+  const el=$('pilCards');if(!el)return;
+  if(!PIL.length){el.innerHTML='<div class="mut">Todavía no estás piloteando ninguna operación.</div>';return;}
+  el.innerHTML=PIL.map(p=>{const a=p.a,L=p.dir>0,pc=v=>fpct((v/p.entry-1)*100);
+    return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}"><div class="pil-h"><b class="${L?'up':'dn'}">${L?'▲ LONG':'▼ SHORT'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev} · margen ${p.margin} USD${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · desde ${fdate(p.t)}</span></div>
+      ${a?`<div class="pil-s${a.act?'':' ok'}"><b>${a.title}</b>${a.txt}</div>
+      <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>Precio ahora</span><b>${fp(a.c)}</b>
+        <span>Resultado</span><b class="${a.usd>=0?'up':'dn'}">${pilMoney(a.usd)} (${fpct(a.usd/a.mg*100)} del margen)</b>
+        <span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>
+        ${a.sup!=null?`<span>${L?'Soporte':'Resistencia'} cercano</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
+        ${a.exitAt?`<span>Salí si pierde</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
+      <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
+      <div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
+function pilOpen(){const b=$('pilBox');b.hidden=false;
+  $('pilList').innerHTML=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');
+  pilRender();b.scrollIntoView({behavior:'smooth',block:'start'});}
+$('pilBtn').onclick=()=>{if(mode==='a')applyMode('medio');pilOpen();};
+$('pilClose').onclick=()=>{$('pilBox').hidden=true;};
+$('pilSym').oninput=()=>{const t=tickers[symOf($('pilSym').value)];$('pilPx').placeholder=t?'ahora '+fp(t.c):'ej. 85000';};
+$('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pilErr');err.textContent='';
+  if(!t){err.textContent='Elegí una moneda de la lista (pares con USDT).';return;}
+  const raw=$('pilPx').value.trim(),px=raw?parsePx(raw,t.c):t.c;if(!(px>0)){err.textContent='Escribí el precio en el que entraste.';return;}
+  const X=Math.round(+$('pilX').value);if(!(X>=1&&X<=125)){err.textContent='El apalancamiento tiene que estar entre 1 y 125.';return;}
+  if(PIL.length>=5){err.textContent='Máximo 5 operaciones a la vez: dejá de pilotear alguna.';return;}
+  const p={id:s+'-'+Date.now(),sym:s,dir:+$('pilDir').value,entry:px,lev:X,margin:Math.max(1,+$('pilM').value||100),t:Date.now(),state:null,ll:null,closed:false};
+  PIL.push(p);savePil();$('pilSym').value='';$('pilPx').value='';if(symbol!==s)select(s);pilRender();pilTick();};
+$('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.pil-c').dataset.id,p=PIL.find(x=>x.id===id);if(!p)return;
+  if(b.dataset.a==='go'){if(symbol!==p.sym)select(p.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}
+  else if(b.dataset.a==='ll'){const t=tickers[p.sym];if(t){p.ll={px:t.c,margin:p.margin/2,t:Date.now()};p.state=null;savePil();pilTick();}}
+  else if(b.dataset.a==='del'){PIL=PIL.filter(x=>x.id!==id);savePil();pilRender();}};
+setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
 </script>
 </body>
 </html>
