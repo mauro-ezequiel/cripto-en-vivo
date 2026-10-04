@@ -329,7 +329,7 @@ body.fs-on .fsbar{display:flex}
 .lqx-src{font-size:10px;color:var(--mut);margin-top:6px}
 .lqx-chart canvas{display:block}
 .lqx-tip{position:absolute;z-index:3;background:rgba(15,17,21,.94);border:1px solid var(--line);border-radius:8px;padding:6px 9px;font-size:11px;display:flex;flex-direction:column;gap:2px;pointer-events:none;min-width:140px}
-.lqx-leg{position:absolute;left:8px;top:6px;display:flex;gap:10px;font-size:10px;color:#c9ccd4;pointer-events:none;background:rgba(15,17,21,.6);padding:3px 6px;border-radius:6px}
+.lqx-leg{position:absolute;left:8px;bottom:24px;display:flex;gap:10px;font-size:10px;color:#c9ccd4;pointer-events:none;background:rgba(15,17,21,.6);padding:3px 6px;border-radius:6px}
 .lqx-leg span{display:flex;align-items:center;gap:5px}.lqx-leg i{display:inline-block;width:46px;height:7px;border-radius:3px}
 .lqx-chart{height:340px}
 .lqx-chart canvas{touch-action:pan-y;cursor:grab}.lqx.big .lqx-chart canvas{touch-action:none}.lqx-chart.draw canvas{cursor:crosshair}
@@ -1827,7 +1827,7 @@ function checkSignals(){
 }
 function renderSignals(){
   const m=mode,cfg=SIGCFG[m],now=Date.now();
-  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${m==='x'?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones y CEDEARs con más volumen de BYMA':'las '+cfg.n+' con más volumen'}`;
+  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones y CEDEARs con más volumen de BYMA':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales calibradas con 6 años de velas diarias de BYMA (acciones argentinas y CEDEARs): el % es el acierto en acciones que no se usaron para elegir las reglas. Solo aparecen si el termómetro, la amplitud del mercado y las noticias no están en contra. Ninguna es segura: usa siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
