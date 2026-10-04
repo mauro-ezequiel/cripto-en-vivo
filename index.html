@@ -281,7 +281,7 @@ body.fs-on .fsbar{display:flex}
 .hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
 .sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{background:rgba(255,214,0,.13)}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
 .pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-x{margin-left:auto;background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer}
-.pil-f{display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
+.pil-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
 .pil-f input,.pil-f select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:13px;min-width:0}
 .pil-f .pri{background:#ff9100;color:#14171d;border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
 .pil-c{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--bg)}.pil-c.act{border-color:#ff9100;background:rgba(255,145,0,.07)}
@@ -2727,7 +2727,7 @@ function pilAnalyze(p,D,c){
     txt=`El precio está sobre ${d>0?'un soporte':'una resistencia'} (${fp(sup)}) y la tendencia de 4h sigue a favor. Si agregás ${pilMoney(add).replace('+','')} a × ${p.lev}, tu entrada promedio pasa a ${fp(na)} y la liquidación a ${fp(nl)}.${d*(sup-nl)>0?'':' Ojo: la nueva liquidación queda cerca del soporte.'}`;}
   else if(pf>0&&pf>=atr&&fav<=-.34){st='asegurar';title='💰 ASEGURÁ: la tendencia está girando';txt=`Vas ganando ${pilMoney(usd)}. Cerrá una parte o poné el stop en la entrada (${fp(avg)}).`;}
   else if(pf>0&&pf>=atr){st='stop';title='✅ DEJÁ CORRER: mové el stop a la entrada';txt=`Vas ganando ${pilMoney(usd)} y la tendencia acompaña. Con el stop en ${fp(avg)} ya no podés perder.${res!=null?` Próxima ${d>0?'resistencia':'soporte'}: ${fp(res)}.`:''}`;}
-  else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra.${exitAt?` Salí si pierde ${fp(exitAt)}.`:''}`;}
+  else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra.${exitAt?` Salí si toca ${fp(exitAt)}.`:''}`;}
   return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt};}
 function pilNotify(p,a){if(!a.act||!NTF.on||!canNotify||Notification.permission!=='granted')return;
   notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:'1h',m:'medio'});}
@@ -2746,8 +2746,8 @@ function pilRender(){const btn=$('pilBtn');if(btn){const n=PIL.filter(p=>!p.clos
       <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>Precio ahora</span><b>${fp(a.c)}</b>
         <span>Resultado</span><b class="${a.usd>=0?'up':'dn'}">${pilMoney(a.usd)} (${fpct(a.usd/a.mg*100)} del margen)</b>
         <span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>
-        ${a.sup!=null?`<span>${L?'Soporte':'Resistencia'} cercano</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
-        ${a.exitAt?`<span>Salí si pierde</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
+        ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
+        ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
       <div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
 function pilOpen(){const b=$('pilBox');b.hidden=false;
