@@ -280,7 +280,7 @@ body.fs-on .fsbar{display:flex}
 .hdet .rs{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}.hdet .rs i{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--mut)}
 .hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
 .sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{background:rgba(255,214,0,.13)}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
-.pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-x{margin-left:auto;background:none;border:0;color:var(--mut);font-size:16px;cursor:pointer}
+.pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-i{margin-left:auto;background:none;border:1px solid #ff9100;color:#ff9100;border-radius:50%;width:26px;height:26px;font-size:15px;line-height:1;cursor:pointer;flex-shrink:0}.pil-leg{background:var(--bg);border:1px solid #ff9100;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:12px;line-height:1.5}.pil-leg ul{margin:6px 0 0;padding-left:18px}.pil-m{border-color:#ff9100!important}
 .pil-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
 .pil-f input,.pil-f select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:13px;min-width:0}
 .pil-f .pri{background:#ff9100;color:#14171d;border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
@@ -399,7 +399,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     </div>
     <div id="chartWrap">
       <div class="toolbar">
-        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="p">PERSONALIZADO</button><button class="btn" id="pilBtn" type="button">🧭 PILOTEAR</button><button class="btn" data-mode="a">ACCIONES</button></span>
+        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span>
         <span class="sep"></span>
         <span id="tfs"></span>
         <span class="sep"></span>
@@ -439,7 +439,15 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       </div>
     </section>
     <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
-    <section class="pil" id="pilBox" hidden><div class="dt"><span>🧭 Pilotear mi operación</span> <span class="mut">cargá tu entrada y te aviso con notificación naranja qué conviene hacer</span><button class="pil-x" id="pilClose" aria-label="Cerrar">✕</button></div>
+    <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span> <span class="mut">cargá tu entrada y te aviso con notificación naranja qué conviene hacer</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
+      <div class="pil-leg" id="pilLeg" hidden><b>Qué significa cada aviso</b><ul>
+        <li>🚨 <b>SALÍ YA</b>: estás muy cerca de la liquidación.</li>
+        <li>⛔ <b>SALÍ</b>: el movimiento va en contra en varias temporalidades.</li>
+        <li>🔄 <b>SALÍ y evaluá DAR VUELTA</b>: también la tendencia de 4h se dio vuelta.</li>
+        <li>🛟 <b>POSIBLE REBOTE, poné un salvavidas</b>: te dice cuánto agregar, y cómo quedarían la entrada promedio y la nueva liquidación. Si lo agregás, tocás "Ya agregué el salvavidas" y recalcula todo.</li>
+        <li>💰 <b>ASEGURÁ</b>: vas ganando pero la tendencia está girando.</li>
+        <li>✅ <b>DEJÁ CORRER</b>: vas ganando; mové el stop a la entrada.</li>
+        <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul></div>
       <div class="pil-f"><label>Moneda<input id="pilSym" list="pilList" placeholder="BTC, ETH, SOL…" autocomplete="off" autocapitalize="characters"><datalist id="pilList"></datalist></label>
         <label>Dirección<select id="pilDir"><option value="1">▲ LONG</option><option value="-1">▼ SHORT</option></select></label>
         <label>Precio de entrada<input id="pilPx" type="text" inputmode="decimal" placeholder="ej. 85000" autocomplete="off"></label>
@@ -461,7 +469,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
   <button data-go="chart" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="m7 15 4-4 3 3 5-6"/></svg>Gráfico</button>
   <button data-go="thermo" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 16a8 8 0 1 1 16 0"/><path d="m12 16 4-5"/></svg>Termómetro</button>
   <button data-go="sig" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg>Señales</button>
-  <button data-go="liq" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 3s6 7 6 11a6 6 0 0 1-12 0c0-4 6-11 6-11z"/></svg>Liquidez</button>
+  <button data-go="pil" type="button"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/></svg>Pilotear</button>
 </nav>
 <div class="cu" id="cu" hidden><div class="cu-bg" id="cuBg"></div><div class="cu-p" role="dialog" aria-label="Personalizar indicadores">
   <div class="cu-h"><b>⚙ Personalizar indicadores</b><button class="drw-x" id="cuX" aria-label="Cerrar">✕</button></div>
@@ -476,7 +484,8 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · objetivos +1,6 / +3,2 / +4,8 % · simulación 50 USD × 18, stop al 4 %, salvavidas 25 USD</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 8, stop al 7 %, salvavidas 50.000 ARS</small></button></div>
-    <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button></section>
+    <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
+    <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
     <details class="alr-d" id="alrD" open><summary>Mis alertas de precio <span class="mut" id="alrN"></span><button class="plus" id="alrPlus" title="Nueva alerta" aria-label="Nueva alerta">+</button></summary>
       <div class="alr-in"><div id="alrForm"></div><div id="alrBox"></div></div></details></section>
@@ -1241,7 +1250,7 @@ $('fsInd').onclick=e=>$('inds').onclick(e);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 function applyMode(m){
-  const wasA=mode==='a';mode=m;const M=MODES[m];
+  const wasA=mode==='a';mode=m;const M=MODES[m];if(typeof pilRender==='function')setTimeout(pilRender,0);
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
   setNames();
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
@@ -2671,11 +2680,11 @@ $('lqBig').onclick=()=>lqBigSet(true);$('lqX').onclick=()=>lqBigSet(false);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lqBox').classList.contains('big'))lqBigSet(false);});
 setInterval(()=>renderLqx(false),2000);setTimeout(lqInit,3000);
 /* ---------- barra de accesos directos (celular) ---------- */
-function mnavTarget(k){return k==='chart'?$('chartWrap'):k==='thermo'?($('g-svg')?.closest('.dcard')||$('dash')):k==='sig'?$('sigBox'):(mode==='a'?$('market')?.closest('.dcard'):$('lqBox'));}
+function mnavTarget(k){return k==='chart'?$('chartWrap'):k==='thermo'?($('g-svg')?.closest('.dcard')||$('dash')):k==='sig'?$('sigBox'):(mode==='a'?$('market')?.closest('.dcard'):$('pilBox'));}
 $('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const el=mnavTarget(b.dataset.go);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
 (function(){const io=new IntersectionObserver(()=>{let best=null,bd=1e9;for(const b of document.querySelectorAll('#mnav [data-go]')){const el=mnavTarget(b.dataset.go);if(!el)continue;const r=el.getBoundingClientRect(),d=Math.abs(r.top-60);if(r.bottom>80&&d<bd){bd=d;best=b;}}
   document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b===best));},{threshold:[0,.25,.5,.75,1]});
-  ['chartWrap','dash','sigBox','lqBox','newsBox'].forEach(id=>{const el=$(id);if(el)io.observe(el);});})();
+  ['chartWrap','dash','sigBox','pilBox','newsBox'].forEach(id=>{const el=$(id);if(el)io.observe(el);});})();
 
 /* ---------- PILOTEAR: seguimiento de una operación propia ----------
    Cargás moneda, dirección, precio de entrada, X y margen. Cada 15 s se leen velas de 15m, 1h y 4h, soportes/resistencias
@@ -2737,7 +2746,7 @@ async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
     try{const D=await pilData(p.sym),a=pilAnalyze(p,D,t.c);p.a=a;
       if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
     savePil();pilRender();}finally{pilBusy=false;}}
-function pilRender(){const btn=$('pilBtn');if(btn){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;btn.classList.toggle('alert',n>0);btn.textContent='🧭 PILOTEAR'+(PIL.length?` (${PIL.length})`:'');}
+function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cnt=$('pilCnt');if(cnt){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;cnt.textContent=PIL.length?`(${PIL.length}${n?` · ${n} con aviso`:''})`:'';}
   const el=$('pilCards');if(!el)return;
   if(!PIL.length){el.innerHTML='<div class="mut">Todavía no estás piloteando ninguna operación.</div>';return;}
   el.innerHTML=PIL.map(p=>{const a=p.a,L=p.dir>0,pc=v=>fpct((v/p.entry-1)*100);
@@ -2750,11 +2759,11 @@ function pilRender(){const btn=$('pilBtn');if(btn){const n=PIL.filter(p=>!p.clos
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
       <div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
-function pilOpen(){const b=$('pilBox');b.hidden=false;
-  $('pilList').innerHTML=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');
-  pilRender();b.scrollIntoView({behavior:'smooth',block:'start'});}
-$('pilBtn').onclick=()=>{if(mode==='a')applyMode('medio');pilOpen();};
-$('pilClose').onclick=()=>{$('pilBox').hidden=true;};
+function pilFill(){$('pilList').innerHTML=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');}
+function pilOpen(){const b=$('pilBox');b.hidden=false;pilFill();pilRender();b.scrollIntoView({behavior:'smooth',block:'start'});}
+$('pilDrw').onclick=()=>{drawer(false);if(mode==='a')applyMode('medio');setTimeout(pilOpen,260);};
+$('pilInfo').onclick=()=>{const l=$('pilLeg'),o=l.hidden;l.hidden=!o;$('pilInfo').setAttribute('aria-expanded',String(o));};
+$('pilSym').onfocus=pilFill;
 $('pilSym').oninput=()=>{const t=tickers[symOf($('pilSym').value)];$('pilPx').placeholder=t?'ahora '+fp(t.c):'ej. 85000';};
 $('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pilErr');err.textContent='';
   if(!t){err.textContent='Elegí una moneda de la lista (pares con USDT).';return;}
