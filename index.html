@@ -425,7 +425,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes y rupturas con la tendencia de 15m. El % es cuántas veces llegó al primer objetivo antes de la liquidación. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces la operación simulada terminó en ganancia (con comisiones); las ganadoras ganan más de lo que pierden las liquidadas. Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span></div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -450,8 +450,8 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 5 % o más · simulación 350 USD × 5</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 1 a 30 min · movimientos de 0,5 % o más · simulación 50 USD × 20</small></button>
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · velas de 1H a 1 mes · movimientos de 4,5 % o más · simulación 350 USD × 5, liquidación al 3 %</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · movimientos de 3,75 % o más · simulación 50 USD × 20, liquidación al 2,5 %</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 10</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button></section>
@@ -1637,8 +1637,8 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    la moneda tiene volatilidad para recorrer el movimiento mínimo y el riesgo/beneficio es ≥ 1,4.
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
-  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.05,maxAtr:.02,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.005,maxAtr:.004,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
+  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.045,maxAtr:.02,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
+  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.0375,maxAtr:.017,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
@@ -1707,48 +1707,45 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'t-pb':{p:56,n:617,txt:'retroceso dentro de la tendencia con volumen bajo'}},
-           x:{'sh-r':{p:56,n:709,txt:'rebote desde el extremo con la tendencia de 15m a favor'},'sh-k':{p:52,n:681,txt:'ruptura de máximo/mínimo con tendencia fuerte'}}};
-const MINCERT={medio:52,x:50,p:0,a:57};CAL.a={'a-mom':{p:59,n:495,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:62,n:290,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:65,n:489,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const CAL={medio:{'t-pb':{p:51,n:697,txt:'retroceso dentro de la tendencia con volumen bajo'}},
+           x:{'sh-r':{p:53,n:391,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
+const MINCERT={medio:45,x:45,p:0,a:57};CAL.a={'a-mom':{p:61,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:62,n:290,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:66,n:677,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
-  const w=mine.filter(o=>o.hit>0).length,n=mine.length,k=Math.min(c.n,60);
+  const w=mine.filter(o=>o.pnl>0).length,n=mine.length,k=Math.min(c.n,60);
   return {p:Math.round((c.p/100*k+w)/(k+n)*100),n:c.n+n,mine:n};
 }
 /* tendencia de la temporalidad mayor, solo con velas cerradas */
 function htfTrend(hc){const h=hc.slice(0,-1),cl=h.map(b=>b.close),e=emaArr(cl,21),i=h.length-1;if(i<4||e[i]==null||e[i-3]==null)return 0;return (cl[i]>e[i]?.5:-.5)+(e[i]>e[i-3]?.5:-.5);}
 function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDelta(cc[j]);vv+=cc[j].v;}for(let j=Math.max(0,i-19);j<=i;j++)vs+=cc[j].v;
   const b=cc[i];return {flow:vv?fl/vv:0,vr:b.v/((vs/Math.min(i+1,20))||1),body:(b.close-b.open)/((b.high-b.low)||1)};}
-/* SHOOTER v4 (5m) · simulación 50 USD × 20 con liquidación en −5 USD (el precio solo puede ir 0,5 % en contra).
-   Backtest 30 días × 60 criptos (todas las líquidas, sin filtrar por "confiables"), validado en el último 40 % del período:
-   - sh-r: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65), tendencia de 15m a favor, ADX 20–30 → 1.er objetivo antes de la liquidación 56 %.
-   - sh-k: ruptura del máximo/mínimo de 20 velas con EMA 9/21 y vela fuerte, tendencia de 15m a favor, ADX > 30 → 52 %.
-   Solo monedas con ATR de 5m entre 0,2 % y 0,4 %: con menos no llegan al objetivo; con más (impredecibles) el ruido liquida. */
+/* SHOOTER v5 (5m) · 50 USD × 20 · liquidación al 2,5 % en contra (−25 USD), objetivos +3,75 / +6,25 / +10 %, plazo 4 h.
+   Se probaron liquidaciones de 0,5 % a 4 % y objetivos de 0,4 a 4 veces la liquidación en 60 criptos (30 días de velas de 5m):
+   2,5 % fue la que más ganó de forma estable (positiva en longs y shorts y en las dos mitades del período).
+   Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65) con la tendencia de 15m a favor,
+   solo en monedas con ATR de 5m entre 0,83 % y 1,67 % (con menos no llega a los objetivos; con más es impredecible).
+   Resultado: ganó el 53 % de 391 casos, +4,4 USD por operación con comisiones. */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
     const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
-    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0,L=lastBarStats(cc,i),e9=emaArr(cl,9)[i],e21=emaArr(cl,21)[i];
+    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0;
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
-    if(adx==null||r7==null||e21==null||!(atrP>=.002&&atrP<=.004))return out;
-    let dir=0,setup=null;
-    if(Math.abs(z)>=2&&(z<0?r7<=35:r7>=65)){dir=z<0?1:-1;if(adx>=20&&adx<=30)setup='sh-r';}
-    else{let hh=-Infinity,ll=Infinity;for(let j=i-20;j<i;j++){hh=Math.max(hh,cc[j].high);ll=Math.min(ll,cc[j].low);}
-      if(cb>hh&&e9>e21&&L.body>.5)dir=1;else if(cb<ll&&e9<e21&&L.body<-.5)dir=-1;if(dir&&adx>30)setup='sh-k';}
-    if(!setup||Math.sign(htf)!==dir)return out;
-    out.dir=dir;out.score=dir;out.setup=setup;
-    if(setup==='sh-r')out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','ADX '+adx.toFixed(0)+' (tendencia moderada)');
-    else out.reasons.push(dir>0?'rompió el máximo de 20 velas':'rompió el mínimo de 20 velas','EMA 9 '+(dir>0?'sobre':'bajo')+' EMA 21 y vela fuerte','tendencia de 15m a favor','ADX '+adx.toFixed(0)+' (tendencia fuerte)');
-    out.reasons.push('volatilidad justa para la liquidación de −5 USD');
+    if(r7==null||!(atrP>.025/3&&atrP<=.025/1.5))return out;
+    if(!(Math.abs(z)>=2&&(z<0?r7<=35:r7>=65)))return out;
+    const dir=z<0?1:-1;if(Math.sign(htf)!==dir)return out;
+    out.dir=dir;out.score=dir;out.setup='sh-r';
+    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0),'tendencia de 15m a favor','volatilidad justa para la liquidación al 2,5 %');
     return out;
   });
 }
-/* TRADING v4 (4H) · simulación 350 USD × 5 con liquidación en −45 USD (el precio puede ir 2,57 % en contra).
-   Backtest ~11 meses × 60 criptos, validado en el último 40 %: retroceso dentro de la tendencia
-   (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 por debajo de 50 en long / por encima en short),
-   con volumen bajo en el retroceso y ATR de 4H entre 1,2 % y 2 % → 1.er objetivo (3 %) antes de la liquidación 56 %.
-   El impulso (RSI ≥ 70) con este stop más corto quedó casi sin ventaja y se descarta. */
+/* TRADING v5 (4H) · 350 USD × 5 · liquidación al 3 % en contra (−52,50 USD), objetivos +4,5 / +7,5 / +12 %, plazo 7 días.
+   Se probaron liquidaciones de 2 % a 15 % en 60 criptos (~11 meses de velas de 4H). Con 10–15 % el impulso ganaba más
+   en total, pero dependía de la fase del mercado (meses de −40.000 USD sumando todas las operaciones): se descartó.
+   3 % fue la mejor relación ganancia/riesgo y la más estable (11 de 15 meses positivos).
+   Regla: retroceso dentro de la tendencia (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 bajo 50 en long /
+   sobre 50 en short), volumen bajo en el retroceso y ATR de 4H entre 1 % y 2 %. Ganó el 51 % de 697 casos, +13 USD por operación. */
 function evalTrading(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
@@ -1757,9 +1754,9 @@ function evalTrading(cs,hc){
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null};
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
-    if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>=.012&&atrP<.02))return out;
+    if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.02))return out;
     out.setup='t-pb';out.dir=dir;out.score=dir;
-    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para la liquidación de −45 USD');
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para la liquidación al 3 %');
     if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;
   });
@@ -1772,7 +1769,7 @@ async function futData(m,syms){
     if(Array.isArray(t)&&t.length)out[s].taker=t.reduce((a,x)=>a+ +x.buySellRatio,0)/t.length;}
   return out;
 }
-const TGTS={'t-pb':[.03,.05,.08],'sh-r':[.005,.0075,.012],'sh-k':[.005,.01,.015]};
+const TGTS={'t-pb':[.045,.075,.12],'sh-r':[.0375,.0625,.1],'a-mom':[.05,.1,.15],'c-mom':[.05,.1,.15]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||atrP>cfg.maxAtr)return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
@@ -1789,7 +1786,7 @@ function buildSignalV2(m,sym,e,fd){
   if(m==='p')conf=e.str;conf=Math.round(clamp(conf,1,99));if(conf<MINCERT[m])return null;
   const zone=c*Math.min(cfg.min*.15,atrP*.5);
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,
-    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':m==='a'?`acierto histórico ${cal.p} % en ${cal.n} casos de ${CAL[m][setup].txt}`:`acierto histórico ${cal.p} % (llegó al primer objetivo antes de la liquidación) en ${cal.n} casos de ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
+    calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`ganó en el ${cal.p} % de ${cal.n} casos del backtest (con comisiones) · ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
 async function scanSignals(mm){
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
@@ -1853,13 +1850,13 @@ setInterval(()=>{const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode
 setInterval(checkSignals,2000);
 
 /* ---------- operaciones simuladas e historial ----------
-   TRADING: 350 USD × 5 (posición de 1.750 USD), se liquida si pierde 45 USD (2,57 % en contra).
-   SHOOTER: 50 USD × 20 (posición de 1.000 USD), se liquida si pierde 5 USD (0,5 % en contra).
+   TRADING: 350 USD × 5 (posición de 1.750 USD), se liquida al 3 % en contra (−52,50 USD).
+   SHOOTER: 50 USD × 20 (posición de 1.000 USD), se liquida al 2,5 % en contra (−25 USD).
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:5,maxLoss:45,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 5 · liquidación en −45 USD'},
-           x:{margin:50,lev:20,maxLoss:5,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 20 · liquidación en −5 USD'}};
+const SIM={medio:{margin:350,lev:5,maxLoss:52.5,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 5 · liquidación al 3 % (−52,50 USD)'},
+           x:{margin:50,lev:20,maxLoss:25,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 20 · liquidación al 2,5 % (−25 USD)'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:100000,lev:10,maxLoss:50000,maxAge:30*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 10 · liquidación en −50.000 ARS'};
+SIM.a={margin:100000,lev:10,maxLoss:50000,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 10 · liquidación en −50.000 ARS'};
 const TGT=['objetivo corto','objetivo 1','objetivo 2'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
