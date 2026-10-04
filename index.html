@@ -283,6 +283,8 @@ body.fs-on .fsbar{display:flex}
 .pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-i{margin-left:auto;background:none;border:1px solid #ff9100;color:#ff9100;border-radius:50%;width:26px;height:26px;font-size:15px;line-height:1;cursor:pointer;flex-shrink:0}.pil-leg{background:var(--bg);border:1px solid #ff9100;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:12px;line-height:1.5}.pil-leg ul{margin:6px 0 0;padding-left:18px}.pil-m{border-color:#ff9100!important}
 .pil-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
 .pil-f input,.pil-f select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:13px;min-width:0}
+.pil-q{grid-column:1/-1;position:relative;display:flex;flex-direction:column;gap:3px}.pil-ql{font-size:11px;color:var(--mut)}.pil-q .search{margin:0}.pil-f .search input{padding:9px 12px 9px 34px;font-size:14px;border-radius:8px}.pil-f .search input:focus{border-color:var(--acc)}
+.pil-dd{position:absolute;left:0;right:0;top:100%;z-index:40;margin-top:4px;background:var(--panel);border:1px solid var(--line);border-radius:8px;box-shadow:0 10px 28px #0009;overflow:hidden}.pil-dd #pilList{max-height:290px;overflow-y:auto}.pil-dd .row.sel{background:#1c2333;border-left-color:var(--acc)}
 .pil-f .pri{background:#ff9100;color:#14171d;border:0;border-radius:8px;padding:9px 12px;font-weight:700;cursor:pointer}
 .pil-c{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;background:var(--bg)}.pil-c.act{border-color:#ff9100;background:rgba(255,145,0,.07)}
 .pil-h{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.pil-s{background:#ff9100;color:#14171d;border-radius:8px;padding:8px 10px;margin:8px 0;font-size:13px;line-height:1.4}.pil-s b{display:block;font-size:14px;margin-bottom:2px}
@@ -459,7 +461,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <li>💰 <b>ASEGURÁ</b>: vas ganando pero la tendencia está girando.</li>
         <li>✅ <b>DEJÁ CORRER</b>: vas ganando; mové el stop a la entrada.</li>
         <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul></div>
-      <div class="pil-f"><label>Moneda<input id="pilSym" list="pilList" placeholder="BTC, ETH, SOL…" autocomplete="off" autocapitalize="characters"><datalist id="pilList"></datalist></label>
+      <div class="pil-f"><div class="pil-q"><span class="pil-ql">Moneda</span><div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pilSym" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off" autocapitalize="characters" spellcheck="false"></div><div class="pil-dd" id="pilDD" hidden><div class="head"><span>Par</span><span>Precio</span><span>24h</span></div><div id="pilList"></div></div></div>
         <label>Dirección<select id="pilDir"><option value="1">▲ LONG</option><option value="-1">▼ SHORT</option></select></label>
         <label>Precio de entrada<input id="pilPx" type="text" inputmode="decimal" placeholder="ej. 85000" autocomplete="off"></label>
         <label>Apalancamiento (X)<input id="pilX" type="number" inputmode="numeric" min="1" max="125" value="10"></label>
@@ -2770,12 +2772,22 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cn
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
       ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
-function pilFill(){$('pilList').innerHTML=Object.keys(tickers).filter(s=>s.endsWith('USDT')).sort((a,b)=>(tickers[b].q||0)-(tickers[a].q||0)).slice(0,400).map(s=>`<option value="${s.replace('USDT','')}">`).join('');}
+let pilSel=0;
+function pilFill(){const q=$('pilSym').value.trim().toUpperCase().replace(/[\/\s]|USDT$/g,'');let arr=Object.values(tickers).filter(t=>t.s.endsWith('USDT'));
+  if(q)arr=arr.filter(t=>t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||b.q-a.q);else arr.sort((a,b)=>b.q-a.q);arr=arr.slice(0,60);if(pilSel>=arr.length)pilSel=0;
+  $('pilList').innerHTML=arr.map((t,i)=>`<div class="row${i===pilSel?' sel':''}" data-s="${t.s}"><span><b>${t.s.replace('USDT','')}</b><small>/USDT</small></span><span>${fp(t.c)}</span><span class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span></div>`).join('')||'<div style="padding:12px 16px;color:var(--mut)">Sin resultados</div>';}
+function pilDD(o){const d=$('pilDD');if(o){pilFill();d.hidden=false;}else d.hidden=true;}
+function pilPick(s){$('pilSym').value=s.replace('USDT','');pilDD(false);$('pilSym').oninput&&$('pilSym').oninput({pick:1});$('pilPx').focus();}
 function pilOpen(){const b=$('pilBox');b.hidden=false;pilFill();pilRender();b.scrollIntoView({behavior:'smooth',block:'start'});}
 $('pilDrw').onclick=()=>{drawer(false);if(mode==='a')applyMode('medio');setTimeout(pilOpen,260);};
 $('pilInfo').onclick=()=>{const l=$('pilLeg'),o=l.hidden;l.hidden=!o;$('pilInfo').setAttribute('aria-expanded',String(o));};
-$('pilSym').onfocus=pilFill;
-$('pilSym').oninput=()=>{const t=tickers[symOf($('pilSym').value)];$('pilPx').placeholder=t?'ahora '+fp(t.c):'ej. 85000';};
+$('pilSym').onfocus=()=>{pilSel=0;pilDD(true);};
+$('pilSym').onblur=()=>setTimeout(()=>pilDD(false),200);
+$('pilSym').oninput=e=>{const t=tickers[symOf($('pilSym').value)];$('pilPx').placeholder=t?'ahora '+fp(t.c):'ej. 85000';if(!(e&&e.pick)){pilSel=0;pilDD(true);}};
+$('pilSym').onkeydown=e=>{const rows=$('pilList').querySelectorAll('.row');if(e.key==='ArrowDown'||e.key==='ArrowUp'){e.preventDefault();if($('pilDD').hidden){pilDD(true);return;}pilSel=Math.max(0,Math.min(rows.length-1,pilSel+(e.key==='ArrowDown'?1:-1)));rows.forEach((r,i)=>r.classList.toggle('sel',i===pilSel));rows[pilSel]&&rows[pilSel].scrollIntoView({block:'nearest'});}
+  else if(e.key==='Enter'){e.preventDefault();const r=rows[pilSel]||rows[0];if(r&&!$('pilDD').hidden)pilPick(r.dataset.s);}else if(e.key==='Escape')pilDD(false);};
+$('pilDD').onmousedown=e=>e.preventDefault();
+$('pilList').onclick=e=>{const r=e.target.closest('.row');if(r)pilPick(r.dataset.s);};
 $('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pilErr');err.textContent='';
   if(!t){err.textContent='Elegí una moneda de la lista (pares con USDT).';return;}
   const raw=$('pilPx').value.trim(),px=raw?parsePx(raw,t.c):t.c;if(!(px>0)){err.textContent='Escribí el precio en el que entraste.';return;}
