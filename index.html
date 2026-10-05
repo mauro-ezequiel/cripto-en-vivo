@@ -300,6 +300,12 @@ body.fs-on .fsbar{display:flex}
 .int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
 .int-n{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}.pil-cl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-cl input{background:var(--bg);color:var(--txt);border:1px solid #ff9100;border-radius:6px;padding:6px 8px;font-size:13px;min-width:0;flex:1 1 160px}
 .pil-cl button{background:#ff9100;color:#14171d;border:0;border-radius:6px;font-size:12px;padding:6px 10px;font-weight:700;cursor:pointer}.pil-cl button[data-a=cancel]{background:var(--panel);color:var(--txt);border:1px solid var(--line)}.jrn{margin-top:12px}
+.sig-warn,.pil-note{display:none!important}#posCard,#lqBox{display:none!important}#dash .dcard:nth-child(2){grid-column:auto!important;order:0!important}
+@media (min-width:801px){#dash.dash{grid-template-columns:minmax(220px,260px) minmax(0,1fr)!important}}
+.liq-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px;font-size:11px;color:var(--mut);border-bottom:1px solid var(--line)}.liq-row .lopts{margin-left:0}body.fs-on .liq-row{display:none!important}@media (orientation:landscape) and (max-height:520px){.liq-row{display:none!important}}
+.bell-btn{margin-left:auto;background:none;border:1px solid var(--line);color:var(--txt);border-radius:50%;width:26px;height:26px;min-width:26px;padding:0;font-size:13px;line-height:1;cursor:pointer}.bell-btn~.i-btn{margin-left:0}
+@media (max-width:800px){body[data-v="main"] #sigBox,body[data-v="main"] #pilBox{display:none!important}body[data-v="sig"] .app>aside,body[data-v="pil"] .app>aside{display:none!important}
+  body[data-v="sig"] main>*:not(#sigBox),body[data-v="pil"] main>*:not(#pilBox){display:none!important}body[data-v="sig"] #sigBox,body[data-v="pil"] #pilBox{border-top:0;min-height:calc(100vh - 80px)}#pilDrw{display:none!important}}
 .ers-tip{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(20,23,29,.94);border:1px solid #ef5350;border-radius:10px;padding:6px 10px;font-size:12px;color:var(--txt);max-width:calc(100% - 20px)}.ers-tip button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer}.ers-tip #ersAll{border-color:#ef5350;color:#ff8a80}
 .rmt-n{font-size:12px;color:var(--mut);margin:0 0 4px;line-height:1.45}.rmt-f{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:12px;line-height:1.45}.rmt-f ol{margin:0 0 8px;padding-left:18px}.rmt-f li{margin:3px 0}.rmt-f a{color:var(--acc)}
 .rmt-f input{width:100%;box-sizing:border-box;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px;margin-bottom:6px}.rmt-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.rmt-a button{border:1px solid var(--line);background:transparent;color:var(--txt);border-radius:6px;padding:7px 10px;font-size:12px;cursor:pointer}.rmt-a .pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
@@ -437,7 +443,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
         <button class="btn on" id="logBtn" title="Escala logarítmica: las subas y bajadas se ven en proporción (%)">LOG</button>
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
-      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): <b>azul</b> = manos fuertes (institucionales), <b>verde</b> = minoristas, <b>marrón</b> = tendencia y <b>línea roja</b> = su media. Azul sobre 0 = las manos fuertes compran; marrón cruzando arriba de la roja = giro alcista (y al revés). También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
+      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): <b>azul</b> = manos fuertes (institucionales), <b>verde</b> = minoristas, <b>marrón</b> = tendencia y <b>línea roja</b> = su media. Azul sobre 0 = las manos fuertes compran; marrón cruzando arriba de la roja = giro alcista (y al revés). Reemplaza al MACD clásico y también vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
       <div class="inds hide" id="inds"></div>
       <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
     </div>
@@ -448,24 +454,24 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div class="g-mid"><span class="g-num" id="g-num">—</span><span class="g-lab" id="g-lab"></span></div>
         <div class="g-sub" id="g-sub"></div>
       </div>
-      <div class="dcard"><div class="dt">Qué dice cada factor <span class="mut" id="facTf"></span><button class="i-btn" data-i="fac" type="button" aria-label="Qué son los factores" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="fac" hidden><b>Qué dice cada factor</b><br>Cada indicador (RSI, MACD, EMAs, Supertrend, volumen, liquidaciones, noticias, miedo y codicia…) se lee por separado y dice si empuja para arriba (▲), para abajo (▼) o está neutral (●). Los que tienen más peso mueven más el termómetro. Tocá "Ver todos los factores" para la lista completa. Si la mayoría coincide, la lectura es más fuerte; si están divididos, conviene esperar.</div><div id="factors"></div><button class="fac-more" id="facMore" type="button">Ver todos los factores ▼</button></div>
-      <div class="dcard">
+      <div class="dcard"><div class="dt">Qué dice cada factor <span class="mut" id="facTf"></span><button class="i-btn" data-i="fac" type="button" aria-label="Qué son los factores" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="fac" hidden><b>Qué dice cada factor</b><br>Cada indicador (RSI, MACD, EMAs, Supertrend, volumen, liquidaciones, noticias, miedo y codicia…) se lee por separado y dice si empuja para arriba (▲), para abajo (▼) o está neutral (●). Los que tienen más peso mueven más el termómetro. Tocá "Ver todos los factores" para la lista completa. Si la mayoría coincide, la lectura es más fuerte; si están divididos, conviene esperar. RSI, Stoch RSI y Konkorde miden casi lo mismo (el impulso): si tenés varios activos, entre todos pesan 1,5 en vez de sumar uno cada uno, para no exagerar la lectura.</div><div id="factors"></div><button class="fac-more" id="facMore" type="button">Ver todos los factores ▼</button></div>
+      <div class="dcard" id="posCard">
         <div class="dt">Posiciones apalancadas
           <span class="lopts"><select id="liqView"><option value="zones">Zonas (cajas)</option><option value="heat">Mapa de calor</option><option value="both">Ambas</option></select><select id="liqSide"><option value="both">Longs y shorts</option><option value="L">Solo longs</option><option value="S">Solo shorts</option></select>
           <label title="Muestra zonas más débiles">Sensibilidad <input type="range" id="liqSens" min="0" max="100"></label></span><button class="i-btn" data-i="pos" type="button" aria-label="Qué son las posiciones apalancadas" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="pos" hidden><b>Posiciones apalancadas</b><br>Muestra cuánto dinero hay apostado con apalancamiento en esta moneda (interés abierto en Binance, Bybit y OKX) y las liquidaciones reales de la última hora: longs liquidados (verde) y shorts liquidados (rojo). Los selectores cambian cómo se dibujan las zonas de liquidación sobre el gráfico: <b>Zonas</b> (cajas), <b>Mapa de calor</b> o ambas; solo longs, solo shorts o los dos; y la <b>Sensibilidad</b> muestra también las zonas más débiles. El precio suele ir a buscar las zonas grandes.</div>
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>Historial</b> y <b>Operaciones simuladas</b>: el resultado de cada señal pasada con dinero simulado.</li><li>Activá las notificaciones para que te avise aunque estés en otra pestaña.</li></ul></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow"></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>Historial de señales <span class="mut" id="histSum"></span></summary><div id="histList"></div></details><details class="hist" id="simBox"><summary>Operaciones simuladas del mes <span class="mut" id="simSum"></span></summary><div><div id="simStats"></div><div id="simList"></div></div></details></section>
-    <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span> <span class="mut">cargá tu entrada y te aviso con notificación naranja qué conviene hacer</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
-      <div class="pil-leg" id="pilLeg" hidden><b>Qué significa cada aviso</b><ul>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu, Telegram o WhatsApp).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li></ul></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
+    <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
+      <div class="pil-leg" id="pilLeg" hidden><p style="margin:0 0 6px">Cargá moneda, dirección, precio de entrada, X y margen: cada 15 s reviso tu operación y te aviso con notificación naranja 🟠 qué conviene hacer.</p><b>Qué significa cada aviso</b><ul>
         <li>🚨 <b>SALÍ YA</b>: estás muy cerca de la liquidación.</li>
         <li>⛔ <b>SALÍ</b>: el movimiento va en contra en varias temporalidades.</li>
         <li>🔄 <b>SALÍ y evaluá DAR VUELTA</b>: también la tendencia de 4h se dio vuelta.</li>
         <li>🛟 <b>POSIBLE REBOTE, poné un salvavidas</b>: te dice cuánto agregar, y cómo quedarían la entrada promedio y la nueva liquidación. Si lo agregás, tocás "Ya agregué el salvavidas" y recalcula todo.</li>
         <li>💰 <b>ASEGURÁ</b>: vas ganando pero la tendencia está girando.</li>
         <li>✅ <b>DEJÁ CORRER</b>: vas ganando; mové el stop a la entrada.</li>
-        <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul></div>
+        <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul><p style="margin:8px 0 0"><b>Cómo decide:</b> tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</p><p style="margin:8px 0 0"><b>📒 Mi diario:</b> cuando cierres una operación tocá "Cerré la operación" y poné el precio de salida; se guarda con tu resultado y calcula tu propio % de aciertos.</p></div>
       <div class="pil-f"><div class="pil-q"><span class="pil-ql">Moneda</span><div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pilSym" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off" autocapitalize="characters" spellcheck="false"></div><div class="pil-dd" id="pilDD" hidden><div class="head"><span>Par</span><span>Precio</span><span>24h</span></div><div id="pilList"></div></div></div>
         <label>Dirección<select id="pilDir"><option value="1">▲ LONG</option><option value="-1">▼ SHORT</option></select></label>
         <label>Precio de entrada<input id="pilPx" type="text" inputmode="decimal" placeholder="ej. 85000" autocomplete="off"></label>
@@ -474,7 +480,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
       <div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
       <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</div></section>
-    <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="led" class="on">📊 Registro en vivo</button><button data-t="reg">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
+    <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span><button class="i-btn" data-i="lq" type="button" aria-label="Cómo leer el mapa" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="lq" hidden><b>Cómo leer el mapa de liquidaciones</b><br>Las barras de la derecha muestran cuánto dinero se liquidaría si el precio llega a ese nivel (rojo = shorts, arriba del precio; verde = longs, abajo). Las bandas sobre las velas marcan los niveles más fuertes: suelen atraer al precio y, una vez barridos, funcionar como techo o piso. Las tarjetas de arriba resumen hacia dónde hay más liquidez dentro de ±8 %. Estimado con el interés abierto y el volumen de Binance, Bybit y OKX; los paneles de la derecha muestran liquidaciones reales en vivo. Tocá o pasá el mouse para ver montos; arrastrá y usá la rueda o pellizcá para moverte. "Todo el mercado / Esta moneda" y la ventana (15 min a 4 h) cambian qué liquidaciones reales se cuentan.</div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -538,7 +544,7 @@ const MODES = {
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','macd','adx','stochrsi','cvd','kon'],
+    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','adx','stochrsi','cvd','kon'],
     def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
@@ -546,8 +552,8 @@ const MODES = {
     desc: 'Acciones argentinas y CEDEARs (acciones de EE. UU. en pesos)',
     info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 8, stop al 7 % (−56.000 ARS), salvavidas 50.000 ARS'],
     tf: '1d', bars: 160,
-    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd','kon'],
-    def: ['liq','trend','supertrend','ema','vprofile','rsi','macd','adx','cvd','kon']
+    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
+    def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
   }
 };
 let mode = 'medio';
@@ -797,8 +803,9 @@ function marketFactors(){
     add('oi','Interés abierto vs precio',1,s,`OI ${fpct(dO*100)} · precio ${fpct(dP*100)}`+(dO>0?(dP>0?' (entran compradores)':' (entran vendedores)'):' (cierre de posiciones)'));}
   return out;
 }
-function allFactors(){
-  return signals().map(x=>({...x,name:IND[x.k].name,w:x.k==='liq'?1.5:1,color:IND[x.k].color})).concat(marketFactors()).concat(newsFactors());
+const MOM=['rsi','stochrsi','macd','kon'];
+function allFactors(){const sg=signals(),nm=sg.filter(x=>MOM.includes(x.k)).length;
+  return sg.map(x=>({...x,name:IND[x.k].name,w:x.k==='liq'?1.5:MOM.includes(x.k)&&nm>1?1.5/nm:1,color:IND[x.k].color})).concat(marketFactors()).concat(newsFactors());
 }
 function gaugeScore(f){const sw=f.reduce((a,x)=>a+x.w,0);if(!sw)return null;
   return Math.max(1,Math.min(100,Math.round(50+50*f.reduce((a,x)=>a+x.w*x.s,0)/sw)));}
@@ -1282,6 +1289,7 @@ function renderChips(){
   $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
   $('fsInd').innerHTML=M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
   $('fsIndBtn').hidden=!M.inds.length;
+  if($('liqOptsRow'))$('liqOptsRow').hidden=!active.has('liq')||!M.inds.length;
 }
 $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
   active.has(k)?active.delete(k):active.add(k);
@@ -1708,7 +1716,7 @@ function renderNews(){
   updateNewsTop();
   const list=NTOP.items.slice().sort((a,b)=>b.rel-a.rel);
   const next=NTOP.since?new Date(NTOP.since+TOP_MS).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):'';
-  $('newsUpd').textContent=NEWS.upd?`· se renuevan cada 8 h (próximo cambio ${next}) · si sale una muy importante reemplaza a la menos relevante`:'· cargando…';
+  $('newsUpd').textContent=NEWS.upd?`· próximo cambio ${next}`:'· cargando…';
   $('newsList').innerHTML=list.map(n=>{const c=n.sent>0?'up':n.sent<0?'dn':'neu',lab=n.sent>0?'▲ Alcista':n.sent<0?'▼ Bajista':'● Neutral',imp=n.imp>=4?'alto':n.imp>=2?'medio':'bajo';
     const ttl=n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:`<span>${esc(n.title)}</span>`;
     return `<div class="nw"><span class="nt">${ago(n.t)}</span><span class="ntags">${n.tags.map(([t,col])=>`<i style="color:${col};border-color:${col}66">${t}</i>`).join('')}</span>${ttl}<span class="nsrc">${n.hot?'<b class="dn">NUEVA · </b>':''}${esc(n.source)} · impacto ${imp}</span><span class="vp ${c}">${lab}</span></div>`;}).join('')
@@ -2046,7 +2054,8 @@ function opDetail(o){
   </div>${o.reasons&&o.reasons.length?`<div class="rs">${o.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>`:''}
   <button class="go" data-go="${o.sym}" data-tf="${cfg.tf}" data-m="${o.m}">Ver en el gráfico</button></div>`;
 }
-function renderHist(){
+function renderHist(){return renderRes();}
+function renderHistOld(){
   const m=mode,c=SIM[m],now=new Date(),mStart=new Date(now.getFullYear(),now.getMonth(),1).getTime();
   const mine=OPS.filter(o=>o.m===m),month=mine.filter(o=>o.t>=mStart),closed=month.filter(o=>o.state!=='open');
   const wins=closed.filter(o=>o.pnl>0).length,eff=closed.length?Math.round(wins/closed.length*100):null,tot=closed.reduce((a,o)=>a+o.pnl,0);
@@ -2734,8 +2743,10 @@ $('lqBig').onclick=()=>lqBigSet(true);$('lqX').onclick=()=>lqBigSet(false);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lqBox').classList.contains('big'))lqBigSet(false);});
 setInterval(()=>renderLqx(false),2000);setTimeout(lqInit,3000);
 /* ---------- barra de accesos directos (celular) ---------- */
-function mnavTarget(k){return k==='chart'?$('chartWrap'):k==='thermo'?($('g-svg')?.closest('.dcard')||$('dash')):k==='sig'?$('sigBox'):(mode==='a'?$('market')?.closest('.dcard'):$('pilBox'));}
-$('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const el=mnavTarget(b.dataset.go);if(el)el.scrollIntoView({behavior:'smooth',block:'start'});};
+function mnavTarget(k){return k==='chart'?$('chartWrap'):k==='thermo'?($('g-svg')?.closest('.dcard')||$('dash')):k==='sig'?$('sigBox'):$('pilBox');}
+$('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const g=b.dataset.go;if(g==='pil'&&mode==='a')applyMode('medio');
+  if(g==='sig'||g==='pil'){setView(g);if(g==='pil'&&typeof pilRender==='function')pilRender();return;}
+  setView('main');const el=mnavTarget(g);if(el)setTimeout(()=>el.scrollIntoView({behavior:'smooth',block:'start'}),40);};
 (function(){const io=new IntersectionObserver(()=>{let best=null,bd=1e9;for(const b of document.querySelectorAll('#mnav [data-go]')){const el=mnavTarget(b.dataset.go);if(!el)continue;const r=el.getBoundingClientRect(),d=Math.abs(r.top-60);if(r.bottom>80&&d<bd){bd=d;best=b;}}
   document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b===best));},{threshold:[0,.25,.5,.75,1]});
   ['chartWrap','dash','sigBox','pilBox','newsBox'].forEach(id=>{const el=$(id);if(el)io.observe(el);});})();
@@ -2851,7 +2862,7 @@ setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
 /* Línea de base "al azar": entradas en momentos y direcciones al azar, con el mismo stop, objetivos, plazo y filtro de volatilidad
    (40 criptos: 11 meses de 4H para TRADING y 30 días de 5m para SHOOTER). Sirve para saber cuánto aporta la señal de verdad. */
 var AZAR={medio:{p:78,p3:28,n:1309},x:{p:72,p3:23,n:547}};AZAR.p=AZAR.medio;
-let INT_T='led',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'led';}catch(e){}
+let INT_T='reg',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'reg';}catch(e){}if(INT_T==='led')INT_T='reg';
 const intMoney=v=>{const a=mode==='a';return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
 const pc0=v=>v==null?'—':Math.round(v)+' %';
 function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=OPS.filter(o=>o.m===m&&o.t>=t0),cl=a.filter(o=>o.state!=='open'),n=cl.length;
@@ -2926,8 +2937,7 @@ function bigHTML(){if(mode==='a')return '<div class="mut">Las órdenes grandes s
   let B=0,S=0,BB=0,BS=0;for(const k in BIG.mins)if(k>=now-15){const x=BIG.mins[k];B+=x.b;S+=x.s;BB+=x.bb;BS+=x.bs;}
   const imb=B+S?(B-S)/(B+S)*100:0,bimb=BB+BS?(BB-BS)/(BB+BS)*100:0,c=symbol.replace('USDT','');
   const read=BB+BS<BIG.th?'Todavía no hubo órdenes grandes en los últimos 15 min.':bimb>25?'Las ballenas están comprando con urgencia (pagan el precio de venta para entrar ya).':bimb<-25?'Las ballenas están vendiendo con urgencia (aceptan el precio de compra para salir ya).':'Las órdenes grandes están repartidas entre compras y ventas.';
-  return `<div class="int-g"><div>Compras agresivas (15 min)<b class="up">$${fnum(B)}</b><small>todas las operaciones de ${c}</small></div><div>Ventas agresivas (15 min)<b class="dn">$${fnum(S)}</b><small>${imb>=0?'+':''}${Math.round(imb)} % de desbalance</small></div>
-      <div>Ballenas compran<b class="up">$${fnum(BB)}</b><small>órdenes de $${fnum(BIG.th)} o más</small></div><div>Ballenas venden<b class="dn">$${fnum(BS)}</b><small>${bimb>=0?'+':''}${Math.round(bimb)} % de desbalance</small></div></div>
+  return `<div class="int-g"><div>Ballenas compran<b class="up">$${fnum(BB)}</b><small>órdenes de $${fnum(BIG.th)} o más</small></div><div>Ballenas venden<b class="dn">$${fnum(BS)}</b><small>${bimb>=0?'+':''}${Math.round(bimb)} % de desbalance</small></div></div>
     <div class="int-v">${read}</div>
     ${BIG.tr.length?`<table class="int-t"><tr><th>Hora</th><th>Lado</th><th>Precio</th><th>Monto</th></tr>${BIG.tr.slice(0,12).map(x=>`<tr><td class="mut">${new Date(x.t).toLocaleTimeString('es-ES')}</td><td class="${x.buy?'up':'dn'}">${x.buy?'Compra':'Venta'}</td><td>${fp(x.p)}</td><td><b class="${x.buy?'up':'dn'}">$${fnum(x.usd)}</b></td></tr>`).join('')}</table>`:`<div class="mut">Esperando órdenes de $${fnum(BIG.th)} o más en ${c}…</div>`}`;}
 function intRender(){const box=$('intBox');if(!box)return;document.querySelectorAll('#intTabs button').forEach(b=>b.classList.toggle('on',b.dataset.t===INT_T));
@@ -2945,7 +2955,7 @@ setInterval(intTick,5000);setTimeout(intTick,4000);
 let JRN=[];try{JRN=JSON.parse(localStorage.getItem('cv_jrn')||'[]')||[];}catch(e){}
 const saveJrn=()=>{try{localStorage.setItem('cv_jrn',JSON.stringify(JRN))}catch(e){}};
 let jrnDel=false;
-function jrnRender(){const el=$('jrnBox');if(!el)return;if(!JRN.length){el.innerHTML='<div class="mut">Mi diario: cuando cierres una operación piloteada (botón "Cerré la operación"), se guarda acá y se calcula tu propio porcentaje de aciertos.</div>';return;}
+function jrnRender(){const el=$('jrnBox');if(!el)return;if(!JRN.length){el.innerHTML='';return;}
   const n=JRN.length,w=JRN.filter(j=>j.pnl>0).length,g=JRN.filter(j=>j.pnl>0).reduce((s,j)=>s+j.pnl,0),l=JRN.filter(j=>j.pnl<=0).reduce((s,j)=>s+j.pnl,0);
   el.innerHTML=`<div class="dt" style="margin-top:4px"><span>📒 Mi diario de operaciones reales</span>${iBtn('jrn','Cómo funciona mi diario')}</div>${iBox('jrn')}
     <div class="int-g"><div>Operaciones<b>${n}</b><small>${JRN.filter(j=>j.ll).length} con salvavidas</small></div><div>Ganadas<b>${Math.round(w/n*100)} %</b><small>${w} de ${n}</small></div>
@@ -2967,7 +2977,7 @@ var INT_INFO={
 led:'<b>📊 Registro en vivo</b><br>Cada señal que aparece mientras la página está abierta se simula sola con su stop, sus 3 objetivos y el salvavidas, usando las velas reales que vinieron después. Acá ves el resultado real por período (7, 30, 90 días o todo): % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido y factor de ganancia. Se compara con el backtest y con <b>entrar al azar</b> con el mismo stop y objetivos: si en vivo no supera al azar, la señal no está aportando. Con menos de 20 operaciones cerradas el número todavía no es confiable. Se puede exportar en CSV o JSON.',
 reg:'<b>🌐 Régimen de mercado</b><br>Dice si el dinero está yendo a BTC o a las altcoins. La <b>probabilidad de altseason</b> (0 a 100) combina cuántas alts le ganan a BTC en 24 h, cuántas están en positivo, si ETH le gana a BTC y la dominancia de BTC. La <b>dominancia de estables</b> sube cuando la gente se refugia en dólares. La tabla de <b>rotación</b> muestra la variación media por grupo (grandes = 10 alts con más volumen, medianas = las 25 siguientes, chicas = las 45 siguientes); ★ marca al que lidera. Sirve para elegir qué operar: en dominio de BTC conviene cuidar el riesgo en alts. Dominancias: CoinGecko.',
 sol:'<b>🚀 Suben solas</b><br>Revisa las 60 monedas con más volumen cada 5 minutos y lista las que suben con compradores propios: al menos +1,5 % en las últimas 4 h y 1,5 % más que BTC y ETH. <b>Fuerza propia</b> = lo que sube por encima de BTC/ETH. <b>Volumen</b> compara las últimas 4 h con las 20 anteriores (🔥 = 1,5× o más: hay dinero nuevo entrando). "Ver" la abre en el gráfico. Si BTC cae fuerte casi todas caen con él, y una suba de una sola vela sin volumen suele devolverse. Es una lectura, no una señal calibrada.',
-big:'<b>🐋 Órdenes grandes</b><br>Muestra operaciones ya ejecutadas en futuros de Binance para la moneda del gráfico (las órdenes del libro se pueden cancelar; estas no). "Compra agresiva" = alguien pagó el precio de venta para entrar ya; "venta agresiva" = aceptó el precio de compra para salir ya. Las <b>ballenas</b> son órdenes de al menos 0,002 % del volumen diario (mínimo 25 mil USD). El <b>desbalance</b> de los últimos 15 minutos dice quién tiene más urgencia: más de +25 % compran fuerte, menos de −25 % venden fuerte. Se cuenta desde que abriste esta pestaña.'};
+big:'<b>🐋 Órdenes grandes</b><br>Muestra operaciones ya ejecutadas en futuros de Binance para la moneda del gráfico (las órdenes del libro se pueden cancelar; estas no). "Compra agresiva" = alguien pagó el precio de venta para entrar ya; "venta agresiva" = aceptó el precio de compra para salir ya. Las <b>ballenas</b> son órdenes de al menos 0,002 % del volumen diario (mínimo 25 mil USD). El <b>desbalance</b> de los últimos 15 minutos dice quién tiene más urgencia: más de +25 % compran fuerte, menos de −25 % venden fuerte. Se cuenta desde que abriste esta pestaña. El flujo de <b>todas</b> las operaciones (no solo las grandes) es el indicador <b>CVD</b> del gráfico: si los dos coinciden, la lectura es más fuerte.'};
 document.addEventListener('click',e=>{const b=e.target.closest('.i-btn');if(!b)return;e.preventDefault();const k=b.dataset.i;
   const box=b.closest('section,.dcard,#chartWrap,.jrn')?.querySelector(`.i-box[data-i="${k}"]`)||document.querySelector(`.i-box[data-i="${k}"]`);if(!box)return;
   const open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open)INFO_OPEN.add(k);else INFO_OPEN.delete(k);});
@@ -3027,6 +3037,32 @@ $('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;
     rmtMsg=[RMT.tg.chat?(ok.tg?'Telegram: enviado ✓':'Telegram: no se pudo enviar ✕'):'',RMT.wa.key?'WhatsApp: enviado (revisá tu celu)':''].filter(Boolean).join(' · ');}
   rmtRender();if(typeof renderDrw==='function'&&$('drw').classList.contains('open'))renderDrw();};
 rmtRender();
+
+/* ---------- resultados de las señales (un solo bloque) ---------- */
+function renderRes(){const m=mode,S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
+  const mine=OPS.filter(o=>o.m===m&&(o.t>=t0||o.state==='open'));
+  $('histSum').textContent=S.n?`${pc0(S.o1)} al objetivo 1 · ${intMoney(S.net)}${S.open?' · '+S.open+' en curso':''}`:(S.open?S.open+' en curso':'todavía sin operaciones cerradas');
+  const rs=$('resStats');if(!rs.contains(document.activeElement))rs.innerHTML=ledHTML();
+  const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
+    if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
+    if(o.state==='fail')return `<span class="dn">✕ Liquidada · ${fusd2(o.pnl)}</span>`;
+    return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
+  const row=o=>`<div class="hrow${o.ll?' ll':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
+  const L=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
+  $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';}
+$('resStats').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes();return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
+$('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
+/* ---------- controles de las zonas de liquidación, debajo de los indicadores ---------- */
+(function(){const lo=document.querySelector('.lopts');if(!lo)return;const row=document.createElement('div');row.className='liq-row';row.id='liqOptsRow';
+  row.innerHTML='<span>Zonas de liquidación:</span>';row.appendChild(lo);$('inds').after(row);row.hidden=!active.has('liq')||!MODES[mode].inds.length;})();
+/* ---------- celular: Señales y Pilotear se abren como pantallas desde el menú inferior ---------- */
+const isMob=()=>matchMedia('(max-width:800px)').matches;
+function setView(v){document.body.dataset.v=v;if(v!=='main')window.scrollTo(0,0);document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===v));}
+document.body.dataset.v='main';
+(function(){const hook=(id,v)=>{const el=$(id);if(!el)return;const orig=el.scrollIntoView.bind(el);
+    el.scrollIntoView=o=>{if(!isMob()){orig(o);return;}if(v==='main'){if(document.body.dataset.v!=='main'){setView('main');setTimeout(()=>orig(o),40);}else orig(o);}else setView(v);};};
+  hook('chartWrap','main');hook('sigBox','sig');hook('pilBox','pil');})();
+renderRes();
 </script>
 </body>
 </html>
