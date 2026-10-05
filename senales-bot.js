@@ -141,4 +141,9 @@ async function main() {
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }
-main().catch(e => { console.error(e); try { fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} process.exit(1); });
+/* vuelta larga: revisa cada 5 minutos durante LOOP_MIN minutos (así no depende de la puntualidad del horario de GitHub) */
+async function run() { const LOOP = +(process.env.LOOP_MIN || 0) * 6e4, start = Date.now();
+  while (true) { const t0 = Date.now(); try { await main(); } catch (e) { console.error(e); }
+    if (!LOOP) break; const wait = 3e5 - (Date.now() - t0); if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
+  try { if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} }
+run();
