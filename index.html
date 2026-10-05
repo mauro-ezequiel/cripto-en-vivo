@@ -300,6 +300,10 @@ body.fs-on .fsbar{display:flex}
 .int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
 .int-n{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}.pil-cl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-cl input{background:var(--bg);color:var(--txt);border:1px solid #ff9100;border-radius:6px;padding:6px 8px;font-size:13px;min-width:0;flex:1 1 160px}
 .pil-cl button{background:#ff9100;color:#14171d;border:0;border-radius:6px;font-size:12px;padding:6px 10px;font-weight:700;cursor:pointer}.pil-cl button[data-a=cancel]{background:var(--panel);color:var(--txt);border:1px solid var(--line)}.jrn{margin-top:12px}
+.ers-tip{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(20,23,29,.94);border:1px solid #ef5350;border-radius:10px;padding:6px 10px;font-size:12px;color:var(--txt);max-width:calc(100% - 20px)}.ers-tip button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer}.ers-tip #ersAll{border-color:#ef5350;color:#ff8a80}
+.rmt-n{font-size:12px;color:var(--mut);margin:0 0 4px;line-height:1.45}.rmt-f{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:12px;line-height:1.45}.rmt-f ol{margin:0 0 8px;padding-left:18px}.rmt-f li{margin:3px 0}.rmt-f a{color:var(--acc)}
+.rmt-f input{width:100%;box-sizing:border-box;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:8px;font-size:13px;margin-bottom:6px}.rmt-a{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}.rmt-a button{border:1px solid var(--line);background:transparent;color:var(--txt);border-radius:6px;padding:7px 10px;font-size:12px;cursor:pointer}.rmt-a .pri{background:var(--acc);border-color:var(--acc);color:#fff;font-weight:700}
+.rmt-m{font-size:12px;margin-top:8px;padding:8px 10px;border-radius:8px;background:var(--bg);border-left:3px solid var(--acc);line-height:1.4}
 .i-btn{margin-left:auto;background:none;border:1px solid #26c6da;color:#26c6da;border-radius:50%;width:24px;height:24px;min-width:24px;padding:0;font-size:14px;line-height:1;cursor:pointer;flex-shrink:0;text-transform:none;letter-spacing:0}.i-btn[aria-expanded=true]{background:#26c6da;color:#0f1115}
 .lopts~.i-btn,.lqx-ctl~.i-btn,.int-tabs~.i-btn{margin-left:0}.i-box{background:var(--bg);border:1px solid #26c6da;border-radius:8px;padding:8px 12px;margin:6px 0 8px;font-size:12px;line-height:1.5;color:var(--txt);text-align:left;text-transform:none;letter-spacing:0}.i-box ul{margin:4px 0 0;padding-left:18px}.i-box li{margin:2px 0}
 @media (max-width:800px){.int-tabs{margin-left:0}.int-t{font-size:11px}}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
@@ -422,7 +426,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg>Regla</button>
         <button class="btn" data-tool="hline" title="Línea horizontal (H)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>Línea</button>
-        <button class="btn" id="clear" title="Borrar todas las líneas">
+        <button class="btn" id="clear" data-tool="erase" title="Borrar una línea: tocá este botón y después la línea">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Borrar</button>
         <button class="btn" id="alertBtn" title="Crear una alerta de precio para esta moneda">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerta</button>
@@ -431,10 +435,11 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Reset</button>
         <button class="btn" id="fs" title="Pantalla completa (F)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
+        <button class="btn on" id="logBtn" title="Escala logarítmica: las subas y bajadas se ven en proporción (%)">LOG</button>
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
-      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: quita todas tus líneas.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
+      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): <b>azul</b> = manos fuertes (institucionales), <b>verde</b> = minoristas, <b>marrón</b> = tendencia y <b>línea roja</b> = su media. Azul sobre 0 = las manos fuertes compran; marrón cruzando arriba de la roja = giro alcista (y al revés). También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
       <div class="inds hide" id="inds"></div>
-      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
+      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
     </div>
     <section class="dash hide" id="dash">
       <div class="dcard gauge">
@@ -502,6 +507,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
     <details class="alr-d" id="alrD" open><summary>Mis alertas de precio <span class="mut" id="alrN"></span><button class="plus" id="alrPlus" title="Nueva alerta" aria-label="Nueva alerta">+</button></summary>
       <div class="alr-in"><div id="alrForm"></div><div id="alrBox"></div></div></details></section>
+  <section><h4>📲 Avisos por Telegram o WhatsApp</h4><div id="rmtBox"></div></section>
 </div></div>
 <script>
 const API = 'https://api.binance.com/api/v3';
@@ -518,30 +524,30 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 5m', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '5m', bars: 180,
-    inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd']
+    inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd','kon']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','macd','adx','stochrsi','cvd'],
-    def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','macd','adx','stochrsi','cvd','kon'],
+    def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
     name: 'ACCIONES', tag: 'BYMA · pesos',
     desc: 'Acciones argentinas y CEDEARs (acciones de EE. UU. en pesos)',
     info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 8, stop al 7 % (−56.000 ARS), salvavidas 50.000 ARS'],
     tf: '1d', bars: 160,
-    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd'],
-    def: ['liq','trend','supertrend','ema','vprofile','rsi','macd','adx','cvd']
+    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','macd','adx','cvd','kon'],
+    def: ['liq','trend','supertrend','ema','vprofile','rsi','macd','adx','cvd','kon']
   }
 };
 let mode = 'medio';
@@ -616,6 +622,7 @@ const IND = {
   liq:       {name:'Zonas de liquidación',color:'#ffd166', pane:false},
   rsi:       {name:'RSI (14)',            color:'#b388ff', pane:true},
   macd:      {name:'MACD (12,26,9)',      color:'#2962ff', pane:true},
+  kon:       {name:'MACD Konkorde',       color:'#66ff66', pane:true},
   adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true}
 };
 let active = new Set();
@@ -627,6 +634,8 @@ const OS = {
          macd:chart.addLineSeries(lineOpt('macd','#2962ff')), sig:chart.addLineSeries(lineOpt('macd','#ff9800'))},
   stochrsi:{k:chart.addLineSeries({...lineOpt('stochrsi','#26c6da'),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})}), d:chart.addLineSeries({...lineOpt('stochrsi','#ff7043',1),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})})},
   cvd:  {cvd:chart.addLineSeries(lineOpt('cvd','#ffd166'))},
+  kon:  {verde:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(102,255,102,.55)',priceLineVisible:false,lastValueVisible:false,visible:false}),marron:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(255,204,153,.8)',priceLineVisible:false,lastValueVisible:false,visible:false}),
+         azul:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(0,229,255,.8)',priceLineVisible:false,lastValueVisible:false,visible:false}),media:chart.addLineSeries(lineOpt('kon','#ff1744',1.5))},
   adx:  {adx:chart.addLineSeries(lineOpt('adx','#e0e0e0',2)), pdi:chart.addLineSeries(lineOpt('adx','#26a69a',1)), mdi:chart.addLineSeries(lineOpt('adx','#ef5350',1))}
 };
 [70,30].forEach(p=>OS.rsi.rsi.createPriceLine({price:p,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false}));
@@ -654,6 +663,20 @@ function calcRSI(p=14){const c=closes(),o=Array(c.length).fill(null);let g=0,l=0
 function calcMACD(pf=12,ps=26,pg=9){const c=closes(),f=emaArr(c,pf),s=emaArr(c,ps);
   const m=c.map((_,i)=>f[i]!=null&&s[i]!=null?f[i]-s[i]:null),sig=emaArr(m,pg);
   return {macd:m,sig,hist:m.map((x,i)=>x!=null&&sig[i]!=null?x-sig[i]:null)};}
+/* MACD Konkorde (Blai5): azul = manos fuertes (índice de volumen negativo), verde = minoristas (índice de volumen positivo),
+   marrón = tendencia (RSI + MFI + oscilador de Bollinger + estocástico), línea roja = media de 15 del marrón. */
+function calcKon(){const n=candles.length,tp=candles.map(b=>(b.open+b.high+b.low+b.close)/4),hl=candles.map(b=>(b.high+b.low+b.close)/3),vol=candles.map(b=>b.v||0);
+  const pvi=Array(n).fill(1000),nvi=Array(n).fill(1000);
+  for(let i=1;i<n;i++){const r=tp[i-1]?(tp[i]-tp[i-1])/tp[i-1]:0;pvi[i]=vol[i]>vol[i-1]?pvi[i-1]*(1+r):pvi[i-1];nvi[i]=vol[i]<vol[i-1]?nvi[i-1]*(1+r):nvi[i-1];}
+  const osc=v=>{const m=emaArr(v,15),o=Array(n).fill(null);for(let i=0;i<n;i++){if(m[i]==null)continue;let mx=-Infinity,mn=Infinity;for(let j=Math.max(0,i-89);j<=i;j++){if(m[j]==null)continue;if(m[j]>mx)mx=m[j];if(m[j]<mn)mn=m[j];}o[i]=mx>mn?(v[i]-m[i])*100/(mx-mn):0;}return o;};
+  const oscp=osc(pvi),az=osc(nvi);
+  const mfi=Array(n).fill(null);for(let i=14;i<n;i++){let p=0,q=0;for(let j=i-13;j<=i;j++){const ch=hl[j]-hl[j-1],f=vol[j]*hl[j];if(ch>0)p+=f;else if(ch<0)q+=f;}mfi[i]=q===0?100:100-100/(1+p/q);}
+  const rsi=Array(n).fill(null);{let g=0,l=0;for(let i=1;i<n;i++){const d=tp[i]-tp[i-1],u=Math.max(d,0),w=Math.max(-d,0);if(i<=14){g+=u;l+=w;if(i===14){g/=14;l/=14;rsi[i]=l===0?100:100-100/(1+g/l);}}else{g=(g*13+u)/14;l=(l*13+w)/14;rsi[i]=l===0?100:100-100/(1+g/l);}}}
+  const [bm,bs]=smaStd(tp,25),bo=tp.map((x,i)=>bm[i]==null||!bs[i]?null:(x-bm[i])/(4*bs[i])*100);
+  const raw=Array(n).fill(null);for(let i=20;i<n;i++){let h=-Infinity,lo=Infinity;for(let j=i-20;j<=i;j++){if(candles[j].high>h)h=candles[j].high;if(candles[j].low<lo)lo=candles[j].low;}raw[i]=h>lo?100*(tp[i]-lo)/(h-lo):50;}
+  const sto=raw.map((x,i)=>i<22||raw[i-2]==null?null:(x+raw[i-1]+raw[i-2])/3);
+  const marron=Array(n).fill(null);for(let i=0;i<n;i++)if(rsi[i]!=null&&mfi[i]!=null&&bo[i]!=null&&sto[i]!=null)marron[i]=(rsi[i]+mfi[i]+bo[i]+sto[i]/3)/2;
+  return {verde:marron.map((x,i)=>x==null||oscp[i]==null?null:x+oscp[i]),marron,azul:az.map((x,i)=>marron[i]==null?null:x),media:emaArr(marron,15)};}
 function calcADX(p=14){const n=candles.length,pdm=[0],mdm=[0];
   for(let i=1;i<n;i++){const up=candles[i].high-candles[i-1].high,dn=candles[i-1].low-candles[i].low;
     pdm.push(up>dn&&up>0?up:0);mdm.push(dn>up&&dn>0?dn:0);}
@@ -681,6 +704,7 @@ function calcInd(full){
   if(full)for(const k in OS)if(!active.has(k))for(const s in OS[k])OS[k][s].setData([]);
   if(active.has('rsi')) C.rsi=calcRSI(PRM[mode].rsi);
   if(active.has('macd')) C.macd=calcMACD(...(PRM[mode].macd||[]));
+  if(active.has('kon')) C.kon=calcKon();
   if(active.has('adx')) C.adx=calcADX(PRM[mode].adx||14);
   if(active.has('supertrend')) C.st=calcST(...PRM[mode].st);
   if(active.has('ichimoku')) C.ichi=calcIchi(...(PRM[mode].ichi||[]));
@@ -697,6 +721,7 @@ function calcInd(full){
   if(active.has('rsi')) push(OS.rsi.rsi,C.rsi);
   if(active.has('macd')){push(OS.macd.macd,C.macd.macd);push(OS.macd.sig,C.macd.sig);
     push(OS.macd.hist,C.macd.hist,(v,i)=>{const pr=C.macd.hist[i-1];return v>=0?(pr!=null&&v<pr?'rgba(38,166,154,.45)':'#26a69a'):(pr!=null&&v>pr?'rgba(239,83,80,.45)':'#ef5350');});}
+  if(active.has('kon')){push(OS.kon.verde,C.kon.verde);push(OS.kon.marron,C.kon.marron);push(OS.kon.azul,C.kon.azul);push(OS.kon.media,C.kon.media);}
   if(active.has('adx')){push(OS.adx.adx,C.adx.adx);push(OS.adx.pdi,C.adx.pdi);push(OS.adx.mdi,C.adx.mdi);}
   if(active.has('stochrsi')){push(OS.stochrsi.k,C.srsi.k);push(OS.stochrsi.d,C.srsi.d);}
   if(active.has('cvd'))push(OS.cvd.cvd,C.cvd);
@@ -704,7 +729,7 @@ function calcInd(full){
 }
 
 /* ---- distribución de paneles ---- */
-const PANE=.16;
+let PANE=.16;
 
 function calcVWAP(){const n=candles.length,v=Array(n).fill(null),u1=Array(n).fill(null),l1=Array(n).fill(null),u2=Array(n).fill(null),l2=Array(n).fill(null);let day=-1,spv=0,sv=0,sp2v=0;
   for(let i=0;i<n;i++){const b=candles[i],d=Math.floor(b.t/864e5);const nd=d!==day;if(nd){day=d;spv=sv=sp2v=0;}const tp=(b.high+b.low+b.close)/3,vol=b.v||0;spv+=tp*vol;sv+=vol;sp2v+=tp*tp*vol;
@@ -717,9 +742,9 @@ function calcStochRSI(pr=14,ps=14,pk=3,pd=3){const r=calcRSI(pr),n=r.length,st=A
 const barDelta=b=>{const tb=b.tb!=null&&!isNaN(b.tb)?b.tb:b.v/2;return 2*tb-b.v;};
 function calcCVD(){let c=0,day=-1;return candles.map(b=>{const d=Math.floor(b.t/864e5);if(d!==day){day=d;if(mode!=='a')c=0;}c+=barDelta(b);return c;});}
 function flowScore(cs,i,n){let ds=0,av=0;for(let j=Math.max(0,i-n+1);j<=i;j++){ds+=barDelta(cs[j]);av+=cs[j].v;}return av?ds/av*2.5:0;}
-function oscList(){return ['rsi','stochrsi','macd','adx','cvd'].filter(k=>active.has(k));}
+function oscList(){return ['rsi','stochrsi','macd','kon','adx','cvd'].filter(k=>active.has(k));}
 function layout(){
-  const os=oscList(),block=os.length*PANE;
+  const os=oscList();PANE=os.length>=4?.13:.16;const block=os.length*PANE;
   series.priceScale().applyOptions({scaleMargins:{top:.06,bottom:block+.1}});
   chart.priceScale('vol').applyOptions({scaleMargins:{top:1-block-.12,bottom:block+.005}});
   os.forEach((k,i)=>{const st=1-block+i*PANE;chart.priceScale(k).applyOptions({scaleMargins:{top:st+.03,bottom:Math.max(0,1-st-PANE+.012)}});});
@@ -744,6 +769,8 @@ function signals(){
   if(active.has('rsi')&&C.rsi){const r=C.rsi[i];if(r!=null)add('rsi',(r-50)/20,r.toFixed(1)+(r>70?' sobrecompra':r<30?' sobreventa':''));}
   if(active.has('macd')&&C.macd){const m=C.macd.macd[i],s=C.macd.sig[i],h=C.macd.hist[i],hp=C.macd.hist[i-1];
     if(m!=null&&s!=null)add('macd',(m>s?.7:-.7)+(h!=null&&hp!=null?(h>hp?.3:-.3):0),(m>s?'sobre señal':'bajo señal')+(h>hp?', impulso sube':', impulso baja'));}
+  if(active.has('kon')&&C.kon){const ma=C.kon.marron[i],me=C.kon.media[i],az=C.kon.azul[i],ve=C.kon.verde[i];
+    if(ma!=null&&me!=null&&az!=null)add('kon',(ma>me?.45:-.45)+clamp(az/30)*.55,(az>0?'manos fuertes compran':'manos fuertes venden')+(ma>me?', tendencia sobre su media':', tendencia bajo su media')+(ve!=null&&ve>ma?', minoristas compran':''));}
   if(active.has('adx')&&C.adx){const a=C.adx.adx[i],p=C.adx.pdi[i],m=C.adx.mdi[i];
     if(a!=null)add('adx',((p-m)/((p+m)||1))*2*Math.min(1,a/25),'fuerza '+a.toFixed(0)+(a<20?' (sin tendencia)':p>m?', +DI domina':', −DI domina'));}
   if(active.has('vwap')&&C.vwap){const v=C.vwap.v[i],u=C.vwap.u1[i];if(v!=null){const z=(c-v)/((u-v)||1);add('vwap',z*.6,c>v?(z>2?'muy por encima del VWAP':'sobre el VWAP'):(z<-2?'muy por debajo del VWAP':'bajo el VWAP'));}}
@@ -902,6 +929,7 @@ function drawInd(ctx,w,h){
     let txt=IND[k].name;
     if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
     if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
+    if(k==='kon'&&C.kon)txt+=`  azul ${(C.kon.azul[i]??0).toFixed(1)}  marrón ${(C.kon.marron[i]??0).toFixed(1)}  media ${(C.kon.media[i]??0).toFixed(1)}`;
     if(k==='stochrsi'&&C.srsi)txt+=`  K ${(C.srsi.k[i]??0).toFixed(1)}  D ${(C.srsi.d[i]??0).toFixed(1)}`;
     if(k==='cvd'&&C.cvd)txt+=`  ${fnum(C.cvd[i]??0)} ${symbol.replace('USDT','')}`;
     if(k==='adx'&&C.adx)txt+=`  ADX ${(C.adx.adx[i]??0).toFixed(1)}  +DI ${(C.adx.pdi[i]??0).toFixed(1)}  −DI ${(C.adx.mdi[i]??0).toFixed(1)}`;
@@ -1268,6 +1296,7 @@ function applyMode(m){
   setNames();
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
   try{if(saved&&!saved.includes('trend')&&!localStorage.getItem('cv_tr_'+m)){saved.push('trend');localStorage.setItem('cv_tr_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
+  try{if(saved&&!saved.includes('kon')&&!localStorage.getItem('cv_kon_'+m)){saved.push('kon');localStorage.setItem('cv_kon_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   active=new Set((saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
@@ -1348,11 +1377,12 @@ $('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dat
 /* ---------- herramientas ---------- */
 const hints={cursor:'Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla',
   ruler:'Toca un punto y arrastra para medir · Esc para salir',
-  hline:'Clic en el gráfico para colocar una línea horizontal'};
+  hline:'Clic en el gráfico para colocar una línea horizontal',
+  erase:'Tocá la línea que querés borrar · Esc para cancelar'};
 function setTool(t){
   tool=t;
   document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  $('hint').textContent=hints[t];
+  $('hint').textContent=hints[t];if($('ersTip')){$('ersTip').hidden=t!=='erase';$('ersTip').firstChild.textContent='🧽 Tocá la línea que querés borrar';$('ersAll').hidden=(hlines[symbol]||[]).length<2;}
   chart.applyOptions({handleScroll:{pressedMouseMove:t==='cursor',horzTouchDrag:t==='cursor',vertTouchDrag:t==='cursor'}});
   $('chart').style.touchAction=t==='cursor'?'':'none';
   $('chart').style.cursor=t==='cursor'?'':'crosshair';
@@ -1397,6 +1427,7 @@ chart.subscribeClick(p=>{
   const price=series.coordinateToPrice(p.point.y);
   const l=chart.timeScale().coordinateToLogical(p.point.x);
   if(price==null||l==null) return;
+  if(tool==='erase'){ eraseAt(p.point.y); return; }
   if(tool==='hline'){ addLine(price); setTool('cursor'); }
   else if(tool==='ruler'){}
   else if(ruler&&ruler.phase===2) ruler=null;
@@ -1420,14 +1451,22 @@ function addLine(price,save=true){
   (hlines[symbol]=hlines[symbol]||[]).push({price,line});
   if(save) saveLines();
 }
-function saveLines(){try{const o={};for(const s in hlines)o[s]=hlines[s].map(h=>h.price);localStorage.setItem('cv_lines',JSON.stringify(o));}catch(e){}cloudSave();}
+function saveLines(){try{const o={};for(const s in hlines)o[s]=hlines[s].map(h=>h.price);localStorage.setItem('cv_lines',JSON.stringify(o));localStorage.setItem('cv_lines_t',String(Date.now()));}catch(e){}cloudSave(true);}
 function restoreLines(){
   for(const s in hlines) hlines[s].forEach(h=>{try{series.removePriceLine(h.line)}catch(e){}});
   let saved={};try{saved=JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){}
   hlines={};(saved[symbol]||[]).forEach(p=>addLine(p,false));
   for(const s in saved) if(s!==symbol) hlines[s]=saved[s].map(p=>({price:p,line:null}));
 }
-$('clear').onclick=()=>{(hlines[symbol]||[]).forEach(h=>h.line&&series.removePriceLine(h.line));hlines[symbol]=[];ruler=null;saveLines();};
+$('clear').onclick=()=>setTool(tool==='erase'?'cursor':'erase');
+function eraseAt(y){const arr=hlines[symbol]||[];let bi=-1,bd=1e9;
+  arr.forEach((h,i)=>{const yy=series.priceToCoordinate(h.price);if(yy!=null&&Math.abs(yy-y)<bd){bd=Math.abs(yy-y);bi=i;}});
+  const tol=matchMedia('(pointer:coarse)').matches?24:12;
+  if(bi>-1&&bd<=tol){try{series.removePriceLine(arr[bi].line)}catch(e){}arr.splice(bi,1);saveLines();setTool('cursor');return;}
+  if(ruler){ruler=null;setTool('cursor');return;}
+  $('ersTip').firstChild.textContent=arr.length?'No hay una línea ahí: tocá justo sobre la línea':'No hay líneas en esta moneda';}
+$('ersX').onclick=e=>{e.stopPropagation();setTool('cursor');};
+$('ersAll').onclick=e=>{e.stopPropagation();(hlines[symbol]||[]).forEach(h=>h.line&&series.removePriceLine(h.line));hlines[symbol]=[];ruler=null;saveLines();setTool('cursor');};
 $('fit').onclick=fitView;
 
 /* pantalla completa */
@@ -1571,8 +1610,8 @@ let favs=new Set(),favOnly=false,fbUser=null,fbDb=null,cloudTimer=null,cloudRead
 try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
-function cloudSave(){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{
-  fbDb.collection('users').doc(fbUser.uid).set({lines:readLocalLines(),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},800);}
+function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
+  fbDb.collection('users').doc(fbUser.uid).set({lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
@@ -1587,14 +1626,16 @@ function renderAcct(msg){const el=$('acct');
 function initCloud(){
   if(!FIREBASE_CONFIG||!window.firebase){renderAcct();return;}
   try{firebase.initializeApp(FIREBASE_CONFIG);fbDb=firebase.firestore();}catch(e){console.warn(e);return;}
-  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;renderAcct();if(!u)return;
+  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;renderAcct();if(!u){if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
     try{const snap=await fbDb.collection('users').doc(u.uid).get(),d=snap.exists?snap.data():{};
-      const local=readLocalLines(),merged={...local};
-      for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];
-      try{localStorage.setItem('cv_lines',JSON.stringify(merged))}catch(e){}
+      const local=readLocalLines(),lt=+(localStorage.getItem('cv_lines_t')||0);let merged;
+      if(!d.linesT){merged={...local};for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];}else merged=lt>d.linesT?local:(d.lines||{});
+      try{localStorage.setItem('cv_lines',JSON.stringify(merged));localStorage.setItem('cv_lines_t',String(Math.max(lt,d.linesT||0)||Date.now()));}catch(e){}
       (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);if(d.cu&&typeof d.cu==='object'){CU=normCu(d.cu);try{localStorage.setItem('cv_custom',JSON.stringify(CU))}catch(e){}if(mode==='p'){setNames();if(candles.length)calcInd(true);renderChips();}}try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
     }catch(e){console.warn('No se pudo leer la nube',e);}
-    cloudReady=true;restoreLines();renderList();cloudSave();});
+    cloudReady=true;restoreLines();renderList();cloudSave();
+    try{if(window.__unsubLines)window.__unsubLines();window.__unsubLines=fbDb.collection('users').doc(u.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.data()||{},lt=+(localStorage.getItem('cv_lines_t')||0);
+      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}});}catch(e){}});
 }
 loadTickers();applyMode('medio');initCloud();setInterval(renderLegend,1500);
 
@@ -1957,7 +1998,7 @@ function applyLL(o,ts){const d=o.dir,px=o.llAt,s=o.liqD||lossOf(o)/notOf(o);
   o.ae=(o.entry+.5*px)/1.5;o.sz=1.5;o.fail=o.ae*(1-d*s);o.loss=1.5*notOf(o)*s;o.ll={t:ts,px,why:llWhy(o.m),margin:o.llMargin||SIM[o.m].margin/2};
   const sg=(SIG[o.m]||[]).find(x=>x.op===o.id);if(sg){sg.ll=true;sg.sl=o.fail;saveSig();}
   notifyLL(o);}
-function notifyLL(o){if(typeof NTF==='undefined'||!NTF.on||!NTF[o.m]||!canNotify||Notification.permission!=='granted')return;
+function notifyLL(o){if(typeof NTF==='undefined'||!NTF[o.m]||!ntfAny())return;
   const c=o.sym.replace('USDT',''),mg=o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD';
   notify(`🟡🛟 SALVAVIDAS · ${SIGCFG[o.m].name} ${o.dir>0?'▲ LONG':'▼ SHORT'} ${c}`,`Se suman ${mg} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)}: ${o.ll.why}. Entrada promedio ${fp(o.ae)} · nuevo stop ${fp(o.fail)}.`,'ll-'+o.id,{sym:o.sym,tf:SIGCFG[o.m].tf,m:o.m});}
 function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;if(o.llPend){llResolve(o);continue;}const t=tickers[o.sym];if(!t)continue;const r=stepOp(o,t.c,t.c,now);if(r==='ll')llResolve(o);else if(r)ch=true;o.last=now;}if(ch)saveOps();}
@@ -2054,13 +2095,13 @@ async function askNotif(){
   if(NTF.on)notify('Avisos activados','Te voy a avisar cuando aparezca una señal nueva de TRADING o SHOOTER.','cl-ok',null);
   else if(r==='denied')appBar('<b>Avisos bloqueados</b><span>Para activarlos, abre los permisos del sitio o de la app y permite las notificaciones.</span>',[['Entendido','pri',()=>{}]]);
 }
-async function notify(title,body,tag,data){
+async function notifyLocal(title,body,tag,data){
   try{const reg=swReg||(navigator.serviceWorker&&await navigator.serviceWorker.getRegistration());
     const o={body,tag:tag||undefined,icon:'icon-192.png',badge:'icon-192.png',data:data||{},vibrate:[120,60,120],renotify:!!tag};
     if(reg)await reg.showNotification(title,o);else new Notification(title,o);}catch(e){}
 }
 function notifySig(m,f){
-  if(!NTF.on||!NTF[m]||!canNotify||Notification.permission!=='granted')return;
+  if(!NTF[m]||!ntfAny())return;
   const L=f.dir>0,c=f.sym.replace('USDT','');
   notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)} · Salvavidas en ${fp(f.entry*(1-f.dir*SIM[m].maxLoss/(SIM[m].margin*SIM[m].lev)*LLTH))} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
 }
@@ -2098,16 +2139,16 @@ $('hamb').onclick=()=>drawer(true);$('drwBg').onclick=$('drwX').onclick=()=>draw
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('drw').classList.contains('open'))drawer(false);});
 function renderDrw(){
   document.querySelectorAll('#drwModes .mcard').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
-  const on=k=>permOK()&&NTF.on&&NTF[k];
+  const on=k=>ntfAny()&&NTF[k];
   $('drwNtf').innerHTML=(permOK()?'':`<button class="mcard" data-t="ask" style="text-align:center"><b>🔔 Permitir notificaciones</b><small>${canNotify?'Hace falta para que el celu te muestre los avisos':(isIOS?'En iPhone primero instala la app en la pantalla de inicio':'Este navegador no permite avisos')}</small></button>`)+
     [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['a','Señales ACCIONES','Avisa cuando aparece una señal de acciones o CEDEARs'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
     .map(([k,t,d])=>`<div class="tg"><div>${t}<small>${d}</small></div><button class="tsw${on(k)?' on':''}" data-t="${k}" role="switch" aria-checked="${on(k)}" aria-label="${t}"></button></div>`).join('');
-  renderAlrList();
+  renderAlrList();if(typeof rmtRender==='function')rmtRender();
 }
 $('drwNtf').onclick=async e=>{const b=e.target.closest('button');if(!b)return;const k=b.dataset.t;
   if(k==='ask'){await askNotif();renderDrw();return;}
-  if(permOK()&&NTF.on&&NTF[k])NTF[k]=false;
-  else{if(!permOK()){await askNotif();if(!permOK()){renderDrw();return;}}NTF.on=true;NTF[k]=true;}
+  if(ntfAny()&&NTF[k])NTF[k]=false;
+  else{if(!permOK()&&!rmtOn()){await askNotif();if(!permOK()){renderDrw();return;}}if(permOK())NTF.on=true;NTF[k]=true;}
   saveNtf();renderNtf();renderDrw();};
 $('drwModes').onclick=e=>{const b=e.target.closest('.mcard');if(!b)return;if(b.dataset.m!==mode)applyMode(b.dataset.m);renderDrw();renderHist();setTimeout(()=>drawer(false),250);};
 /* alertas de precio */
@@ -2154,7 +2195,7 @@ $('alrPlus').onclick=e=>{e.preventDefault();e.stopPropagation();openAlrForm('');
 $('alertBtn').onclick=()=>{drawer(true);openAlrForm(symbol);};
 function fireAlert(a,p){const c=a.sym.replace('USDT',''),msg=`${c} ${a.dir>0?'subió a':'bajó a'} ${fp(a.price)} · ahora ${fp(p)}`;
   try{navigator.vibrate&&navigator.vibrate([200,100,200]);}catch(e){}
-  if(permOK()&&NTF.on&&NTF.alert)notify('🔔 Alerta de precio: '+c,msg,'alr-'+a.id,{sym:a.sym});
+  if(NTF.alert&&ntfAny())notify('🔔 Alerta de precio: '+c,msg,'alr-'+a.id,{sym:a.sym});
   appBar(`<b>🔔 Alerta de precio</b><span>${esc(msg)}</span>`,[['Cerrar','sec',()=>{}],['Ver gráfico','pri',()=>openFromNotif({sym:a.sym})]]);}
 function checkAlerts(){let ch=false;
   for(const a of ALR){if(a.done)continue;const p=tickers[a.sym]?.c;if(!p)continue;
@@ -2751,7 +2792,7 @@ function pilAnalyze(p,D,c){
   else if(pf>0&&pf>=atr){st='stop';title='✅ DEJÁ CORRER: mové el stop a la entrada';txt=`Vas ganando ${pilMoney(usd)} y la tendencia acompaña. Con el stop en ${fp(avg)} ya no podés perder.${res!=null?` Próxima ${d>0?'resistencia':'soporte'}: ${fp(res)}.`:''}`;}
   else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra.${exitAt?` Salí si toca ${fp(exitAt)}.`:''}`;}
   return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt};}
-function pilNotify(p,a){if(!a.act||!NTF.on||!canNotify||Notification.permission!=='granted')return;
+function pilNotify(p,a){if(!a.act||!ntfAny())return;
   notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:'1h',m:'medio'});}
 let pilBusy=false;
 async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
@@ -2930,6 +2971,62 @@ big:'<b>🐋 Órdenes grandes</b><br>Muestra operaciones ya ejecutadas en futuro
 document.addEventListener('click',e=>{const b=e.target.closest('.i-btn');if(!b)return;e.preventDefault();const k=b.dataset.i;
   const box=b.closest('section,.dcard,#chartWrap,.jrn')?.querySelector(`.i-box[data-i="${k}"]`)||document.querySelector(`.i-box[data-i="${k}"]`);if(!box)return;
   const open=box.hidden;box.hidden=!open;b.setAttribute('aria-expanded',String(open));if(open)INFO_OPEN.add(k);else INFO_OPEN.delete(k);});
+
+/* ---------- escala logarítmica ---------- */
+let LOGS=true;try{LOGS=localStorage.getItem('cv_log')!=='0';}catch(e){}
+function applyLog(){series.priceScale().applyOptions({mode:LOGS?LightweightCharts.PriceScaleMode.Logarithmic:LightweightCharts.PriceScaleMode.Normal});$('logBtn').classList.toggle('on',LOGS);hmKey='';}
+applyLog();$('logBtn').onclick=()=>{LOGS=!LOGS;try{localStorage.setItem('cv_log',LOGS?'1':'0')}catch(e){}applyLog();};
+/* si cerrás o cambiás de pestaña, guarda en la nube lo que esté pendiente */
+addEventListener('pagehide',()=>{if(cloudTimer)cloudSave(true);});
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden'&&cloudTimer)cloudSave(true);});
+/* ---------- avisos por Telegram y WhatsApp ---------- */
+var RMT={tg:{token:'',chat:'',on:false},wa:{phone:'',key:'',on:false}};
+try{const r=JSON.parse(localStorage.getItem('cv_rmt')||'null');if(r){Object.assign(RMT.tg,r.tg||{});Object.assign(RMT.wa,r.wa||{});}}catch(e){}
+const saveRmt=()=>{try{localStorage.setItem('cv_rmt',JSON.stringify(RMT))}catch(e){}};
+function rmtOn(){return !!((RMT.tg.on&&RMT.tg.token&&RMT.tg.chat)||(RMT.wa.on&&RMT.wa.phone&&RMT.wa.key));}
+function ntfAny(){return (NTF.on&&permOK())||rmtOn();}
+function notify(title,body,tag,data){if(NTF.on&&permOK())notifyLocal(title,body,tag,data);if(tag!=='cl-ok')rmtSend(title,body,data);}
+async function rmtSend(title,body,data,force){
+  const link=location.origin+location.pathname+(data&&data.sym?`?sym=${data.sym}${data.tf?'&tf='+data.tf:''}${data.m?'&m='+data.m:''}`:'');
+  const txt=`${title}\n${body}\n${link}`,out={};
+  if((force||RMT.tg.on)&&RMT.tg.token&&RMT.tg.chat){try{const r=await fetch(`https://api.telegram.org/bot${RMT.tg.token}/sendMessage`,{method:'POST',body:new URLSearchParams({chat_id:RMT.tg.chat,text:txt,disable_web_page_preview:'true'})});out.tg=(await r.json()).ok;}catch(e){out.tg=false;}}
+  if((force||RMT.wa.on)&&RMT.wa.phone&&RMT.wa.key){try{await fetch(`https://api.callmebot.com/whatsapp.php?phone=${encodeURIComponent(RMT.wa.phone.replace(/[^\d+]/g,''))}&text=${encodeURIComponent(txt)}&apikey=${encodeURIComponent(RMT.wa.key)}`,{mode:'no-cors'});out.wa=true;}catch(e){out.wa=false;}}
+  return out;}
+let rmtOpen=null,rmtMsg='';
+function rmtRender(){const el=$('rmtBox');if(!el)return;const tg=RMT.tg,wa=RMT.wa,tOn=!!(tg.on&&tg.chat),wOn=!!(wa.on&&wa.key);
+  el.innerHTML=`<p class="rmt-n">Te llegan como mensaje los mismos avisos que activaste arriba: señales, salvavidas, Pilotear y alertas de precio. <b>Funciona mientras CRIPTO-LIVE esté abierto</b> en algún dispositivo (por ejemplo, la compu prendida con la página abierta, aunque esté minimizada).</p>
+  <div class="tg"><div>✈️ Telegram<small>${tg.chat?(tOn?'Conectado':'Conectado · pausado'):'Sin conectar · tocá para configurar'}</small></div><button class="tsw${tOn?' on':''}" data-r="tg" role="switch" aria-checked="${tOn}" aria-label="Avisos por Telegram"></button></div>
+  ${rmtOpen==='tg'?`<div class="rmt-f"><ol><li>En Telegram buscá <b>@BotFather</b>, mandale <b>/newbot</b> y elegí un nombre. Te da un <b>token</b> (algo como 123456789:AAH…).</li><li>Abrí el chat con tu bot nuevo y mandale cualquier mensaje, por ejemplo "hola".</li><li>Pegá el token acá y tocá Conectar.</li></ol><input id="rmtTok" type="text" autocomplete="off" spellcheck="false" placeholder="Token de tu bot" value="${esc(tg.token)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="tgGo">Conectar</button></div></div>`:''}
+  <div class="tg"><div>💬 WhatsApp<small>${wa.key?(wOn?'Conectado':'Conectado · pausado'):'Sin conectar · tocá para configurar'} · vía CallMeBot</small></div><button class="tsw${wOn?' on':''}" data-r="wa" role="switch" aria-checked="${wOn}" aria-label="Avisos por WhatsApp"></button></div>
+  ${rmtOpen==='wa'?`<div class="rmt-f"><ol><li>Seguí los pasos de <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank" rel="noopener">CallMeBot</a> (servicio gratis): agendá su número y mandale por WhatsApp el mensaje que indica. Te responde con tu <b>apikey</b>.</li><li>Poné tu número con código de país y la apikey.</li></ol><input id="rmtPh" type="tel" autocomplete="off" placeholder="Tu número, ej. +5491122334455" value="${esc(wa.phone)}"><input id="rmtKey" type="text" autocomplete="off" spellcheck="false" placeholder="apikey de CallMeBot" value="${esc(wa.key)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="waGo">Conectar</button></div></div>`:''}
+  ${rmtMsg?`<div class="rmt-m">${rmtMsg}</div>`:''}
+  ${(tg.chat||wa.key)&&!rmtOpen?`<div class="rmt-a"><button data-r="test">Mandar mensaje de prueba</button>${tg.chat?'<button data-r="tgEdit">Cambiar Telegram</button>':''}${wa.key?'<button data-r="waEdit">Cambiar WhatsApp</button>':''}</div>`:''}`;}
+$('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;const r=b.dataset.r;
+  if(r==='tg'){if(RMT.tg.chat){RMT.tg.on=!RMT.tg.on;saveRmt();rmtMsg='';}else{rmtOpen='tg';rmtMsg='';}}
+  else if(r==='wa'){if(RMT.wa.key){RMT.wa.on=!RMT.wa.on;saveRmt();rmtMsg='';}else{rmtOpen='wa';rmtMsg='';}}
+  else if(r==='cancel'){rmtOpen=null;rmtMsg='';}
+  else if(r==='tgEdit'){rmtOpen='tg';rmtMsg='';}else if(r==='waEdit'){rmtOpen='wa';rmtMsg='';}
+  else if(r==='tgGo'){const tok=($('rmtTok').value||'').trim();
+    if(!/^\d{6,}:[\w-]{20,}$/.test(tok)){rmtMsg='Ese token no tiene el formato correcto. Copialo completo del mensaje de @BotFather.';rmtRender();return;}
+    rmtMsg='Conectando…';rmtRender();
+    try{const me=await (await fetch(`https://api.telegram.org/bot${tok}/getMe`)).json();
+      if(!me.ok){rmtMsg='Telegram no reconoce ese token. Revisá que esté completo.';rmtRender();return;}
+      const up=await (await fetch(`https://api.telegram.org/bot${tok}/getUpdates?limit=100`)).json();
+      const msgs=(up.result||[]).map(u=>u.message||u.edited_message||u.channel_post||u.my_chat_member).filter(Boolean);const last=msgs.pop();
+      if(!last||!last.chat){RMT.tg.token=tok;saveRmt();rmtMsg=`Token correcto (bot @${esc(me.result.username)}). Ahora abrí el chat con <b>@${esc(me.result.username)}</b> en Telegram, mandale "hola" y tocá Conectar otra vez.`;rmtRender();return;}
+      RMT.tg={token:tok,chat:String(last.chat.id),on:true};saveRmt();rmtOpen=null;
+      const ok=await rmtSend('✅ CRIPTO-LIVE conectado','A partir de ahora te llegan acá los avisos que tengas activados.',null,true);
+      rmtMsg=ok.tg?'Listo: te mandé un mensaje de prueba por Telegram.':'Se conectó, pero no pude mandar el mensaje de prueba. Probá con "Mandar mensaje de prueba".';}
+    catch(err){rmtMsg='No se pudo conectar con Telegram. Revisá tu conexión e intentá de nuevo.';}}
+  else if(r==='waGo'){const ph=($('rmtPh').value||'').trim(),k=($('rmtKey').value||'').trim();
+    if(!/^\+?\d{8,15}$/.test(ph.replace(/[\s-]/g,''))||!k){rmtMsg='Poné tu número con código de país (ej. +5491122334455) y la apikey que te mandó CallMeBot.';rmtRender();return;}
+    RMT.wa={phone:ph.replace(/[\s-]/g,''),key:k,on:true};saveRmt();rmtOpen=null;
+    await rmtSend('✅ CRIPTO-LIVE conectado','A partir de ahora te llegan acá los avisos que tengas activados.',null,true);
+    rmtMsg='Te mandé un mensaje de prueba por WhatsApp. Si no te llega en 1 o 2 minutos, revisá el número y la apikey.';}
+  else if(r==='test'){const ok=await rmtSend('🧪 Prueba de CRIPTO-LIVE','Así te van a llegar los avisos.',{sym:symbol},true);
+    rmtMsg=[RMT.tg.chat?(ok.tg?'Telegram: enviado ✓':'Telegram: no se pudo enviar ✕'):'',RMT.wa.key?'WhatsApp: enviado (revisá tu celu)':''].filter(Boolean).join(' · ');}
+  rmtRender();if(typeof renderDrw==='function'&&$('drw').classList.contains('open'))renderDrw();};
+rmtRender();
 </script>
 </body>
 </html>
