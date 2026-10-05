@@ -113,7 +113,8 @@ async function main() {
 
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
-    const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0;
+    const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0;
+    if (m === 'medio') { try { const bk = await kl('BTCUSDT', '4h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     for (const s of U) {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
       if (S.open.some(o => o.sym === s && o.m === m)) continue;
@@ -121,8 +122,10 @@ async function main() {
         const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
         const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc); if (!e.dir) continue;
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
-        const conf = CAL[m].p; if (conf < MINCERT[m]) continue;
-        const d = e.dir, Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
+        const d = e.dir; let conf = CAL[m].p;
+        if (m === 'medio' && btcDir) { if (btcDir === d) { conf += 2; e.reasons.push('BTC a favor'); } else { conf -= 5; e.reasons.push('BTC en contra: algo menos confiable'); } }
+        if (conf < MINCERT[m]) continue;
+        const Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
         await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}`);

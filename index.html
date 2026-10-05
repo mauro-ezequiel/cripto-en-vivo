@@ -300,6 +300,7 @@ body.fs-on .fsbar{display:flex}
 .int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
 .int-n{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}.pil-cl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-cl input{background:var(--bg);color:var(--txt);border:1px solid #ff9100;border-radius:6px;padding:6px 8px;font-size:13px;min-width:0;flex:1 1 160px}
 .pil-cl button{background:#ff9100;color:#14171d;border:0;border-radius:6px;font-size:12px;padding:6px 10px;font-weight:700;cursor:pointer}.pil-cl button[data-a=cancel]{background:var(--panel);color:var(--txt);border:1px solid var(--line)}.jrn{margin-top:12px}
+@media (max-width:800px){aside{height:auto!important}aside .ltabs,aside .head,aside #list{display:none!important}aside.open .ltabs{display:flex!important}aside.open .head{display:grid!important}aside.open #list{display:block!important;height:40vh;height:40dvh;overflow-y:auto;flex:none}aside.open{box-shadow:0 10px 24px #0008}}
 .sig-warn,.pil-note{display:none!important}#posCard,#lqBox{display:none!important}#dash .dcard:nth-child(2){grid-column:auto!important;order:0!important}
 @media (min-width:801px){#dash.dash{grid-template-columns:minmax(220px,260px) minmax(0,1fr)!important}}
 .liq-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px;font-size:11px;color:var(--mut);border-bottom:1px solid var(--line)}.liq-row .lopts{margin-left:0}body.fs-on .liq-row{display:none!important}@media (orientation:landscape) and (max-height:520px){.liq-row{display:none!important}}
@@ -444,7 +445,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
         <button class="btn on" id="logBtn" title="Escala logarítmica: las subas y bajadas se ven en proporción (%)">LOG</button>
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
-      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): <b>azul</b> = manos fuertes (institucionales), <b>verde</b> = minoristas, <b>marrón</b> = tendencia y <b>línea roja</b> = su media. Azul sobre 0 = las manos fuertes compran; marrón cruzando arriba de la roja = giro alcista (y al revés). Reemplaza al MACD clásico y también vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
+      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
       <div class="inds hide" id="inds"></div>
       <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
     </div>
@@ -629,7 +630,7 @@ const IND = {
   liq:       {name:'Zonas de liquidación',color:'#ffd166', pane:false},
   rsi:       {name:'RSI (14)',            color:'#b388ff', pane:true},
   macd:      {name:'MACD (12,26,9)',      color:'#2962ff', pane:true},
-  kon:       {name:'MACD Konkorde',       color:'#66ff66', pane:true},
+  kon:       {name:'MACD Konkorde',       color:'#2962ff', pane:true},
   adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true}
 };
 let active = new Set();
@@ -641,8 +642,8 @@ const OS = {
          macd:chart.addLineSeries(lineOpt('macd','#2962ff')), sig:chart.addLineSeries(lineOpt('macd','#ff9800'))},
   stochrsi:{k:chart.addLineSeries({...lineOpt('stochrsi','#26c6da'),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})}), d:chart.addLineSeries({...lineOpt('stochrsi','#ff7043',1),autoscaleInfoProvider:()=>({priceRange:{minValue:0,maxValue:100}})})},
   cvd:  {cvd:chart.addLineSeries(lineOpt('cvd','#ffd166'))},
-  kon:  {verde:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(102,255,102,.55)',priceLineVisible:false,lastValueVisible:false,visible:false}),marron:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(255,204,153,.8)',priceLineVisible:false,lastValueVisible:false,visible:false}),
-         azul:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(0,229,255,.8)',priceLineVisible:false,lastValueVisible:false,visible:false}),media:chart.addLineSeries(lineOpt('kon','#ff1744',1.5))},
+  kon:  {verde:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(102,255,102,.55)',priceLineVisible:false,lastValueVisible:false,visible:false}),marron:chart.addLineSeries(lineOpt('kon','#2962ff',2)),
+         azul:chart.addHistogramSeries({priceScaleId:'kon',color:'rgba(0,229,255,.8)',priceLineVisible:false,lastValueVisible:false,visible:false}),media:chart.addLineSeries(lineOpt('kon','#ff1744',2))},
   adx:  {adx:chart.addLineSeries(lineOpt('adx','#e0e0e0',2)), pdi:chart.addLineSeries(lineOpt('adx','#26a69a',1)), mdi:chart.addLineSeries(lineOpt('adx','#ef5350',1))}
 };
 [70,30].forEach(p=>OS.rsi.rsi.createPriceLine({price:p,color:'#555b6b',lineWidth:1,lineStyle:LightweightCharts.LineStyle.Dashed,axisLabelVisible:false}));
@@ -728,7 +729,7 @@ function calcInd(full){
   if(active.has('rsi')) push(OS.rsi.rsi,C.rsi);
   if(active.has('macd')){push(OS.macd.macd,C.macd.macd);push(OS.macd.sig,C.macd.sig);
     push(OS.macd.hist,C.macd.hist,(v,i)=>{const pr=C.macd.hist[i-1];return v>=0?(pr!=null&&v<pr?'rgba(38,166,154,.45)':'#26a69a'):(pr!=null&&v>pr?'rgba(239,83,80,.45)':'#ef5350');});}
-  if(active.has('kon')){push(OS.kon.verde,C.kon.verde);push(OS.kon.marron,C.kon.marron);push(OS.kon.azul,C.kon.azul);push(OS.kon.media,C.kon.media);}
+  if(active.has('kon')){push(OS.kon.marron,C.kon.marron);push(OS.kon.media,C.kon.media);}
   if(active.has('adx')){push(OS.adx.adx,C.adx.adx);push(OS.adx.pdi,C.adx.pdi);push(OS.adx.mdi,C.adx.mdi);}
   if(active.has('stochrsi')){push(OS.stochrsi.k,C.srsi.k);push(OS.stochrsi.d,C.srsi.d);}
   if(active.has('cvd'))push(OS.cvd.cvd,C.cvd);
@@ -845,7 +846,7 @@ function renderLegend(){
   $('facTf').textContent=`· gráfico ${TFS.find(x=>x[0]===tf)[1]} (◆ = ${mode==='a'?'mercado, opciones y noticias':'futuros y noticias'})`;
   renderMarket();
 }
-function renderMarket(){
+function renderMarket(){if(!$('posCard')||getComputedStyle($('posCard')).display==='none')return;
   if(mode==='a'){renderStkMarket();return;}
   const el=$('market');
   if(!FUT){el.innerHTML='<div class="mut">Cargando datos de futuros…</div>';return;}
@@ -937,7 +938,7 @@ function drawInd(ctx,w,h){
     let txt=IND[k].name;
     if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
     if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
-    if(k==='kon'&&C.kon)txt+=`  azul ${(C.kon.azul[i]??0).toFixed(1)}  marrón ${(C.kon.marron[i]??0).toFixed(1)}  media ${(C.kon.media[i]??0).toFixed(1)}`;
+    if(k==='kon'&&C.kon)txt+=`  azul ${(C.kon.marron[i]??0).toFixed(1)}  roja ${(C.kon.media[i]??0).toFixed(1)}  · manos fuertes ${(C.kon.azul[i]??0)>=0?'compran':'venden'}`;
     if(k==='stochrsi'&&C.srsi)txt+=`  K ${(C.srsi.k[i]??0).toFixed(1)}  D ${(C.srsi.d[i]??0).toFixed(1)}`;
     if(k==='cvd'&&C.cvd)txt+=`  ${fnum(C.cvd[i]??0)} ${symbol.replace('USDT','')}`;
     if(k==='adx'&&C.adx)txt+=`  ADX ${(C.adx.adx[i]??0).toFixed(1)}  +DI ${(C.adx.pdi[i]??0).toFixed(1)}  −DI ${(C.adx.mdi[i]??0).toFixed(1)}`;
@@ -1871,6 +1872,7 @@ function buildSignalV2(m,sym,e,fd){
     const slD=Math.min(Math.max(1.2*atrP,cfg.min*.35),.045),t1=Math.max(cfg.min,slD*1.6);if(t1>reach)return null;
     tp0=c*(1+dir*t1*.5);tp1=c*(1+dir*t1);tp2=c*(1+dir*Math.max(t1*1.6,reach*.9));sl=c*(1-dir*slD);}
   const cal=calCert(m,setup);let conf=cal.p;const reasons=e.reasons.slice(0,4);
+  if(m==='medio'&&window.__btcDir){if(window.__btcDir===dir){conf+=2;reasons.push('BTC a favor');}else{conf-=5;reasons.push('BTC en contra: algo menos confiable');}}
   const f=fd&&fd[sym];
   if(f){if(f.taker!=null){if(dir*(f.taker-1)>.05){conf+=2;reasons.push('futuros: compras/ventas a favor');}else if(dir*(f.taker-1)<-.05){conf-=3;reasons.push('futuros: flujo en contra');}}
     if(f.fund!=null){if(dir>0&&f.fund>.0005){conf-=2;reasons.push('funding alto: muchos longs');}else if(dir<0&&f.fund<-.0003){conf-=2;reasons.push('funding negativo: muchos shorts');}else if(dir*f.fund<0){conf+=1;reasons.push('funding a favor');}}}
@@ -1885,6 +1887,7 @@ async function scanSignals(mm){
   const m=mm||mode,cfg=SIGCFG[m];scanBusy=true;lastScan[m]=Date.now();renderSignals();
   try{
     const fresh=[],U=universe(m),fd=m==='a'?null:await safe(futData(m,U));
+    if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
     for(const s of U){
       try{const [cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
         const e=m==='x'?evalShooter(cs,hc):m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc),ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
@@ -2752,7 +2755,7 @@ $('lqWin').onchange=$('lqScope').onchange=()=>renderLqx(true);
 const lqBigSet=on=>{$('lqBox').classList.toggle('big',on);$('lqBig').hidden=on;document.body.style.overflow=on?'hidden':'';setTimeout(()=>renderLqx(true),60);};
 $('lqBig').onclick=()=>lqBigSet(true);$('lqX').onclick=()=>lqBigSet(false);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lqBox').classList.contains('big'))lqBigSet(false);});
-setInterval(()=>renderLqx(false),2000);setTimeout(lqInit,3000);
+/* el mapa de liquidaciones grande está oculto: no se descargan ni dibujan sus datos */
 /* ---------- barra de accesos directos (celular) ---------- */
 function mnavTarget(k){return k==='chart'?$('chartWrap'):k==='thermo'?($('g-svg')?.closest('.dcard')||$('dash')):k==='sig'?$('sigBox'):$('pilBox');}
 $('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const g=b.dataset.go;if(g==='pil'&&mode==='a')applyMode('medio');
@@ -3081,6 +3084,13 @@ renderRes();
 /* ---------- ACCIONES pasa a NYSE en dólares: se descartan operaciones y señales viejas de BYMA en pesos ---------- */
 OPS=OPS.filter(o=>!(o.m==='a'&&o.t<1791218400000));try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}
 SIG.a=SIG.a.filter(x=>x.t>=1791218400000);saveSig();
+
+/* ---------- buscador del inicio en el celular: se abre una lista del 40 % de la pantalla ---------- */
+(function(){const A=document.querySelector('aside');if(!A)return;const close=()=>{A.classList.remove('open');};
+  $('q').addEventListener('focus',()=>{if(isMob())A.classList.add('open');});
+  document.addEventListener('pointerdown',e=>{if(A.classList.contains('open')&&!e.target.closest('aside'))close();});
+  $('list').addEventListener('click',e=>{if(isMob()&&e.target.closest('.row')&&!e.target.closest('[data-star]')){close();$('q').blur();}});
+  $('q').addEventListener('keydown',e=>{if(e.key==='Enter'&&isMob()){close();$('q').blur();}else if(e.key==='Escape'){close();$('q').blur();}});})();
 </script>
 </body>
 </html>
