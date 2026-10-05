@@ -462,7 +462,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu, Telegram o WhatsApp).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li></ul></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu o Telegram).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li></ul></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
     <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
       <div class="pil-leg" id="pilLeg" hidden><p style="margin:0 0 6px">Cargá moneda, dirección, precio de entrada, X y margen: cada 15 s reviso tu operación y te aviso con notificación naranja 🟠 qué conviene hacer.</p><b>Qué significa cada aviso</b><ul>
         <li>🚨 <b>SALÍ YA</b>: estás muy cerca de la liquidación.</li>
@@ -507,13 +507,13 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · objetivos +1,25 / +2,5 / +3,75 % · simulación 350 USD × 15, stop al 5 %, salvavidas 175 USD</small></button>
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · objetivos +1,6 / +3,2 / +4,8 % · simulación 50 USD × 18, stop al 4 %, salvavidas 25 USD</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
-    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones argentinas y CEDEARs en pesos (BYMA) · velas diarias · simulación 100.000 ARS × 8, stop al 7 %, salvavidas 50.000 ARS</small></button></div>
+    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · simulación 500 USD × 8, stop al 7 %, salvavidas 250 USD</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
     <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
     <details class="alr-d" id="alrD" open><summary>Mis alertas de precio <span class="mut" id="alrN"></span><button class="plus" id="alrPlus" title="Nueva alerta" aria-label="Nueva alerta">+</button></summary>
       <div class="alr-in"><div id="alrForm"></div><div id="alrBox"></div></div></details></section>
-  <section><h4>📲 Avisos por Telegram o WhatsApp</h4><div id="rmtBox"></div></section>
+  <section><h4>📲 Avisos por Telegram</h4><div id="rmtBox"></div></section>
 </div></div>
 <script>
 const API = 'https://api.binance.com/api/v3';
@@ -548,9 +548,9 @@ const MODES = {
     def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
-    name: 'ACCIONES', tag: 'BYMA · pesos',
-    desc: 'Acciones argentinas y CEDEARs (acciones de EE. UU. en pesos)',
-    info: ['Velas diarias, semanales y mensuales de BYMA', 'Zonas de liquidez: stops acumulados y muros de opciones de EE. UU.', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 100.000 ARS × 8, stop al 7 % (−56.000 ARS), salvavidas 50.000 ARS'],
+    name: 'ACCIONES', tag: 'NYSE · USD',
+    desc: 'Acciones que cotizan en la Bolsa de Nueva York (NYSE), en dólares',
+    info: ['Velas diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 500 USD × 8, stop al 7 % (−280 USD), salvavidas 250 USD'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
     def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
@@ -1553,13 +1553,13 @@ async function loadTickers(){
 }
 function renderList(){
   const q=$('q').value.trim().toUpperCase();
-  let arr=Object.values(mode==='a'?STK:tickers);
+  let arr=Object.values(mode==='a'?STK:tickers).filter(t=>t.kind!=='ETF');
   if(q) arr=arr.filter(t=>t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||b.q-a.q);
   else arr.sort((a,b)=>b.q-a.q);
   if(favOnly) arr=arr.filter(t=>favs.has(t.s));
   arr=arr.slice(0,200);
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
-    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i><b>${t.s.replace('USDT','')}</b><small>${t.kind?(t.kind==='CED'?' CEDEAR':' ARG'):'/USDT'}</small></span>
+    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i><b>${t.s.replace('USDT','')}</b><small>${t.kind?' NYSE':'/USDT'}</small></span>
     <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span></div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
 }
@@ -1582,7 +1582,7 @@ function select(s){
 }
 function updateTop(){
   const t=tickers[symbol];if(!t)return;
-  $('sym').textContent=t.kind?symbol+(t.kind==='CED'?' · CEDEAR':' · BYMA'):symbol.replace('USDT','')+'/USDT';
+  $('sym').textContent=t.kind?symbol+' · NYSE · USD':symbol.replace('USDT','')+'/USDT';
   $('px').textContent=fp(t.c);$('px').className='px '+(t.p>=0?'up':'dn');
   $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
   $('s-hi').textContent=fp(t.h);$('s-lo').textContent=fp(t.l);$('s-vol').textContent=fv(t.q);
@@ -1802,7 +1802,7 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
 const CAL={medio:{'t-pb':{p:87,p3:36,n:370,txt:'retroceso dentro de la tendencia con volumen bajo'}},
            x:{'sh-r':{p:80,p3:37,n:152,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
-const MINCERT={medio:75,x:70,p:0,a:70};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (CEDEARs)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:75,x:70,p:0,a:70};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1915,14 +1915,14 @@ function checkSignals(){
 }
 function renderSignals(){
   const m=mode,cfg=SIGCFG[m],now=Date.now();
-  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones y CEDEARs con más volumen de BYMA':'las '+cfg.n+' con más volumen'}`;
+  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones de NYSE con más volumen':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales calibradas con 6 años de velas diarias de BYMA (acciones argentinas y CEDEARs): el % es el acierto en acciones que no se usaron para elegir las reglas. Solo aparecen si el termómetro, la amplitud del mercado y las noticias no están en contra. Ninguna es segura: usa siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
     return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
-      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (ARS)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.m==='a'?Math.round(op.ll.margin).toLocaleString('es-ES')+' ARS':op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
+      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. Se quita en ${Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))} s.</div>`:''}
       <div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
@@ -1949,18 +1949,18 @@ setInterval(checkSignals,2000);
 const SIM={medio:{margin:350,lev:15,maxLoss:262.5,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 15 · stop al 5 % (−262,50 USD) · salvavidas 175 USD'},
            x:{margin:50,lev:18,maxLoss:36,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 18 · stop al 4 % (−36 USD) · salvavidas 25 USD'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:100000,lev:8,maxLoss:56000,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'100.000 ARS × 8 · stop al 7 % (−56.000 ARS) · salvavidas 50.000 ARS'};
+SIM.a={margin:500,lev:8,maxLoss:280,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop al 7 % (−280 USD) · salvavidas 250 USD'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
-function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
+function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
 /* SALVAVIDAS: si el precio llega al 65 % del camino al stop sin tocar ningún objetivo y los datos siguen confirmando la señal,
    se suma media posición (la mitad del margen, mismas X). La entrada pasa a ser el promedio y el stop se recalcula a la misma
    distancia desde el promedio (lo máximo que permite el apalancamiento antes de la liquidación real). Una sola vez por señal.
    Confirmación: SHOOTER = tendencia de 15m a favor y RSI 7 todavía extremo · TRADING = precio todavía del lado correcto de la EMA 200
    · ACCIONES = precio todavía del lado correcto de la EMA 50. En el backtest mejoró el acierto y el resultado en los tres modos. */
 const LLTH=.65;
-const llMoney=(m,v)=>m==='a'?Math.round(v).toLocaleString('es-ES')+' ARS':v.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+const llMoney=(m,v)=>v.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
 /* fila "Salvavidas si llega a…" para señales y operaciones abiertas que todavía no lo usaron */
 function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
   if(o.llNo)return `<span>Salvavidas</span><b class="mut">descartado: los datos ya no confirmaban la señal</b>`;
@@ -1977,7 +1977,7 @@ const notOf=o=>o.not||SIM[o.m].margin*SIM[o.m].lev,lossOf=o=>o.loss||SIM[o.m].ma
 function realOf(o){if(o.real!=null)return o.real;let r=0;const T=[o.tp0,o.tp1,o.tp2];for(let k=0;k<(o.hit||0);k++)r+=szOf(o)*notOf(o)/3*o.dir*(T[k]/aeOf(o)-1);return r;}
 const pnlAt=(o,px)=>realOf(o)+(1-(o.hit||0)/3)*szOf(o)*notOf(o)*o.dir*(px/aeOf(o)-1);
 function closeOp(o,state,px,ts,why,pnl){o.state=state;o.closeAt=ts;o.px=px;o.why=why;o.pnl=pnl!=null?pnl:state==='fail'?-lossOf(o):pnlAt(o,px);}
-const lossTxt=o=>o.m==='a'?`−${Math.round(lossOf(o)).toLocaleString('es-ES')} ARS`:`−${lossOf(o).toLocaleString('es-ES',{maximumFractionDigits:2})} USD`;
+const lossTxt=o=>`−${lossOf(o).toLocaleString('es-ES',{maximumFractionDigits:2})} USD`;
 function stepOp(o,hi,lo,ts){
   if(o.state!=='open'||o.llPend)return false;const d=o.dir,adv=d>0?lo:hi,fav=d>0?hi:lo,T=[o.tp0,o.tp1,o.tp2];o.hit=o.hit||0;
   if(!o.hit&&o.llAt&&!o.ll&&!o.llNo&&d*(adv-o.llAt)<=0){o.llPend=ts;return 'll';}
@@ -2007,7 +2007,7 @@ function applyLL(o,ts){const d=o.dir,px=o.llAt,s=o.liqD||lossOf(o)/notOf(o);
   const sg=(SIG[o.m]||[]).find(x=>x.op===o.id);if(sg){sg.ll=true;sg.sl=o.fail;saveSig();}
   notifyLL(o);}
 function notifyLL(o){if(typeof NTF==='undefined'||!NTF[o.m]||!ntfAny())return;
-  const c=o.sym.replace('USDT',''),mg=o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD';
+  const c=o.sym.replace('USDT',''),mg=o.ll.margin+' USD';
   notify(`🟡🛟 SALVAVIDAS · ${SIGCFG[o.m].name} ${o.dir>0?'▲ LONG':'▼ SHORT'} ${c}`,`Se suman ${mg} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)}: ${o.ll.why}. Entrada promedio ${fp(o.ae)} · nuevo stop ${fp(o.fail)}.`,'ll-'+o.id,{sym:o.sym,tf:SIGCFG[o.m].tf,m:o.m});}
 function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;if(o.llPend){llResolve(o);continue;}const t=tickers[o.sym];if(!t)continue;const r=stepOp(o,t.c,t.c,now);if(r==='ll')llResolve(o);else if(r)ch=true;o.last=now;}if(ch)saveOps();}
 let syncBusy=false;
@@ -2023,7 +2023,7 @@ async function syncOps(){
     await new Promise(r=>setTimeout(r,150));}
   }finally{syncBusy=false;if(ch)saveOps();renderHist();}
 }
-const fusd2=v=>{const a=mode==='a';return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:a?0:2,maximumFractionDigits:a?0:2})+(a?' ARS':' USD');};
+const fusd2=v=>{const a=false;return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:a?0:2,maximumFractionDigits:a?0:2})+(a?' ARS':' USD');};
 const fdate=t=>new Date(t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'});
 /* resultado si hubieras entrado en el precio de la señal */
 function liveRes(s,p){
@@ -2046,7 +2046,7 @@ function opDetail(o){
     ${o.conf?`<span>${o.m==='p'?'Fuerza (sin calibrar)':'Acierto hist.'}</span><b>${o.conf} %</b>`:''}
     <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
     <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
-    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.m==='a'?Math.round(o.ll.margin).toLocaleString('es-ES')+' ARS':o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
+    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
     <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>${llInfo(o,v=>fpct((v/o.entry-1)*100))}
     <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
@@ -2150,7 +2150,7 @@ function renderDrw(){
   document.querySelectorAll('#drwModes .mcard').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
   const on=k=>ntfAny()&&NTF[k];
   $('drwNtf').innerHTML=(permOK()?'':`<button class="mcard" data-t="ask" style="text-align:center"><b>🔔 Permitir notificaciones</b><small>${canNotify?'Hace falta para que el celu te muestre los avisos':(isIOS?'En iPhone primero instala la app en la pantalla de inicio':'Este navegador no permite avisos')}</small></button>`)+
-    [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['a','Señales ACCIONES','Avisa cuando aparece una señal de acciones o CEDEARs'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
+    [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['a','Señales ACCIONES','Avisa cuando aparece una señal de acciones de NYSE'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
     .map(([k,t,d])=>`<div class="tg"><div>${t}<small>${d}</small></div><button class="tsw${on(k)?' on':''}" data-t="${k}" role="switch" aria-checked="${on(k)}" aria-label="${t}"></button></div>`).join('');
   renderAlrList();if(typeof rmtRender==='function')rmtRender();
 }
@@ -2292,35 +2292,44 @@ function evalCustom(cs,hc){
 const D912='https://data912.com';
 const STK={};let STKH={},stkReady=false,USQ=null,USQt=0,OPTC={},STKOPT=null,NEWS_CO={sym:null,items:[],t:0};
 if(NTF.a===undefined)NTF.a=true;
-let LSYM={c:'BTCUSDT',a:'GGAL'};try{Object.assign(LSYM,JSON.parse(localStorage.getItem('cv_lsym')||'{}'))}catch(e){}
+let LSYM={c:'BTCUSDT',a:'JPM'};try{Object.assign(LSYM,JSON.parse(localStorage.getItem('cv_lsym')||'{}'))}catch(e){}
 const ADR={GGAL:'GGAL',YPFD:'YPF',PAMP:'PAM',BMA:'BMA',BBAR:'BBAR',SUPV:'SUPV',CEPU:'CEPU',TGSU2:'TGS',TECO2:'TEO',EDN:'EDN',LOMA:'LOMA',CRES:'CRESY',IRSA:'IRS'};
 const CO_NAME={YPFD:'YPF',GGAL:'Grupo Financiero Galicia',PAMP:'Pampa Energia',BMA:'Banco Macro',BBAR:'BBVA Argentina',SUPV:'Supervielle',CEPU:'Central Puerto',TGSU2:'Transportadora de Gas del Sur',TECO2:'Telecom Argentina',EDN:'Edenor',LOMA:'Loma Negra',CRES:'Cresud',IRSA:'IRSA',TXAR:'Ternium Argentina',ALUA:'Aluar',TRAN:'Transener',BYMA:'Bolsas y Mercados Argentinos',COME:'Sociedad Comercial del Plata',METR:'Metrogas',TGNO4:'Transportadora de Gas del Norte',CVH:'Cablevision Holding',MIRG:'Mirgor',VALO:'Grupo Financiero Valores',ECOG:'Ecogas'};
 tickers=new Proxy(tickers,{get(t,k){return k in t?t[k]:(typeof k==='string'?STK[k]:undefined);}});
-const artNow=()=>new Date(Date.now()-3*36e5); // hora de Buenos Aires
+const NYSE=new Set(['JPM','BAC','WFC','C','GS','MS','AXP','BLK','SCHW','SPGI','MCO','BX','KKR','APO','COF','USB','PNC','TFC','MET','PRU','AIG','CB','PGR','TRV','MMC','AON','ICE','V','MA','BRK.B','XYZ','NU','BBVA','SAN','HSBC','ITUB','BBD','BMA','BBAR','SUPV','ORCL','CRM','IBM','ACN','NOW','SNOW','UBER','ANET','DELL','HPQ','HPE','TSM','SAP','SONY','INFY','SPOT','SE','PATH','U','NET','TWLO','PINS','SNAP','RBLX','GLOB','JNJ','LLY','UNH','MRK','ABBV','PFE','TMO','ABT','DHR','BMY','CVS','CI','ELV','HUM','MDT','SYK','BSX','ZTS','BDX','NVO','NVS','GSK','MCK','HCA','KO','PG','PM','MO','MCD','NKE','DIS','HD','LOW','TGT','CL','KMB','EL','GIS','HSY','STZ','BUD','DEO','UL','BTI','YUM','CMG','HLT','CCL','RCL','NCLH','F','GM','TM','HMC','STLA','RACE','NIO','XPEV','BABA','LVS','MGM','TJX','DG','BBY','KR','GE','GEV','CAT','DE','BA','LMT','RTX','NOC','GD','UPS','FDX','UNP','NSC','MMM','ETN','EMR','PH','ITW','WM','RSG','CARR','OTIS','JCI','DAL','LUV','URI','XOM','CVX','COP','OXY','SLB','HAL','EOG','PSX','MPC','VLO','KMI','WMB','OKE','PBR','YPF','VIST','PAM','TGS','CEPU','EDN','E','SHEL','BP','TTE','EQNR','FCX','NEM','B','AA','CLF','NUE','DOW','LYB','SHW','ECL','APD','VALE','RIO','BHP','SQM','SCCO','MT','NEE','DUK','SO','D','T','VZ','AMT','PLD','O','SPG','CCI','PSA','TEO','AMX','LOMA','CX','KOF','FMX','ASR','PAC','EC','CIB','BCH','TS','TX','IRS']);
+const etOff=()=>{const d=new Date(),p=Object.fromEntries(new Intl.DateTimeFormat('en-US',{timeZone:'America/New_York',hourCycle:'h23',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}).formatToParts(d).map(x=>[x.type,x.value]));return Date.UTC(+p.year,+p.month-1,+p.day,+p.hour,+p.minute)-Math.floor(d.getTime()/6e4)*6e4;};
+const artNow=()=>new Date(Date.now()+etOff()); // hora de Nueva York
 const artDay=()=>artNow().toISOString().slice(0,10);
-function mktOpen(){const d=artNow(),wd=d.getUTCDay(),m=d.getUTCHours()*60+d.getUTCMinutes();return wd>=1&&wd<=5&&m>=11*60&&m<=17*60+5;}
+function mktOpen(){const d=artNow(),wd=d.getUTCDay(),m=d.getUTCHours()*60+d.getUTCMinutes();return wd>=1&&wd<=5&&m>=9*60+30&&m<=16*60+5;}
 async function loadStocks(){
-  const [A,C]=await Promise.all([safe(getJ(D912+'/live/arg_stocks',15000)),safe(getJ(D912+'/live/arg_cedears',20000))]);
-  const add=(L,kind)=>{if(!Array.isArray(L))return;const set=new Set(L.map(x=>x.symbol)),day=artDay();
-    for(const x of L){const s=x.symbol;if(!(x.c>0)||s.includes('.')||((s.endsWith('D')||s.endsWith('C'))&&set.has(s.slice(0,-1))))continue;
-      const o=STK[s]||(STK[s]={s,kind});if(o.day!==day){o.day=day;o.h=o.l=null;}
-      o.c=+x.c;o.p=+x.pct_change||0;o.v=+x.v||0;o.q=o.v*o.c;o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;
-      o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}};
-  add(A,'AR');add(C,'CED');if(Object.keys(STK).length)stkReady=true;
+  const [U0,A0,C]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000)),safe(getJ(D912+'/live/arg_cedears',20000))]);if(!Array.isArray(U0))return;const U=U0.concat(Array.isArray(A0)?A0:[]);
+  const cv={};if(Array.isArray(C))for(const x of C)if(x.v>0)cv[x.symbol]=+x.v;const day=artDay();
+  for(const x of U){const s=x.symbol;if(!(x.c>0)||!(NYSE.has(s)||s==='SPY'))continue;
+    const o=STK[s]||(STK[s]={s,kind:s==='SPY'?'ETF':'US'});if(o.day!==day){o.day=day;o.h=o.l=null;}
+    o.c=+x.c;o.p=+x.pct_change||0;o.sv=+x.v||0;o.v=cv[s]||1;o.q=o.sv*o.c;o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;
+    o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}
+  if(Object.keys(STK).length)stkReady=true;
   if(mode==='a'){renderList();updateTop();stkLiveBar();}
 }
 (function poll(){setTimeout(async()=>{try{await loadStocks();}catch(e){}poll();},mode==='a'&&mktOpen()?20000:120000);})();
 loadStocks();
 const stkBar=r=>{const t=Date.parse(r.date+'T00:00:00Z'),v=+r.v||0;return {time:t/1000,t,open:+r.o,high:+r.h,low:+r.l,close:+r.c,v,tb:r.h>r.l?v*(r.c-r.l)/(r.h-r.l):v/2,date:r.date};};
+/* historial en dólares: cierres diarios de NYSE; la forma de cada vela (apertura, máximo, mínimo y volumen) sale del CEDEAR
+   del mismo día pasado a dólares. Las acciones sin CEDEAR se ven solo con cierres y no generan señales. */
 async function stkHist(sym){const h=STKH[sym];if(h&&Date.now()-h.t<30*6e4)return h.b;
-  const k=STK[sym]?.kind,paths=k==='CED'?['cedears','stocks']:['stocks','cedears'];let d=null;
-  for(const pth of paths){d=await safe(getJ(`${D912}/historical/${pth}/${sym}`,25000));if(Array.isArray(d)&&d.length)break;d=null;}
-  if(!d)throw new Error('sin datos');const b=d.slice(-1500).map(stkBar).filter(x=>x.close>0);STKH[sym]={t:Date.now(),b};return b;}
+  const [u,ce]=await Promise.all([getJ(`${D912}/historical/usa_stocks/${sym}`,25000),safe(getJ(`${D912}/historical/cedears/${sym}`,20000))]);
+  if(!u||!Array.isArray(u.dates)||!u.dates.length)throw new Error('sin datos');
+  const cm=new Map(),vs=[];if(Array.isArray(ce))for(const r of ce)if(r&&r.c>0){cm.set(r.date,r);vs.push(+r.v||0);}
+  vs.sort((a,b)=>a-b);const vMed=vs.length?(vs[vs.length>>1]||1):1,b=[],n=u.dates.length;let pc=null;
+  for(let i=Math.max(0,n-1500);i<n;i++){const date=u.dates[i],c=+u.prices[i];if(!(c>0))continue;const t=Date.parse(date+'T00:00:00Z'),r=cm.get(date);let o,hh,l,v;
+    if(r){const k=c/r.c;o=r.o*k;hh=Math.max(r.h*k,c,o);l=Math.min(r.l*k,c,o);v=+r.v||vMed;}else{o=pc??c;hh=Math.max(o,c);l=Math.min(o,c);v=vMed;}
+    b.push({time:t/1000,t,open:o,high:hh,low:l,close:c,v,tb:hh>l?v*(c-l)/(hh-l):v/2,date});pc=c;}
+  STKH[sym]={t:Date.now(),b,ced:cm.size>30};return b;}
 /* agrega o actualiza la vela del día con el precio en vivo de BYMA */
 function withLive(sym,b){
   const q=STK[sym];if(!q||!b.length)return b;const day=artDay(),last=b[b.length-1],d=artNow(),wd=d.getUTCDay(),m=d.getUTCHours()*60+d.getUTCMinutes();
   if(last.date===day){const x={...last,close:q.c,high:Math.max(last.high,q.c),low:Math.min(last.low,q.c)};if(q.v>last.v){x.v=q.v;x.tb=x.high>x.low?x.v*(x.close-x.low)/(x.high-x.low):x.v/2;}return b.slice(0,-1).concat(x);}
-  if(wd>=1&&wd<=5&&m>=11*60&&q.v>0&&last.date<day){const o=last.close,h=Math.max(o,q.c,q.h||q.c),l=Math.min(o,q.c,q.l||q.c),t=Date.parse(day+'T00:00:00Z');
+  if(wd>=1&&wd<=5&&m>=9*60+30&&q.v>0&&last.date<day){const o=last.close,h=Math.max(o,q.c,q.h||q.c),l=Math.min(o,q.c,q.l||q.c),t=Date.parse(day+'T00:00:00Z');
     return b.concat({time:t/1000,t,open:o,high:h,low:l,close:q.c,v:q.v,tb:h>l?q.v*(q.c-l)/(h-l):q.v/2,date:day,live:true});}
   return b;}
 function aggBars(b,t){if(t==='1d')return b;const out=[];let cur=null,key=null;
@@ -2379,7 +2388,7 @@ function drawStkLiq(ctx,o){if(!LIQ||!LIQ.stk)return;const {paneW,X,Y}=o,h=LIQ.st
 async function usQuotes(){if(USQ&&Date.now()-USQt<10*6e4)return USQ;const [u,a]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000))]);
   USQ={};for(const x of [...(u||[]),...(a||[])])if(x.c>0)USQ[x.symbol]=+x.c;USQt=Date.now();return USQ;}
 async function loadStkOptions(sym){
-  const q=STK[sym];if(!q)return;const us=q.kind==='CED'?sym:ADR[sym];if(!us){STKOPT={sym,none:true,walls:[]};renderLegend();return;}
+  const q=STK[sym];if(!q)return;const us=q.kind==='US'||q.kind==='CED'?sym:ADR[sym];if(!us){STKOPT={sym,none:true,walls:[]};renderLegend();return;}
   try{const U=await usQuotes(),up=U[us];if(!up){STKOPT={sym,none:true,walls:[]};renderLegend();return;}
     let ch=OPTC[us];if(!ch||Date.now()-ch.t>36e5){const [d,iv]=await Promise.all([getJ(`${D912}/eod/option_chain/${us}`,30000),safe(getJ(`${D912}/eod/volatilities/${us}`,15000))]);ch=OPTC[us]={t:Date.now(),d,iv};}
     if(sym!==symbol||mode!=='a')return;
@@ -2395,7 +2404,7 @@ async function loadStkOptions(sym){
   }catch(e){}}
 /* noticias de la empresa */
 async function loadCoNews(sym){if(NEWS_CO.sym===sym&&Date.now()-NEWS_CO.t<20*6e4)return;const q=STK[sym];
-  const qs=q&&q.kind==='CED'?`${sym} stock`:`"${CO_NAME[sym]||sym}" Argentina`;
+  const qs=q&&q.kind!=='AR'?`${sym} stock`:`"${CO_NAME[sym]||sym}" Argentina`;
   try{const url='https://news.google.com/rss/search?q='+encodeURIComponent(qs+' when:3d')+'&hl=en-US&gl=US&ceid=US:en';
     const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),10000),items=[];
     for(const it of (j.items||[])){let title=(it.title||'').trim();const m=title.match(/^(.*) - ([^-]{2,40})$/);if(m)title=m[1];const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');if(!title||isNaN(t))continue;items.push({title,t,...scoreNews(title)});}
@@ -2407,10 +2416,10 @@ function coNewsFactor(sym){if(NEWS_CO.sym!==sym||!NEWS_CO.items.length)return nu
   return sw>0?{s:clamp(ss/sw*1.5),txt:`${pos} positivas · ${neg} negativas`}:null;}
 function stkFactors(){const out=[],q=STK[symbol];if(!q||candles.length<25)return out;
   const add=(k,name,w,s,txt)=>out.push({k,name,w,s:clamp(s),txt,mk:true});
-  const {up,dn}=stkPeers(q.kind);if(up+dn>5)add('breadth',q.kind==='CED'?'Amplitud de los CEDEARs':'Amplitud del panel de BYMA',1,(up-dn)/(up+dn)*1.5,`${up} suben · ${dn} bajan hoy`);
+  const {up,dn}=stkPeers(q.kind);if(up+dn>5)add('breadth',q.kind==='US'?'Amplitud de las acciones de NYSE':q.kind==='CED'?'Amplitud de los CEDEARs':'Amplitud del panel de BYMA',1,(up-dn)/(up+dn)*1.5,`${up} suben · ${dn} bajan hoy`);
   const i=candles.length-1,b=candles[i];let sv=0;for(let j=i-20;j<i;j++)sv+=candles[j].v;const vr=b.v/((sv/20)||1);
   add('rvol','Volumen relativo',.75,Math.sign(b.close-b.open)*Math.min(1,Math.max(0,vr-1)),`${vr.toFixed(2)}× el promedio de 20 velas`);
-  if(q.kind==='CED'&&tf==='1d'&&symbol!=='SPY'&&STKH.SPY){const sb=STKH.SPY.b,n=20;if(sb.length>n&&i>n){const r1=b.close/candles[i-n].close-1,r2=sb.at(-1).close/sb.at(-1-n).close-1;
+  if(q.kind!=='AR'&&tf==='1d'&&symbol!=='SPY'&&STKH.SPY){const sb=STKH.SPY.b,n=20;if(sb.length>n&&i>n){const r1=b.close/candles[i-n].close-1,r2=sb.at(-1).close/sb.at(-1-n).close-1;
     add('rs','Fuerza relativa vs S&P 500',1,(r1-r2)/.06,`${fpct(r1*100)} vs ${fpct(r2*100)} en 20 ruedas`);}}
   if(STKOPT&&STKOPT.sym===symbol&&STKOPT.pc!=null)add('pc','Opciones put/call (contrario)',.75,(STKOPT.pc-.9)/.6,`put/call ${STKOPT.pc.toFixed(2)} en ${STKOPT.us}`);
   const cn=coNewsFactor(symbol);if(cn)add('conews','Noticias de la empresa (72 h)',1,cn.s,cn.txt);
@@ -2438,10 +2447,10 @@ function renderStkMarket(){const el=$('market'),q=STK[symbol];if(!q){el.innerHTM
    - c-mom (CEDEARs, LONG): vela fuerte cerrando en máximos, tendencia semanal alcista, ADX ≥30 → 63–66 %
    Acierto = llegar a +5 % antes de −5 % (la liquidación de la simulación) en 15 ruedas. Los shorts en CEDEARs no superaron el 58 %: no se usan.
    Además, el termómetro del activo (indicadores, amplitud del mercado y noticias) no puede estar en contra. */
-function stkUniverse(){return Object.values(STK).filter(x=>x.q>0&&x.c>0).sort((a,b)=>b.q-a.q).slice(0,30).map(x=>x.s);}
+function stkUniverse(){return Object.values(STK).filter(x=>x.kind==='US'&&x.q>0&&x.c>0).sort((a,b)=>b.q-a.q).slice(0,30).map(x=>x.s);}
 async function stkKl(sym){const b=withLive(sym,await stkHist(sym)).slice(-320);return [b,aggBars(b,'1w')];}
 async function stkKlines(sym){const b=withLive(sym,await stkHist(sym));return b.slice(-60).map(x=>[x.t,x.open,x.high,x.low,x.close]);}
-function stkClosed(cs){const d=artNow(),m=d.getUTCHours()*60+d.getUTCMinutes(),last=cs.at(-1);return last&&last.date===artDay()&&m<17*60+10?cs.slice(0,-1):cs;}
+function stkClosed(cs){const d=artNow(),m=d.getUTCHours()*60+d.getUTCMinutes(),last=cs.at(-1);return last&&last.date===artDay()&&m<16*60+10?cs.slice(0,-1):cs;}
 function stkScore(cc,q){const i=cc.length-1,cl=closes(),c=cc[i].close,v=[];const add=(s,w=1)=>{if(s!=null&&!isNaN(s))v.push([clamp(s),w]);};
   add(calcST(10,3).dir[i]);const e20=emaArr(cl,20)[i],e50=emaArr(cl,50)[i];if(e20!=null&&e50!=null)add((e20>e50?.6:-.6)+(c>e20?.4:-.4));
   const r=calcRSI(14)[i];if(r!=null)add((r-50)/20);
@@ -2454,7 +2463,7 @@ function stkScore(cc,q){const i=cc.length-1,cl=closes(),c=cc[i].close,v=[];const
   const sw=v.reduce((a,x)=>a+x[1],0);return sw?Math.round(50+50*v.reduce((a,x)=>a+x[0]*x[1],0)/sw):50;}
 function evalStock(sym,cs,hc){
   const q=STK[sym],cc=stkClosed(cs),out={keep:true,score:0,dir:0,c:q?q.c:cs.at(-1).close,atr:null,adx:null,htf:0,reasons:[],setup:null};
-  if(!q||cc.length<210)return out;
+  if(!q||cc.length<210||(q.kind==='US'&&!(STKH[sym]&&STKH[sym].ced)))return out;
   return withCandles(cc,()=>{const i=cc.length-1,A=calcADX(14),adx=A.adx[i],M=calcMACD(),mh=M.hist[i],mh1=M.hist[i-1],R=calcRSI(14),r=R[i],r1=R[i-1],L=lastBarStats(cc,i);
     out.atr=wilder(trArr(),14)[i];out.adx=adx;out.htf=htfTrend(aggBars(cc,'1w'));
     if(adx==null||mh==null||mh1==null||r==null||r1==null)return out;
@@ -2469,15 +2478,15 @@ function evalStock(sym,cs,hc){
     if(setup==='c-mom')out.reasons.push('tendencia semanal alcista');
     return out;});}
 /* cambio entre criptomonedas y acciones */
-const FEEDS_A=[['Google News','https://news.google.com/rss/search?q=Merval+OR+%22Argentine+stocks%22+OR+YPF+OR+%22Grupo+Galicia%22+OR+%22Pampa+Energia%22+OR+Milei+when:1d&hl=en-US&gl=US&ceid=US:en'],
+const FEEDS_A=[['Google News','https://news.google.com/rss/search?q=NYSE+OR+%22Dow+Jones%22+OR+%22New+York+Stock+Exchange%22+when:1d&hl=en-US&gl=US&ceid=US:en'],
  ['Google News','https://news.google.com/rss/search?q=%22stock+market%22+OR+%22S%26P+500%22+OR+Nasdaq+OR+%22Wall+Street%22+OR+earnings+when:1d&hl=en-US&gl=US&ceid=US:en'],
  ['Google News','https://news.google.com/rss/search?q=%22federal+reserve%22+OR+inflation+OR+CPI+OR+tariffs+OR+recession+when:1d&hl=en-US&gl=US&ceid=US:en'],
  ['CNBC','https://www.cnbc.com/id/100003114/device/rss/rss.html']];
-const STAT_LBL={c:['Cambio 24h','Máx 24h','Mín 24h','Volumen 24h (USDT)'],a:['Cambio del día','Máx del día','Mín del día','Volumen (ARS)']};
+const STAT_LBL={c:['Cambio 24h','Máx 24h','Mín 24h','Volumen 24h (USDT)'],a:['Cambio del día','Máx del día','Mín del día','Volumen (USD)']};
 function switchMarket(toA){
-  if(toA){LSYM.c=symbol;symbol=STK[LSYM.a]?LSYM.a:(stkUniverse()[0]||LSYM.a||'GGAL');}else{LSYM.a=symbol;symbol=LSYM.c||'BTCUSDT';}
+  if(toA){LSYM.c=symbol;symbol=STK[LSYM.a]&&STK[LSYM.a].kind==='US'?LSYM.a:(stkUniverse()[0]||'JPM');}else{LSYM.a=symbol;symbol=LSYM.c||'BTCUSDT';}
   try{localStorage.setItem('cv_lsym',JSON.stringify(LSYM))}catch(e){}
-  $('q').value='';$('q').placeholder=toA?'Buscar acción o CEDEAR (GGAL, YPFD, AAPL…)':'Buscar moneda (BTC, ETH, SOL…)';
+  $('q').value='';$('q').placeholder=toA?'Buscar acción de NYSE (JPM, KO, XOM…)':'Buscar moneda (BTC, ETH, SOL…)';
   const hd=document.querySelector('aside .head span');if(hd)hd.textContent=toA?'Activo':'Par';
   ['s-ch','s-hi','s-lo','s-vol'].forEach((id,k)=>{const n=$(id)?.parentNode?.firstChild;if(n&&n.nodeType===3)n.nodeValue=STAT_LBL[toA?'a':'c'][k];});
   const lo=document.querySelector('.lopts');if(lo)lo.style.display=toA?'none':'';
@@ -2863,7 +2872,7 @@ setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
    (40 criptos: 11 meses de 4H para TRADING y 30 días de 5m para SHOOTER). Sirve para saber cuánto aporta la señal de verdad. */
 var AZAR={medio:{p:78,p3:28,n:1309},x:{p:72,p3:23,n:547}};AZAR.p=AZAR.medio;
 let INT_T='reg',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'reg';}catch(e){}if(INT_T==='led')INT_T='reg';
-const intMoney=v=>{const a=mode==='a';return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
+const intMoney=v=>{const a=false;return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
 const pc0=v=>v==null?'—':Math.round(v)+' %';
 function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=OPS.filter(o=>o.m===m&&o.t>=t0),cl=a.filter(o=>o.state!=='open'),n=cl.length;
   const g=cl.filter(o=>o.pnl>0).reduce((s,o)=>s+o.pnl,0),l=cl.filter(o=>o.pnl<=0).reduce((s,o)=>s+o.pnl,0);
@@ -2992,6 +3001,7 @@ document.addEventListener('visibilitychange',()=>{if(document.visibilityState===
 /* ---------- avisos por Telegram y WhatsApp ---------- */
 var RMT={tg:{token:'',chat:'',on:false},wa:{phone:'',key:'',on:false}};
 try{const r=JSON.parse(localStorage.getItem('cv_rmt')||'null');if(r){Object.assign(RMT.tg,r.tg||{});Object.assign(RMT.wa,r.wa||{});}}catch(e){}
+RMT.wa={phone:'',key:'',on:false};
 const saveRmt=()=>{try{localStorage.setItem('cv_rmt',JSON.stringify(RMT))}catch(e){}};
 function rmtOn(){return !!((RMT.tg.on&&RMT.tg.token&&RMT.tg.chat)||(RMT.wa.on&&RMT.wa.phone&&RMT.wa.key));}
 function ntfAny(){return (NTF.on&&permOK())||rmtOn();}
@@ -3007,10 +3017,9 @@ function rmtRender(){const el=$('rmtBox');if(!el)return;const tg=RMT.tg,wa=RMT.w
   el.innerHTML=`<p class="rmt-n">Te llegan como mensaje los mismos avisos que activaste arriba: señales, salvavidas, Pilotear y alertas de precio. <b>Funciona mientras CRIPTO-LIVE esté abierto</b> en algún dispositivo (por ejemplo, la compu prendida con la página abierta, aunque esté minimizada).</p>
   <div class="tg"><div>✈️ Telegram<small>${tg.chat?(tOn?'Conectado':'Conectado · pausado'):'Sin conectar · tocá para configurar'}</small></div><button class="tsw${tOn?' on':''}" data-r="tg" role="switch" aria-checked="${tOn}" aria-label="Avisos por Telegram"></button></div>
   ${rmtOpen==='tg'?`<div class="rmt-f"><ol><li>En Telegram buscá <b>@BotFather</b>, mandale <b>/newbot</b> y elegí un nombre. Te da un <b>token</b> (algo como 123456789:AAH…).</li><li>Abrí el chat con tu bot nuevo y mandale cualquier mensaje, por ejemplo "hola".</li><li>Pegá el token acá y tocá Conectar.</li></ol><input id="rmtTok" type="text" autocomplete="off" spellcheck="false" placeholder="Token de tu bot" value="${esc(tg.token)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="tgGo">Conectar</button></div></div>`:''}
-  <div class="tg"><div>💬 WhatsApp<small>${wa.key?(wOn?'Conectado':'Conectado · pausado'):'Sin conectar · tocá para configurar'} · vía CallMeBot</small></div><button class="tsw${wOn?' on':''}" data-r="wa" role="switch" aria-checked="${wOn}" aria-label="Avisos por WhatsApp"></button></div>
   ${rmtOpen==='wa'?`<div class="rmt-f"><ol><li>Seguí los pasos de <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank" rel="noopener">CallMeBot</a> (servicio gratis): agendá su número y mandale por WhatsApp el mensaje que indica. Te responde con tu <b>apikey</b>.</li><li>Poné tu número con código de país y la apikey.</li></ol><input id="rmtPh" type="tel" autocomplete="off" placeholder="Tu número, ej. +5491122334455" value="${esc(wa.phone)}"><input id="rmtKey" type="text" autocomplete="off" spellcheck="false" placeholder="apikey de CallMeBot" value="${esc(wa.key)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="waGo">Conectar</button></div></div>`:''}
   ${rmtMsg?`<div class="rmt-m">${rmtMsg}</div>`:''}
-  ${(tg.chat||wa.key)&&!rmtOpen?`<div class="rmt-a"><button data-r="test">Mandar mensaje de prueba</button>${tg.chat?'<button data-r="tgEdit">Cambiar Telegram</button>':''}${wa.key?'<button data-r="waEdit">Cambiar WhatsApp</button>':''}</div>`:''}`;}
+  ${(tg.chat||wa.key)&&!rmtOpen?`<div class="rmt-a"><button data-r="test">Mandar mensaje de prueba</button>${tg.chat?'<button data-r="tgEdit">Cambiar Telegram</button>':''}</div>`:''}`;}
 $('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;const r=b.dataset.r;
   if(r==='tg'){if(RMT.tg.chat){RMT.tg.on=!RMT.tg.on;saveRmt();rmtMsg='';}else{rmtOpen='tg';rmtMsg='';}}
   else if(r==='wa'){if(RMT.wa.key){RMT.wa.on=!RMT.wa.on;saveRmt();rmtMsg='';}else{rmtOpen='wa';rmtMsg='';}}
@@ -3063,6 +3072,10 @@ document.body.dataset.v='main';
     el.scrollIntoView=o=>{if(!isMob()){orig(o);return;}if(v==='main'){if(document.body.dataset.v!=='main'){setView('main');setTimeout(()=>orig(o),40);}else orig(o);}else setView(v);};};
   hook('chartWrap','main');hook('sigBox','sig');hook('pilBox','pil');})();
 renderRes();
+
+/* ---------- ACCIONES pasa a NYSE en dólares: se descartan operaciones y señales viejas de BYMA en pesos ---------- */
+OPS=OPS.filter(o=>!(o.m==='a'&&o.t<1791218400000));try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}
+SIG.a=SIG.a.filter(x=>x.t>=1791218400000);saveSig();
 </script>
 </body>
 </html>
