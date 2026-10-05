@@ -94,7 +94,7 @@ try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } c
 
 async function main() {
   const now = Date.now();
-  if (!S.boot) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.'); }
+  if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.'); }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25)
@@ -133,6 +133,6 @@ async function main() {
   }
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
   S.run = now;
-  fs.writeFileSync(STATE_FILE, JSON.stringify(S));
+  if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }
 main().catch(e => { console.error(e); try { fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} process.exit(1); });
