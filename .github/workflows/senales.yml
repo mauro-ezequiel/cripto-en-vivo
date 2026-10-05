@@ -1,0 +1,31 @@
+name: Señales 24 h
+on:
+  schedule:
+    - cron: '*/5 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: senales
+  cancel-in-progress: false
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        with:
+          path: estado.json
+          key: estado-${{ github.run_id }}
+          restore-keys: estado-
+      - name: Revisar señales y avisar por Telegram
+        run: node senales-bot.js
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: estado.json
+          key: estado-${{ github.run_id }}
