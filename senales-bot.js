@@ -85,8 +85,10 @@ const kl = (s, t, n) => getJ(`${API}/klines?symbol=${s}&interval=${t}&limit=${n}
 const dec = p => p >= 1000 ? 2 : p >= 1 ? 3 : p >= 0.01 ? 5 : 8;
 const fp = p => (+p).toLocaleString('es-ES', { minimumFractionDigits: dec(p), maximumFractionDigits: dec(p) });
 const pct = (v, e) => { const x = (v / e - 1) * 100; return (x >= 0 ? '+' : '') + x.toFixed(2) + ' %'; };
-async function tg(text) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; }
-  try { const r = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', body: new URLSearchParams({ chat_id: CHAT, text, disable_web_page_preview: 'true' }) }); const j = await r.json(); if (!j.ok) console.log('Telegram:', j.description); } catch (e) { console.log('Telegram error', e.message); } }
+const CANAL = process.env.TELEGRAM_CANAL || '@criptolive_senales';
+async function sendTo(chat, text) { try { const r = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', body: new URLSearchParams({ chat_id: chat, text, disable_web_page_preview: 'true' }) }); const j = await r.json(); if (!j.ok) console.log('Telegram', chat, ':', j.description); return j.ok; } catch (e) { console.log('Telegram error', chat, e.message); return false; } }
+async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; }
+  await sendTo(CHAT, text); if (canal && CANAL) await sendTo(CANAL, text); }
 
 /* ---------- estado (para no repetir avisos) ---------- */
 let S = { last: {}, open: [], boot: 0 };
@@ -94,7 +96,8 @@ try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } c
 
 async function main() {
   const now = Date.now();
-  if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.'); }
+  if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.', false); }
+  if (!S.canal && TOKEN && CHAT && CANAL) { if (await sendTo(CANAL, '📈 CRIPTO-LIVE · Señales en vivo\nAcá se publican las señales de TRADING (4 h) y SHOOTER (5 min) apenas aparecen, con entrada, objetivos, stop y salvavidas, y después cuando tocan cada objetivo o el stop.\nGráfico y detalles: ' + PAGE + '\nℹ️ Solo informativo: no es consejo financiero. Operar con apalancamiento puede hacerte perder todo el margen.')) S.canal = now; }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25)
@@ -128,7 +131,7 @@ async function main() {
         const Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
-        await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}`);
+        await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
     }
