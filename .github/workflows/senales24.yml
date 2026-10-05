@@ -1,0 +1,39 @@
+name: Señales 24 h
+on:
+  schedule:
+    - cron: '17 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+  actions: write
+concurrency:
+  group: senales
+  cancel-in-progress: false
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 350
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/cache/restore@v4
+        with:
+          path: estado.json
+          key: estado-${{ github.run_id }}
+          restore-keys: estado-
+      - name: Revisar señales cada 5 minutos durante 5 h 30 min
+        run: node senales-bot.js
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+          LOOP_MIN: '330'
+      - uses: actions/cache/save@v4
+        if: always()
+        with:
+          path: estado.json
+          key: estado-${{ github.run_id }}
+      - name: Encadenar la próxima vuelta
+        if: always()
+        run: gh workflow run senales24.yml --ref main
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
