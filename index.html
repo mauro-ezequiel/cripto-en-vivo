@@ -327,6 +327,9 @@ body.fs-on .fsbar{display:flex}
 .lopts~.i-btn,.lqx-ctl~.i-btn,.int-tabs~.i-btn{margin-left:0}.i-box{background:var(--bg);border:1px solid #26c6da;border-radius:8px;padding:8px 12px;margin:6px 0 8px;font-size:12px;line-height:1.5;color:var(--txt);text-align:left;text-transform:none;letter-spacing:0}.i-box ul{margin:4px 0 0;padding-left:18px}.i-box li{margin:2px 0}
 @media (max-width:800px){.int-tabs{margin-left:0}.int-t{font-size:11px}}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
 @media (max-width:800px){.pil-f{grid-template-columns:1fr 1fr}.pil-f .pri{grid-column:1/-1}}
+.sig.plus{border:2px solid #b8860b;border-left-width:5px;background:rgba(184,134,11,.13)}.sig.plus.short{border-left-color:var(--dn)}.sig.plus:not(.short){border-left-color:var(--up)}
+.sg-plus{background:#7a5c00;color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;border-radius:6px;padding:4px 8px}
+.sig-tabs .tp-ntf{border-color:#b8860b!important;color:#e0b030!important}.sig-tabs .tp-ntf.on{background:#7a5c00!important;color:#fff!important}
 .sig.nr{border-color:rgba(239,83,80,.6);border-left-color:var(--dn);background:rgba(239,83,80,.08)}
 .sig.nr .sg-dir,.sig.nr .sg-conf{color:var(--dn)}
 .sg-nr{background:var(--dn);color:#fff;font-weight:800;font-size:11px;letter-spacing:.05em;border-radius:6px;padding:4px 8px;text-align:center}
@@ -1910,7 +1913,7 @@ async function scanSignals(mm){
       }catch(err){}
       await new Promise(r=>setTimeout(r,120));
     }
-    const live=SIG[m].filter(x=>x.state==='live');fresh.sort((a,b)=>b.conf-a.conf);
+    const live=SIG[m].filter(x=>x.state==='live'&&!x.plus);fresh.sort((a,b)=>b.conf-a.conf);
     for(const f of fresh){
       if(live.length<MAXSIG){addSig(m,f);live.push(f);}
       else{const worst=live.reduce((a,b)=>a.conf<b.conf?a:b);if(f.conf>worst.conf+5){lose(worst,'reemplazada por una señal con más certeza');live.splice(live.indexOf(worst),1,f);addSig(m,f);}}
@@ -1936,11 +1939,11 @@ function renderSignals(){
   $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones de NYSE con más volumen':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales calibradas con 6 años de velas diarias de BYMA (acciones argentinas y CEDEARs): el % es el acierto en acciones que no se usaron para elegir las reglas. Solo aparecen si el termómetro, la amplitud del mercado y las noticias no están en contra. Ninguna es segura: usa siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
-  const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
+  const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG+4);
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
-    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
-      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
+    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
+      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. Se quita en ${Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))} s.</div>`:''}
       ${opAdvice(op,s)}<div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
@@ -3283,6 +3286,60 @@ function srvToast(f){document.querySelectorAll('.srv-toast').forEach(x=>x.remove
   d.onclick=()=>{d.remove();if(f.m!==mode)applyMode(f.m);if(typeof setView==='function')setView('sig');renderSignals();};document.body.appendChild(d);setTimeout(()=>d.remove(),20000);}
 setInterval(()=>{if(!document.hidden)srvImport();},30000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)srvImport();});
+
+/* ---------- TRADING+ : señales extra de TRADING (recuadro amarillo oscuro) ----------
+   Backtest 4H, ~290 días, 55 monedas líquidas, objetivo 1 a +1,25 %, stop al 5 %, sin salvavidas:
+   regla actual de TRADING en ese período: 0,48 señales/día, 78 % al objetivo 1.
+   tp-r55: misma tendencia alineada pero retroceso más suave (RSI 50–55 en long / 45–50 en short) y solo si ADX ≥ 25
+           → 101 señales (0,35/día), 84 % al objetivo 1, 31 % a los 3 (primera mitad 86 %, segunda 83 %).
+   tp-u80: la regla actual en las monedas 41–80 por volumen (la normal solo mira las 40 primeras)
+           → 85 señales (0,29/día), 85 % al objetivo 1, 35 % a los 3 (primera mitad 75 %, segunda 90 %).
+   Juntas suman ~0,64 señales/día: con las normales, unas 2,3 veces más señales de TRADING.
+   Probé además ampliar el ATR, ATR bajo y volumen alto: daban 57–80 % o eran inestables, así que quedaron afuera. */
+CAL.medio['tp-r55']={p:84,p3:31,n:101,txt:'retroceso suave (RSI 50–55) con tendencia fuerte (ADX ≥ 25)'};
+CAL.medio['tp-u80']={p:85,p3:35,n:85,txt:'la regla de TRADING en monedas 41–80 por volumen'};
+TGTS['tp-r55']=TGTS['t-pb'];TGTS['tp-u80']=TGTS['t-pb'];
+const MAXPLUS=4;if(NTF.tplus===undefined)NTF.tplus=false;
+function evalTradingPlus(cs,hc,rank){const cc=cs.slice(0,-1);
+  return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
+    const st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],adx=calcADX().adx[i],r14=calcRSI(14)[i],htf=htfTrend(hc),L=lastBarStats(cc,i);
+    const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null};
+    if(e200==null||r14==null)return out;
+    const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
+    if(!dir||L.vr>=1||!(atrP>.01&&atrP<=.05/3))return out;
+    const pull=dir>0?r14<50:r14>50,soft=dir>0?r14<55:r14>45;
+    if(rank>=40&&pull){out.setup='tp-u80';out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','moneda fuera de las 40 con más volumen');}
+    else if(rank<40&&soft&&!pull&&adx!=null&&adx>=25){out.setup='tp-r55';out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','retroceso suave: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso');}
+    else return out;
+    out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
+    return out;});}
+let plusBusy=false,plusLast=0;
+async function scanPlus(){if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
+  try{const cfg=SIGCFG.medio,now=Date.now();
+    const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,80).map(t=>t.s);
+    const fresh=[];
+    for(let r=0;r<U.length;r++){const s=U[r];
+      if(SIG.medio.some(x=>x.sym===s&&x.state==='live'))continue;
+      if(OPS.some(o=>o.m==='medio'&&o.sym===s&&now-o.t<24*36e5))continue;
+      try{const [cs,hc]=await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<250||hc.length<30)continue;
+        const e=evalTradingPlus(cs,hc,r);if(!e.dir)continue;const sg=buildSignalV2('medio',s,e,null);if(sg){sg.plus=true;fresh.push(sg);}}catch(err){}
+      await new Promise(z=>setTimeout(z,120));}
+    const live=SIG.medio.filter(x=>x.state==='live'&&x.plus);fresh.sort((a,b)=>b.conf-a.conf);
+    for(const f of fresh){if(live.length>=MAXPLUS)break;addSig('medio',f);live.push(f);}
+    if(fresh.length)saveSig();
+  }finally{plusBusy=false;renderSignals();}}
+setInterval(()=>{if(!scanBusy&&Date.now()-plusLast>SIGCFG.medio.every&&(mode==='medio'||(NTF.on&&NTF.tplus)||rmtOn()&&NTF.tplus))scanPlus();},15000);
+/* avisos propios de TRADING+ (botón nuevo); el servidor 24 h no las manda, así que el aviso a Telegram lo hace la página */
+{const _ns=notifySig;notifySig=function(m,f){if(f&&f.plus){if(window.__importing||!NTF.tplus||!ntfAny())return;
+  const L=f.dir>0,c=f.sym.replace('USDT','');window.__skipRmt=false;
+  notify(`🟨 TRADING+: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivos ${fp(f.tp0)} · ${fp(f.tp1)} · ${fp(f.tp2)} · Stop ${fp(f.sl)} · Salvavidas en ${fp(f.entry*(1-f.dir*SIM.medio.maxLoss/(SIM.medio.margin*SIM.medio.lev)*LLTH))} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m:'medio'});return;}
+  return _ns(m,f);};}
+{const _st=sigTabsRender;sigTabsRender=function(){_st.apply(this,arguments);const el=$('sigTabs');if(!el||mode!=='medio')return;
+  const n=SIG.medio.filter(s=>s.state==='live'&&s.plus).length,b=document.createElement('button');b.type='button';b.className='tp-ntf'+(NTF.tplus?' on':'');b.dataset.tp='1';
+  b.title='Avisos de las señales extra TRADING+';b.innerHTML=`🟨 TRADING+ ${NTF.tplus?'🔔':'🔕'}${n?`<b>${n}</b>`:''}`;el.appendChild(b);};}
+$('sigTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!b)return;e.stopPropagation();NTF.tplus=!NTF.tplus;saveNtf();
+  if(NTF.tplus&&!ntfAny()&&typeof askNotif==='function')askNotif();sigTabsRender();},true);
+sigTabsRender();setTimeout(()=>{if(mode==='medio')scanPlus();},20000);
 </script>
 </body>
 </html>
