@@ -4,7 +4,7 @@ on:
     - cron: '17 * * * *'
   workflow_dispatch:
 permissions:
-  contents: read
+  contents: write
   actions: write
 concurrency:
   group: senales
@@ -25,6 +25,7 @@ jobs:
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+          GH_TOKEN: ${{ github.token }}
           LOOP_MIN: '330'
       - uses: actions/cache/save@v4
         if: always()
