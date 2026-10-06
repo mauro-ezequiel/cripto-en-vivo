@@ -1302,7 +1302,7 @@ function renderChips(){
 }
 $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
   active.has(k)?active.delete(k):active.add(k);
-  try{localStorage.setItem('cv_ind4_'+mode,JSON.stringify([...active]))}catch(e){}
+  try{localStorage.setItem('cv_ind4_'+mode,JSON.stringify([...active]))}catch(e){}indUserSet(k,active.has(k));
   renderChips();layout();calcInd(true);hmKey='';};
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
@@ -1314,10 +1314,10 @@ function applyMode(m){
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
   try{if(saved&&!saved.includes('trend')&&!localStorage.getItem('cv_tr_'+m)){saved.push('trend');localStorage.setItem('cv_tr_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('kon')&&!localStorage.getItem('cv_kon_'+m)){saved.push('kon');localStorage.setItem('cv_kon_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
-  active=new Set((saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
+  active=new Set((indUser()||saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
-  tf=M.tf;
+  tf=(window.__bootTf&&TF_MS[window.__bootTf])?window.__bootTf:M.tf;window.__bootTf=null;
   renderTfs();
   try{localStorage.setItem('cv_mode',m)}catch(e){}
   loadChart();
@@ -1628,7 +1628,7 @@ try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
-  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
+  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
@@ -1648,14 +1648,15 @@ function initCloud(){
       const local=readLocalLines(),lt=+(localStorage.getItem('cv_lines_t')||0);let merged;
       if(!d.linesT){merged={...local};for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];}else merged=lt>d.linesT?local:(d.lines||{});
       try{localStorage.setItem('cv_lines',JSON.stringify(merged));localStorage.setItem('cv_lines_t',String(Math.max(lt,d.linesT||0)||Date.now()));}catch(e){}
-      try{applyCloudPil(d);}catch(e){}
+      try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,true);}catch(e){}
       (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);if(d.cu&&typeof d.cu==='object'){CU=normCu(d.cu);try{localStorage.setItem('cv_custom',JSON.stringify(CU))}catch(e){}if(mode==='p'){setNames();if(candles.length)calcInd(true);renderChips();}}try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
     }catch(e){console.warn('No se pudo leer la nube',e);}
     cloudReady=true;restoreLines();renderList();cloudSave();
     try{if(window.__unsubLines)window.__unsubLines();window.__unsubLines=fbDb.collection('users').doc(u.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.data()||{},lt=+(localStorage.getItem('cv_lines_t')||0);
-      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}try{applyCloudPil(d);}catch(e){}});}catch(e){}});
+      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,false);}catch(e){}});}catch(e){}});
 }
-loadTickers();applyMode('medio');initCloud();setInterval(renderLegend,1500);
+loadTickers();window.__viewHold=true;{let v=null;try{v=JSON.parse(localStorage.getItem('cv_view')||'null')}catch(e){}
+  if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}initCloud();setInterval(renderLegend,1500);
 
 /* ---------- noticias globales (cripto, macro, regulación, geopolítica) ---------- */
 const NEWS={items:[],fng:null,upd:0};
@@ -3191,6 +3192,32 @@ document.addEventListener('click',e=>{const c=e.target.closest('#sigList .sig[da
   SFOC={id:c.dataset.op};try{localStorage.setItem('cv_sfoc',JSON.stringify(SFOC))}catch(_){}SOV.key='';setTimeout(()=>sovDraw(true),700);},true);
 {const _rl=restoreLines;restoreLines=function(){_rl.apply(this,arguments);try{sovDraw(true);}catch(e){}};}
 setInterval(()=>{try{sovDraw(false);}catch(e){}},3000);
+
+/* ---------- la cuenta recuerda la última moneda vista y los indicadores elegidos ---------- */
+function indUser(){try{const u=JSON.parse(localStorage.getItem('cv_ind_user')||'null');return Array.isArray(u)?u:null;}catch(e){return null;}}
+function indUserSet(k,on){let u=indUser();if(!u)u=[...active];else{u=u.filter(x=>x!==k);if(on)u.push(k);}
+  try{localStorage.setItem('cv_ind_user',JSON.stringify(u));localStorage.setItem('cv_ind_user_t',String(Date.now()));}catch(e){}
+  if(typeof cloudSave==='function')cloudSave(true);}
+function viewGet(){try{return JSON.parse(localStorage.getItem('cv_view')||'null');}catch(e){return null;}}
+function viewSave(){if(window.__viewHold)return;const o=viewGet();if(o&&o.sym===symbol&&o.m===mode&&o.tf===tf)return;
+  try{localStorage.setItem('cv_view',JSON.stringify({sym:symbol,m:mode,tf,t:Date.now()}));}catch(e){}
+  if(typeof cloudSave==='function')cloudSave();}
+function cloudViewData(){const o={},v=viewGet(),u=indUser();if(v)o.view=v;if(u){o.inds=u;o.indsT=+(localStorage.getItem('cv_ind_user_t')||0);}return o;}
+function goView(v){if(!v||!v.sym||!MODES[v.m])return;window.__viewHold=true;
+  try{if(v.m!==mode){if(v.m==='a')LSYM.a=v.sym;else{LSYM.c=v.sym;if(mode!=='a')symbol=v.sym;}window.__bootTf=v.tf;applyMode(v.m);if(symbol!==v.sym)select(v.sym);}
+    else{if(v.tf&&TF_MS[v.tf])tf=v.tf;renderTfs();select(v.sym);}}
+  finally{window.__viewHold=false;}
+  try{localStorage.setItem('cv_view',JSON.stringify(v));}catch(e){}}
+function applyCloudView(d,nav){
+  if(Array.isArray(d.inds)&&d.indsT>+(localStorage.getItem('cv_ind_user_t')||0)){
+    try{localStorage.setItem('cv_ind_user',JSON.stringify(d.inds));localStorage.setItem('cv_ind_user_t',String(d.indsT));}catch(e){}
+    const M=MODES[mode];active=new Set(d.inds.filter(k=>M.inds.includes(k)));renderChips();layout();if(candles.length)calcInd(true);}
+  const v=d.view,l=viewGet();
+  if(nav&&v&&v.sym&&v.t>((l&&l.t)||0)&&(!l||v.sym!==l.sym||v.m!==l.m||v.tf!==l.tf))goView(v);}
+/* ACCIONES no se puede abrir antes de que cargue su código: se restaura acá */
+{const v=viewGet();if(v&&v.m==='a'&&v.sym){LSYM.a=v.sym;window.__bootTf=v.tf;applyMode('a');if(symbol!==v.sym)select(v.sym);}}
+window.__viewHold=false;
+{const _lc=loadChart;loadChart=function(){try{viewSave();}catch(e){}return _lc.apply(this,arguments);};}
 </script>
 </body>
 </html>
