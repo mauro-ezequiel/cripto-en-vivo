@@ -3340,6 +3340,44 @@ setInterval(()=>{if(!scanBusy&&Date.now()-plusLast>SIGCFG.medio.every&&(mode==='
 $('sigTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!b)return;e.stopPropagation();NTF.tplus=!NTF.tplus;saveNtf();
   if(NTF.tplus&&!ntfAny()&&typeof askNotif==='function')askNotif();sigTabsRender();},true);
 sigTabsRender();setTimeout(()=>{if(mode==='medio')scanPlus();},20000);
+
+/* ---------- octubre 2026 · v2: las 2 reglas extra pasan a TRADING normal y TRADING+ se amplía ----------
+   Backtest limpio (4H, ~290 días, 54 monedas, objetivo 1 +1,25 %, stop 5 %, una señal cada 24 h por moneda):
+   TRADING viejo (solo t-pb, 40 monedas): 0,91/día · 81,9 % al objetivo 1 · +2,8 % del margen por operación.
+   TRADING nuevo (t-pb + tp-r55 + tp-u80): 1,43/día · 82,5 % · +4,1 %.
+   TRADING+ (tp-x: tendencia alineada, ADX ≥ 25, RSI sin extremo <70 / >30, ATR 0,8–3 %): 10,4/día · 81,3 % · +2,5 %
+   (primera mitad 83 %, segunda 80 %). Ninguna variante bajó a 75 %: hasta tomar todas las velas con tendencia
+   alineada da 77 % (+0,7 %), porque con objetivo a 1,25 % y stop a 5 % el azar ya llega cerca del 75 %. */
+CAL.medio['tp-x']={p:81,p3:30,n:3020,txt:'tendencia alineada con ADX ≥ 25 y RSI sin extremo (más señales, algo menos de ganancia)'};TGTS['tp-x']=TGTS['t-pb'];
+var MAXPLUS2=6,MAXCORE=6;
+evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
+  return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
+    const st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],adx=calcADX().adx[i],r14=calcRSI(14)[i],htf=htfTrend(hc),L=lastBarStats(cc,i);
+    const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null,plus:false};
+    if(e200==null||r14==null)return out;
+    const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;if(!dir)return out;
+    const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3;
+    if(core&&rank>=40&&rr<50){out.setup='tp-u80';out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','moneda fuera de las 40 con más volumen');}
+    else if(core&&rank<40&&rr>=50&&rr<55&&adx!=null&&adx>=25){out.setup='tp-r55';out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','retroceso suave: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso');}
+    else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=25&&atrP>.008&&atrP<=.03){out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
+    else return out;
+    out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
+    return out;});};
+scanPlus=async function(){if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
+  try{const cfg=SIGCFG.medio,now=Date.now();
+    const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,80).map(t=>t.s);
+    const fresh=[];
+    for(let r=0;r<U.length;r++){const s=U[r];
+      if(SIG.medio.some(x=>x.sym===s&&x.state==='live'))continue;
+      if(OPS.some(o=>o.m==='medio'&&o.sym===s&&now-o.t<24*36e5))continue;
+      try{const [cs,hc]=await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<250||hc.length<30)continue;
+        const e=evalTradingPlus(cs,hc,r);if(!e.dir)continue;const sg=buildSignalV2('medio',s,e,null);if(sg){sg.plus=!!e.plus;fresh.push(sg);}}catch(err){}
+      await new Promise(z=>setTimeout(z,120));}
+    fresh.sort((a,b)=>b.conf-a.conf);
+    const liveC=SIG.medio.filter(x=>x.state==='live'&&!x.plus),liveP=SIG.medio.filter(x=>x.state==='live'&&x.plus);
+    for(const f of fresh){const L=f.plus?liveP:liveC,cap=f.plus?MAXPLUS2:MAXCORE;if(L.length>=cap)continue;addSig('medio',f);L.push(f);}
+    if(fresh.length)saveSig();
+  }finally{plusBusy=false;renderSignals();}};
 </script>
 </body>
 </html>

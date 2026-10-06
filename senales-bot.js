@@ -9,11 +9,13 @@ const TOKEN = process.env.TELEGRAM_TOKEN, CHAT = process.env.TELEGRAM_CHAT;
 const STATE_FILE = 'estado.json';
 
 const SIGCFG = {
-  medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 40, cool: 24 * 36e5, maxAge: 7 * 864e5 },
+  medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 80, cool: 24 * 36e5, maxAge: 7 * 864e5 },
   x: { name: 'SHOOTER', tf: '5m', htf: '15m', min: .016, maxAtr: .027, n: 45, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
 };
 const SIM = { medio: { margin: 350, lev: 15, maxLoss: 262.5 }, x: { margin: 50, lev: 18, maxLoss: 36 } };
 const CAL = { medio: { p: 87, p3: 36, n: 370 }, x: { p: 80, p3: 37, n: 152 } };
+/* acierto por tipo de señal de TRADING (las 2 reglas sumadas en octubre 2026) */
+const CALSET = { 't-pb': 87, 'tp-r55': 84, 'tp-u80': 85, 'sh-r': 80 };
 const MINCERT = { medio: 75, x: 70 };
 const TGTS = { medio: [.0125, .025, .0375], x: [.016, .032, .048] };
 const LLTH = .65;
@@ -66,14 +68,18 @@ function evalShooter(cs, hc) { const cc = cs.slice(0, -1);
     const dir = z < 0 ? 1 : -1; if (Math.sign(htf) !== dir) return out;
     out.dir = dir; out.reasons.push(dir > 0 ? 'cerró bajo la banda inferior' : 'cerró sobre la banda superior', 'RSI 7 en ' + r7.toFixed(0), 'tendencia de 15m a favor');
     return out; }); }
-function evalTrading(cs, hc) { const cc = cs.slice(0, -1);
+function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
     const st = calcST(10, 3).dir[i], e21 = emaArr(cl, 21)[i], e50 = emaArr(cl, 50)[i], e200 = emaArr(cl, 200)[i], r14 = calcRSI(14)[i], htf = htfTrend(hc), L = lastBarStats(cc, i);
-    const out = { dir: 0, c, atr, reasons: [] };
+    const out = { dir: 0, c, atr, reasons: [], setup: null };
     if (e200 == null || r14 == null) return out;
     const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0;
-    if (!dir || !(dir > 0 ? r14 < 50 : r14 > 50) || L.vr >= 1 || !(atrP > .01 && atrP <= .05 / 3)) return out;
-    out.dir = dir; out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)', 'retroceso: RSI 14 en ' + r14.toFixed(0), 'volumen bajo en el retroceso');
+    if (!dir || L.vr >= 1 || !(atrP > .01 && atrP <= .05 / 3)) return out;
+    const pull = dir > 0 ? r14 < 50 : r14 > 50, soft = dir > 0 ? r14 < 55 : r14 > 45, adx = calcADX(14).adx[i];
+    if (pull) out.setup = rank < 40 ? 't-pb' : 'tp-u80';
+    else if (rank < 40 && soft && adx != null && adx >= 25) out.setup = 'tp-r55';
+    else return out;
+    out.dir = dir; out.reasons.push(out.setup === 'tp-r55' ? 'tendencia alineada y fuerte (ADX ' + adx.toFixed(0) + ')' : 'tendencia alineada (Supertrend, EMA 21/50/200)', 'retroceso: RSI 14 en ' + r14.toFixed(0), 'volumen bajo en el retroceso');
     if (Math.sign(htf) === dir) out.reasons.push('tendencia diaria a favor');
     return out; }); }
 
@@ -129,22 +135,22 @@ async function main() {
 
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
-    const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0;
+    const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
     if (m === 'medio') { try { const bk = await kl('BTCUSDT', '4h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     for (const s of U) {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
       if (S.open.some(o => o.sym === s && o.m === m)) continue;
       try {
         const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
-        const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc); if (!e.dir) continue;
+        const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc, rankOf[s]); if (!e.dir) continue;
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
-        const d = e.dir; let conf = CAL[m].p;
+        const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
         if (m === 'medio' && btcDir) { if (btcDir === d) { conf += 2; e.reasons.push('BTC a favor'); } else { conf -= 5; e.reasons.push('BTC en contra: algo menos confiable'); } }
         if (conf < MINCERT[m]) continue;
         const Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
-        (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup: m === 'medio' ? 't-pb' : 'sh-r', reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
+        (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
         await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
