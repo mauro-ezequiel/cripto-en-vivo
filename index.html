@@ -1881,7 +1881,7 @@ async function futData(m,syms){
 }
 const TGTS={'t-pb':[.0125,.025,.0375],'sh-r':[.016,.032,.048],'a-mom':[.0175,.035,.0525],'c-mom':[.0175,.035,.0525],'a-rev':[.028,.056,.084]};
 function buildSignalV2(m,sym,e,fd){
-  const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||atrP>cfg.maxAtr)return null;
+  const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
   if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
