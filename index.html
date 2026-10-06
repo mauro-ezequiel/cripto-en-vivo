@@ -327,6 +327,43 @@ body.fs-on .fsbar{display:flex}
 .lopts~.i-btn,.lqx-ctl~.i-btn,.int-tabs~.i-btn{margin-left:0}.i-box{background:var(--bg);border:1px solid #26c6da;border-radius:8px;padding:8px 12px;margin:6px 0 8px;font-size:12px;line-height:1.5;color:var(--txt);text-align:left;text-transform:none;letter-spacing:0}.i-box ul{margin:4px 0 0;padding-left:18px}.i-box li{margin:2px 0}
 @media (max-width:800px){.int-tabs{margin-left:0}.int-t{font-size:11px}}#pilBtn{border:1px solid #ff9100!important;color:#ff9100}#pilBtn.alert{background:#ff9100;color:#14171d}
 @media (max-width:800px){.pil-f{grid-template-columns:1fr 1fr}.pil-f .pri{grid-column:1/-1}}
+#trn{position:fixed;inset:0;z-index:8500;background:var(--bg);display:flex;flex-direction:column;color:var(--txt)}#trn[hidden]{display:none}
+body.trn-on{overflow:hidden}
+.trn-h{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--panel)}.trn-h>b{font-size:15px;white-space:nowrap}
+.trn-eq{margin-left:auto;text-align:right;font-weight:800;font-size:14px;font-variant-numeric:tabular-nums;line-height:1.15}.trn-eq small{display:block;font-size:9px;color:var(--mut);font-weight:600;text-transform:uppercase}.trn-eq span{font-size:11px}
+.trn-chart{border:1px solid var(--line);background:#1b2130;color:var(--txt);border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700;white-space:nowrap}
+.trn-b{flex:1;overflow-y:auto;padding:12px 14px 20px;width:100%;max-width:760px;margin:0 auto;box-sizing:border-box}
+.trn-nav{display:flex;border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}.trn-nav button{flex:1;background:none;border:0;color:var(--mut);padding:8px 2px;font-size:18px;display:flex;flex-direction:column;align-items:center;gap:2px;cursor:pointer}.trn-nav button span{font-size:11px;font-weight:600}.trn-nav button.on{color:#e0b030}
+.trn-card{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:12px}
+.trn-row{display:flex;gap:10px;align-items:flex-end;margin-bottom:10px}.trn-row label{flex:1;display:flex;flex-direction:column;gap:4px;font-size:11px;color:var(--mut)}.trn-row input{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px;font:inherit;font-size:14px;width:100%;box-sizing:border-box}.trn-row input[type=range]{padding:0;accent-color:#e0b030}
+.trn-px{flex:1;text-align:right;font-variant-numeric:tabular-nums}.trn-px b{font-size:18px;display:block}.trn-px small{font-size:11px}
+.trn-dir{display:flex;gap:8px;margin-bottom:10px}.trn-dir button{flex:1;border:1px solid var(--line);background:var(--bg);color:var(--txt);border-radius:10px;padding:9px;font-weight:800;font-size:14px;cursor:pointer;display:flex;flex-direction:column;align-items:center}.trn-dir small{font-weight:500;font-size:10px;color:var(--mut)}.trn-dir .on.long{background:var(--up);border-color:var(--up);color:#fff}.trn-dir .on.short{background:var(--dn);border-color:var(--dn);color:#fff}.trn-dir .on small{color:#fff}
+.trn-prev{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;font-size:12px;font-variant-numeric:tabular-nums;margin-bottom:8px}.trn-prev span{color:var(--mut)}.trn-prev b{text-align:right}.trn-warn{grid-column:1/-1;color:#ff9800;font-weight:700}
+.trn-err{color:var(--dn);font-size:12px;font-weight:700;min-height:0}
+.trn-go{width:100%;padding:12px;border:0;border-radius:10px;background:#e0b030;color:#14171d;font-weight:800;font-size:15px;cursor:pointer}
+.trn-h4{margin:14px 0 8px;font-size:13px;color:var(--mut);text-transform:uppercase;letter-spacing:.05em}
+.trn-pos{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--up);border-radius:10px;padding:10px;margin-bottom:8px;font-size:12px}.trn-pos.short{border-left-color:var(--dn)}
+.trn-ph{display:flex;gap:8px;align-items:baseline;flex-wrap:wrap}.trn-ph span{color:var(--mut)}.trn-ph b:last-child{margin-left:auto;font-variant-numeric:tabular-nums}
+.trn-pg{display:grid;grid-template-columns:repeat(2,auto 1fr);gap:3px 10px;margin:8px 0;font-variant-numeric:tabular-nums}.trn-pg span{color:var(--mut)}.trn-pg b{text-align:right}
+.trn-pa{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.trn-pa button{border:1px solid var(--line);background:#1b2130;color:var(--txt);border-radius:8px;padding:6px 10px;cursor:pointer;font-size:12px;font-weight:600}.trn-pa .pri{background:#e0b030;color:#14171d;border-color:#e0b030}
+.trn-hr{display:flex;gap:8px;font-size:12px;padding:5px 0;border-bottom:1px solid #1d222c}.trn-hr b{margin-left:auto;font-variant-numeric:tabular-nums}
+.trn-tip{background:rgba(224,176,48,.12);border:1px solid rgba(224,176,48,.45);border-radius:10px;padding:9px 11px;font-size:12.5px;line-height:1.45;margin-bottom:12px}
+.trn-ex{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:9px 11px;margin-bottom:8px;display:flex;flex-direction:column;gap:4px;font-size:13px}.trn-ex small{color:var(--mut);font-size:11.5px}.trn-ex.ok{border-color:rgba(0,200,83,.5)}.trn-ex button{align-self:flex-start;border:1px solid #e0b030;color:#e0b030;background:none;border-radius:8px;padding:5px 10px;cursor:pointer;font-weight:700;font-size:12px}
+.trn-opts{display:flex;flex-direction:column;gap:8px;margin:12px 0}.trn-opts button{border:1px solid var(--line);background:var(--bg);color:var(--txt);border-radius:10px;padding:10px;text-align:left;cursor:pointer;font:inherit}.trn-opts .ok{border-color:#00c853;background:rgba(0,200,83,.15)}.trn-opts .bad{border-color:#ef5350;background:rgba(239,83,80,.15)}
+.trn-back,.trn-link{border:0;background:none;color:#e0b030;cursor:pointer;font-weight:700;padding:4px 0;margin-bottom:8px;font:inherit}
+.trn-le{background:var(--panel);border:1px solid var(--line);border-radius:10px;margin-bottom:8px}.trn-le summary{padding:10px 12px;cursor:pointer;font-weight:700;font-size:14px}.trn-le>div{padding:0 12px 12px;font-size:13px;line-height:1.5}.trn-le ul{margin:6px 0;padding-left:18px}
+.trn-bar{height:12px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:10px 0 6px}.trn-bar i{display:block;height:100%;background:linear-gradient(90deg,#e0b030,#00c853)}
+.trn-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.trn-stats div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.trn-stats small{display:block;color:var(--mut);font-size:10px}.trn-stats b{font-size:14px}
+.trn-reset{width:100%;border:1px solid var(--line);background:none;color:var(--mut);border-radius:10px;padding:10px;cursor:pointer}
+#trnPill{position:fixed;left:12px;bottom:78px;z-index:80;background:#7a5c00;color:#fff;border:1px solid #e0b030;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;box-shadow:0 6px 18px #000a;cursor:pointer}#trnPill[hidden]{display:none}
+@media (min-width:801px){#trnPill{bottom:20px}}
+.trn-toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:9800;background:#1b2130;border:1px solid #e0b030;color:var(--txt);border-radius:10px;padding:10px 14px;font-size:13px;box-shadow:0 8px 24px #000a;max-width:92vw}
+.trn-m{border-color:#b8860b!important;background:rgba(184,134,11,.12)!important}
+.trn-lk{display:block;margin-top:8px;border:1px solid #e0b030;background:rgba(224,176,48,.12);color:#e0b030;border-radius:8px;padding:6px 10px;cursor:pointer;font-weight:700;font-size:12px}
+.chip-i{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;margin-left:5px;border:1px solid #26c6da;color:#26c6da;border-radius:50%;font-size:10px;font-style:normal;font-weight:700;line-height:1;vertical-align:middle;cursor:help}.mcard .chip-i.mi{float:right;margin-top:-28px;width:20px;height:20px;font-size:12px}
+#tpop{position:fixed;inset:0;z-index:9700;background:rgba(0,0,0,.55);display:flex;align-items:flex-end;justify-content:center}#tpop[hidden]{display:none}
+.tpop-c{background:var(--panel);border:1px solid var(--line);border-radius:14px 14px 0 0;width:min(560px,100%);max-height:80vh;overflow-y:auto;padding:14px 16px 18px;box-sizing:border-box;font-size:13px;line-height:1.5;color:var(--txt)}.tpop-c>b:first-child{font-size:16px}.tpop-c ul{padding-left:18px;margin:6px 0}
+@media (min-width:801px){#tpop{align-items:center}.tpop-c{border-radius:14px}}
 .sig.plus{border:2px solid #b8860b;border-left-width:5px;background:rgba(184,134,11,.13)}.sig.plus.short{border-left-color:var(--dn)}.sig.plus:not(.short){border-left-color:var(--up)}
 .sg-plus{background:#7a5c00;color:#fff;font-weight:800;font-size:11px;letter-spacing:.03em;border-radius:6px;padding:4px 8px}
 .sig-tabs .tp-ntf{border-color:#b8860b!important;color:#e0b030!important}.sig-tabs .tp-ntf.on{background:#7a5c00!important;color:#fff!important}
@@ -3378,6 +3415,235 @@ scanPlus=async function(){if(plusBusy||!Object.keys(tickers).length)return;plusB
     for(const f of fresh){const L=f.plus?liveP:liveC,cap=f.plus?MAXPLUS2:MAXCORE;if(L.length>=cap)continue;addSig('medio',f);L.push(f);}
     if(fresh.length)saveSig();
   }finally{plusBusy=false;renderSignals();}};
+
+/* =====================================================================
+   📚 MODO ENTRENAMIENTO · dinero ficticio, operaciones apalancadas con precios reales,
+   lecciones de cada componente, ejercicios que se comprueban solos y un objetivo.
+   ===================================================================== */
+const TRN_START=500000;
+const TRN_GOAL=550000,TRN_FLOOR=450000;
+const TRN_FEE=.0004; // comisión por lado (como Binance futuros)
+const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entrar, x ejercicios
+ intro:{g:'Primeros pasos',t:'🕯 Velas, long y short',b:'Cada vela resume un período (en 1H, una hora): apertura, cierre, máximo y mínimo. <b>Verde</b> = cerró más arriba de lo que abrió; <b>roja</b> = más abajo.<br><b>LONG</b>: ganás si el precio sube. <b>SHORT</b>: ganás si baja.',h:['Antes de entrar decidí dónde salís si te equivocás (stop) y dónde cobrás (objetivo).','Mirá primero una temporalidad grande (4H o 1D) para saber la dirección y después una chica (15m o 1H) para el momento de entrada.','No persigas velas gigantes: esperá el retroceso.'],x:['q_intro','e1']},
+ lev:{g:'Primeros pasos',t:'⚖️ Apalancamiento y liquidación',b:'Con ×10 movés 10 veces tu margen: un 1 % a favor es +10 % del margen, pero cerca de un 10 % en contra te <b>liquidan</b> y perdés todo el margen. A más apalancamiento, más cerca está la liquidación.',h:['Usá apalancamientos bajos (×3 a ×10) mientras aprendés.','Tu stop tiene que estar siempre <b>antes</b> que el precio de liquidación.','En este simulador ves el precio de liquidación antes de abrir.'],x:['q_lev','e12']},
+ risk:{g:'Primeros pasos',t:'🛡 Gestión de riesgo',b:'Lo que te mantiene en el juego no es acertar siempre sino perder poco cuando fallás. La regla clásica: arriesgar 1–2 % del saldo por operación.',h:['Riesgo = tamaño de la posición × distancia al stop. Ej.: saldo 500.000, riesgo 1 % = 5.000; con stop a 2 % la posición puede ser de 250.000 (margen 25.000 con ×10).','Escalá las ganancias: cerrá 1/3 en cada objetivo y pasá el stop a la entrada después del primero (así trabajan las señales).','Nunca muevas el stop en contra para "aguantar".'],x:['q_risk','e2','e3']},
+ chart:{g:'Gráfico',t:'📈 Gráfico, temporalidades y herramientas',b:'Arriba elegís el modo y la temporalidad. Con <b>Regla</b> medís distancias y %, con <b>Línea</b> marcás precios (soportes, resistencias, tu entrada), <b>Borrar</b> quita la línea que tocás después y <b>LOG</b> pone la escala logarítmica.',h:['Marcá con Línea los máximos y mínimos recientes: son tus soportes y resistencias.','Entrá cerca de un soporte en long (o de una resistencia en short) y poné el stop un poco más allá.','Con la Regla medí si el objetivo está al menos tan lejos como el stop.'],x:['q_tf']},
+ trend:{g:'Indicadores',t:'📏 Línea de tendencia',ind:'trend',b:'Une los mínimos (tendencia alcista) o los máximos (bajista) usando todos los datos. Mientras el precio la respete, la tendencia sigue sana.',h:['En tendencia alcista, los toques a la línea son zonas para comprar.','Si el precio la rompe con fuerza y volumen, la tendencia puede estar terminando: no compres más.'],x:['q_trend']},
+ supertrend:{g:'Indicadores',t:'🟩 Supertrend',ind:'supertrend',b:'Línea que va <b>debajo</b> del precio cuando la tendencia es alcista y <b>encima</b> cuando es bajista. Cambia de lado cuando la tendencia se da vuelta.',h:['Usalo como filtro: solo long con Supertrend alcista, solo short con bajista.','La línea sirve como stop dinámico.','En mercados de rango da muchas señales falsas: combinalo con ADX.'],x:['e4','q_st']},
+ ema:{g:'Indicadores',t:'〰️ Medias móviles (EMA)',ind:'ema',b:'Promedian el precio dando más peso a lo reciente. Las rápidas (9, 21) sobre las lentas (50, 200) = alcista. El precio sobre la EMA 200 = mercado alcista de fondo.',h:['En tendencia alcista, los retrocesos a la EMA 21 o 50 son zonas de entrada.','Cruce de la rápida sobre la lenta = posible inicio de tendencia (llega tarde, pero confirma).','Es la base de la regla de TRADING: EMA 21 > 50 y precio > EMA 200.'],x:['e5','q_ema']},
+ bollinger:{g:'Indicadores',t:'🎚 Bandas de Bollinger',ind:'bollinger',b:'Media de 20 velas ± 2 desvíos. Contienen la mayor parte del movimiento. Bandas muy juntas = poca volatilidad (suele venir un movimiento fuerte).',h:['En tendencia alcista, un toque a la banda inferior es una oportunidad de compra (y al revés en bajista).','Ojo: en tendencias fuertes el precio "camina" por la banda; no shortees solo porque tocó la superior.','Es la base de SHOOTER: cierre fuera de la banda con RSI extremo y tendencia a favor.'],x:['e7','q_bb']},
+ ichimoku:{g:'Indicadores',t:'☁️ Ichimoku',ind:'ichimoku',b:'La nube resume tendencia y soportes. Precio <b>sobre</b> la nube = alcista; <b>debajo</b> = bajista; <b>dentro</b> = indecisión.',h:['Buscá long cuando el precio está sobre la nube y retrocede hacia ella.','Una nube gruesa es un soporte fuerte; una fina se rompe fácil.'],x:['q_ichi']},
+ vwap:{g:'Indicadores',t:'⚖️ VWAP diario',ind:'vwap',b:'Precio promedio del día ponderado por volumen: lo que pagó en promedio todo el mercado. Las bandas ±σ marcan extremos.',h:['Sobre el VWAP dominan los compradores; debajo, los vendedores.','Rebotes en el VWAP a favor de la tendencia son buenas entradas de corto plazo.','En las bandas ±2σ el precio está estirado: no entres a favor ahí.'],x:['q_vwap']},
+ vprofile:{g:'Indicadores',t:'📊 Perfil de volumen',ind:'vprofile',b:'Barras horizontales con el volumen operado en cada precio. El nivel con más volumen (POC) actúa como imán y soporte o resistencia.',h:['Zonas de mucho volumen frenan el precio: buenos lugares para entrar o tomar ganancia.','Zonas de poco volumen se atraviesan rápido: no pongas el stop en el medio de una.'],x:['q_vp']},
+ fib:{g:'Indicadores',t:'🌀 Fibonacci automático',ind:'fib',b:'Marca retrocesos de la última gran onda: 38,2 %, 50 % y 61,8 % son los más usados.',h:['En tendencia, esperá que el precio retroceda a 50–61,8 % y entrá a favor con el stop debajo del 78,6 %.','Si rompe el 78,6 %, la onda probablemente terminó.'],x:['q_fib']},
+ liq:{g:'Indicadores',t:'🧲 Zonas de liquidación',ind:'liq',b:'Bandas donde se liquidarían muchos apalancados (verde = longs abajo, rojo = shorts arriba). El precio suele ir a buscarlas porque ahí hay órdenes forzadas.',h:['Usalas como <b>objetivo</b>: si hay una zona grande de shorts arriba, el precio tiene un imán hacia arriba.','No entres solo por una zona: confirmá la dirección con la tendencia.'],x:['q_liq']},
+ rsi:{g:'Indicadores',t:'🔮 RSI (14)',ind:'rsi',b:'Mide la fuerza de las subas contra las bajas, de 0 a 100. Sobre 70 = sobrecompra; bajo 30 = sobreventa.',h:['En tendencia alcista, un RSI que baja a 40–50 marca un retroceso para comprar (así entra TRADING).','Sobrecompra no significa "shortear": en tendencias fuertes el RSI puede quedarse arriba mucho tiempo.','Divergencia: precio hace un máximo más alto y el RSI no = la suba se debilita.'],x:['e5','q_rsi']},
+ macd:{g:'Indicadores',t:'📉 MACD',ind:'macd',b:'Diferencia entre dos medias (12 y 26) y su señal (9). El histograma muestra si el impulso crece o se apaga.',h:['MACD sobre la señal y el histograma creciendo = impulso alcista.','Los cruces que pasan debajo de cero y a favor de la tendencia son los más confiables.'],x:['e8','q_macd']},
+ kon:{g:'Indicadores',t:'🔷 MACD Konkorde',ind:'kon',b:'Dos líneas: <b>azul</b> = tendencia (combina RSI, flujo de dinero y bandas) y <b>roja</b> = su media. Azul sobre roja = la fuerza va hacia arriba.',h:['Usalo como confirmación: entrá long cuando la azul cruza sobre la roja a favor de la tendencia.','Si la azul cae debajo de la roja estando en ganancia, considerá asegurar.'],x:['q_kon']},
+ adx:{g:'Indicadores',t:'💪 ADX / DMI',ind:'adx',b:'ADX mide la <b>fuerza</b> de la tendencia (no la dirección): sobre 25 fuerte, bajo 20 rango. +DI sobre −DI = dominan los compradores.',h:['Operá a favor de la tendencia cuando ADX ≥ 25 (así filtra TRADING+).','Con ADX bajo 20 evitá las estrategias de tendencia: el precio va de lado.'],x:['e6','q_adx']},
+ stochrsi:{g:'Indicadores',t:'⚡ Stoch RSI',ind:'stochrsi',b:'Un RSI del RSI: muy rápido. Cruces bajo 20 o sobre 80 marcan giros de corto plazo.',h:['Útil para afinar la entrada en SHOOTER: comprá cuando cruza hacia arriba desde menos de 20 en tendencia alcista.','Solo, da muchísimas señales falsas.'],x:['q_stoch']},
+ cvd:{g:'Indicadores',t:'🌊 CVD (flujo de órdenes)',ind:'cvd',b:'Suma compras agresivas menos ventas agresivas del día. Muestra quién empuja de verdad.',h:['Precio sube y CVD sube = suba sana.','Precio sube y CVD baja = suba débil (divergencia): cuidado con los longs.'],x:['q_cvd']},
+ gauge:{g:'Paneles',t:'🌡 Termómetro de tendencia',b:'Resume todos los factores en un número de 0 a 100: ≥ 70 alcista, ≤ 30 bajista, en el medio neutral.',h:['Operá a favor del termómetro: long con 70 o más, short con 30 o menos.','En la zona neutral (40–60) mejor esperar.'],x:['q_gauge']},
+ fac:{g:'Paneles',t:'📋 Qué dice cada factor',b:'La tabla al lado del termómetro muestra cada indicador, si está a favor o en contra y su peso.',h:['Buscá que la mayoría coincida. Si los de más peso están en contra, no entres.','Mirá también noticias y "manos fuertes" en la tabla: pueden cambiar el panorama.'],x:['q_fac']},
+ sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, algo menos de ganancia).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
+ ll:{g:'Paneles',t:'🛟 Salvavidas',b:'Si el precio va en contra hasta la zona del salvavidas y los datos siguen a favor, se agrega medio margen: mejora la entrada promedio y aleja la liquidación.',h:['Solo usalo si los indicadores siguen confirmando la dirección.','Nunca agregues margen "por las dudas" sin un plan: es la forma más rápida de perder más.'],x:['q_ll']},
+ pil:{g:'Paneles',t:'🧭 Pilotear',b:'Cargás una operación real tuya y cada 15 s la página te dice si mantener, asegurar, salir o poner un salvavidas.',h:['Cargá la operación apenas la abrís en el exchange.','Hacé caso a los avisos 🚨 y ⛔: son los que te evitan liquidaciones.'],x:['q_pil']},
+ int:{g:'Paneles',t:'🧠 Inteligencia',b:'Registro en vivo de las señales, régimen de mercado (BTC o altcoins), monedas que suben y órdenes grandes (ballenas).',h:['Si el régimen dice "altseason", las alts suelen moverse más que BTC.','Órdenes grandes en una dirección confirman el movimiento.'],x:['q_int']},
+ lq:{g:'Paneles',t:'🔥 Mapa de liquidaciones',b:'Muestra cuánto dinero se liquidaría en cada nivel de precio y las liquidaciones en vivo.',h:['Los niveles con mucho dinero son objetivos probables.','Una cascada de liquidaciones suele marcar el final de un movimiento brusco.'],x:['q_liq']},
+ news:{g:'Paneles',t:'📰 Noticias',b:'Las noticias más relevantes de cripto, macro y regulación, con su efecto probable.',h:['Antes de un dato macro fuerte (tasa de la Fed, inflación) bajá el tamaño o no operes.','Una noticia muy negativa puede romper cualquier análisis técnico.'],x:['q_news']},
+ vbar:{g:'Paneles',t:'🟢🔴 Barra caro / barato',b:'Debajo del buscador: monedas muy baratas (verde) o muy caras con giro confirmado (rojo) para su propio último año.',h:['Barato: posible rebote; buscá confirmación en el gráfico antes de entrar.','Caro con borde punteado: todavía sube, no lo shortees aún.'],x:['q_vbar']},
+ 'm-medio':{g:'Modos',t:'📈 Modo TRADING',b:'Operaciones de 4 horas a días. Señales de retroceso dentro de la tendencia (4H), objetivos +1,25 / +2,5 / +3,75 %.',h:['Ideal si no podés mirar la pantalla todo el día.','Usá ×5 a ×15 con el stop al 5 %.'],x:['e5']},
+ 'm-x':{g:'Modos',t:'🎯 Modo SHOOTER',b:'Operaciones cortas de 5 min a 4 h. Rebotes desde los extremos de Bollinger con la tendencia de 15m a favor.',h:['Necesita estar atento: la señal dura poco.','Usá Stoch RSI y VWAP para afinar la entrada.'],x:['e7']},
+ 'm-a':{g:'Modos',t:'🏛 Modo ACCIONES',b:'Acciones de la Bolsa de Nueva York en dólares, con velas diarias.',h:['Los huecos de apertura pueden saltar el stop: usá menos apalancamiento.','Mirá las noticias de la empresa antes de entrar.'],x:['q_gauge']},
+ 'm-p':{g:'Modos',t:'🛠 Modo PERSONALIZADO',b:'Valores de TRADING con tus propios ajustes de indicadores. Las señales no están calibradas.',h:['Usalo para experimentar, no para operar en serio.','Probá tus ideas acá en el modo entrenamiento antes de usarlas con dinero real.'],x:['q_intro']}
+};
+const TQ={ // preguntas: q, o opciones, a correcta, w explicación
+ q_intro:{q:'Abrís un SHORT en 100 y el precio baja a 95. ¿Qué pasa?',o:['Perdés','Ganás','No cambia nada'],a:1,w:'En short ganás cuando el precio baja.'},
+ q_lev:{q:'Con ×20, ¿aproximadamente cuánto en contra te liquida?',o:['20 %','5 %','1 %'],a:1,w:'100 % / 20 = 5 %: con ×20 un 5 % en contra se come el margen.'},
+ q_risk:{q:'Saldo 500.000, querés arriesgar 1 % con el stop a 2 %. ¿Tamaño de la posición?',o:['10.000','250.000','500.000'],a:1,w:'Riesgo 5.000 / 2 % = 250.000 de posición (con ×10, 25.000 de margen).'},
+ q_tf:{q:'¿Para qué sirve mirar una temporalidad mayor (4H o 1D)?',o:['Para ver la dirección de fondo','Para entrar más rápido','No sirve'],a:0,w:'La grande marca la dirección; la chica, el momento de entrada.'},
+ q_trend:{q:'El precio rompe con fuerza una línea de tendencia alcista. ¿Qué conviene?',o:['Comprar más','Dejar de comprar y proteger','Ignorarlo'],a:1,w:'La ruptura puede ser el fin de la tendencia: protegé y no compres más.'},
+ q_st:{q:'El Supertrend está debajo del precio (verde). ¿Qué operaciones priorizás?',o:['Long','Short','Ninguna'],a:0,w:'Supertrend debajo = tendencia alcista: priorizá long.'},
+ q_ema:{q:'EMA 21 sobre EMA 50 y precio sobre EMA 200 indica…',o:['Tendencia alcista','Tendencia bajista','Rango'],a:0,w:'Medias rápidas arriba y precio sobre la de 200 = alcista.'},
+ q_bb:{q:'En plena tendencia alcista el precio toca la banda superior de Bollinger. ¿Conviene shortear?',o:['Sí, siempre','No por eso solo','Sí con ×50'],a:1,w:'En tendencias fuertes el precio camina por la banda: tocar la superior no alcanza para shortear.'},
+ q_ichi:{q:'El precio está dentro de la nube de Ichimoku. Significa…',o:['Tendencia fuerte','Indecisión','Sobreventa'],a:1,w:'Dentro de la nube el mercado está indeciso: mejor esperar.'},
+ q_vwap:{q:'El precio está sobre el VWAP del día. ¿Quién domina?',o:['Compradores','Vendedores','Nadie'],a:0,w:'Sobre el VWAP el promedio de los compradores del día está en ganancia: dominan ellos.'},
+ q_vp:{q:'¿Dónde NO conviene poner el stop según el perfil de volumen?',o:['Detrás de una zona de mucho volumen','En medio de una zona de poco volumen','Lejos de la entrada'],a:1,w:'Las zonas de poco volumen se cruzan rápido: tu stop se toca fácil.'},
+ q_fib:{q:'¿Qué retrocesos de Fibonacci se usan más para entrar a favor?',o:['0–10 %','50–61,8 %','150 %'],a:1,w:'Entre 50 y 61,8 % es la zona clásica de retroceso.'},
+ q_liq:{q:'Hay una zona grande de liquidaciones de shorts arriba del precio. ¿Qué suele pasar?',o:['El precio tiende a ir a buscarla','El precio no puede subir','Nada'],a:0,w:'Las liquidaciones son órdenes forzadas: funcionan como imán.'},
+ q_rsi:{q:'Tendencia alcista y el RSI baja a 45. ¿Qué indica?',o:['Retroceso para comprar','Hay que shortear','Sobrecompra'],a:0,w:'En tendencia alcista, RSI 40–50 marca el retroceso (así entra TRADING).'},
+ q_macd:{q:'MACD sobre su señal y el histograma creciendo indica…',o:['Impulso alcista','Impulso bajista','Rango'],a:0,w:'El impulso alcista está ganando fuerza.'},
+ q_kon:{q:'En Konkorde la línea azul cruza sobre la roja. ¿Qué indica?',o:['Fuerza compradora','Fuerza vendedora','Nada'],a:0,w:'Azul sobre roja = la tendencia empuja hacia arriba.'},
+ q_adx:{q:'ADX en 15. ¿Qué tipo de mercado es?',o:['Tendencia fuerte','Rango / sin tendencia','Pánico'],a:1,w:'ADX bajo 20 = el precio va de lado.'},
+ q_stoch:{q:'Stoch RSI cruza hacia arriba desde menos de 20 en tendencia alcista. ¿Qué es?',o:['Posible rebote de corto plazo','Señal de short','Nada'],a:0,w:'Es un giro de corto plazo a favor de la tendencia.'},
+ q_cvd:{q:'El precio sube pero el CVD baja. ¿Qué pasa?',o:['Suba sana','Suba débil (divergencia)','No importa'],a:1,w:'Suben sin compras agresivas: la suba es débil.'},
+ q_gauge:{q:'El termómetro marca 25. ¿Qué operaciones priorizás?',o:['Long','Short o esperar','Long con ×50'],a:1,w:'≤ 30 es bajista: short o esperar.'},
+ q_fac:{q:'La mayoría de los factores están a favor pero los de más peso en contra. ¿Qué hacés?',o:['Entro con todo','Espero o reduzco','Entro al revés'],a:1,w:'Los factores de más peso mandan: mejor esperar.'},
+ q_sig:{q:'Una señal tocó el objetivo 1. ¿Qué indica el plan?',o:['Cerrar todo','Cerrar 1/3 y pasar el stop a la entrada','Agregar margen'],a:1,w:'Así lo que queda no puede perder.'},
+ q_ll:{q:'¿Cuándo se usa el salvavidas?',o:['Siempre que vaya en contra','Solo si los datos siguen a favor','Nunca'],a:1,w:'Solo si los indicadores siguen confirmando la dirección.'},
+ q_pil:{q:'Pilotear te muestra 🚨 SALÍ YA. ¿Qué significa?',o:['Estás cerca de la liquidación','Vas ganando','Nada urgente'],a:0,w:'Estás muy cerca de la liquidación: salí.'},
+ q_int:{q:'El régimen de mercado dice "altseason". ¿Qué suele pasar?',o:['Las alts se mueven más que BTC','BTC sube más','Todo baja'],a:0,w:'En altseason el dinero rota hacia las altcoins.'},
+ q_news:{q:'Hoy sale el dato de inflación de EE. UU. ¿Qué conviene?',o:['Aumentar el apalancamiento','Bajar el tamaño o esperar','Da igual'],a:1,w:'Los datos macro provocan movimientos bruscos en cualquier dirección.'},
+ q_vbar:{q:'Una moneda aparece "caro, todavía sube" (borde punteado). ¿Qué hacés?',o:['Short ya','Esperar el giro','Long con ×50'],a:1,w:'Shortear lo caro sin giro perdió en el backtest: esperá que perfore el mínimo del día anterior.'}
+};
+const TE={ // ejercicios de práctica: se comprueban solos al abrir (on:'open') o al cerrar (on:'close')
+ e1:{t:'Abrí tu primera operación',d:'Elegí una moneda, LONG o SHORT, margen y apalancamiento, y abrí.',on:'open',ok:()=>true},
+ e2:{t:'Siempre con stop',d:'Abrí una operación con stop loss.',on:'open',ok:p=>p.sl>0},
+ e3:{t:'Arriesgá como máximo el 2 %',d:'Abrí con stop de forma que, si lo toca, pierdas 2 % del saldo o menos.',on:'open',ok:p=>p.sl>0&&trnRiskAt(p)<=.02*p.eq0},
+ e4:{t:'A favor del Supertrend',d:'Abrí LONG con el Supertrend de 4H alcista o SHORT con el bajista.',on:'open',ok:(p,s)=>s&&s.st===p.dir},
+ e5:{t:'Retroceso dentro de la tendencia',d:'Tendencia 4H alineada (EMA 21 sobre 50 y precio sobre EMA 200 para long; al revés para short) y RSI 14 en retroceso (bajo 50 en long, sobre 50 en short).',on:'open',ok:(p,s)=>s&&(p.dir>0?(s.e21>s.e50&&s.c>s.e200&&s.rsi<50):(s.e21<s.e50&&s.c<s.e200&&s.rsi>50))},
+ e6:{t:'Solo con tendencia fuerte',d:'Abrí con ADX 4H de 25 o más y el DMI a favor (+DI arriba en long, −DI arriba en short).',on:'open',ok:(p,s)=>s&&s.adx>=25&&(p.dir>0?s.pdi>s.mdi:s.mdi>s.pdi)},
+ e7:{t:'Rebote en la banda de Bollinger',d:'LONG cerca de la banda inferior (4H) con el precio sobre la EMA 200, o SHORT cerca de la superior con el precio debajo.',on:'open',ok:(p,s)=>s&&(p.dir>0?(s.pb<.2&&s.c>s.e200):(s.pb>.8&&s.c<s.e200))},
+ e8:{t:'Impulso del MACD a favor',d:'Abrí con el histograma del MACD 4H a favor y creciendo.',on:'open',ok:(p,s)=>s&&p.dir*s.hist>0&&p.dir*(s.hist-s.histP)>0},
+ e9:{t:'Seguí una señal',d:'Abrí una operación en la misma moneda y dirección que una señal activa (Señales).',on:'open',ok:p=>Object.values(SIG).some(a=>a.some(x=>x.state==='live'&&x.sym===p.sym&&x.dir===p.dir))},
+ e10:{t:'Cerrá con ganancia',d:'Cerrá una operación en positivo (después de comisiones).',on:'close',ok:p=>p.pnl>0},
+ e11:{t:'Cobrá con take profit',d:'Abrí con un objetivo (take profit) y dejá que se cierre solo al tocarlo.',on:'close',ok:p=>p.why==='tp'},
+ e12:{t:'Apalancamiento prudente',d:'Abrí con ×5 o menos y con stop.',on:'open',ok:p=>p.lev<=5&&p.sl>0},
+ e13:{t:'Short en tendencia bajista',d:'Abrí SHORT con Supertrend 4H bajista y el precio debajo de la EMA 200.',on:'open',ok:(p,s)=>s&&p.dir<0&&s.st===-1&&s.c<s.e200}
+};
+let TR=null;
+function trnNew(){return {bal:TRN_START,pos:[],hist:[],done:{},quiz:{},start:Date.now(),peak:TRN_START,low:TRN_START,goal:0};}
+try{TR=JSON.parse(localStorage.getItem('cv_train')||'null');}catch(e){}
+if(!TR||typeof TR.bal!=='number')TR=trnNew();
+function trnSave(cloud){try{localStorage.setItem('cv_train',JSON.stringify(TR));localStorage.setItem('cv_train_t',String(Date.now()));}catch(e){}if(cloud!==false&&typeof cloudSave==='function')cloudSave();}
+const trn$=v=>Math.round(v).toLocaleString('es-ES')+' USD',trnS$=v=>(v>=0?'+':'−')+Math.abs(Math.round(v)).toLocaleString('es-ES')+' USD';
+const trnPx=s=>tickers[s]&&!tickers[s].kind?tickers[s].c:null;
+function trnLiq(p){return p.entry*(1-p.dir*(1/p.lev)*(1-.005));}
+function trnUpnl(p,px){return p.notional*p.dir*(px/p.entry-1)-p.notional*TRN_FEE*2;}
+function trnRiskAt(p){return p.sl?p.notional*Math.abs(p.sl/p.entry-1)+p.notional*TRN_FEE*2:p.margin;}
+function trnEq(){let e=TR.bal;for(const p of TR.pos){const px=trnPx(p.sym)||p.entry;e+=p.margin+Math.max(-p.margin,trnUpnl(p,px));}return e;}
+async function trnSnap(sym){try{const cs=await kl(sym,'4h',300);if(cs.length<210)return null;const cc=cs.slice(0,-1);
+  return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),A=calcADX(),M=calcMACD();let sm=0,sq=0;for(let j=i-19;j<=i;j++)sm+=cl[j];sm/=20;for(let j=i-19;j<=i;j++)sq+=(cl[j]-sm)**2;const sd=Math.sqrt(sq/20);
+    return {c:cs[cs.length-1].close,st:calcST(10,3).dir[i],e21:emaArr(cl,21)[i],e50:emaArr(cl,50)[i],e200:emaArr(cl,200)[i],rsi:calcRSI(14)[i],adx:A.adx[i],pdi:A.pdi[i],mdi:A.mdi[i],hist:M.hist[i],histP:M.hist[i-1],pb:sd?(cl[i]-(sm-2*sd))/(4*sd):.5};});}catch(e){return null;}}
+function trnCheck(on,p){const got=[];for(const [k,e] of Object.entries(TE)){if(TR.done[k]||e.on!==on)continue;let ok=false;try{ok=e.ok(p,p.snap);}catch(err){}if(ok){TR.done[k]=Date.now();got.push(e.t);}}
+  if(got.length){trnToast('✅ Ejercicio completado: '+got.join(' · '));}return got;}
+function trnToast(t){document.querySelectorAll('.trn-toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='trn-toast';d.innerHTML=t;document.body.appendChild(d);setTimeout(()=>d.remove(),6000);}
+async function trnOpen(o){const px=trnPx(o.sym);if(!px)return 'Elegí una cripto válida (por ejemplo BTC).';
+  if(!(o.margin>0))return 'Poné un margen mayor a 0.';if(o.margin>TR.bal)return 'No te alcanza el saldo disponible.';
+  const notional=o.margin*o.lev,fee=notional*TRN_FEE;
+  const p={id:'t'+Date.now(),sym:o.sym,dir:o.dir,entry:px,lev:o.lev,margin:o.margin,notional,t:Date.now(),eq0:trnEq()};
+  if(o.slp>0)p.sl=px*(1-o.dir*o.slp/100);if(o.tpp>0)p.tp=px*(1+o.dir*o.tpp/100);
+  if(p.sl&&o.dir*(p.sl-trnLiq(p))<=0)return 'Tu stop está más allá de la liquidación: acercalo o bajá el apalancamiento.';
+  TR.bal-=o.margin;TR.pos.push(p);trnSave();trnRender();
+  p.snap=await trnSnap(p.sym);trnCheck('open',p);trnSave();trnRender(true);return '';}
+function trnClose(id,why,pxF){const i=TR.pos.findIndex(x=>x.id===id);if(i<0)return;const p=TR.pos[i],px=pxF||trnPx(p.sym)||p.entry;
+  let pnl=why==='liq'?-p.margin:trnUpnl(p,px);pnl=Math.max(-p.margin,pnl);
+  TR.bal+=p.margin+pnl;TR.pos.splice(i,1);const h={...p,px,pnl,why,closeAt:Date.now()};delete h.snap;TR.hist.unshift(h);TR.hist=TR.hist.slice(0,200);
+  trnCheck('close',h);trnSave();trnRender(TRN_TAB==='op');
+  const W={tp:'🎯 Take profit',sl:'🛑 Stop loss',liq:'💥 Liquidada',man:'Cerrada'};trnToast(`${W[why]||'Cerrada'} · ${p.sym.replace('USDT','')} ${trnS$(pnl)}`);}
+function trnTick(){if(!TR.pos.length)return;let ch=false;
+  for(const p of [...TR.pos]){const px=trnPx(p.sym);if(!px)continue;const d=p.dir;
+    if(d*(px-trnLiq(p))<=0){trnClose(p.id,'liq',trnLiq(p));ch=true;continue;}
+    if(p.sl&&d*(px-p.sl)<=0){trnClose(p.id,'sl',p.sl);ch=true;continue;}
+    if(p.tp&&d*(px-p.tp)>=0){trnClose(p.id,'tp',p.tp);ch=true;continue;}}
+  const eq=trnEq();if(eq>TR.peak)TR.peak=eq;if(eq<TR.low)TR.low=eq;
+  if(!TR.goal&&eq>=TRN_GOAL){TR.goal=Date.now();trnToast('🏆 ¡Objetivo cumplido! Llegaste a '+trn$(TRN_GOAL));trnSave();}
+  if(!$('trn').hidden||ch)trnRender(true);trnPill();}
+setInterval(trnTick,1500);
+
+/* ---------- interfaz ---------- */
+let TRN_TAB='op',TRN_SYM='BTCUSDT',TRN_DIR=1,TRN_LES=null,TRN_Q=null;
+(function(){const d=document.createElement('div');d.id='trn';d.hidden=true;d.innerHTML=`<div class="trn-h"><b>📚 Modo entrenamiento</b><span class="trn-eq" id="trnEq"></span><button type="button" class="trn-chart" id="trnChart" title="Ver el gráfico">📈 Gráfico</button><button type="button" class="drw-x" id="trnX" aria-label="Cerrar">✕</button></div><div class="trn-b" id="trnB"></div><nav class="trn-nav" id="trnNav"><button data-tt="op">💹<span>Operar</span></button><button data-tt="ex">🏋️<span>Ejercicios</span></button><button data-tt="le">📖<span>Aprender</span></button><button data-tt="go">🏆<span>Objetivo</span></button></nav>`;document.body.appendChild(d);
+  const pill=document.createElement('button');pill.id='trnPill';pill.type='button';pill.hidden=true;document.body.appendChild(pill);pill.onclick=()=>trnShow();
+  const pop=document.createElement('div');pop.id='tpop';pop.hidden=true;document.body.appendChild(pop);})();
+function trnShow(tab,les){if(tab)TRN_TAB=tab;if(les){TRN_LES=les;}$('trn').hidden=false;$('trnPill').hidden=true;document.body.classList.add('trn-on');if(typeof drawer==='function')drawer(false);trnRender();
+  if(les)setTimeout(()=>{const el=document.querySelector(`#trnB [data-les="${les}"]`);if(el)el.scrollIntoView({block:'start'});},50);}
+function trnHide(){$('trn').hidden=true;document.body.classList.remove('trn-on');trnPill();}
+function trnPill(){const p=$('trnPill');if(!p)return;const on=$('trn').hidden&&(TR.pos.length||window.__trnUsed);p.hidden=!on;if(on){const eq=trnEq();p.innerHTML=`📚 Entrenamiento · ${trn$(eq)}${TR.pos.length?` · ${TR.pos.length} abiertas`:''}`;}}
+$('trnX').onclick=()=>{window.__trnUsed=false;trnHide();};
+$('trnChart').onclick=()=>{window.__trnUsed=true;if(mode==='a')applyMode('medio');if(TRN_SYM&&symbol!==TRN_SYM&&tickers[TRN_SYM])select(TRN_SYM);trnHide();if(typeof setView==='function')setView('main');$('chartWrap').scrollIntoView({block:'start'});};
+$('trnNav').onclick=e=>{const b=e.target.closest('[data-tt]');if(!b)return;TRN_TAB=b.dataset.tt;TRN_Q=null;trnRender();$('trnB').scrollTop=0;};
+function trnRender(soft){const el=$('trnB');if(!el||$('trn').hidden)return;const eq=trnEq();
+  $('trnEq').innerHTML=`<small>Patrimonio</small>${trn$(eq)} <span class="${eq>=TRN_START?'up':'dn'}">${trnS$(eq-TRN_START)}</span>`;
+  document.querySelectorAll('#trnNav [data-tt]').forEach(b=>b.classList.toggle('on',b.dataset.tt===TRN_TAB));
+  if(soft&&TRN_TAB==='op'){const box=$('trnPos');if(box)box.innerHTML=trnPosHTML();trnPrev();return;}
+  if(soft&&TRN_TAB!=='op'&&TRN_TAB!=='go')return;
+  if(soft&&document.activeElement&&el.contains(document.activeElement))return;
+  el.innerHTML=TRN_TAB==='op'?trnOpHTML():TRN_TAB==='ex'?trnExHTML():TRN_TAB==='le'?trnLeHTML():trnGoHTML();
+  if(TRN_TAB==='op')trnPrev();}
+function trnOpHTML(){const pend=Object.keys(TE).filter(k=>!TR.done[k]);const next=pend[0]?TE[pend[0]]:null;
+  return `${next?`<div class="trn-tip">🏋️ <b>Próximo ejercicio:</b> ${next.t}. <span class="mut">${next.d}</span></div>`:''}
+  <div class="trn-card"><div class="trn-row"><label>Cripto<input id="trnSym" list="trnList" value="${TRN_SYM.replace('USDT','')}" autocomplete="off" placeholder="BTC, ETH, SOL…"></label><datalist id="trnList">${Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)).sort((a,b)=>b.q-a.q).slice(0,120).map(t=>`<option value="${t.s.replace('USDT','')}">`).join('')}</datalist><div class="trn-px" id="trnPx"></div></div>
+  <div class="trn-dir"><button type="button" data-dir="1" class="${TRN_DIR>0?'on long':''}">▲ LONG<small>gana si sube</small></button><button type="button" data-dir="-1" class="${TRN_DIR<0?'on short':''}">▼ SHORT<small>gana si baja</small></button></div>
+  <div class="trn-row"><label>Margen (USD)<input id="trnM" type="number" min="10" step="100" value="${Math.min(10000,Math.floor(TR.bal))}"></label><label>Apalancamiento <b id="trnLv">×5</b><input id="trnL" type="range" min="1" max="50" value="5"></label></div>
+  <div class="trn-row"><label>Stop loss (% desde la entrada)<input id="trnSL" type="number" min="0" step="0.1" value="3" placeholder="vacío = sin stop"></label><label>Take profit (%)<input id="trnTP" type="number" min="0" step="0.1" value="3" placeholder="vacío = sin objetivo"></label></div>
+  <div class="trn-prev" id="trnPrev"></div><div class="trn-err" id="trnErr"></div>
+  <button type="button" class="trn-go" id="trnGo">Abrir operación</button>
+  <div class="mut" style="font-size:11px;margin-top:6px">Disponible: ${trn$(TR.bal)} · comisión 0,04 % por lado · precios reales en vivo de Binance · dinero ficticio</div></div>
+  <h4 class="trn-h4">Operaciones abiertas</h4><div id="trnPos">${trnPosHTML()}</div>
+  <h4 class="trn-h4">Historial</h4>${TR.hist.length?TR.hist.slice(0,15).map(h=>`<div class="trn-hr"><span>${h.dir>0?'▲':'▼'} ${h.sym.replace('USDT','')} ×${h.lev}</span><span class="mut">${({tp:'objetivo',sl:'stop',liq:'liquidada',man:'manual'})[h.why]||''}</span><b class="${h.pnl>=0?'up':'dn'}">${trnS$(h.pnl)}</b></div>`).join(''):'<div class="mut">Todavía no cerraste operaciones.</div>'}`;}
+function trnPosHTML(){if(!TR.pos.length)return '<div class="mut">No tenés operaciones abiertas.</div>';
+  return TR.pos.map(p=>{const px=trnPx(p.sym)||p.entry,u=Math.max(-p.margin,trnUpnl(p,px)),pc=u/p.margin*100,liq=trnLiq(p);
+    return `<div class="trn-pos ${p.dir>0?'long':'short'}"><div class="trn-ph"><b>${p.dir>0?'▲ LONG':'▼ SHORT'} ${p.sym.replace('USDT','')}</b><span>×${p.lev} · margen ${trn$(p.margin)}</span><b class="${u>=0?'up':'dn'}">${trnS$(u)} (${pc>=0?'+':''}${pc.toFixed(1)} %)</b></div>
+    <div class="trn-pg"><span>Entrada</span><b>${fp(p.entry)}</b><span>Ahora</span><b>${fp(px)}</b><span>Stop</span><b class="dn">${p.sl?fp(p.sl):'—'}</b><span>Objetivo</span><b class="up">${p.tp?fp(p.tp):'—'}</b><span>Liquidación</span><b style="color:#ff9800">${fp(liq)} (${(Math.abs(liq/px-1)*100).toFixed(1)} %)</b></div>
+    <div class="trn-pa"><button type="button" data-cl="${p.id}">Cerrar ahora</button><button type="button" data-see="${p.sym}">Ver en el gráfico</button></div></div>`;}).join('');}
+function trnPrev(){const el=$('trnPrev');if(!el)return;const sym=trnSymVal(),px=trnPx(sym),m=+($('trnM')||{}).value||0,l=+($('trnL')||{}).value||1,sl=+($('trnSL')||{}).value||0,tp=+($('trnTP')||{}).value||0;
+  if($('trnLv'))$('trnLv').textContent='×'+l;const pe=$('trnPx');if(pe)pe.innerHTML=px?`<b>${fp(px)}</b><small class="${(tickers[sym].p||0)>=0?'up':'dn'}">${fpct(tickers[sym].p||0)} 24h</small>`:'<span class="mut">moneda no encontrada</span>';
+  if(!px||!m){el.innerHTML='';return;}const p={entry:px,dir:TRN_DIR,lev:l,margin:m,notional:m*l};if(sl)p.sl=px*(1-TRN_DIR*sl/100);
+  const liq=trnLiq(p),risk=trnRiskAt(p),eq=trnEq(),rp=risk/eq*100,win=tp?p.notional*tp/100-p.notional*TRN_FEE*2:null;
+  el.innerHTML=`<span>Posición</span><b>${trn$(p.notional)}</b><span>Liquidación</span><b style="color:#ff9800">${fp(liq)} (a ${(100/l*.995).toFixed(1)} %)</b><span>Si toca el stop</span><b class="dn">${sl?'−'+trn$(risk)+' ('+rp.toFixed(1)+' % del saldo)':'perdés hasta todo el margen'}</b><span>Si toca el objetivo</span><b class="up">${win!=null?'+'+trn$(win):'—'}</b>${sl&&rp>2?'<div class="trn-warn">⚠ Estás arriesgando más del 2 % del saldo.</div>':''}${sl&&TRN_DIR*(p.sl-liq)<=0?'<div class="trn-warn">⚠ El stop está más allá de la liquidación.</div>':''}${!sl?'<div class="trn-warn">⚠ Sin stop: una mala racha te puede liquidar.</div>':''}`;}
+function trnSymVal(){const v=(($('trnSym')||{}).value||'').trim().toUpperCase().replace(/[\/\s]|USDT$/g,'');return v?v+'USDT':TRN_SYM;}
+function trnExHTML(){if(TRN_Q)return trnQuizHTML(TRN_Q);const n=Object.keys(TE).length+Object.keys(TQ).length,d=Object.keys(TR.done).length+Object.keys(TR.quiz).filter(k=>TR.quiz[k]).length;
+  return `<div class="trn-tip">Completaste <b>${d}</b> de <b>${n}</b>. Los de práctica se comprueban solos cuando abrís o cerrás una operación en <b>Operar</b>; las preguntas se responden acá.</div>
+  <h4 class="trn-h4">Práctica con operaciones</h4>${Object.entries(TE).map(([k,e])=>`<div class="trn-ex ${TR.done[k]?'ok':''}"><b>${TR.done[k]?'✅':'⬜'} ${e.t}</b><small>${e.d}</small>${TR.done[k]?'':`<button type="button" data-goop="${k}">Ir a operar</button>`}</div>`).join('')}
+  <h4 class="trn-h4">Preguntas</h4>${Object.entries(TQ).map(([k,q])=>`<div class="trn-ex ${TR.quiz[k]?'ok':''}"><b>${TR.quiz[k]?'✅':'❔'} ${q.q}</b><button type="button" data-quiz="${k}">${TR.quiz[k]?'Repasar':'Responder'}</button></div>`).join('')}`;}
+function trnQuizHTML(k){const q=TQ[k],a=window.__trnAns;return `<button type="button" class="trn-back" data-back="1">← Volver</button><div class="trn-card"><b style="font-size:15px">${q.q}</b><div class="trn-opts">${q.o.map((o,i)=>`<button type="button" data-ans="${i}" class="${a!=null?(i===q.a?'ok':i===a?'bad':''):''}">${o}</button>`).join('')}</div>${a!=null?`<div class="trn-tip">${a===q.a?'✅ ¡Correcto!':'❌ No.'} ${q.w}</div>`:''}${(()=>{const l=Object.keys(TL).find(x=>TL[x].x.includes(k));return l?`<button type="button" class="trn-link" data-les="${l}" data-open="1">📖 Ver la lección: ${TL[l].t}</button>`:'';})()}</div>`;}
+function trnLeHTML(){const G={};for(const [k,l] of Object.entries(TL))(G[l.g]=G[l.g]||[]).push([k,l]);
+  return Object.entries(G).map(([g,arr])=>`<h4 class="trn-h4">${g}</h4>${arr.map(([k,l])=>`<details class="trn-le" data-les="${k}" ${TRN_LES===k?'open':''}><summary>${l.t}${l.x.every(x=>TR.done[x]||TR.quiz[x])?' <span class="up">✓</span>':''}</summary><div><p>${l.b}</p><b>Cómo usarlo para entrar</b><ul>${l.h.map(x=>`<li>${x}</li>`).join('')}</ul><div class="trn-pa">${l.ind?`<button type="button" data-showind="${l.ind}">👁 Verlo en el gráfico</button>`:''}${l.x.map(x=>TE[x]?`<button type="button" data-goop="${x}">🏋️ ${TE[x].t}</button>`:`<button type="button" data-quiz="${x}">❔ Pregunta</button>`).join('')}</div></div></details>`).join('')}`).join('');}
+function trnGoHTML(){const eq=trnEq(),pr=Math.max(0,Math.min(100,(eq-TRN_START)/(TRN_GOAL-TRN_START)*100)),cl=TR.hist,w=cl.filter(h=>h.pnl>0).length,ex=Object.keys(TR.done).length,qz=Object.keys(TR.quiz).filter(k=>TR.quiz[k]).length;
+  const dd=TR.peak?((TR.peak-TR.low)/TR.peak*100):0,lvl=ex+qz>=30?'🥇 Avanzado':ex+qz>=15?'🥈 Intermedio':ex+qz>=5?'🥉 Aprendiz':'🌱 Principiante';
+  return `<div class="trn-card"><b style="font-size:16px">🏆 Objetivo</b><p>Llegá a <b>${trn$(TRN_GOAL)}</b> (+10 %) sin que tu patrimonio baje de <b>${trn$(TRN_FLOOR)}</b>, completando los ejercicios. Es lo que haría un trader disciplinado: ganar despacio y no quemar la cuenta.</p>
+  <div class="trn-bar"><i style="width:${pr}%"></i></div><div class="mut" style="font-size:12px">${trn$(eq)} de ${trn$(TRN_GOAL)} · ${TR.goal?'✅ cumplido el '+fdate(TR.goal):eq<TRN_FLOOR?'⚠ bajaste del piso: reiniciá y probá con menos riesgo':pr.toFixed(0)+' %'}</div></div>
+  <div class="trn-stats"><div><small>Nivel</small><b>${lvl}</b></div><div><small>Ejercicios</small><b>${ex}/${Object.keys(TE).length}</b></div><div><small>Preguntas</small><b>${qz}/${Object.keys(TQ).length}</b></div><div><small>Operaciones cerradas</small><b>${cl.length}</b></div><div><small>Ganadas</small><b>${cl.length?Math.round(w/cl.length*100)+' %':'—'}</b></div><div><small>Caída máxima</small><b>${dd.toFixed(1)} %</b></div></div>
+  <div class="trn-tip">💡 Consejo: primero leé <b>Aprender</b>, después hacé los ejercicios en orden. Cuando ganes de forma constante con riesgo de 1–2 % por operación, recién ahí pensá en dinero real.</div>
+  <button type="button" class="trn-reset" id="trnReset">↺ Reiniciar con 500.000 USD</button>`;}
+$('trnB').addEventListener('click',async e=>{const t=e.target;
+  const dir=t.closest('[data-dir]');if(dir){TRN_DIR=+dir.dataset.dir;document.querySelectorAll('.trn-dir [data-dir]').forEach(b=>{const on=+b.dataset.dir===TRN_DIR;b.classList.toggle('on',on);b.classList.toggle('long',on&&TRN_DIR>0);b.classList.toggle('short',on&&TRN_DIR<0);});trnPrev();return;}
+  if(t.closest('#trnGo')){TRN_SYM=trnSymVal();const err=await trnOpen({sym:TRN_SYM,dir:TRN_DIR,margin:+$('trnM').value,lev:+$('trnL').value,slp:+$('trnSL').value||0,tpp:+$('trnTP').value||0});if(err&&$('trnErr'))$('trnErr').textContent=err;return;}
+  const cl=t.closest('[data-cl]');if(cl){trnClose(cl.dataset.cl,'man');return;}
+  const see=t.closest('[data-see]');if(see){TRN_SYM=see.dataset.see;$('trnChart').click();return;}
+  const go=t.closest('[data-goop]');if(go){TRN_TAB='op';TRN_Q=null;trnRender();trnToast('🏋️ '+TE[go.dataset.goop].t+': '+TE[go.dataset.goop].d);return;}
+  const qz=t.closest('[data-quiz]');if(qz){TRN_TAB='ex';TRN_Q=qz.dataset.quiz;window.__trnAns=null;trnRender();$('trnB').scrollTop=0;return;}
+  const an=t.closest('[data-ans]');if(an&&TRN_Q&&window.__trnAns==null){window.__trnAns=+an.dataset.ans;if(window.__trnAns===TQ[TRN_Q].a){TR.quiz[TRN_Q]=Date.now();trnSave();}trnRender();return;}
+  if(t.closest('[data-back]')){TRN_Q=null;trnRender();return;}
+  const lo=t.closest('[data-open][data-les]');if(lo){TRN_TAB='le';TRN_Q=null;TRN_LES=lo.dataset.les;trnRender();setTimeout(()=>{const x=document.querySelector(`#trnB details[data-les="${TRN_LES}"]`);if(x)x.scrollIntoView({block:'start'});},30);return;}
+  const si=t.closest('[data-showind]');if(si){const k=si.dataset.showind;if(mode==='a')applyMode('medio');if(!MODES[mode].inds.includes(k))applyMode('medio');if(!active.has(k)){const b=document.querySelector(`#inds [data-ind="${k}"]`);if(b)b.click();}window.__trnUsed=true;trnHide();if(typeof setView==='function')setView('main');$('chartWrap').scrollIntoView({block:'start'});trnToast('👁 '+IND[k].name+' activado en el gráfico. Tocá "📚 Entrenamiento" abajo para volver.');return;}
+  if(t.closest('#trnReset')){if(TR.pos.length&&!confirm('Tenés operaciones abiertas: se cierran y vuelve todo a 500.000 USD. ¿Seguir?'))return;const keep={done:TR.done,quiz:TR.quiz};TR=trnNew();TR.done=keep.done;TR.quiz=keep.quiz;trnSave();trnRender();return;}
+});
+$('trnB').addEventListener('input',e=>{if(e.target.closest('#trnSym,#trnM,#trnL,#trnSL,#trnTP'))trnPrev();});
+$('trnB').addEventListener('change',e=>{if(e.target.id==='trnSym'){TRN_SYM=trnSymVal();trnPrev();}});
+/* posiciones de entrenamiento dibujadas en el gráfico principal */
+let TRNL={lines:[],key:''};
+setInterval(()=>{try{const ps=TR.pos.filter(p=>p.sym===symbol),key=ps.map(p=>p.id+(p.sl||0)+(p.tp||0)).join('|')+symbol;if(key===TRNL.key)return;
+  TRNL.lines.forEach(l=>{try{series.removePriceLine(l)}catch(e){}});TRNL.lines=[];TRNL.key=key;const LS=LightweightCharts.LineStyle;
+  for(const p of ps){const add=(price,color,title,st)=>{if(price>0)TRNL.lines.push(series.createPriceLine({price,color,lineWidth:2,lineStyle:st,axisLabelVisible:true,title}));};
+    add(p.entry,'#90caf9','📚 Entrada',LS.Solid);add(p.sl,'#ff1744','📚 Stop',LS.Dashed);add(p.tp,'#00e676','📚 Objetivo',LS.Dashed);add(trnLiq(p),'#ff9800','📚 Liquidación',LS.Dotted);}}catch(e){}},2500);
+
+/* ---------- acceso desde la barra lateral ---------- */
+{const pd=$('pilDrw');if(pd){const b=document.createElement('button');b.type='button';b.className='mcard trn-m';b.id='trnDrw';b.innerHTML='<b>📚 Modo entrenamiento</b><small>500.000 USD ficticios para operar con apalancamiento en tiempo real, lecciones de cada indicador, ejercicios y un objetivo</small>';pd.after(b);b.onclick=()=>trnShow();}}
+
+/* ---------- "cómo usarlo" + acceso directo a entrenar desde cada ⓘ, cada indicador y cada modo ---------- */
+const TRN_MAP={chart:'chart',fac:'fac',gauge:'gauge',int:'int',lq:'lq',news:'news',pos:'risk',sig:'sig',vbarInfo:'vbar'};
+function trnPop(k){const l=TL[k];if(!l)return;const p=$('tpop');p.innerHTML=`<div class="tpop-c"><b>${l.t}</b><p>${l.b}</p><b>Cómo usarlo</b><ul>${l.h.map(x=>`<li>${x}</li>`).join('')}</ul><div class="trn-pa"><button type="button" class="pri" data-tgo="${k}">📚 Entrenar esto</button><button type="button" data-tx="1">Cerrar</button></div></div>`;p.hidden=false;}
+$('tpop').onclick=e=>{const g=e.target.closest('[data-tgo]');if(g){$('tpop').hidden=true;trnShow('le',g.dataset.tgo);return;}if(e.target.closest('[data-tx]')||e.target.id==='tpop')$('tpop').hidden=true;};
+document.addEventListener('click',e=>{const b=e.target.closest('.i-btn');if(!b)return;setTimeout(()=>{const k=b.dataset.i,box=b.closest('section,.dcard,#chartWrap,.jrn,aside')?.querySelector(`.i-box[data-i="${k}"]`)||document.querySelector(`.i-box[data-i="${k}"]`);if(!box||box.hidden)return;
+  const les=k==='int'&&typeof INT_T!=='undefined'?({led:'int',reg:'int',sol:'int',big:'int'})[INT_T]||'int':TRN_MAP[k]||'intro';if(box.querySelector('.trn-lk'))return;
+  const a=document.createElement('button');a.type='button';a.className='trn-lk';a.dataset.tgo=les;a.innerHTML='📚 Practicar esto en el modo entrenamiento';box.appendChild(a);},0);});
+document.addEventListener('click',e=>{const a=e.target.closest('.trn-lk');if(a){e.preventDefault();trnShow('le',a.dataset.tgo);}});
+{const pl=$('pilLeg');if(pl&&!pl.querySelector('.trn-lk')){const a=document.createElement('button');a.type='button';a.className='trn-lk';a.dataset.tgo='pil';a.textContent='📚 Practicar en el modo entrenamiento';pl.appendChild(a);}}
+/* indicadores: una "i" dentro de cada chip */
+{const _rc=renderChips;renderChips=function(){_rc.apply(this,arguments);document.querySelectorAll('#inds .chip[data-ind]').forEach(c=>{if(TL[c.dataset.ind]&&!c.querySelector('.chip-i')){const s=document.createElement('span');s.className='chip-i';s.dataset.ii=c.dataset.ind;s.textContent='i';s.title='Cómo usarlo';c.appendChild(s);}});};}
+$('inds').addEventListener('click',e=>{const s=e.target.closest('.chip-i');if(!s)return;e.preventDefault();e.stopImmediatePropagation();trnPop(s.dataset.ii);},true);
+renderChips();
+/* modos del menú lateral */
+document.querySelectorAll('#drwModes .mcard[data-m]').forEach(c=>{if(c.querySelector('.chip-i'))return;const s=document.createElement('span');s.className='chip-i mi';s.dataset.ii='m-'+c.dataset.m;s.textContent='i';s.title='Cómo usar este modo';c.appendChild(s);});
+$('drwModes').addEventListener('click',e=>{const s=e.target.closest('.chip-i');if(!s)return;e.preventDefault();e.stopImmediatePropagation();trnPop(s.dataset.ii);},true);
+
+/* ---------- nube: el entrenamiento se guarda en la cuenta ---------- */
+{const _cv=cloudViewData;cloudViewData=function(){const o=_cv.apply(this,arguments);try{o.train=JSON.parse(JSON.stringify(TR,(k,v)=>k==='snap'?undefined:v));o.trainT=+(localStorage.getItem('cv_train_t')||0);}catch(e){}return o;};}
+{const _ac=applyCloudView;applyCloudView=function(d,nav){_ac.apply(this,arguments);try{if(d.train&&typeof d.train.bal==='number'&&d.trainT>+(localStorage.getItem('cv_train_t')||0)){TR=d.train;TR.pos=TR.pos||[];TR.hist=TR.hist||[];TR.done=TR.done||{};TR.quiz=TR.quiz||{};try{localStorage.setItem('cv_train',JSON.stringify(TR));localStorage.setItem('cv_train_t',String(d.trainT));}catch(e){}trnRender();trnPill();}}catch(e){}};}
+setInterval(()=>{if(TR.pos.length)trnSave(false);},30000);
+trnPill();
 </script>
 </body>
 </html>
