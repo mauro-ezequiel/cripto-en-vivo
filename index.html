@@ -3556,13 +3556,13 @@ $('trnNav').onclick=e=>{const b=e.target.closest('[data-tt]');if(!b)return;TRN_T
 function trnRender(soft){const el=$('trnB');if(!el||$('trn').hidden)return;const eq=trnEq();
   $('trnEq').innerHTML=`<small>Patrimonio</small>${trn$(eq)} <span class="${eq>=TRN_START?'up':'dn'}">${trnS$(eq-TRN_START)}</span>`;
   document.querySelectorAll('#trnNav [data-tt]').forEach(b=>b.classList.toggle('on',b.dataset.tt===TRN_TAB));
-  if(soft&&TRN_TAB==='op'){const box=$('trnPos');if(box)box.innerHTML=trnPosHTML();trnPrev();return;}
+  if(soft&&TRN_TAB==='op'){const box=$('trnPos');if(box)box.innerHTML=trnPosHTML();const tp=$('trnTip');if(tp)tp.innerHTML=trnTipHTML();trnPrev();return;}
   if(soft&&TRN_TAB!=='op'&&TRN_TAB!=='go')return;
   if(soft&&document.activeElement&&el.contains(document.activeElement))return;
   el.innerHTML=TRN_TAB==='op'?trnOpHTML():TRN_TAB==='ex'?trnExHTML():TRN_TAB==='le'?trnLeHTML():trnGoHTML();
   if(TRN_TAB==='op')trnPrev();}
 function trnOpHTML(){const pend=Object.keys(TE).filter(k=>!TR.done[k]);const next=pend[0]?TE[pend[0]]:null;
-  return `${next?`<div class="trn-tip">🏋️ <b>Próximo ejercicio:</b> ${next.t}. <span class="mut">${next.d}</span></div>`:''}
+  return `<div id="trnTip">${trnTipHTML()}</div>
   <div class="trn-card"><div class="trn-row"><label>Cripto<input id="trnSym" list="trnList" value="${TRN_SYM.replace('USDT','')}" autocomplete="off" placeholder="BTC, ETH, SOL…"></label><datalist id="trnList">${Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)).sort((a,b)=>b.q-a.q).slice(0,120).map(t=>`<option value="${t.s.replace('USDT','')}">`).join('')}</datalist><div class="trn-px" id="trnPx"></div></div>
   <div class="trn-dir"><button type="button" data-dir="1" class="${TRN_DIR>0?'on long':''}">▲ LONG<small>gana si sube</small></button><button type="button" data-dir="-1" class="${TRN_DIR<0?'on short':''}">▼ SHORT<small>gana si baja</small></button></div>
   <div class="trn-row"><label>Margen (USD)<input id="trnM" type="number" min="10" step="100" value="${Math.min(10000,Math.floor(TR.bal))}"></label><label>Apalancamiento <b id="trnLv">×5</b><input id="trnL" type="range" min="1" max="50" value="5"></label></div>
@@ -3572,6 +3572,7 @@ function trnOpHTML(){const pend=Object.keys(TE).filter(k=>!TR.done[k]);const nex
   <div class="mut" style="font-size:11px;margin-top:6px">Disponible: ${trn$(TR.bal)} · comisión 0,04 % por lado · precios reales en vivo de Binance · dinero ficticio</div></div>
   <h4 class="trn-h4">Operaciones abiertas</h4><div id="trnPos">${trnPosHTML()}</div>
   <h4 class="trn-h4">Historial</h4>${TR.hist.length?TR.hist.slice(0,15).map(h=>`<div class="trn-hr"><span>${h.dir>0?'▲':'▼'} ${h.sym.replace('USDT','')} ×${h.lev}</span><span class="mut">${({tp:'objetivo',sl:'stop',liq:'liquidada',man:'manual'})[h.why]||''}</span><b class="${h.pnl>=0?'up':'dn'}">${trnS$(h.pnl)}</b></div>`).join(''):'<div class="mut">Todavía no cerraste operaciones.</div>'}`;}
+function trnTipHTML(){const k=Object.keys(TE).find(k=>!TR.done[k]),n=k?TE[k]:null;return n?`<div class="trn-tip">🏋️ <b>Próximo ejercicio:</b> ${n.t}. <span class="mut">${n.d}</span></div>`:'<div class="trn-tip">🏆 Completaste todos los ejercicios de práctica. Ahora apuntá al objetivo: 550.000 USD sin bajar de 450.000.</div>';}
 function trnPosHTML(){if(!TR.pos.length)return '<div class="mut">No tenés operaciones abiertas.</div>';
   return TR.pos.map(p=>{const px=trnPx(p.sym)||p.entry,u=Math.max(-p.margin,trnUpnl(p,px)),pc=u/p.margin*100,liq=trnLiq(p);
     return `<div class="trn-pos ${p.dir>0?'long':'short'}"><div class="trn-ph"><b>${p.dir>0?'▲ LONG':'▼ SHORT'} ${p.sym.replace('USDT','')}</b><span>×${p.lev} · margen ${trn$(p.margin)}</span><b class="${u>=0?'up':'dn'}">${trnS$(u)} (${pc>=0?'+':''}${pc.toFixed(1)} %)</b></div>
