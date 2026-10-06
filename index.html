@@ -158,6 +158,10 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 .acct-btn{display:inline-flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:999px;padding:4px 10px;font-size:12px;font-weight:600;cursor:pointer}
 .acct-btn img{width:18px;height:18px;border-radius:50%}
 .ltabs{display:flex;gap:6px;padding:0 12px 8px}
+.vbar-w{display:flex;align-items:center;gap:6px;margin:0 12px 8px}.vbar{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.vbar::-webkit-scrollbar{display:none}
+.vbar .mut{font-size:11px;white-space:nowrap}.vb{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line);background:#1b2130;color:var(--txt);border-radius:8px;padding:4px 9px;font-size:11.5px;cursor:pointer;white-space:nowrap;line-height:1.2}
+.vb b{font-size:12px}.vb small{font-size:10px;color:var(--mut)}.vb.cheap{background:#0d5c36;border-color:#00c853}.vb.exp{background:#7a1622;border-color:#ff1744}.vb.cheap small,.vb.exp small{color:#fff;opacity:.9}.vb.warm{border-color:#ff1744;border-style:dashed}.vb.cool{border-color:#00c853;border-style:dashed}
+.srv-toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:90;background:#1b2130;border:1px solid #2962ff;color:var(--txt);border-radius:10px;padding:9px 14px;font-size:13px;box-shadow:0 8px 24px #000a;cursor:pointer;max-width:92vw}
 .ltabs button{flex:1;background:none;border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:5px;font-size:12px;cursor:pointer}
 .ltabs button.on{color:var(--txt);border-color:#3a4256;background:#1b2130}
 .star{font-style:normal;color:#3a4256;margin-right:6px;cursor:pointer;padding:2px}
@@ -414,6 +418,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
     </div>
+    <div class="vbar-w"><div class="vbar" id="vbar"><span class="mut">Buscando monedas muy caras o baratas…</span></div><button type="button" class="i-btn" data-i="vbarInfo" title="Qué es esta barra">i</button></div><div class="i-box" id="vbarInfo" data-i="vbarInfo" style="margin:0 12px 8px" hidden></div>
     <div class="ltabs" id="ltabs"><button class="on" data-f="all">Todas</button><button data-f="fav">★ Favoritas</button></div>
     <div class="head"><span>Par</span><span>Precio</span><span>24h</span></div>
     <div id="list"></div>
@@ -3218,6 +3223,66 @@ function applyCloudView(d,nav){
 {const v=viewGet();if(v&&v.m==='a'&&v.sym){LSYM.a=v.sym;window.__bootTf=v.tf;applyMode('a');if(symbol!==v.sym)select(v.sym);}}
 window.__viewHold=false;
 {const _lc=loadChart;loadChart=function(){try{viewSave();}catch(e){}return _lc.apply(this,arguments);};}
+
+/* ---------- barra de monedas muy caras o muy baratas para su propio historial (velas diarias) ----------
+   Universo: las de buen volumen (≥ 50 M USDT en 24 h), sin estables ni apalancadas, con más de 415 días de historia,
+   sin pumps de ±25 % en el día y con volatilidad diaria (ATR 14) menor al 7 % (las impredecibles quedan afuera).
+   "Historial" = dónde está hoy la distancia a la media de 50 días comparada con los últimos 365 días.
+   Backtest (1.000 días, monedas grandes): BARATO (5 % más bajo del año + RSI ≤ 30) subió en 7 días en promedio +3,3 %
+   y tocó +6 % antes que −6 % el 53 % de las veces (al azar 48 %). CARO solo no sirvió para shortear: siguió subiendo
+   (−8 % en promedio para el short); con giro confirmado (perfora el mínimo del día anterior) el short acertó el 58 %. */
+const VB={list:[],upd:0,busy:false};
+function vbInfo(){const el=$('vbarInfo');if(el)el.innerHTML=`<b>Monedas muy caras o muy baratas para su propio historial</b> (velas diarias, último año). Solo monedas con buen volumen y que no sean impredecibles (volatilidad diaria menor al 7 %).<br>🟢 <b>Barato</b>: está en el 5 % más bajo de su año respecto a su media de 50 días y con RSI ≤ 30. En el backtest subió en 7 días en promedio un 3,3 % y llegó a +6 % antes que a −6 % el 53 % de las veces (al azar, 48 %).<br>🔴 <b>Caro para short</b>: estuvo en el 5 % más alto de su año con RSI ≥ 70 y ya perfora el mínimo del día anterior (giro confirmado): el short acertó el 58 %.<br>Borde rojo punteado: caro pero <b>todavía sube</b>. Shortear solo por estar caro perdió en el backtest (en cripto lo caro suele seguir subiendo), así que esperá el giro.<br>Si ninguna cumple, se muestran las principales sin color. Muestras chicas: es una ayuda para mirar, no una señal segura ni consejo financiero.`;}
+async function vbScan(){if(VB.busy)return;VB.busy=true;try{
+  const uni=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>5e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,40);
+  if(!uni.length)return;const out=[];
+  for(const t of uni){try{const d=await getJ(`${API}/klines?symbol=${t.s}&interval=1d&limit=420`);if(!Array.isArray(d)||d.length<416)continue;
+    const c=d.map(x=>+x[4]),h=d.map(x=>+x[2]),l=d.map(x=>+x[3]),n=c.length,i=n-1,p=tickers[t.s]?.c||c[i];c[i]=p;
+    const sma=k=>{let s=0;for(let j=k-49;j<=k;j++)s+=c[j];return s/50;},dev=k=>c[k]/sma(k)-1;
+    const hist=[];for(let k=i-365;k<i;k++)hist.push(dev(k));const pr=v=>hist.filter(x=>x<v).length/hist.length;
+    let g=0,lo=0;const rsi=[];for(let k=1;k<n;k++){const dd=c[k]-c[k-1],u=Math.max(dd,0),w=Math.max(-dd,0);if(k<=14){g+=u;lo+=w;if(k===14){g/=14;lo/=14;}}else{g=(g*13+u)/14;lo=(lo*13+w)/14;}rsi[k]=k>=14?100-100/(1+g/(lo||1e-12)):null;}
+    let atr=0;for(let k=i-13;k<=i;k++)atr+=Math.max(h[k]-l[k],Math.abs(h[k]-c[k-1]),Math.abs(l[k]-c[k-1]))/c[k-1];atr/=14;if(atr>=.07)continue;
+    const pNow=pr(dev(i)),pPrev=pr(dev(i-1)),rNow=rsi[i],rPrev=rsi[i-1];
+    let st=null;
+    if(pNow<=.05&&rNow<=30)st='cheap';
+    else if(pPrev>=.95&&rPrev>=70&&p<l[i-1])st='exp';
+    else if(pNow>=.95&&rNow>=70)st='warm';
+    out.push({s:t.s,st,pct:pNow,rsi:rNow,chg:t.p,p,q:t.q});
+  }catch(e){}}
+  VB.list=out;VB.upd=Date.now();vbRender();
+}finally{VB.busy=false;}}
+function vbRender(){const el=$('vbar');if(!el)return;
+  const hot=VB.list.filter(x=>x.st),show=hot.length?hot.sort((a,b)=>({exp:0,cheap:1,warm:2}[a.st]-{exp:0,cheap:1,warm:2}[b.st])):Object.values(tickers).filter(t=>!t.kind&&SAFE.includes(t.s)).sort((a,b)=>b.q-a.q).map(t=>({s:t.s,st:null,chg:t.p,p:t.c}));
+  if(!show.length)return;
+  const lab={cheap:'BARATO · long',exp:'CARO · short',warm:'caro, todavía sube'};
+  el.innerHTML=show.map(x=>{const tk=tickers[x.s],chg=tk?tk.p:x.chg;return `<button type="button" class="vb ${x.st||''}" data-s="${x.s}" title="${x.st?`En el ${Math.round(x.pct*100)} % de su año · RSI ${Math.round(x.rsi)}`:'Principal'}"><b>${x.s.replace('USDT','')} <span class="${chg>=0?'up':'dn'}" style="${x.st&&x.st!=='warm'?'color:#fff':''}">${chg!=null?fpct(+chg):''}</span></b><small>${x.st?lab[x.st]:fp(tk?tk.c:x.p)}</small></button>`;}).join('');}
+$('vbar').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;if(mode==='a')applyMode('medio');select(b.dataset.s);if(typeof setView==='function'&&document.body.dataset.v!=='main')setView('main');};
+vbInfo();setTimeout(()=>{vbRender();vbScan();},5000);setInterval(vbScan,30*6e4);setInterval(vbRender,15000);
+
+/* ---------- señales del servidor: llegan a todos los dispositivos en ~30 s ----------
+   Se consulta la API de GitHub con revalidación (ETag): si no cambió responde 304 y no gasta el límite de consultas. */
+const SRV_API='https://api.github.com/repos/mauro-ezequiel/cripto-en-vivo/contents/senales.json?ref=datos';
+let srvSeen=null,srvApiOff=0;
+async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await r.json();if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
+  return await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();}
+srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;const fresh=[];
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS.some(o=>o.id===id))continue;
+    const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
+    const c=CAL[x.m]&&CAL[x.m][x.setup];
+    const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
+      calTxt:`📡 señal del servidor 24 h (también llegó por Telegram)${c?` · llegó al objetivo 1 en el ${c.p} % de ${c.n} casos · ${c.txt}`:''}`,t:x.t,state:'live',srv:true};
+    window.__importing=true;try{addSig(x.m,f);}finally{window.__importing=false;}
+    if(Date.now()-x.t>cfg.maxAge)lose(f,'pasó el tiempo para entrar (llegó con la página cerrada)');
+    else if(srvSeen!==null&&Date.now()-x.t<30*6e4)fresh.push(f);
+    ch=true;}
+  srvSeen=true;
+  if(ch){saveSig();renderSignals();renderHist();setTimeout(()=>{try{syncOps();}catch(e){}},800);}
+  if(fresh.length)srvToast(fresh[fresh.length-1]);}catch(e){}};
+function srvToast(f){document.querySelectorAll('.srv-toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='srv-toast';
+  d.innerHTML=`📡 Nueva señal ${SIGCFG[f.m].name}: <b class="${f.dir>0?'up':'dn'}">${f.dir>0?'▲ LONG':'▼ SHORT'} ${f.sym.replace('USDT','')}</b> · tocá para verla`;
+  d.onclick=()=>{d.remove();if(f.m!==mode)applyMode(f.m);if(typeof setView==='function')setView('sig');renderSignals();};document.body.appendChild(d);setTimeout(()=>d.remove(),20000);}
+setInterval(()=>{if(!document.hidden)srvImport();},30000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)srvImport();});
 </script>
 </body>
 </html>
