@@ -201,6 +201,10 @@ body.fs-on .fsbar{display:flex}
 .sg-g .tgt{color:var(--up)}.sg-g .stp{color:var(--dn)}
 .sg-r{display:flex;flex-wrap:wrap;gap:4px}.sg-r i{font-style:normal;font-size:10.5px;background:#1b2130;border:1px solid var(--line);border-radius:999px;padding:2px 7px;color:var(--txt)}
 .sg-f{font-size:10.5px;color:var(--mut)}
+.adv{margin:7px 0;padding:7px 10px;border-radius:7px;font-size:12px;line-height:1.45;border-left:4px solid;color:var(--txt)}.adv b{font-weight:800;letter-spacing:.2px}
+.adv.ok{background:rgba(0,200,83,.14);border-color:#00c853}.adv.hold{background:rgba(41,98,255,.14);border-color:#2962ff}.adv.warn{background:rgba(255,152,0,.15);border-color:#ff9800}.adv.bad{background:rgba(239,83,80,.16);border-color:#ef5350}.adv.end{background:#222836;border-color:#6b7280}
+.sg-go{display:block;width:100%;margin:6px 0 4px;padding:7px;border:1px solid var(--line);border-radius:7px;background:#1b2130;color:var(--txt);font-weight:700;font-size:12px;cursor:pointer}.sg-go:hover{border-color:#2962ff}
+#sovChip{position:absolute;left:8px;bottom:34px;z-index:6;display:flex;align-items:center;gap:6px;background:rgba(20,23,29,.92);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 10px;font-size:11.5px;color:var(--txt);pointer-events:auto}#sovChip[hidden]{display:none}#sovChip button{border:0;background:#2a3142;color:var(--txt);border-radius:999px;width:22px;height:22px;cursor:pointer}
 .sg-lost{font-size:11.5px;color:var(--txt);background:#222836;border-radius:6px;padding:5px 8px}
 /* historial y simulación */
 .hist{margin-top:10px;border:1px solid var(--line);border-radius:10px;background:var(--bg)}
@@ -1929,16 +1933,16 @@ function renderSignals(){
   const list=SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,MAXSIG);
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
-    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
+    return `<div class="sig ${L?'long':'short'}${lost?' lost':''}${s.m==='p'?' nr':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
       <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. Se quita en ${Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))} s.</div>`:''}
-      <div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
+      ${opAdvice(op,s)}<div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
         <span>Objetivo 3</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
         <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>${llInfo(op,pc)}
         <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
-      <div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
+      <button type="button" class="sg-go">📈 Ver en el gráfico: entrada y objetivos</button><div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
 $('sigList').onclick=e=>{const c=e.target.closest('.sig');if(!c)return;
   if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
@@ -2048,7 +2052,7 @@ function opDetail(o){
   const st=open?`<span class="live">EN VIVO</span> <span class="up">Operación activa${o.hit?' · ya tocó el '+TGT[o.hit-1]:''}</span>`
     :o.state==='win'?`<span class="up">✓ Terminada · ganada (${o.hit}/3)</span>`:o.state==='fail'?`<span class="dn">✕ Terminada · liquidada (0/3)</span>`:`<span class="neu">• Terminada · ${esc(o.why||'cerrada')}</span>`;
   const T=[o.tp0,o.tp1,o.tp2],tg=(i,n)=>T[i]?`<span>${n}</span><b class="${o.hit>i?'up':''}">${fp(T[i])} (${fpct((T[i]/o.entry-1)*100)})${o.hit>i?' ✓':''}</b>`:'';
-  return `<div class="hdet${o.ll?' ll':''}"><div class="st">${st}${o.ll?' <span class="llt">🛟 con salvavidas</span>':''}</div><div class="g">
+  return `<div class="hdet${o.ll?' ll':''}"><div class="st">${st}${o.ll?' <span class="llt">🛟 con salvavidas</span>':''}</div>${opAdvice(o,(SIG[o.m]||[]).find(x=>x.op===o.id))}<div class="g">
     <span>Modo</span><b>${cfg.name} · ${L?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}/USDT</b>
     ${o.setup&&CAL[o.m][o.setup]?`<span>Tipo de señal</span><b>${CAL[o.m][o.setup].txt}</b>`:''}
     ${o.conf?`<span>${o.m==='p'?'Fuerza (sin calibrar)':'Acierto hist.'}</span><b>${o.conf} %</b>`:''}
@@ -2060,7 +2064,7 @@ function opDetail(o){
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
     <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
   </div>${o.reasons&&o.reasons.length?`<div class="rs">${o.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>`:''}
-  <button class="go" data-go="${o.sym}" data-tf="${cfg.tf}" data-m="${o.m}">Ver en el gráfico</button></div>`;
+  <button class="go" data-op="${o.id}" data-go="${o.sym}" data-tf="${cfg.tf}" data-m="${o.m}">Ver en el gráfico</button></div>`;
 }
 function renderHist(){return renderRes();}
 function renderHistOld(){
@@ -3124,6 +3128,69 @@ function sigTabsRender(){const el=$('sigTabs');if(!el)return;el.innerHTML=[['med
 $('sigTabs').onclick=e=>{const b=e.target.closest('[data-m]');if(!b||b.dataset.m===mode)return;applyMode(b.dataset.m);renderSignals();renderHist();sigTabsRender();};
 {const _rs=renderSignals;renderSignals=function(){_rs.apply(this,arguments);sigTabsRender();};}
 sigTabsRender();
+
+/* ---------- qué hacer ahora con cada operación (aviso en la tarjeta) ---------- */
+function advDur(ms){const h=ms/36e5;return h>=24?Math.round(h/24)+' d':h>=1?Math.round(h)+' h':Math.max(1,Math.ceil(ms/6e4))+' min';}
+function opAdvice(o,sg){try{
+  if(!o)return '';const d=o.dir,e=aeOf(o),T=[o.tp0,o.tp1,o.tp2],open=o.state==='open',p=open?tickers[o.sym]?.c:o.px;
+  if(!T[0])return '';const dist=v=>(Math.abs(v/p-1)*100).toLocaleString('es-ES',{maximumFractionDigits:2})+' %',mv=d>0?'subí':'bajá';
+  let c,t;
+  if(!open){
+    if(o.state==='fail'){c='bad';t=`🔴 <b>SALIR · TOCÓ EL STOP</b> · Operación terminada en ${fp(o.fail)} (${fusd2(o.pnl)}).`;}
+    else if(o.state==='exp'){c='end';t=`⏱ <b>SALIR · VENCIÓ EL PLAZO</b> · No llegó a ningún objetivo: se cierra lo que quede (${fusd2(o.pnl)}).`;}
+    else if(o.hit===3){c='ok';t=`🏁 <b>SALIR CON GANANCIA</b> · Llegó a los 3 objetivos (${fusd2(o.pnl)}).`;}
+    else{c='ok';t=`🏁 <b>TERMINADA CON GANANCIA</b> · ${esc(o.why||'')} (${fusd2(o.pnl)}).`;}
+  }else if(!p)return '';
+  else if(o.llPend){c='warn';t=`🛟 <b>ZONA DE SALVAVIDAS</b> · El precio llegó a ${fp(o.llAt)}. Revisando si los datos siguen a favor antes de sumar margen…`;}
+  else if(o.hit>0){const nx=T[o.hit],back=d*(p-e)/Math.abs(T[0]-e);
+    if(back<.35){c='warn';t=`🟠 <b>CUIDADO, VUELVE A LA ENTRADA</b> · Si toca ${fp(e)} se cierra el resto sin pérdida. Lo cobrado en el objetivo ${o.hit} ya está asegurado.`;}
+    else{c='ok';t=`🟢 <b>ASEGURANDO GANANCIA</b> · Ya tocó el objetivo ${o.hit}: cerrá 1/3 y ${mv} el stop a la entrada (${fp(e)}), así lo que queda no puede perder. Mantené el resto hacia el objetivo ${o.hit+1}: ${fp(nx)} (a ${dist(nx)}).`;}
+  }else{
+    const stop=o.fail,r=d*(e-p)/Math.abs(e-stop),fr=d*(p-e)/Math.abs(T[0]-e),age=Date.now()-o.t,max=SIM[o.m].maxAge,left=max-age;
+    const live=sg&&sg.state==='live',inZ=live&&sg.zl!=null&&p>=Math.min(sg.zl,sg.zh)&&p<=Math.max(sg.zl,sg.zh),llOpen=o.llAt&&!o.ll&&!o.llNo;
+    if(r>=.7){c='bad';t=`🔴 <b>CERCA DEL STOP</b> · Está a ${dist(stop)} del stop (${fp(stop)}). Si lo toca, salí sin dudar: no lo muevas en contra.`;}
+    else if(llOpen&&r>=.4){c='warn';t=`🟠 <b>VA EN CONTRA</b> · Zona de salvavidas en ${fp(o.llAt)} (a ${dist(o.llAt)}): ahí se suma medio margen solo si los datos siguen a favor; si no, se respeta el stop en ${fp(stop)}.`;}
+    else if(inZ){c='ok';t=`🟢 <b>BUEN MOMENTO PARA ENTRAR</b> · El precio está dentro de la zona de entrada. Stop en ${fp(stop)}, objetivo 1 en ${fp(T[0])} (a ${dist(T[0])}).`;}
+    else if(r>.15){c='warn';t=`🟠 <b>MANTENER CON CUIDADO</b> · Va un poco en contra. Respetá el stop en ${fp(stop)} (a ${dist(stop)}).${!live?' Si todavía no entraste, no entres ahora.':''}`;}
+    else if(fr>=.6){c='hold';t=`🔵 <b>MANTENER · CASI EN EL OBJETIVO 1</b> · Falta ${dist(T[0])}. Al tocarlo cerrá 1/3 y ${mv} el stop a la entrada.`;}
+    else{c='hold';t=`🔵 <b>MANTENER POSICIÓN</b> · ${fr>.05?'Va a favor':'Todavía sin avance'}. Objetivo 1 en ${fp(T[0])} (a ${dist(T[0])}), stop en ${fp(stop)}.${!live?' Si todavía no entraste, ya es tarde: esperá la próxima señal.':''}`;}
+    if(left>0&&left<max*.2&&c!=='bad')t+=` ⏳ Quedan ${advDur(left)} de plazo: si no llega al objetivo 1, cerrá al vencer.`;
+  }
+  return `<div class="adv ${c}">${t}</div>`;}catch(err){return '';}}
+
+/* ---------- la señal elegida en el gráfico: flecha de entrada, 3 objetivos gruesos, stop ---------- */
+var SFOC=null;try{SFOC=JSON.parse(localStorage.getItem('cv_sfoc')||'null')}catch(e){}
+var SOV={lines:[],key:''};
+(function(){const w=$('chartWrap');if(!w||$('sovChip'))return;const c=document.createElement('div');c.id='sovChip';c.hidden=true;w.appendChild(c);
+  c.addEventListener('click',e=>{if(!e.target.closest('button'))return;e.stopPropagation();SFOC=null;try{localStorage.removeItem('cv_sfoc')}catch(_){}sovClear();});})();
+function sovClear(){SOV.lines.forEach(l=>{try{series.removePriceLine(l)}catch(e){}});SOV.lines=[];try{series.setMarkers([])}catch(e){}SOV.key='';const c=$('sovChip');if(c)c.hidden=true;}
+function sovIdx(ts){let k=-1;for(let i=0;i<candles.length;i++){const c=candles[i],ct=c.t!=null?c.t:(c.time-TZ)*1000;if(ct<=ts)k=i;else break;}return k;}
+function sovDraw(force){
+  const o=SFOC&&OPS.find(x=>x.id===SFOC.id);
+  if(!o||o.sym!==symbol||!candles.length){if(SOV.key||SOV.lines.length)sovClear();return;}
+  const key=[o.id,o.hit,o.state,o.fail,o.ae||0,!!o.ll,tf,candles.length,candles[0].time].join('|');
+  if(!force&&key===SOV.key)return;const first=!SOV.key||force;sovClear();SOV.key=key;
+  const d=o.dir,L=d>0,LS=LightweightCharts.LineStyle,e=aeOf(o),T=[o.tp0,o.tp1,o.tp2],open=o.state==='open';
+  const add=(price,color,w,style,title)=>{if(price>0)SOV.lines.push(series.createPriceLine({price,color,lineWidth:w,lineStyle:style,axisLabelVisible:true,title}));};
+  T.forEach((v,i)=>add(v,o.hit>i?'#b9f6ca':'#00e676',4,LS.Solid,`OBJETIVO ${i+1}${o.hit>i?' ✓':''}`));
+  add(o.entry,'#e0e3eb',1,LS.Dashed,'Entrada');
+  if(o.ll)add(e,'#ffd600',1,LS.Dashed,'Entrada promedio');
+  add(o.hit>0&&open?e:o.fail,'#ff1744',2,LS.Dashed,o.hit>0&&open?'Stop (en la entrada)':'Stop');
+  if(open&&!o.hit&&o.llAt&&!o.ll&&!o.llNo)add(o.llAt,'#ffd600',1,LS.Dotted,'Salvavidas');
+  const mk=[],at=(ts)=>{const i=sovIdx(ts);return i<0?null:candles[i].time;},ti=at(o.t);
+  if(ti!=null)mk.push({time:ti,position:L?'belowBar':'aboveBar',color:L?'#00e676':'#ff1744',shape:L?'arrowUp':'arrowDown',text:`ENTRADA ${L?'LONG':'SHORT'} ${fp(o.entry)}`});
+  if(o.ll&&o.ll.t){const x=at(o.ll.t);if(x!=null)mk.push({time:x,position:L?'belowBar':'aboveBar',color:'#ffd600',shape:'circle',text:'🛟 Salvavidas'});}
+  if(!open&&o.closeAt){const x=at(o.closeAt);if(x!=null)mk.push({time:x,position:L?'aboveBar':'belowBar',color:o.pnl>=0?'#00e676':'#ff1744',shape:'square',text:`SALIDA ${fusd2(o.pnl)}`});}
+  mk.sort((a,b)=>a.time-b.time);try{series.setMarkers(mk);}catch(err){}
+  const c=$('sovChip');if(c){c.innerHTML=`📍 ${L?'▲ LONG':'▼ SHORT'} ${o.sym.replace('USDT','')} · ${SIGCFG[o.m]?.name||''} · ${fdate(o.t)} <button type="button" title="Quitar del gráfico">✕</button>`;c.hidden=false;}
+  if(first){const i=sovIdx(o.t),ts=chart.timeScale(),r=ts.getVisibleLogicalRange();
+    if(i>=0&&r&&(i<r.from+3||i>r.to))ts.setVisibleLogicalRange({from:Math.max(0,i-25),to:candles.length+8});
+    else if(i<0&&ti==null&&c)c.innerHTML+=' <span class="mut">(la entrada es anterior a las velas cargadas)</span>';}
+}
+document.addEventListener('click',e=>{const c=e.target.closest('#sigList .sig[data-op], #histList [data-op]');if(!c||!c.dataset.op)return;
+  SFOC={id:c.dataset.op};try{localStorage.setItem('cv_sfoc',JSON.stringify(SFOC))}catch(_){}SOV.key='';setTimeout(()=>sovDraw(true),700);},true);
+{const _rl=restoreLines;restoreLines=function(){_rl.apply(this,arguments);try{sovDraw(true);}catch(e){}};}
+setInterval(()=>{try{sovDraw(false);}catch(e){}},3000);
 </script>
 </body>
 </html>
