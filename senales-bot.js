@@ -90,14 +90,27 @@ async function sendTo(chat, text) { try { const r = await fetch(`https://api.tel
 async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; }
   await sendTo(CHAT, text); if (canal && CANAL) await sendTo(CANAL, text); }
 
+/* ---------- publica las señales en la rama "datos" para que la página las muestre ---------- */
+async function ghPublish() { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
+  const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'cripto-live-bot' }, api = 'https://api.github.com/repos/' + repo;
+  try { if (!S.brOk) { let r = await fetch(api + '/git/ref/heads/datos', { headers: H });
+      if (r.status === 404) { const mm = await (await fetch(api + '/git/ref/heads/main', { headers: H })).json(); r = await fetch(api + '/git/refs', { method: 'POST', headers: H, body: JSON.stringify({ ref: 'refs/heads/datos', sha: mm.object.sha }) }); }
+      if (!r.ok) { console.log('rama datos:', r.status); return false; } S.brOk = true; }
+    let sha = S.fileSha; if (!sha) { const g = await fetch(api + '/contents/senales.json?ref=datos', { headers: H }); if (g.ok) sha = (await g.json()).sha; }
+    const body = JSON.stringify({ upd: Date.now(), senales: S.hist || [] });
+    const r = await fetch(api + '/contents/senales.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: 'Señales del servidor', content: Buffer.from(body).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
+    if (r.ok) { S.fileSha = (await r.json()).content.sha; console.log('Publicadas', (S.hist || []).length, 'señales'); return true; }
+    console.log('publicar:', r.status, (await r.text()).slice(0, 200)); S.fileSha = null; return false; } catch (e) { console.log('publicar error', e.message); return false; } }
+
 /* ---------- estado (para no repetir avisos) ---------- */
-let S = { last: {}, open: [], boot: 0 };
+let S = { last: {}, open: [], boot: 0, hist: [] };
 try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } catch (e) {}
 
 async function main() {
   const now = Date.now();
   if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.', false); }
   if (!S.canal && TOKEN && CHAT && CANAL) { if (await sendTo(CANAL, '📈 CRIPTO-LIVE · Señales en vivo\nAcá se publican las señales de TRADING (4 h) y SHOOTER (5 min) apenas aparecen, con entrada, objetivos, stop y salvavidas, y después cuando tocan cada objetivo o el stop.\nGráfico y detalles: ' + PAGE + '\nℹ️ Solo informativo: no es consejo financiero. Operar con apalancamiento puede hacerte perder todo el margen.')) S.canal = now; }
+  if (!(S.hist && S.hist.length) && S.open.length) { S.hist = S.open.map(o => ({ m: o.m, sym: o.sym, dir: o.dir, entry: o.entry, zl: o.entry, zh: o.entry, tp: o.tp, sl: o.sl, ll: o.ll, conf: CAL[o.m].p, setup: o.m === 'medio' ? 't-pb' : 'sh-r', reasons: [], t: o.t })); S.histDirty = true; }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25)
@@ -131,6 +144,7 @@ async function main() {
         const Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
+        (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup: m === 'medio' ? 't-pb' : 'sh-r', reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
         await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
@@ -138,6 +152,8 @@ async function main() {
     console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
   }
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
+  S.hist = (S.hist || []).filter(x => now - x.t < 10 * 864e5).slice(-150);
+  if (S.histDirty || !S.pubOk) { if (await ghPublish()) { S.histDirty = false; S.pubOk = true; } }
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }

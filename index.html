@@ -300,6 +300,7 @@ body.fs-on .fsbar{display:flex}
 .int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
 .int-n{font-size:10px;color:var(--mut);margin-top:6px;line-height:1.4}.pil-cl{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}.pil-cl input{background:var(--bg);color:var(--txt);border:1px solid #ff9100;border-radius:6px;padding:6px 8px;font-size:13px;min-width:0;flex:1 1 160px}
 .pil-cl button{background:#ff9100;color:#14171d;border:0;border-radius:6px;font-size:12px;padding:6px 10px;font-weight:700;cursor:pointer}.pil-cl button[data-a=cancel]{background:var(--panel);color:var(--txt);border:1px solid var(--line)}.jrn{margin-top:12px}
+.sig-tabs{display:flex;gap:6px;margin:2px 0 10px;flex-wrap:wrap}.sig-tabs button{flex:1;min-width:92px;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:8px 6px;font-size:12px;font-weight:700;cursor:pointer}.sig-tabs button.on{border-color:var(--acc);background:#1c2333;box-shadow:inset 0 -2px 0 var(--acc)}.sig-tabs b{background:#ef5350;color:#fff;border-radius:999px;padding:0 6px;font-size:10px;margin-left:4px}
 .tg-ch{margin-left:auto;display:inline-flex;align-items:center;gap:4px;background:#229ED9;color:#fff;border-radius:999px;padding:3px 10px;font-size:11px;font-weight:700;text-decoration:none;text-transform:none;letter-spacing:0;white-space:nowrap}.tg-ch~.bell-btn{margin-left:0}
 .rmt-ch{display:block;text-decoration:none;background:linear-gradient(135deg,#1c2a3a,#14202c);border:1px solid #229ED9;border-radius:10px;padding:10px 12px;margin-bottom:8px;color:var(--txt)}.rmt-ch b{display:block;font-size:14px;color:#6cc6f0}.rmt-ch small{color:var(--mut);font-size:11px}
 @media (max-width:800px){aside{height:auto!important}aside .ltabs,aside .head,aside #list{display:none!important}aside.open .ltabs{display:flex!important}aside.open .head{display:grid!important}aside.open #list{display:block!important;height:40vh;height:40dvh;overflow-y:auto;flex:none}aside.open{box-shadow:0 10px 24px #0008}}
@@ -466,7 +467,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
-    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><a class="tg-ch" href="https://t.me/criptolive_senales" target="_blank" rel="noopener" title="Recibí las señales en Telegram aunque la página esté cerrada">📲 Canal</a><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu o Telegram).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li><li><b>📲 Canal</b>: abre el canal de Telegram donde se publican las señales las 24 h, aunque la página esté cerrada.</li><li>Las señales son informativas y <b>no son consejo financiero</b>: el acierto histórico no garantiza resultados y operar con apalancamiento puede hacerte perder todo el margen.</li></ul></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
+    <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><a class="tg-ch" href="https://t.me/criptolive_senales" target="_blank" rel="noopener" title="Recibí las señales en Telegram aunque la página esté cerrada">📲 Canal</a><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el pasado.</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu o Telegram).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li><li><b>📲 Canal</b>: abre el canal de Telegram donde se publican las señales las 24 h, aunque la página esté cerrada.</li><li>Las señales son informativas y <b>no son consejo financiero</b>: el acierto histórico no garantiza resultados y operar con apalancamiento puede hacerte perder todo el margen.</li></ul></div><div class="sig-tabs" id="sigTabs"></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="hist" id="histBox"><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
     <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
       <div class="pil-leg" id="pilLeg" hidden><p style="margin:0 0 6px">Cargá moneda, dirección, precio de entrada, X y margen: cada 15 s reviso tu operación y te aviso con notificación naranja 🟠 qué conviene hacer.</p><b>Qué significa cada aviso</b><ul>
         <li>🚨 <b>SALÍ YA</b>: estás muy cerca de la liquidación.</li>
@@ -1623,7 +1624,7 @@ try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
-  fbDb.collection('users').doc(fbUser.uid).set({lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
+  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
@@ -1643,11 +1644,12 @@ function initCloud(){
       const local=readLocalLines(),lt=+(localStorage.getItem('cv_lines_t')||0);let merged;
       if(!d.linesT){merged={...local};for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];}else merged=lt>d.linesT?local:(d.lines||{});
       try{localStorage.setItem('cv_lines',JSON.stringify(merged));localStorage.setItem('cv_lines_t',String(Math.max(lt,d.linesT||0)||Date.now()));}catch(e){}
+      try{applyCloudPil(d);}catch(e){}
       (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);if(d.cu&&typeof d.cu==='object'){CU=normCu(d.cu);try{localStorage.setItem('cv_custom',JSON.stringify(CU))}catch(e){}if(mode==='p'){setNames();if(candles.length)calcInd(true);renderChips();}}try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
     }catch(e){console.warn('No se pudo leer la nube',e);}
     cloudReady=true;restoreLines();renderList();cloudSave();
     try{if(window.__unsubLines)window.__unsubLines();window.__unsubLines=fbDb.collection('users').doc(u.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.data()||{},lt=+(localStorage.getItem('cv_lines_t')||0);
-      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}});}catch(e){}});
+      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}try{applyCloudPil(d);}catch(e){}});}catch(e){}});
 }
 loadTickers();applyMode('medio');initCloud();setInterval(renderLegend,1500);
 
@@ -2115,7 +2117,7 @@ async function notifyLocal(title,body,tag,data){
     const o={body,tag:tag||undefined,icon:'icon-192.png',badge:'icon-192.png',data:data||{},vibrate:[120,60,120],renotify:!!tag};
     if(reg)await reg.showNotification(title,o);else new Notification(title,o);}catch(e){}
 }
-function notifySig(m,f){
+function notifySig(m,f){if(window.__importing)return;
   if(!NTF[m]||!ntfAny())return;
   window.__skipRmt=!!(RMT.srv&&(m==='medio'||m==='x'));
   const L=f.dir>0,c=f.sym.replace('USDT','');
@@ -2779,7 +2781,7 @@ $('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const g
    · Con ganancia, cerrar antes de tiempo salió peor que dejarla correr: se aconseja mover el stop a la entrada
      y cerrar solo si la tendencia gira. */
 let PIL=[];try{PIL=JSON.parse(localStorage.getItem('cv_pil')||'[]')||[];}catch(e){}
-const savePil=()=>{try{localStorage.setItem('cv_pil',JSON.stringify(PIL))}catch(e){}};
+const savePil=()=>{try{localStorage.setItem('cv_pil',JSON.stringify(PIL))}catch(e){}pilCloudMark();};
 const PILD={};
 const pilQty=p=>p.margin*p.lev/p.entry+(p.ll?p.ll.margin*p.lev/p.ll.px:0);
 const pilAvg=p=>(p.margin+(p.ll?p.ll.margin:0))*p.lev/pilQty(p);
@@ -2969,7 +2971,7 @@ $('intBody').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.data
 setInterval(intTick,5000);setTimeout(intTick,4000);
 /* ---------- MI DIARIO: operaciones reales que cerraste desde PILOTEAR ---------- */
 let JRN=[];try{JRN=JSON.parse(localStorage.getItem('cv_jrn')||'[]')||[];}catch(e){}
-const saveJrn=()=>{try{localStorage.setItem('cv_jrn',JSON.stringify(JRN))}catch(e){}};
+const saveJrn=()=>{try{localStorage.setItem('cv_jrn',JSON.stringify(JRN));localStorage.setItem('cv_jrn_t',String(Date.now()))}catch(e){}if(typeof cloudSave==='function')cloudSave(true);};
 let jrnDel=false;
 function jrnRender(){const el=$('jrnBox');if(!el)return;if(!JRN.length){el.innerHTML='';return;}
   const n=JRN.length,w=JRN.filter(j=>j.pnl>0).length,g=JRN.filter(j=>j.pnl>0).reduce((s,j)=>s+j.pnl,0),l=JRN.filter(j=>j.pnl<=0).reduce((s,j)=>s+j.pnl,0);
@@ -3093,6 +3095,35 @@ SIG.a=SIG.a.filter(x=>x.t>=1791218400000);saveSig();
   document.addEventListener('pointerdown',e=>{if(A.classList.contains('open')&&!e.target.closest('aside'))close();});
   $('list').addEventListener('click',e=>{if(isMob()&&e.target.closest('.row')&&!e.target.closest('[data-star]')){close();$('q').blur();}});
   $('q').addEventListener('keydown',e=>{if(e.key==='Enter'&&isMob()){close();$('q').blur();}else if(e.key==='Escape'){close();$('q').blur();}});})();
+
+/* ---------- Pilotear y Mi diario sincronizados en tu cuenta ---------- */
+function pilCore(){try{return JSON.stringify(PIL.map(p=>[p.id,p.sym,p.dir,p.entry,p.lev,p.margin,p.ll?p.ll.margin:0,!!p.closed]));}catch(e){return '';}}
+function pilCloudMark(){const c=pilCore();if(c===window.__pilC)return;window.__pilC=c;if(!window.__pilInit)return;try{localStorage.setItem('cv_pil_t',String(Date.now()))}catch(e){}if(typeof cloudSave==='function')cloudSave(true);}
+function cloudPilData(){const cl=x=>JSON.parse(JSON.stringify(x||[]));let p=[],j=[];try{p=cl(PIL)}catch(e){}try{j=cl(JRN)}catch(e){}
+  return {pil:p,pilT:+(localStorage.getItem('cv_pil_t')||0),jrn:j,jrnT:+(localStorage.getItem('cv_jrn_t')||0)};}
+function applyCloudPil(d){if(!d)return;const pt=+(localStorage.getItem('cv_pil_t')||0),jt=+(localStorage.getItem('cv_jrn_t')||0);
+  if(Array.isArray(d.pil)&&(d.pilT||0)>pt){PIL=d.pil;try{localStorage.setItem('cv_pil',JSON.stringify(PIL));localStorage.setItem('cv_pil_t',String(d.pilT));}catch(e){}window.__pilC=pilCore();if(typeof pilRender==='function')pilRender();if(typeof pilTick==='function')setTimeout(pilTick,300);}
+  if(Array.isArray(d.jrn)&&(d.jrnT||0)>jt){JRN=d.jrn;try{localStorage.setItem('cv_jrn',JSON.stringify(JRN));localStorage.setItem('cv_jrn_t',String(d.jrnT));}catch(e){}if(typeof jrnRender==='function')jrnRender();}}
+(function(){try{if(PIL.length&&!localStorage.getItem('cv_pil_t'))localStorage.setItem('cv_pil_t',String(Date.now()));if(JRN.length&&!localStorage.getItem('cv_jrn_t'))localStorage.setItem('cv_jrn_t',String(Date.now()));}catch(e){}
+  window.__pilC=pilCore();window.__pilInit=true;})();
+/* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
+const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
+async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS.some(o=>o.id===id))continue;
+    const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
+    const c=CAL[x.m]&&CAL[x.m][x.setup];
+    const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
+      calTxt:`📡 señal del servidor 24 h (también llegó por Telegram)${c?` · llegó al objetivo 1 en el ${c.p} % de ${c.n} casos · ${c.txt}`:''}`,t:x.t,state:'live',srv:true};
+    window.__importing=true;try{addSig(x.m,f);}finally{window.__importing=false;}
+    if(Date.now()-x.t>cfg.maxAge)lose(f,'pasó el tiempo para entrar (llegó con la página cerrada)');
+    ch=true;}
+  if(ch){saveSig();renderSignals();renderHist();setTimeout(()=>{try{syncOps();}catch(e){}},800);}}catch(e){}}
+setTimeout(srvImport,4000);setInterval(srvImport,120000);
+/* ---------- accesos directos a TRADING, SHOOTER y ACCIONES dentro de Señales ---------- */
+function sigTabsRender(){const el=$('sigTabs');if(!el)return;el.innerHTML=[['medio','📈 TRADING'],['x','🎯 SHOOTER'],['a','🏛 ACCIONES']].map(([m,l])=>{const n=(SIG[m]||[]).filter(s=>s.state==='live').length;return `<button type="button" data-m="${m}" class="${mode===m?'on':''}">${l}${n?`<b>${n}</b>`:''}</button>`;}).join('');}
+$('sigTabs').onclick=e=>{const b=e.target.closest('[data-m]');if(!b||b.dataset.m===mode)return;applyMode(b.dataset.m);renderSignals();renderHist();sigTabsRender();};
+{const _rs=renderSignals;renderSignals=function(){_rs.apply(this,arguments);sigTabsRender();};}
+sigTabsRender();
 </script>
 </body>
 </html>
