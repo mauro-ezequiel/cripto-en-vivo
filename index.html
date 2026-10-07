@@ -529,7 +529,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <li>🛟 <b>POSIBLE REBOTE, poné un salvavidas</b>: te dice cuánto agregar, y cómo quedarían la entrada promedio y la nueva liquidación. Si lo agregás, tocás "Ya agregué el salvavidas" y recalcula todo.</li>
         <li>💰 <b>ASEGURÁ</b>: vas ganando pero la tendencia está girando.</li>
         <li>✅ <b>DEJÁ CORRER</b>: vas ganando; mové el stop a la entrada.</li>
-        <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul><p style="margin:8px 0 0"><b>Cómo decide:</b> tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</p><p style="margin:8px 0 0"><b>📒 Mi diario:</b> cuando cierres una operación tocá "Cerré la operación" y poné el precio de salida; se guarda con tu resultado y calcula tu propio % de aciertos.</p></div>
+        <li>⏳ <b>AGUANTAR</b> / 👍 <b>MANTENER</b>: sin aviso, porque no hay nada que hacer.</li></ul><p style="margin:8px 0 0"><b>Cómo decide:</b> tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez y la distancia a tu liquidación. Además te marca un stop según la volatilidad de la moneda y te avisa si una vela de 1 h cierra a mitad de camino a ese stop. Probado con unas 4.500 operaciones al azar: con × 10 bajó a la mitad las pérdidas de más del 50 % del margen (de 7 % a 3 % de las operaciones) y con × 20 las liquidaciones pasaron de 7,7 % a 2,4 %. Ninguna indicación es segura.</p><p style="margin:8px 0 0"><b>📒 Mi diario:</b> cuando cierres una operación tocá "Cerré la operación" y poné el precio de salida; se guarda con tu resultado y calcula tu propio % de aciertos.</p></div>
       <div class="pil-f"><div class="pil-q"><span class="pil-ql">Moneda</span><div class="search"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="pilSym" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off" autocapitalize="characters" spellcheck="false"></div><div class="pil-dd" id="pilDD" hidden><div class="head"><span>Par</span><span>Precio</span><span>24h</span></div><div id="pilList"></div></div></div>
         <label>Dirección<select id="pilDir"><option value="1">▲ LONG</option><option value="-1">▼ SHORT</option></select></label>
         <label>Precio de entrada<input id="pilPx" type="text" inputmode="decimal" placeholder="ej. 85000" autocomplete="off"></label>
@@ -537,7 +537,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <label>Margen (USD)<input id="pilM" type="number" inputmode="decimal" min="1" value="100"></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
       <div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
-      <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Probado con 90 días de 20 criptos: cuando dice SALIR acertó el 54 % y ahorró en promedio 6 % del margen; el salvavidas sugerido volvió al precio promedio el 64 % de las veces y liquidó el 18 %. Ninguna indicación es segura.</div></section>
+      <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Además te marca un stop según la volatilidad de la moneda y te avisa si una vela de 1 h cierra a mitad de camino a ese stop. Probado con unas 4.500 operaciones al azar: con × 10 bajó a la mitad las pérdidas de más del 50 % del margen (de 7 % a 3 % de las operaciones) y con × 20 las liquidaciones pasaron de 7,7 % a 2,4 %. Ninguna indicación es segura.</div></section>
     <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span><button class="i-btn" data-i="lq" type="button" aria-label="Cómo leer el mapa" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="lq" hidden><b>Cómo leer el mapa de liquidaciones</b><br>Las barras de la derecha muestran cuánto dinero se liquidaría si el precio llega a ese nivel (rojo = shorts, arriba del precio; verde = longs, abajo). Las bandas sobre las velas marcan los niveles más fuertes: suelen atraer al precio y, una vez barridos, funcionar como techo o piso. Las tarjetas de arriba resumen hacia dónde hay más liquidez dentro de ±8 %. Estimado con el interés abierto y el volumen de Binance, Bybit y OKX; los paneles de la derecha muestran liquidaciones reales en vivo. Tocá o pasá el mouse para ver montos; arrastrá y usá la rueda o pellizcá para moverte. "Todo el mercado / Esta moneda" y la ventana (15 min a 4 h) cambian qué liquidaciones reales se cuentan.</div>
@@ -565,7 +565,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 10, salvavidas 175 USD · solo a favor de BTC</small></button>
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas · RSI extremo y BTC a favor</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
-    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · simulación 500 USD × 8, stop al 7 %, salvavidas 250 USD</small></button></div>
+    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · impulso o retroceso con el S&P 500 a favor · stop 2 × ATR diario · objetivos 1 / 2 / 3 veces el stop · simulación 500 USD × 8</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
     <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
@@ -1798,7 +1798,7 @@ const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX'
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
-if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom'].includes(x.setup)); // descarta señales de versiones anteriores
+if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom','c-pb','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
@@ -1883,7 +1883,7 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
-const MINCERT={medio:62,x:56,p:0,a:70},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:57,p3:23,n:256,usd:16.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1942,6 +1942,11 @@ async function futData(m,syms){
     if(Array.isArray(t)&&t.length)out[s].taker=t.reduce((a,x)=>a+ +x.buySellRatio,0)/t.length;}
   return out;
 }
+/* ACCIONES v2 (octubre 2026): mercado a favor (SPY sobre su EMA 50), dos reglas (impulso c-mom y retroceso c-pb) y
+   stop 2 × ATR diario (máx. 9,6 % con × 8) con objetivos 1 / 2 / 3 × stop. Backtest 6 años, 68 acciones de NYSE, comisión 0,1 %:
+   6,4 señales/mes · 57 % al objetivo 1 · +3,3 % del margen por operación (factor 1,25) · último año +1,8 %.
+   Antes (solo c-mom, stop 7 %, objetivos +1,75 / 3,5 / 5,25 %): 7,1/mes · 78 % · −0,4 % por operación · último año −1,0 %. */
+const STKG={a:2,r:1,max:.096};
 const TGTS={'t-pb':[.0125,.025,.0375],'sh-r':[.016,.032,.048],'a-mom':[.0175,.035,.0525],'c-mom':[.0175,.035,.0525],'a-rev':[.028,.056,.084]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
@@ -1949,7 +1954,8 @@ function buildSignalV2(m,sym,e,fd){
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
   if(setup==='tp-x'&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING+ solo a favor de BTC
   if(m==='medio'&&NEWG_SET[setup]&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING solo a favor de BTC
-  if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
+  if(setup==='c-mom'||setup==='c-pb'){const slD=Math.min(STKG.max,Math.max(.004,STKG.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*STKG.r*slD));sl=c*(1-dir*slD);}
+  else if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
   else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
   else if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
   else{const reach=atrP*Math.sqrt(cfg.H)*1.3;if(reach<cfg.min)return null;
@@ -1971,6 +1977,7 @@ async function scanSignals(mm){
   const m=mm||mode,cfg=SIGCFG[m];scanBusy=true;lastScan[m]=Date.now();renderSignals();
   try{
     const fresh=[],U=universe(m),fd=m==='a'?null:await safe(futData(m,U));
+    if(m==='a'){try{const j=await getJ(`${D912}/historical/usa_stocks/SPY`,20000),c=j.prices.map(Number).filter(x=>x>0).slice(-200),e=emaArr(c,50);window.__spyUp=c.at(-1)>e.at(-1)?1:-1;}catch(e){}}
     if(m==='x'){const bk=await safe(kl('BTCUSDT','1h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir1h=cl.at(-1)>e.at(-1)?1:-1;}}
     if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
     for(const s of U){
@@ -2042,7 +2049,7 @@ setInterval(checkSignals,2000);
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
            x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:500,lev:8,maxLoss:280,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop al 7 % (−280 USD) · salvavidas 250 USD'};
+SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 2 × ATR diario (máx. 9,6 % = −384 USD) · salvavidas 250 USD'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
@@ -2060,7 +2067,7 @@ function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
   const s=o.liqD||lossOf(o)/notOf(o);
   return `<span>🛟 Salvavidas si llega a</span><b class="llb">${fp(o.llAt)} (${pc(o.llAt)}) · pérdida en ese momento ≈ ${llMoney(o.m,notOf(o)*s*LLTH)} · suma ${llMoney(o.m,o.llMargin||SIM[o.m].margin/2)} (× ${SIM[o.m].lev}) si los datos confirman</b>`;}
 function addSig(m,f){
-  SIG[m].push(f);const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
+  SIG[m].push(f);const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||m==='a'||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
   OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
@@ -2573,12 +2580,15 @@ function evalStock(sym,cs,hc){
     let dir=0,setup=null;
     if(q.kind==='AR'){if(adx>=25&&L.body>.5&&L.vr>=1.8&&mh>0&&mh>mh1){dir=1;setup='a-mom';}
       else if(adx>=30&&L.body<-.5&&mh<0&&mh<mh1&&r1>65&&r<r1){dir=-1;setup='a-rev';}}
-    else if(adx>=30&&L.body>.5&&L.flow>0&&out.htf>0){dir=1;setup='c-mom';}
+    else{const cl=closes(),st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],mk=window.__spyUp;
+      if(mk===1&&adx>=30&&L.body>.5&&L.flow>0&&out.htf>0){dir=1;setup='c-mom';}
+      else if(mk===1&&st===1&&e21>e50&&cc[i].close>e200&&r<45&&L.vr<1){dir=1;setup='c-pb';}}
     if(!dir)return out;
     const sc=stkScore(cc,q);if(dir*(sc-50)<0)return out;
     out.dir=dir;out.score=dir;out.setup=setup;
-    out.reasons.push(setup==='a-rev'?`RSI venía de ${r1.toFixed(0)} y gira`:setup==='a-mom'?`vela fuerte con ${L.vr.toFixed(1)}× de volumen`:'vela fuerte cerrando en máximos',`ADX ${adx.toFixed(0)} · MACD ${dir>0?'acelerando':'cayendo'}`,`termómetro ${sc}/100 a favor`);
+    out.reasons.push(setup==='a-rev'?`RSI venía de ${r1.toFixed(0)} y gira`:setup==='a-mom'?`vela fuerte con ${L.vr.toFixed(1)}× de volumen`:setup==='c-pb'?`retroceso en tendencia: RSI 14 en ${r.toFixed(0)} con volumen bajo`:'vela fuerte cerrando en máximos',`ADX ${adx.toFixed(0)} · MACD ${dir>0?'acelerando':'cayendo'}`,`termómetro ${sc}/100 a favor`);
     if(setup==='c-mom')out.reasons.push('tendencia semanal alcista');
+    if(setup==='c-mom'||setup==='c-pb')out.reasons.push('S&P 500 sobre su promedio de 50 días');
     return out;});}
 /* cambio entre criptomonedas y acciones */
 const FEEDS_A=[['Google News','https://news.google.com/rss/search?q=NYSE+OR+%22Dow+Jones%22+OR+%22New+York+Stock+Exchange%22+when:1d&hl=en-US&gl=US&ceid=US:en'],
@@ -2888,8 +2898,16 @@ async function pilData(s){const D=PILD[s];if(D&&Date.now()-D.t<60e3)return D;
     return {tr:e200==null?0:((st||0)+Math.sign(e21-e50)+Math.sign(cl[i]-e200))/3,rsi:calcRSI(14)[i],adx:A.adx[i]||0,di:Math.sign((A.pdi[i]||0)-(A.mdi[i]||0)),atrP:wilder(trArr(),14)[i]/cl[i]};});};
   const cc=h1.slice(0,-1),n=cc.length,lows=[],highs=[];
   for(let i=Math.max(3,n-123);i<n-3;i++){let L=true,H=true;for(let j=1;j<=3;j++){if(cc[i].low>cc[i-j].low||cc[i].low>cc[i+j].low)L=false;if(cc[i].high<cc[i-j].high||cc[i].high<cc[i+j].high)H=false;}if(L)lows.push(cc[i].low);if(H)highs.push(cc[i].high);}
-  return PILD[s]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),lows,highs};}
+  return PILD[s]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),lows,highs,c1:n?cc[n-1].close:null,t1:n?cc[n-1].t+36e5:0};}
 /* análisis: devuelve el estado y los textos que se muestran */
+/* octubre 2026 · PILOTEAR v2: stop recomendado (3 × ATR de 4h, como máximo el 80 % del camino a la liquidación) y
+   aviso de salida si una vela de 1 h cierra a mitad de camino a ese stop. El salvavidas ya no se sugiere.
+   Probado con ~4.500 operaciones al azar (30 criptos, 120 días, plazo 72 h) contra los consejos anteriores:
+   × 10: pérdidas de más de la mitad del margen 3,3 % (antes 7,1 %) · liquidadas 0,3 % (antes 0,9 %) · resultado promedio +2,3 % (antes +3,0 %).
+   × 20: pérdidas de más de la mitad 10,8 % (antes 17,7 %) · liquidadas 2,4 % (antes 7,7 %) · resultado promedio +3,3 % (antes +2,9 %).
+   Sin el salvavidas el resultado fue igual o mejor y las pérdidas grandes, menores. */
+function pilPlan(p,D){if(!p.plan){const a4=(D&&D.f4&&D.f4.atrP)||.02,sl=Math.min(.8*(1/p.lev-.005),3*a4),e=pilAvg(p);
+    p.plan={sl,stop:e*(1-p.dir*sl),cut:e*(1-p.dir*sl*.5)};}return p.plan;}
 function pilAnalyze(p,D,c){
   const d=p.dir,avg=pilAvg(p),liq=pilLiqPx(p),L=pilLiqD(p),pf=d*(c/avg-1),usd=d*(c-avg)*pilQty(p),mg=p.margin+(p.ll?p.ll.margin:0),atr=D.f1.atrP||.01;
   const fav=d*(.2*D.f15.tr+.4*D.f1.tr+.4*D.f4.tr),against=D.f1.adx>22&&D.f1.di===-d,lossF=pf<0?-pf/L:0,liqDist=d*(c-liq)/c;
@@ -2902,18 +2920,22 @@ function pilAnalyze(p,D,c){
   why.push(`tendencia 15m ${tdir(d*D.f15.tr)} · 1h ${tdir(d*D.f1.tr)} · 4h ${tdir(d*D.f4.tr)}`,`RSI 1h ${D.f1.rsi!=null?D.f1.rsi.toFixed(0):'—'} · ADX 1h ${D.f1.adx.toFixed(0)}${D.f1.adx>22?(D.f1.di===d?' empujando a favor':' empujando en contra'):''}`);
   if(zA)why.push(`zona de liquidez de ${d>0?'longs':'shorts'} en ${fp(zA.p)} (${fpct((zA.p/c-1)*100)}): el precio puede ir a barrerla`);
   if(zF)why.push(`zona de liquidez de ${d>0?'shorts':'longs'} en ${fp(zF.p)} (${fpct((zF.p/c-1)*100)}): imán a favor`);
+  const P=pilPlan(p,D),cutHit=D.c1!=null&&D.t1>p.t&&d*(D.c1-P.cut)<=0;
   let st,title,txt,act=true;
   if(d*(c-liq)<=0){st='liq';title='💥 LIQUIDADA (simulación)';txt=`El precio cruzó tu liquidación estimada en ${fp(liq)}.`;}
   else if(pf<0&&liqDist<Math.max(.6*atr,.2*L)){st='peligro';title='🚨 SALÍ YA: estás muy cerca de la liquidación';txt=`Faltan ${fpct(liqDist*100).replace('+','')} para ${fp(liq)}. Cerrar ahora evita perder todo el margen.`;}
+  else if(pf<0&&d*(c-P.stop)<=0){st='stopplan';title='🛑 SALÍ: tocó el stop recomendado';txt=`El precio pasó ${fp(P.stop)}, el stop que marca la volatilidad de esta moneda. Cerrar acá evita llegar a la liquidación (${fp(liq)}). Pérdida ahora ${pilMoney(usd)}.`;}
+  else if(pf<0&&cutHit){st='aviso';title='⚠️ SALÍ AHORA: se dio vuelta';txt=`Una vela de 1 h cerró en ${fp(D.c1)}, a mitad de camino a tu stop (${fp(P.stop)}). En las pruebas, salir acá redujo a la mitad las pérdidas grandes. Pérdida ahora ${pilMoney(usd)}.`;}
   else if(pf<0&&lossF>=.2&&fav<=-.34&&against){const flip=fav<=-.67&&d*D.f4.tr<0;st=flip?'vuelta':'salir';
     title=flip?'🔄 SALÍ y evaluá DAR VUELTA la operación':'⛔ SALÍ: el movimiento va en contra';
     txt=`La tendencia está en contra en varias temporalidades y el ADX empuja en contra. Pérdida ahora ${pilMoney(usd)}; si sigue, el próximo nivel es ${fp(liq)} (liquidación).${flip?` Con la tendencia de 4h también en contra, la operación contraria (${d>0?'SHORT':'LONG'}) tiene a favor el movimiento.`:''}`;}
-  else if(pf<0&&lossF>=.3&&!p.ll&&d*D.f4.tr>0&&supNear){const add=p.margin/2,q2=add*p.lev/c,nq=pilQty(p)+q2,na=(mg+add)*p.lev/nq,nl=na*(1-d*L);st='salvavidas';
+  else if(false&&pf<0&&lossF>=.3&&!p.ll&&d*D.f4.tr>0&&supNear){ // salvavidas desactivado (octubre 2026): no mejoraba el resultadoconst add=p.margin/2,q2=add*p.lev/c,nq=pilQty(p)+q2,na=(mg+add)*p.lev/nq,nl=na*(1-d*L);st='salvavidas';
     title='🛟 POSIBLE REBOTE: podés poner un salvavidas';
     txt=`El precio está sobre ${d>0?'un soporte':'una resistencia'} (${fp(sup)}) y la tendencia de 4h sigue a favor. Si agregás ${pilMoney(add).replace('+','')} a × ${p.lev}, tu entrada promedio pasa a ${fp(na)} y la liquidación a ${fp(nl)}.${d*(sup-nl)>0?'':' Ojo: la nueva liquidación queda cerca del soporte.'}`;}
   else if(pf>0&&pf>=atr&&fav<=-.34){st='asegurar';title='💰 ASEGURÁ: la tendencia está girando';txt=`Vas ganando ${pilMoney(usd)}. Cerrá una parte o poné el stop en la entrada (${fp(avg)}).`;}
   else if(pf>0&&pf>=atr){st='stop';title='✅ DEJÁ CORRER: mové el stop a la entrada';txt=`Vas ganando ${pilMoney(usd)} y la tendencia acompaña. Con el stop en ${fp(avg)} ya no podés perder.${res!=null?` Próxima ${d>0?'resistencia':'soporte'}: ${fp(res)}.`:''}`;}
-  else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra.${exitAt?` Salí si toca ${fp(exitAt)}.`:''}`;}
+  else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra. Te aviso si una vela de 1 h cierra ${d>0?'por debajo de':'por encima de'} ${fp(P.cut)}; stop recomendado en ${fp(P.stop)}.`;}
+  if(st==='mantener'&&pf>=0)txt+=` Stop recomendado en ${fp(P.stop)}.`;
   return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt};}
 function pilNotify(p,a){if(!a.act||!ntfAny())return;
   notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:'1h',m:'medio'});}
