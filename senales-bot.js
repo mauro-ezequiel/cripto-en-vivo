@@ -13,11 +13,15 @@ const SIGCFG = {
   x: { name: 'SHOOTER', tf: '5m', htf: '15m', min: .016, maxAtr: .027, n: 45, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
 };
 const SIM = { medio: { margin: 350, lev: 15, maxLoss: 262.5 }, x: { margin: 50, lev: 18, maxLoss: 36 } };
-const CAL = { medio: { p: 87, p3: 36, n: 370 }, x: { p: 80, p3: 37, n: 152 } };
-/* acierto por tipo de señal de TRADING (las 2 reglas sumadas en octubre 2026) */
-const CALSET = { 't-pb': 87, 'tp-r55': 84, 'tp-u80': 85, 'sh-r': 80 };
-const MINCERT = { medio: 75, x: 70 };
-const TGTS = { medio: [.0125, .025, .0375], x: [.016, .032, .048] };
+/* octubre 2026 · medidas nuevas: el stop depende de la volatilidad (ATR de la vela de la señal) y los objetivos son
+   múltiplos del stop. Backtest 6 meses (Binance, con salvavidas y comisiones, mismas entradas que antes):
+   TRADING stop 3 × ATR (máx. 5 %), objetivos 0,5 / 1 / 1,5 × stop → +6.923 USD vs +3.758 USD con las viejas (+1,25 % / stop 5 %).
+   SHOOTER stop 1 × ATR (máx. 4 %), objetivos 1,5 / 3 / 4,5 × stop → +202 USD vs −490 USD con las viejas (+1,6 % / stop 4 %).
+   El % de "acierto" baja (llega menos al objetivo 1) pero gana más plata por operación. */
+const GEOM = { medio: { a: 3, r: .5, maxSl: .05 }, x: { a: 1, r: 1.5, maxSl: .04 } };
+const CAL = { medio: { p: 74, p3: 32, n: 224 }, x: { p: 46, p3: 16, n: 194 } };
+const CALSET = { 't-pb': 74, 'tp-r55': 73, 'tp-u80': 62, 'sh-r': 46 };
+const MINCERT = { medio: 62, x: 36 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 
@@ -147,7 +151,7 @@ async function main() {
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
         if (m === 'medio' && btcDir) { if (btcDir === d) { conf += 2; e.reasons.push('BTC a favor'); } else { conf -= 5; e.reasons.push('BTC en contra: algo menos confiable'); } }
         if (conf < MINCERT[m]) continue;
-        const Sm = SIM[m], liqD = Sm.maxLoss / (Sm.margin * Sm.lev), tp = TGTS[m].map(x => c * (1 + d * x)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
+        const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
         (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
