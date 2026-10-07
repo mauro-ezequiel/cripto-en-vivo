@@ -2052,8 +2052,10 @@ SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 2 × ATR diario (máx. 9,6 % = −384 USD) · salvavidas 250 USD'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
+/* operaciones descartadas al rehacer el historial con las reglas nuevas: no se vuelven a importar del servidor ni de la nube */
+var OPS_DROP=new Set();try{OPS_DROP=new Set(JSON.parse(localStorage.getItem('cv_ops_drop')||'[]'));}catch(e){}
 const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
-function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
+function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(OPS_DROP.has(o.id))continue;if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}}
 /* SALVAVIDAS: si el precio llega al 65 % del camino al stop sin tocar ningún objetivo y los datos siguen confirmando la señal,
    se suma media posición (la mitad del margen, mismas X). La entrada pasa a ser el promedio y el stop se recalcula a la misma
    distancia desde el promedio (lo máximo que permite el apalancamiento antes de la liquidación real). Una sola vez por señal.
@@ -3231,7 +3233,7 @@ function applyCloudPil(d){if(!d)return;const pt=+(localStorage.getItem('cv_pil_t
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
 const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
 async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;
-  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS.some(o=>o.id===id))continue;
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||OPS.some(o=>o.id===id))continue;
     const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
@@ -3380,7 +3382,7 @@ let srvSeen=null,srvApiOff=0;
 async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await r.json();if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
   return await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();}
 srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;const fresh=[];
-  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS.some(o=>o.id===id))continue;
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||OPS.some(o=>o.id===id))continue;
     const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
