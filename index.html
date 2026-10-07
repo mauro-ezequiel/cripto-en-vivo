@@ -559,7 +559,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
     <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 20, salvavidas 175 USD</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, salvavidas 25 USD</small></button>
+    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · simulación 500 USD × 8, stop al 7 %, salvavidas 250 USD</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
@@ -1857,13 +1857,15 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
 const CAL={medio:{'t-pb':{p:74,p3:31,n:131,usd:30.9,txt:'retroceso dentro de la tendencia con volumen bajo'}},
-           x:{'sh-r':{p:66,p3:25,n:187,usd:1.9,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
+           x:{'sh-r':{p:65,p3:25,n:218,usd:1.1,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
 /* octubre 2026 · MEDIDAS NUEVAS v2 (TRADING y SHOOTER): apalancamiento, stop y objetivos elegidos juntos para tener más aciertos
    sin ganar menos. Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
    Backtest 6 meses con datos de Binance, mismas entradas, con salvavidas y comisiones (0,05 % por lado):
    TRADING × 20 (stop máx. 3,6 %): 245 operaciones · 75 % al objetivo 1 · +8.767 USD (+35,8 por op., factor 1,44)
      página vieja × 15 (+1,25 / +2,5 / +3,75 %, stop 5 %): 274 · 84 % · +4.096 USD (+14,9 por op., factor 1,31)
    SHOOTER × 10 (stop máx. 7,6 %): 187 operaciones · 66 % al objetivo 1 · +350 USD (+1,9 por op., factor 1,22)
+     SIN SALVAVIDAS desde octubre 2026: con o sin él ganaba lo mismo (+2,2 % del margen por op.) pero las pérdidas grandes eran más grandes
+     (peor operación −110 % del margen con salvavidas, −74 % sin él). Sin salvavidas: 65 % al objetivo 1.
      página vieja × 18 (+1,6 / +3,2 / +4,8 %, stop 4 %): 194 · 71 % · −327 USD (−1,7 por op., factor 0,87)
    usd = resultado promedio por operación en el backtest. */
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
@@ -2015,7 +2017,7 @@ setInterval(checkSignals,2000);
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
 const SIM={medio:{margin:350,lev:20,maxLoss:252,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 20 · stop 3 × ATR (máx. 3,6 % = −252 USD) · salvavidas 175 USD'},
-           x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · salvavidas 25 USD'}};
+           x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:280,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop al 7 % (−280 USD) · salvavidas 250 USD'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
@@ -2037,7 +2039,7 @@ function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
 function addSig(m,f){
   SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&sd<=c.maxLoss/not+1e-9?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
 /* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada (promedio si hubo salvavidas) */
@@ -2181,7 +2183,7 @@ function notifySig(m,f){if(window.__importing)return;
   if(!NTF[m]||!ntfAny())return;
   window.__skipRmt=!!(RMT.srv&&(m==='medio'||m==='x'));
   const L=f.dir>0,c=f.sym.replace('USDT','');
-  notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)} · Salvavidas en ${fp(f.entry+(f.sl-f.entry)*LLTH)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
+  notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)}${m==='x'?'':` · Salvavidas en ${fp(f.entry+(f.sl-f.entry)*LLTH)}`} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
 }
 function renderNtf(){
   const g=canNotify&&Notification.permission==='granted'&&NTF.on;
@@ -2940,7 +2942,7 @@ setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
 /* Línea de base "al azar": entradas en momentos y direcciones al azar, con el mismo stop, objetivos, plazo y filtro de volatilidad
    (octubre 2026, medidas nuevas: 6 meses, 47 monedas en 4H para TRADING y 30 en 5m para SHOOTER, con comisiones).
    p = % que llega al objetivo 1 · usd = resultado promedio por operación. Sirve para saber cuánto aporta la señal de verdad. */
-var BT_USD={medio:35.8,x:1.9};/* resultado promedio por operación del modo en el backtest de 6 meses */
+var BT_USD={medio:35.8,x:1.1};/* resultado promedio por operación del modo en el backtest de 6 meses */
 var AZAR={medio:{p:67,p3:null,n:3212,usd:-6.3},x:{p:62,p3:null,n:1228,usd:-.6}};AZAR.p=AZAR.medio;
 let INT_T='reg',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'reg';}catch(e){}if(INT_T==='led')INT_T='reg';
 const intMoney=v=>{const a=false;return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};

@@ -16,11 +16,12 @@ const SIGCFG = {
    Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
    Backtest 6 meses (Binance, con salvavidas y comisiones):
    TRADING × 20, stop máx. 3,6 % → 75 % al objetivo 1, +8.767 USD (vieja × 15: 84 %, +4.096 USD).
-   SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD). */
+   SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD).
+   SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas. */
 const SIM = { medio: { margin: 350, lev: 20 }, x: { margin: 50, lev: 10 } };
 const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
-const CAL = { medio: { p: 75, p3: 28, n: 245 }, x: { p: 66, p3: 25, n: 187 } };
-const CALSET = { 't-pb': 74, 'tp-r55': 78, 'tp-u80': 74, 'sh-r': 66 };
+const CAL = { medio: { p: 75, p3: 28, n: 245 }, x: { p: 65, p3: 25, n: 218 } };
+const CALSET = { 't-pb': 74, 'tp-r55': 78, 'tp-u80': 74, 'sh-r': 65 };
 const MINCERT = { medio: 62, x: 56 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
@@ -132,7 +133,7 @@ async function main() {
     if (o.hit >= 3) { o.done = true; continue; }
     const stop = o.hit > 0 ? o.entry : o.sl;
     if (d * (stop - p) >= 0) { o.done = true; await tg(o.hit > 0 ? `↩️ ${cfg.name} ${c}: volvió a la entrada (${fp(o.entry)}) después del objetivo ${o.hit}. Se cierra sin pérdida.` : `🛑 ${cfg.name} ${c}: tocó el stop (${fp(o.sl)}, ${pct(o.sl, o.entry)}).`); continue; }
-    if (!o.llSent && o.hit === 0 && d * (o.ll - p) >= 0) { o.llSent = true; await tg(`🟡🛟 ${cfg.name} ${c}: llegó a la zona del salvavidas (${fp(o.ll)}). Abrí la página para ver si los datos confirman agregar la mitad del margen.`); }
+    if (o.ll != null && !o.llSent && o.hit === 0 && d * (o.ll - p) >= 0) { o.llSent = true; await tg(`🟡🛟 ${cfg.name} ${c}: llegó a la zona del salvavidas (${fp(o.ll)}). Abrí la página para ver si los datos confirman agregar la mitad del margen.`); }
     if (now - o.t > cfg.maxAge) { o.done = true; await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
   }
   S.open = S.open.filter(o => !o.done);
@@ -151,11 +152,11 @@ async function main() {
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
         if (m === 'medio' && btcDir) { if (btcDir === d) { conf += 2; e.reasons.push('BTC a favor'); } else { conf -= 5; e.reasons.push('BTC en contra: algo menos confiable'); } }
         if (conf < MINCERT[m]) continue;
-        const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = c * (1 - d * liqD * LLTH);
+        const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
         (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
-        await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)}) · Salvavidas en ${fp(ll)}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
+        await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)})${ll != null ? ` · Salvavidas en ${fp(ll)}` : ''}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
     }
