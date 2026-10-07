@@ -1,0 +1,25 @@
+name: Historial del último año
+# Todos los días recalcula las señales de los últimos 365 días con velas de Binance
+# y guarda historial.json en la rama "datos" (el día nuevo entra y el de hace un año sale).
+on:
+  schedule:
+    - cron: '7 6 * * *' # 03:07 de Argentina
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: historial
+  cancel-in-progress: false
+jobs:
+  recalcular:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Recalcular el último año y publicarlo
+        run: node herramientas/historial-anual.js
+        env:
+          GH_TOKEN: ${{ github.token }}
