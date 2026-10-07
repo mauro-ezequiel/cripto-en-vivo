@@ -2006,7 +2006,7 @@ function checkSignals(){
     else if(d*(p-sg.entry)>Math.abs(sg.tp1-sg.entry)*.35){lose(sg,'el precio ya se alejó de la zona de entrada');ch=true;}
     else if(now-sg.t>SIGCFG[m].maxAge){lose(sg,'pasó demasiado tiempo sin moverse');ch=true;}
   }
-  for(const m of ['medio','x','p','a']){const n=SIG[m].length;SIG[m]=SIG[m].filter(s=>s.state==='live'||now-s.lostAt<30e3||PINS.has(s.op));if(SIG[m].length!==n)ch=true;}
+  for(const m of ['medio','x','p','a']){const n=SIG[m].length;SIG[m]=SIG[m].filter(s=>s.state==='live'||now-s.lostAt<30e3);if(SIG[m].length!==n)ch=true;}
   if(ch)saveSig();renderSignals();
 }
 function renderSignals(){
@@ -2014,13 +2014,13 @@ function renderSignals(){
   $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'las 30 acciones de NYSE con más volumen':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales calibradas con 6 años de velas diarias de BYMA (acciones argentinas y CEDEARs): el % es el acierto en acciones que no se usaron para elegir las reglas. Solo aparecen si el termómetro, la amplitud del mercado y las noticias no están en contra. Ninguna es segura: usa siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
-  const pinned=SIG[m].filter(s=>PINS.has(s.op)).sort((a,b)=>b.t-a.t);
-  const list=pinned.concat(SIG[m].filter(s=>!PINS.has(s.op)).sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,Math.max(0,MAXSIG+4-pinned.length)));
+  const pinned=[];
+  const list=pinned.concat(SIG[m].slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,Math.max(0,MAXSIG+4-pinned.length)));
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
-    const pin=PINS.has(s.op);
+    const pin=false;
     return `<div class="sig ${L?'long':'short'}${pin?' pin':''}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
-      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><label class="sg-pin" title="Fijar esta señal arriba de todo"><input type="checkbox" data-pin="${s.op}"${pin?' checked':''}>📌 ${pin?'Fijada':'Fijar'}</label><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
+      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. ${pin?'Queda fijada hasta que la desfijes.':'Se quita en '+Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))+' s.'}</div>`:''}
       ${opAdvice(op,s)}<div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
