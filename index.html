@@ -558,7 +558,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
   <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 20, salvavidas 175 USD</small></button>
+    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 10, salvavidas 175 USD · solo a favor de BTC</small></button>
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · simulación 500 USD × 8, stop al 7 %, salvavidas 250 USD</small></button></div>
@@ -1856,7 +1856,7 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
      precio fuera de la banda de Bollinger (20,2) con RSI 7 extremo → se opera el rebote.
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
-const CAL={medio:{'t-pb':{p:74,p3:31,n:131,usd:30.9,txt:'retroceso dentro de la tendencia con volumen bajo'}},
+const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la tendencia con volumen bajo'}},
            x:{'sh-r':{p:65,p3:25,n:218,usd:1.1,txt:'rebote desde el extremo con la tendencia de 15m a favor'}}};
 /* octubre 2026 · MEDIDAS NUEVAS v2 (TRADING y SHOOTER): apalancamiento, stop y objetivos elegidos juntos para tener más aciertos
    sin ganar menos. Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
@@ -1867,7 +1867,10 @@ const CAL={medio:{'t-pb':{p:74,p3:31,n:131,usd:30.9,txt:'retroceso dentro de la 
      SIN SALVAVIDAS desde octubre 2026: con o sin él ganaba lo mismo (+2,2 % del margen por op.) pero las pérdidas grandes eran más grandes
      (peor operación −110 % del margen con salvavidas, −74 % sin él). Sin salvavidas: 65 % al objetivo 1.
      página vieja × 18 (+1,6 / +3,2 / +4,8 %, stop 4 %): 194 · 71 % · −327 USD (−1,7 por op., factor 0,87)
-   usd = resultado promedio por operación en el backtest. */
+   usd = resultado promedio por operación en el backtest.
+   TRADING v3 (octubre 2026): × 10 y solo a favor de BTC (4h vs EMA 50). Backtest 6 meses: 0,8 señales/día · 81 % al objetivo 1 ·
+   +10 % del margen por operación · errores −40 % · peor racha −2,1 márgenes (a × 10 sin filtro: 75 %, +5,4 %, −45 %, −5,6 márgenes).
+   TRADING+ suma las señales que faltan. */
 var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
 const MINCERT={medio:62,x:56,p:0,a:70},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
@@ -1934,6 +1937,7 @@ function buildSignalV2(m,sym,e,fd){
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
   if(setup==='tp-x'&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING+ solo a favor de BTC
+  if(m==='medio'&&NEWG_SET[setup]&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING solo a favor de BTC
   if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
   else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
   else if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
@@ -2019,7 +2023,7 @@ setInterval(checkSignals,2000);
    SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:20,maxLoss:252,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 20 · stop 3 × ATR (máx. 3,6 % = −252 USD) · salvavidas 175 USD'},
+const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
            x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:280,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop al 7 % (−280 USD) · salvavidas 250 USD'};
@@ -2954,8 +2958,8 @@ setInterval(pilTick,15000);setTimeout(()=>{pilRender();pilTick();},5000);
 /* Línea de base "al azar": entradas en momentos y direcciones al azar, con el mismo stop, objetivos, plazo y filtro de volatilidad
    (octubre 2026, medidas nuevas: 6 meses, 47 monedas en 4H para TRADING y 30 en 5m para SHOOTER, con comisiones).
    p = % que llega al objetivo 1 · usd = resultado promedio por operación. Sirve para saber cuánto aporta la señal de verdad. */
-var BT_USD={medio:35.8,x:1.1};/* resultado promedio por operación del modo en el backtest de 6 meses */
-var AZAR={medio:{p:67,p3:null,n:3212,usd:-6.3},x:{p:62,p3:null,n:1228,usd:-.6}};AZAR.p=AZAR.medio;
+var BT_USD={medio:35.1,x:1.1};/* resultado promedio por operación del modo en el backtest de 6 meses */
+var AZAR={medio:{p:67,p3:null,n:3212,usd:-3.2},x:{p:62,p3:null,n:1228,usd:-.6}};AZAR.p=AZAR.medio;
 let INT_T='reg',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'reg';}catch(e){}if(INT_T==='led')INT_T='reg';
 const intMoney=v=>{const a=false;return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
 const pc0=v=>v==null?'—':Math.round(v)+' %';
@@ -3365,8 +3369,8 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)srvImport(
            → 85 señales (0,29/día), 85 % al objetivo 1, 35 % a los 3 (primera mitad 75 %, segunda 90 %).
    Juntas suman ~0,64 señales/día: con las normales, unas 2,3 veces más señales de TRADING.
    Probé además ampliar el ATR, ATR bajo y volumen alto: daban 57–80 % o eran inestables, así que quedaron afuera. */
-CAL.medio['tp-r55']={p:78,p3:20,n:60,usd:56.4,txt:'retroceso suave (RSI 50–55) con tendencia fuerte (ADX ≥ 25)'};
-CAL.medio['tp-u80']={p:74,p3:30,n:54,usd:24.8,txt:'la regla de TRADING en monedas 41–80 por volumen'};
+CAL.medio['tp-r55']={p:79,p3:24,n:42,usd:41.3,txt:'retroceso suave (RSI 50–55) con tendencia fuerte (ADX ≥ 25)'};
+CAL.medio['tp-u80']={p:72,p3:40,n:25,usd:17.9,txt:'la regla de TRADING en monedas 41–80 por volumen'};
 TGTS['tp-r55']=TGTS['t-pb'];TGTS['tp-u80']=TGTS['t-pb'];
 const MAXPLUS=4;if(NTF.tplus===undefined)NTF.tplus=false;
 function evalTradingPlus(cs,hc,rank){const cc=cs.slice(0,-1);
@@ -3494,7 +3498,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  lq:{g:'Paneles',t:'🔥 Mapa de liquidaciones',b:'Muestra cuánto dinero se liquidaría en cada nivel de precio y las liquidaciones en vivo.',h:['Los niveles con mucho dinero son objetivos probables.','Una cascada de liquidaciones suele marcar el final de un movimiento brusco.'],x:['q_liq']},
  news:{g:'Paneles',t:'📰 Noticias',b:'Las noticias más relevantes de cripto, macro y regulación, con su efecto probable.',h:['Antes de un dato macro fuerte (tasa de la Fed, inflación) bajá el tamaño o no operes.','Una noticia muy negativa puede romper cualquier análisis técnico.'],x:['q_news']},
  vbar:{g:'Paneles',t:'🟢🔴 Barra caro / barato',b:'Debajo del buscador: monedas muy baratas (verde) o muy caras con giro confirmado (rojo) para su propio último año.',h:['Barato: posible rebote; buscá confirmación en el gráfico antes de entrar.','Caro con borde punteado: todavía sube, no lo shortees aún.'],x:['q_vbar']},
- 'm-medio':{g:'Modos',t:'📈 Modo TRADING',b:'Operaciones de 4 horas a días. Señales de retroceso dentro de la tendencia (4H), stop según la volatilidad y objetivos proporcionales al stop.',h:['Ideal si no podés mirar la pantalla todo el día.','La simulación usa ×20 con un stop máximo de 3,6 %: si usás menos X, el stop puede ir más lejos.'],x:['e5']},
+ 'm-medio':{g:'Modos',t:'📈 Modo TRADING',b:'Operaciones de 4 horas a días. Señales de retroceso dentro de la tendencia (4H), stop según la volatilidad y objetivos proporcionales al stop.',h:['Ideal si no podés mirar la pantalla todo el día.','La simulación usa ×10 con un stop máximo de 3,6 % y solo opera a favor de BTC.'],x:['e5']},
  'm-x':{g:'Modos',t:'🎯 Modo SHOOTER',b:'Operaciones cortas de 5 min a 4 h. Rebotes desde los extremos de Bollinger con la tendencia de 15m a favor.',h:['Necesita estar atento: la señal dura poco.','Usá Stoch RSI y VWAP para afinar la entrada.'],x:['e7']},
  'm-a':{g:'Modos',t:'🏛 Modo ACCIONES',b:'Acciones de la Bolsa de Nueva York en dólares, con velas diarias.',h:['Los huecos de apertura pueden saltar el stop: usá menos apalancamiento.','Mirá las noticias de la empresa antes de entrar.'],x:['q_gauge']},
  'm-p':{g:'Modos',t:'🛠 Modo PERSONALIZADO',b:'Valores de TRADING con tus propios ajustes de indicadores. Las señales no están calibradas.',h:['Usalo para experimentar, no para operar en serio.','Probá tus ideas acá en el modo entrenamiento antes de usarlas con dinero real.'],x:['q_intro']}

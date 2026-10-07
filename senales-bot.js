@@ -17,11 +17,12 @@ const SIGCFG = {
    Backtest 6 meses (Binance, con salvavidas y comisiones):
    TRADING × 20, stop máx. 3,6 % → 75 % al objetivo 1, +8.767 USD (vieja × 15: 84 %, +4.096 USD).
    SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD).
-   SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas. */
-const SIM = { medio: { margin: 350, lev: 20 }, x: { margin: 50, lev: 10 } };
+   SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas.
+   TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
+const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 10 } };
 const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
-const CAL = { medio: { p: 75, p3: 28, n: 245 }, x: { p: 65, p3: 25, n: 218 } };
-const CALSET = { 't-pb': 74, 'tp-r55': 78, 'tp-u80': 74, 'sh-r': 65 };
+const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 65, p3: 25, n: 218 } };
+const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 65 };
 const MINCERT = { medio: 62, x: 56 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
@@ -150,7 +151,7 @@ async function main() {
         const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc, rankOf[s]); if (!e.dir) continue;
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
-        if (m === 'medio' && btcDir) { if (btcDir === d) { conf += 2; e.reasons.push('BTC a favor'); } else { conf -= 5; e.reasons.push('BTC en contra: algo menos confiable'); } }
+        if (m === 'medio') { if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); } // TRADING solo a favor de BTC
         if (conf < MINCERT[m]) continue;
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
