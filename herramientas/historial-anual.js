@@ -156,8 +156,9 @@ function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
     const res = sim(rb, resMs, maxAge, j + 1, rb[j].close, dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
     RAND[m].push({ ...res, margin: g.margin }); } }
 
-/* una operación por moneda a la vez y espera entre señales (como el bot y la página) */
-function pick() { const by = {}; for (const c of CANDS) (by[c.m + c.s] = by[c.m + c.s] || []).push(c);
+/* una operación por moneda a la vez y espera entre señales (como el bot y la página).
+   TRADING y TRADING+ son carteras separadas: una operación abierta de TRADING+ no frena una de TRADING en la misma moneda (y al revés) */
+function pick() { const by = {}; for (const c of CANDS) { const k = c.m + (c.setup === 'tp-x' ? '+' : '') + c.s; (by[k] = by[k] || []).push(c); }
   const out = []; for (const k in by) { let free = 0; for (const c of by[k].sort((a, b) => a.t - b.t)) { if (c.t < free) continue; out.push(c); free = Math.max(c.t + c.cool, c.tEnd); } }
   return out.sort((a, b) => a.t - b.t); }
 function stats(L) { const done = L.filter(x => !x.open), n = done.length; if (!n) return { n: 0 };

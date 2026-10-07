@@ -295,7 +295,7 @@ body.fs-on .fsbar{display:flex}
 .hdet .g>span{color:var(--mut)}
 .hdet .rs{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px}.hdet .rs i{font-style:normal;background:var(--bg);border:1px solid var(--line);border-radius:999px;padding:2px 8px;font-size:11px;color:var(--mut)}
 .hdet .go{margin-top:10px;background:var(--acc);color:#fff;border:0;border-radius:6px;padding:7px 12px;font-weight:700;font-size:12px;cursor:pointer}
-.sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{background:rgba(255,214,0,.13)}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
+.sig.ll{background:rgba(255,214,0,.16)!important;border-color:#ffd600!important;border-left-color:#ffd600!important}.sg-ll{background:#ffd600;color:#14171d;font-weight:700;border-radius:6px;padding:5px 8px;margin:6px 0;font-size:12px;line-height:1.35}.hrow.ll,.srow.ll{box-shadow:inset 3px 0 0 #ffd600}.sg-ll{display:flex;gap:8px;align-items:flex-start}.sg-ll>span{flex:1}.sg-ll .ll-x{background:none;border:0;color:#14171d;font-size:18px;line-height:1;padding:0 2px;cursor:pointer;font-weight:700}.hdet.ll{border-color:#ffd600;background:rgba(255,214,0,.08)}.llt{background:#ffd600;color:#14171d;border-radius:4px;padding:1px 6px;font-weight:700;font-size:11px}.llb{color:#ffd600}
 .pil{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.pil .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.pil-i{margin-left:auto;background:none;border:1px solid #ff9100;color:#ff9100;border-radius:50%;width:26px;height:26px;font-size:15px;line-height:1;cursor:pointer;flex-shrink:0}.pil-leg{background:var(--bg);border:1px solid #ff9100;border-radius:8px;padding:8px 12px;margin:8px 0;font-size:12px;line-height:1.5}.pil-leg ul{margin:6px 0 0;padding-left:18px}.pil-m{border-color:#ff9100!important}
 .pil-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:8px;align-items:end;margin:8px 0}.pil-f label{display:flex;flex-direction:column;font-size:11px;color:var(--mut);gap:3px;min-width:0}
 .pil-f input,.pil-f select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:7px 8px;font-size:13px;min-width:0}
@@ -1856,6 +1856,7 @@ function buildSignal(m,sym,e){
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,reasons,t:Date.now(),state:'live'};
 }
 /* señales fijadas por el usuario: quedan primeras y no se quitan solas hasta desfijarlas */
+var LLHIDE=new Set();try{LLHIDE=new Set(JSON.parse(localStorage.getItem('cv_llhide')||'[]'));}catch(e){}
 var PINS=new Set();try{PINS=new Set(JSON.parse(localStorage.getItem('cv_pins')||'[]'));}catch(e){}
 const savePins=()=>{try{localStorage.setItem('cv_pins',JSON.stringify([...PINS]))}catch(e){}};
 function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why;sg.win=!!win;sg.lostAt=Date.now();}
@@ -2027,8 +2028,8 @@ function renderSignals(){
   if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
     const pin=false;
-    return `<div class="sig ${L?'long':'short'}${pin?' pin':''}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
-      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll?`<div class="sg-ll">🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</div>`:''}
+    return `<div class="sig ${L?'long':'short'}${pin?' pin':''}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll&&!LLHIDE.has(op.id)?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
+      <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small><span class="sg-conf">${s.conf} %<small>${s.m==='p'?'fuerza':'acierto hist.'}</small></span></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll&&!LLHIDE.has(op.id)?`<div class="sg-ll"><span>🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</span><button type="button" class="ll-x" data-llx="${op.id}" aria-label="Cerrar aviso" title="Cerrar aviso">×</button></div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. ${pin?'Queda fijada hasta que la desfijes.':'Se quita en '+Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))+' s.'}</div>`:''}
       ${opAdvice(op,s)}<div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
@@ -2038,7 +2039,7 @@ function renderSignals(){
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <button type="button" class="sg-go">📈 Ver en el gráfico: entrada y objetivos</button><div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
-$('sigList').onclick=e=>{const pk=e.target.closest('.sg-pin');if(pk){e.stopPropagation();const i=pk.querySelector('input');if(e.target!==i)return;
+$('sigList').onclick=e=>{const lx=e.target.closest('[data-llx]');if(lx){e.stopPropagation();LLHIDE.add(lx.dataset.llx);try{localStorage.setItem('cv_llhide',JSON.stringify([...LLHIDE].slice(-200)))}catch(_){}renderSignals();return;}const pk=e.target.closest('.sg-pin');if(pk){e.stopPropagation();const i=pk.querySelector('input');if(e.target!==i)return;
     if(i.checked)PINS.add(i.dataset.pin);else PINS.delete(i.dataset.pin);savePins();renderSignals();try{renderHist();}catch(_){}return;}
   const c=e.target.closest('.sig');if(!c)return;
   if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
@@ -2183,7 +2184,7 @@ function renderHistOld(){
   $('simSum').textContent=eff==null?'sin operaciones cerradas este mes':`efectividad ${eff} % · ${fusd2(tot)}`;
   const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${o.hit}/3 · ${fusd2(o.pnl)}</span>`;
-    if(o.state==='fail')return `<span class="dn">✕ Liquidada 0/3 · ${fusd2(o.pnl)}</span> <span class="neu">(${o.why})</span>`;
+    if(o.state==='fail')return `<span class="dn">✕ Stop 0/3 · ${fusd2(o.pnl)}</span> <span class="neu">(${o.why})</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${o.why} · ${fusd2(o.pnl)}</span>`;};
   const rowH=o=>`<div class="hrow${o.ll?' ll':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
   const hist=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
@@ -3101,7 +3102,7 @@ function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&
     <div class="int-g"><div>Señales<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
       <div>Llegó al objetivo 1<b>${pc0(S.o1)}</b><small>backtest ${cal?cal.p+' %':'—'}${az?` · azar ${az.p} %`:''}</small></div>
       <div>Llegó a los 3 objetivos<b>${pc0(S.o3)}</b><small>backtest ${cal&&cal.p3!=null?cal.p3+' %':'—'}${az&&az.p3!=null?` · azar ${az.p3} %`:''}</small></div>
-      <div>Liquidadas<b class="dn">${S.liq}</b><small>${S.n?Math.round(S.liq/S.n*100)+' % de las cerradas':'—'}</small></div>
+      <div>Tocaron el stop<b class="dn">${S.liq}</b><small>${S.n?Math.round(S.liq/S.n*100)+' % de las cerradas':'—'}</small></div>
       <div>Salvavidas<b style="color:#ffd600">${S.ll}</b><small>${S.llOk} salvaron la operación</small></div>
       <div>Ganado / perdido<b><span class="up">${intMoney(S.g)}</span></b><small class="dn">${intMoney(S.l)}</small></div>
       <div>Resultado neto<b class="${S.net>=0?'up':'dn'}">${intMoney(S.net)}</b><small>${S.avg!=null?intMoney(S.avg)+' por operación':'—'}</small></div>
@@ -3271,7 +3272,7 @@ function renderRes(force){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=l
   const rs=$('resStats');if(force===true||!rs.contains(document.activeElement)||document.activeElement.tagName==='BUTTON')rs.innerHTML=ledHTML();
   const resTxt=o=>{if(o.state==='open'&&o.lite)return `<span class="live">EN CURSO</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
-    if(o.state==='fail')return `<span class="dn">✕ Liquidada · ${fusd2(o.pnl)}</span>`;
+    if(o.state==='fail')return `<span class="dn">✕ Stop · ${fusd2(o.pnl)}</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
   const row=o=>{const pn=PINS.has(String(o.id));return `<div class="hrow${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></div>${HOPEN.has(o.id)?(o.lite?histDet(o):opDetail(o)):''}`;};
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
