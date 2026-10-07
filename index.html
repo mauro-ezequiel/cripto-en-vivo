@@ -1933,6 +1933,7 @@ function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
+  if(setup==='tp-x'&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING+ solo a favor de BTC
   if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
   else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
   else if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
@@ -3416,13 +3417,15 @@ sigTabsRender();setTimeout(()=>{if(mode==='medio')scanPlus();},20000);
    TRADING+ (tp-x: tendencia alineada, ADX ≥ 25, RSI sin extremo <70 / >30, ATR 0,8–3 %): 10,4/día · 81,3 % · +2,5 %
    (primera mitad 83 %, segunda 80 %). Ninguna variante bajó a 75 %: hasta tomar todas las velas con tendencia
    alineada da 77 % (+0,7 %), porque con objetivo a 1,25 % y stop a 5 % el azar ya llega cerca del 75 %. */
-CAL.medio['tp-x']={p:68,p3:null,n:486,usd:4.9,txt:'tendencia muy fuerte (ADX ≥ 35) con volumen bajo · × 7 · aviso de salida si se da vuelta'};TGTS['tp-x']=TGTS['t-pb'];
+CAL.medio['tp-x']={p:69,p3:20,n:472,usd:5.2,txt:'tendencia muy fuerte (ADX ≥ 35) con volumen bajo y BTC a favor · × 7 · aviso de salida si se da vuelta'};TGTS['tp-x']=TGTS['t-pb'];
 /* octubre 2026 · TRADING+ v3: antes perdía (−1,6 % del margen por operación en 6 meses). Ahora: ADX ≥ 35 y volumen bajo,
    × 5, stop 3 × ATR, objetivos 0,35 / 0,7 / 1,05 × stop, sin salvavidas y con aviso de salida temprana.
    Backtest 6 meses (60 monedas, comisiones): ~2,7 señales/día · 68 % al objetivo 1 · +1,0 % del margen por operación (factor 1,16);
    primeros 5 meses +0,9 %, último mes +1,2 %. Los errores pierden en promedio −20 % del margen (sin aviso, −31 %).
    Ajuste: × 7 (punto medio entre la versión segura × 5 y la rentable × 20). Con stop 3 × ATR no hay tope por liquidación,
-   así que señales y aciertos no cambian y todo escala × 1,4: +1,4 % por operación, errores −28 %, peor operación −63 %. */
+   así que señales y aciertos no cambian y todo escala × 1,4: +1,4 % por operación, errores −28 %, peor operación −63 %.
+   Pulido: solo a favor de BTC (4h vs EMA 50). Backtest × 7: 2,6/día · 69 % al objetivo 1 · +1,5 % por operación (antes +0,8 %)
+   · peor racha −5,7 márgenes (antes −8,9) · primeros 5 meses +1,4 % (antes +0,7 %) · último mes +1,8 % (antes +1,4 %). */
 var MAXPLUS2=6,MAXCORE=6;
 evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
@@ -3439,6 +3442,8 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     return out;});};
 scanPlus=async function(){if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
   try{const cfg=SIGCFG.medio,now=Date.now();
+    /* TRADING+ solo opera a favor de BTC (4h sobre/bajo su EMA 50): se actualiza acá por si TRADING no escaneó todavía */
+    try{const bk=await kl('BTCUSDT','4h',80);if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;window.__btcT=now;}}catch(e){}
     const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,80).map(t=>t.s);
     const fresh=[];
     for(let r=0;r<U.length;r++){const s=U[r];
