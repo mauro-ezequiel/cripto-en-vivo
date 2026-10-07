@@ -12,16 +12,16 @@ const SIGCFG = {
   medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 80, cool: 24 * 36e5, maxAge: 7 * 864e5 },
   x: { name: 'SHOOTER', tf: '5m', htf: '15m', min: .016, maxAtr: .027, n: 45, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
 };
-const SIM = { medio: { margin: 350, lev: 15, maxLoss: 262.5 }, x: { margin: 50, lev: 18, maxLoss: 36 } };
-/* octubre 2026 · medidas nuevas: el stop depende de la volatilidad (ATR de la vela de la señal) y los objetivos son
-   múltiplos del stop. Backtest 6 meses (Binance, con salvavidas y comisiones, mismas entradas que antes):
-   TRADING stop 3 × ATR (máx. 5 %), objetivos 0,5 / 1 / 1,5 × stop → +6.923 USD vs +3.758 USD con las viejas (+1,25 % / stop 5 %).
-   SHOOTER stop 1 × ATR (máx. 4 %), objetivos 1,5 / 3 / 4,5 × stop → +202 USD vs −490 USD con las viejas (+1,6 % / stop 4 %).
-   El % de "acierto" baja (llega menos al objetivo 1) pero gana más plata por operación. */
-const GEOM = { medio: { a: 3, r: .5, maxSl: .05 }, x: { a: 1, r: 1.5, maxSl: .04 } };
-const CAL = { medio: { p: 74, p3: 32, n: 224 }, x: { p: 46, p3: 16, n: 194 } };
-const CALSET = { 't-pb': 74, 'tp-r55': 73, 'tp-u80': 62, 'sh-r': 46 };
-const MINCERT = { medio: 62, x: 36 };
+/* octubre 2026 · medidas nuevas v2: apalancamiento, stop y objetivos elegidos juntos (más aciertos sin ganar menos).
+   Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
+   Backtest 6 meses (Binance, con salvavidas y comisiones):
+   TRADING × 20, stop máx. 3,6 % → 75 % al objetivo 1, +8.767 USD (vieja × 15: 84 %, +4.096 USD).
+   SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD). */
+const SIM = { medio: { margin: 350, lev: 20 }, x: { margin: 50, lev: 10 } };
+const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
+const CAL = { medio: { p: 75, p3: 28, n: 245 }, x: { p: 66, p3: 25, n: 187 } };
+const CALSET = { 't-pb': 74, 'tp-r55': 78, 'tp-u80': 74, 'sh-r': 66 };
+const MINCERT = { medio: 62, x: 56 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 
