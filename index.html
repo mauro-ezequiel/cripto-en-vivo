@@ -1868,8 +1868,9 @@ const CAL={medio:{'t-pb':{p:74,p3:31,n:131,usd:30.9,txt:'retroceso dentro de la 
      (peor operación −110 % del margen con salvavidas, −74 % sin él). Sin salvavidas: 65 % al objetivo 1.
      página vieja × 18 (+1,6 / +3,2 / +4,8 %, stop 4 %): 194 · 71 % · −327 USD (−1,7 por op., factor 0,87)
    usd = resultado promedio por operación en el backtest. */
+var PLUSG={a:3,r:.35,lev:5,max:.156,cut:.5,label:'350 USD × 5 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
-const MINCERT={medio:62,x:56,p:0,a:70},MINCERT_SET={'tp-x':75};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:62,x:56,p:0,a:70},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1932,7 +1933,8 @@ function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
   const dir=e.dir,setup=e.setup;if(!dir||!setup||!CAL[m][setup])return null;
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
-  if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
+  if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
+  else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
   else if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
   else{const reach=atrP*Math.sqrt(cfg.H)*1.3;if(reach<cfg.min)return null;
     const slD=Math.min(Math.max(1.2*atrP,cfg.min*.35),.045),t1=Math.max(cfg.min,slD*1.6);if(t1>reach)return null;
@@ -1945,7 +1947,7 @@ function buildSignalV2(m,sym,e,fd){
   const nf=newsFactors().find(x=>x.k==='news');if(nf&&nf.s*dir>.3){conf+=1;reasons.push('noticias a favor');}else if(nf&&nf.s*dir<-.3)conf-=2;
   if(m==='p')conf=e.str;conf=Math.round(clamp(conf,1,99));if(conf<(MINCERT_SET[setup]??MINCERT[m]))return null;
   const zone=c*Math.min(cfg.min*.15,atrP*.5);
-  return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,
+  return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,lev:setup==='tp-x'?PLUSG.lev:undefined,
     calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`llegó al objetivo 1 en el ${cal.p} % y a los 3 objetivos en el ${CAL[m][setup].p3??'—'} % de ${cal.n} casos${CAL[m][setup].usd!=null?` · promedio ${intMoney(CAL[m][setup].usd)} por operación`:''} (backtest con salvavidas y comisiones) · ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
 async function scanSignals(mm){
@@ -1998,7 +2000,7 @@ function renderSignals(){
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
         <span>Objetivo 3</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
         <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>${llInfo(op,pc)}
-        <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
+        <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${s.setup==='tp-x'?PLUSG.label:SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <button type="button" class="sg-go">📈 Ver en el gráfico: entrada y objetivos</button><div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
@@ -2037,9 +2039,9 @@ function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
   const s=o.liqD||lossOf(o)/notOf(o);
   return `<span>🛟 Salvavidas si llega a</span><b class="llb">${fp(o.llAt)} (${pc(o.llAt)}) · pérdida en ese momento ≈ ${llMoney(o.m,notOf(o)*s*LLTH)} · suma ${llMoney(o.m,o.llMargin||SIM[o.m].margin/2)} (× ${SIM[o.m].lev}) si los datos confirman</b>`;}
 function addSig(m,f){
-  SIG[m].push(f);const c=SIM[m],not=c.margin*c.lev,sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&sd<=c.maxLoss/not+1e-9?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
+  SIG[m].push(f);const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
 /* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada (promedio si hubo salvavidas) */
@@ -2081,13 +2083,22 @@ function notifyLL(o){if(typeof NTF==='undefined'||!NTF[o.m]||!ntfAny())return;wi
   notify(`🟡🛟 SALVAVIDAS · ${SIGCFG[o.m].name} ${o.dir>0?'▲ LONG':'▼ SHORT'} ${c}`,`Se suman ${mg} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)}: ${o.ll.why}. Entrada promedio ${fp(o.ae)} · nuevo stop ${fp(o.fail)}.`,'ll-'+o.id,{sym:o.sym,tf:SIGCFG[o.m].tf,m:o.m});}
 function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;if(o.llPend){llResolve(o);continue;}const t=tickers[o.sym];if(!t)continue;const r=stepOp(o,t.c,t.c,now);if(r==='ll')llResolve(o);else if(r)ch=true;o.last=now;}if(ch)saveOps();}
 let syncBusy=false;
+/* TRADING+ · aviso de salida temprana: si una vela de 1 h cierra a mitad de camino al stop sin haber tocado el objetivo 1,
+   se avisa y se cierra ahí. En el backtest, 9 de cada 10 errores se cortaron así y perdieron en promedio un tercio menos. */
+function cutCheck(o,close,tClose){if(o.state!=='open'||!o.cutAt||o.hit||tClose>Date.now()||tClose<=o.t)return false;
+  if(o.dir*(close-o.cutAt)>0)return false;
+  closeOp(o,'exp',close,tClose,'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',pnlAt(o,close));o.cut=true;
+  try{if(typeof notify==='function'&&typeof ntfAny==='function'&&ntfAny()&&NTF.tplus){window.__skipRmt=false;const c0=o.sym.replace('USDT','');
+    notify(`⚠️ TRADING+ ${c0}: SALÍ AHORA`,`Se dio vuelta: una vela de 1 h cerró en ${fp(close)}, a mitad de camino al stop. Cerrar acá evita llegar al stop (${fp(o.fail)}). Resultado ${fpct(100*o.pnl/(SIM[o.m].margin))} del margen.`,'cut-'+o.id,{sym:o.sym,tf:'1h',m:o.m});}}catch(e){}
+  return true;}
 async function syncOps(){
   if(syncBusy)return;syncBusy=true;let ch=false;
   try{for(const o of OPS.filter(x=>x.state==='open')){
     const c=SIM[o.m];try{
       const d=o.m==='a'?await stkKlines(o.sym):await getJ(`${API}/klines?symbol=${o.sym}&interval=${c.kl}&startTime=${Math.max(o.t,o.last-c.klMs)}&limit=1000`);
       if(o.llPend)await llResolve(o);
-      for(const k of d){const ts=+k[0];if(o.m==='a'?ts<=o.t:ts+c.klMs<o.t)continue;let r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));if(r==='ll'){await llResolve(o);if(o.llPend)break;r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));}if(r){ch=true;break;}}
+      for(const k of d){const ts=+k[0];if(o.m==='a'?ts<=o.t:ts+c.klMs<o.t)continue;let r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));if(r==='ll'){await llResolve(o);if(o.llPend)break;r=stepOp(o,+k[2],+k[3],Math.max(ts,o.t));}if(r){ch=true;break;}
+        if(cutCheck(o,+k[4],ts+c.klMs)){ch=true;break;}}
       if(o.state==='open'&&!o.llPend){o.last=Date.now();const lp=(tickers[o.sym]&&tickers[o.sym].c)||(d.length?+d[d.length-1][4]:o.entry);let r=stepOp(o,lp,lp,Date.now());if(r==='ll'){await llResolve(o);r=stepOp(o,lp,lp,Date.now());}if(r)ch=true;}
     }catch(e){}
     await new Promise(r=>setTimeout(r,150));}
@@ -2120,7 +2131,7 @@ function opDetail(o){
     <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>${llInfo(o,v=>fpct((v/o.entry-1)*100))}
     <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
-    <span>Simulación</span><b>${SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
+    <span>Simulación</span><b>${o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
   </div>${o.reasons&&o.reasons.length?`<div class="rs">${o.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>`:''}
   <button class="go" data-op="${o.id}" data-go="${o.sym}" data-tf="${cfg.tf}" data-m="${o.m}">Ver en el gráfico</button></div>`;
 }
@@ -3201,10 +3212,12 @@ function opAdvice(o,sg){try{
   let c,t;
   if(!open){
     if(o.state==='fail'){c='bad';t=`🔴 <b>SALIR · TOCÓ EL STOP</b> · Operación terminada en ${fp(o.fail)} (${fusd2(o.pnl)}).`;}
+    else if(o.state==='exp'&&o.cut){c='bad';t=`⚠️ <b>SALIDA ANTICIPADA</b> · Se dio vuelta y se cerró antes del stop (${fusd2(o.pnl)}).`;}
     else if(o.state==='exp'){c='end';t=`⏱ <b>SALIR · VENCIÓ EL PLAZO</b> · No llegó a ningún objetivo: se cierra lo que quede (${fusd2(o.pnl)}).`;}
     else if(o.hit===3){c='ok';t=`🏁 <b>SALIR CON GANANCIA</b> · Llegó a los 3 objetivos (${fusd2(o.pnl)}).`;}
     else{c='ok';t=`🏁 <b>TERMINADA CON GANANCIA</b> · ${esc(o.why||'')} (${fusd2(o.pnl)}).`;}
   }else if(!p)return '';
+  else if(o.cutAt&&!o.hit&&d*(p-e)<0){c='warn';t=`⚠️ <b>VIGILAR</b> · Si una vela de 1 h cierra ${d>0?'por debajo de':'por encima de'} ${fp(o.cutAt)} te aviso para salir antes del stop (${fp(o.fail)}).`;}
   else if(o.llPend){c='warn';t=`🛟 <b>ZONA DE SALVAVIDAS</b> · El precio llegó a ${fp(o.llAt)}. Revisando si los datos siguen a favor antes de sumar margen…`;}
   else if(o.hit>0){const nx=T[o.hit],back=d*(p-e)/Math.abs(T[0]-e);
     if(back<.35){c='warn';t=`🟠 <b>CUIDADO, VUELVE A LA ENTRADA</b> · Si toca ${fp(e)} se cierra el resto sin pérdida. Lo cobrado en el objetivo ${o.hit} ya está asegurado.`;}
@@ -3387,7 +3400,7 @@ setInterval(()=>{if(!scanBusy&&Date.now()-plusLast>SIGCFG.medio.every&&(mode==='
 /* avisos propios de TRADING+ (botón nuevo); el servidor 24 h no las manda, así que el aviso a Telegram lo hace la página */
 {const _ns=notifySig;notifySig=function(m,f){if(f&&f.plus){if(window.__importing||!NTF.tplus||!ntfAny())return;
   const L=f.dir>0,c=f.sym.replace('USDT','');window.__skipRmt=false;
-  notify(`🟨 TRADING+: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivos ${fp(f.tp0)} · ${fp(f.tp1)} · ${fp(f.tp2)} · Stop ${fp(f.sl)} · Salvavidas en ${fp(f.entry+(f.sl-f.entry)*LLTH)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m:'medio'});return;}
+  notify(`🟨 TRADING+: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivos ${fp(f.tp0)} · ${fp(f.tp1)} · ${fp(f.tp2)} · Stop ${fp(f.sl)} · × ${PLUSG.lev} · aviso de salida si una vela de 1 h cierra en ${fp(f.entry+(f.sl-f.entry)*PLUSG.cut)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m:'medio'});return;}
   return _ns(m,f);};}
 {const _st=sigTabsRender;sigTabsRender=function(){_st.apply(this,arguments);const el=$('sigTabs');if(!el||mode!=='medio')return;
   const n=SIG.medio.filter(s=>s.state==='live'&&s.plus).length,b=document.createElement('button');b.type='button';b.className='tp-ntf'+(NTF.tplus?' on':'');b.dataset.tp='1';
@@ -3403,7 +3416,11 @@ sigTabsRender();setTimeout(()=>{if(mode==='medio')scanPlus();},20000);
    TRADING+ (tp-x: tendencia alineada, ADX ≥ 25, RSI sin extremo <70 / >30, ATR 0,8–3 %): 10,4/día · 81,3 % · +2,5 %
    (primera mitad 83 %, segunda 80 %). Ninguna variante bajó a 75 %: hasta tomar todas las velas con tendencia
    alineada da 77 % (+0,7 %), porque con objetivo a 1,25 % y stop a 5 % el azar ya llega cerca del 75 %. */
-CAL.medio['tp-x']={p:81,p3:30,n:3020,txt:'tendencia alineada con ADX ≥ 25 y RSI sin extremo (más señales, algo menos de ganancia)'};TGTS['tp-x']=TGTS['t-pb'];
+CAL.medio['tp-x']={p:68,p3:null,n:486,usd:3.5,txt:'tendencia muy fuerte (ADX ≥ 35) con volumen bajo · × 5 · aviso de salida si se da vuelta'};TGTS['tp-x']=TGTS['t-pb'];
+/* octubre 2026 · TRADING+ v3: antes perdía (−1,6 % del margen por operación en 6 meses). Ahora: ADX ≥ 35 y volumen bajo,
+   × 5, stop 3 × ATR, objetivos 0,35 / 0,7 / 1,05 × stop, sin salvavidas y con aviso de salida temprana.
+   Backtest 6 meses (60 monedas, comisiones): ~2,7 señales/día · 68 % al objetivo 1 · +1,0 % del margen por operación (factor 1,16);
+   primeros 5 meses +0,9 %, último mes +1,2 %. Los errores pierden en promedio −20 % del margen (sin aviso, −31 %). */
 var MAXPLUS2=6,MAXCORE=6;
 evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
@@ -3414,7 +3431,7 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3;
     if(core&&rank>=40&&rr<50){out.setup='tp-u80';out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','moneda fuera de las 40 con más volumen');}
     else if(core&&rank<40&&rr>=50&&rr<55&&adx!=null&&adx>=25){out.setup='tp-r55';out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','retroceso suave: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso');}
-    else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=25&&atrP>.008&&atrP<=.03){out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
+    else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=35&&L.vr<1&&atrP>.008&&atrP<=.03){out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y muy fuerte (ADX '+adx.toFixed(0)+')','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volumen bajo','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
     else return out;
     out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;});};
@@ -3463,7 +3480,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  cvd:{g:'Indicadores',t:'🌊 CVD (flujo de órdenes)',ind:'cvd',b:'Suma compras agresivas menos ventas agresivas del día. Muestra quién empuja de verdad.',h:['Precio sube y CVD sube = suba sana.','Precio sube y CVD baja = suba débil (divergencia): cuidado con los longs.'],x:['q_cvd']},
  gauge:{g:'Paneles',t:'🌡 Termómetro de tendencia',b:'Resume todos los factores en un número de 0 a 100: ≥ 70 alcista, ≤ 30 bajista, en el medio neutral.',h:['Operá a favor del termómetro: long con 70 o más, short con 30 o menos.','En la zona neutral (40–60) mejor esperar.'],x:['q_gauge']},
  fac:{g:'Paneles',t:'📋 Qué dice cada factor',b:'La tabla al lado del termómetro muestra cada indicador, si está a favor o en contra y su peso.',h:['Buscá que la mayoría coincida. Si los de más peso están en contra, no entres.','Mirá también noticias y "manos fuertes" en la tabla: pueden cambiar el panorama.'],x:['q_fac']},
- sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, algo menos de ganancia).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
+ sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, × 5, sin salvavidas y con aviso de salida si se dan vuelta).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
  ll:{g:'Paneles',t:'🛟 Salvavidas',b:'Si el precio va en contra hasta la zona del salvavidas y los datos siguen a favor, se agrega medio margen: mejora la entrada promedio y aleja la liquidación.',h:['Solo usalo si los indicadores siguen confirmando la dirección.','Nunca agregues margen "por las dudas" sin un plan: es la forma más rápida de perder más.'],x:['q_ll']},
  pil:{g:'Paneles',t:'🧭 Pilotear',b:'Cargás una operación real tuya y cada 15 s la página te dice si mantener, asegurar, salir o poner un salvavidas.',h:['Cargá la operación apenas la abrís en el exchange.','Hacé caso a los avisos 🚨 y ⛔: son los que te evitan liquidaciones.'],x:['q_pil']},
  int:{g:'Paneles',t:'🧠 Inteligencia',b:'Registro en vivo de las señales, régimen de mercado (BTC o altcoins), monedas que suben y órdenes grandes (ballenas).',h:['Si el régimen dice "altseason", las alts suelen moverse más que BTC.','Órdenes grandes en una dirección confirman el movimiento.'],x:['q_int']},
