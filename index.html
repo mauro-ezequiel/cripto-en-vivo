@@ -1868,7 +1868,7 @@ const CAL={medio:{'t-pb':{p:74,p3:31,n:131,usd:30.9,txt:'retroceso dentro de la 
      (peor operación −110 % del margen con salvavidas, −74 % sin él). Sin salvavidas: 65 % al objetivo 1.
      página vieja × 18 (+1,6 / +3,2 / +4,8 %, stop 4 %): 194 · 71 % · −327 USD (−1,7 por op., factor 0,87)
    usd = resultado promedio por operación en el backtest. */
-var PLUSG={a:3,r:.35,lev:5,max:.156,cut:.5,label:'350 USD × 5 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
+var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
 const MINCERT={medio:62,x:56,p:0,a:70},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:89,p3:51,n:674,txt:'impulso con tendencia semanal (calibrado con CEDEARs de acciones de EE. UU.)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
@@ -3416,11 +3416,13 @@ sigTabsRender();setTimeout(()=>{if(mode==='medio')scanPlus();},20000);
    TRADING+ (tp-x: tendencia alineada, ADX ≥ 25, RSI sin extremo <70 / >30, ATR 0,8–3 %): 10,4/día · 81,3 % · +2,5 %
    (primera mitad 83 %, segunda 80 %). Ninguna variante bajó a 75 %: hasta tomar todas las velas con tendencia
    alineada da 77 % (+0,7 %), porque con objetivo a 1,25 % y stop a 5 % el azar ya llega cerca del 75 %. */
-CAL.medio['tp-x']={p:68,p3:null,n:486,usd:3.5,txt:'tendencia muy fuerte (ADX ≥ 35) con volumen bajo · × 5 · aviso de salida si se da vuelta'};TGTS['tp-x']=TGTS['t-pb'];
+CAL.medio['tp-x']={p:68,p3:null,n:486,usd:4.9,txt:'tendencia muy fuerte (ADX ≥ 35) con volumen bajo · × 7 · aviso de salida si se da vuelta'};TGTS['tp-x']=TGTS['t-pb'];
 /* octubre 2026 · TRADING+ v3: antes perdía (−1,6 % del margen por operación en 6 meses). Ahora: ADX ≥ 35 y volumen bajo,
    × 5, stop 3 × ATR, objetivos 0,35 / 0,7 / 1,05 × stop, sin salvavidas y con aviso de salida temprana.
    Backtest 6 meses (60 monedas, comisiones): ~2,7 señales/día · 68 % al objetivo 1 · +1,0 % del margen por operación (factor 1,16);
-   primeros 5 meses +0,9 %, último mes +1,2 %. Los errores pierden en promedio −20 % del margen (sin aviso, −31 %). */
+   primeros 5 meses +0,9 %, último mes +1,2 %. Los errores pierden en promedio −20 % del margen (sin aviso, −31 %).
+   Ajuste: × 7 (punto medio entre la versión segura × 5 y la rentable × 20). Con stop 3 × ATR no hay tope por liquidación,
+   así que señales y aciertos no cambian y todo escala × 1,4: +1,4 % por operación, errores −28 %, peor operación −63 %. */
 var MAXPLUS2=6,MAXCORE=6;
 evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
@@ -3480,7 +3482,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  cvd:{g:'Indicadores',t:'🌊 CVD (flujo de órdenes)',ind:'cvd',b:'Suma compras agresivas menos ventas agresivas del día. Muestra quién empuja de verdad.',h:['Precio sube y CVD sube = suba sana.','Precio sube y CVD baja = suba débil (divergencia): cuidado con los longs.'],x:['q_cvd']},
  gauge:{g:'Paneles',t:'🌡 Termómetro de tendencia',b:'Resume todos los factores en un número de 0 a 100: ≥ 70 alcista, ≤ 30 bajista, en el medio neutral.',h:['Operá a favor del termómetro: long con 70 o más, short con 30 o menos.','En la zona neutral (40–60) mejor esperar.'],x:['q_gauge']},
  fac:{g:'Paneles',t:'📋 Qué dice cada factor',b:'La tabla al lado del termómetro muestra cada indicador, si está a favor o en contra y su peso.',h:['Buscá que la mayoría coincida. Si los de más peso están en contra, no entres.','Mirá también noticias y "manos fuertes" en la tabla: pueden cambiar el panorama.'],x:['q_fac']},
- sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, × 5, sin salvavidas y con aviso de salida si se dan vuelta).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
+ sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, × 7, sin salvavidas y con aviso de salida si se dan vuelta).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
  ll:{g:'Paneles',t:'🛟 Salvavidas',b:'Si el precio va en contra hasta la zona del salvavidas y los datos siguen a favor, se agrega medio margen: mejora la entrada promedio y aleja la liquidación.',h:['Solo usalo si los indicadores siguen confirmando la dirección.','Nunca agregues margen "por las dudas" sin un plan: es la forma más rápida de perder más.'],x:['q_ll']},
  pil:{g:'Paneles',t:'🧭 Pilotear',b:'Cargás una operación real tuya y cada 15 s la página te dice si mantener, asegurar, salir o poner un salvavidas.',h:['Cargá la operación apenas la abrís en el exchange.','Hacé caso a los avisos 🚨 y ⛔: son los que te evitan liquidaciones.'],x:['q_pil']},
  int:{g:'Paneles',t:'🧠 Inteligencia',b:'Registro en vivo de las señales, régimen de mercado (BTC o altcoins), monedas que suben y órdenes grandes (ballenas).',h:['Si el régimen dice "altseason", las alts suelen moverse más que BTC.','Órdenes grandes en una dirección confirman el movimiento.'],x:['q_int']},
