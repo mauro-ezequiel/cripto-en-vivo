@@ -146,12 +146,12 @@ async function runShooter(s) {
     const g = GEO.sh, sl = slOf(g, atrP);
     const res = sim(tb, SH.tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
     CANDS.push({ m: 'x', setup: 'sh-r', s, t, dir, sl, cool: SH.cool, margin: g.margin, ...res }); }
-  return { rb: tb }; }
+  return { rb: tb, ok: j => atr[j] != null && atr[j] / tb[j].close > .04 / 3 && atr[j] / tb[j].close <= .04 / 1.5 }; }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
-function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf) {
+function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
   if (!slPool.length || !rb.length) return;
-  for (let j = 0; j < rb.length; j++) { if (rb[j].t < FROM || rnd() > 1 / every) continue;
+  for (let j = 0; j < rb.length; j++) { if (rb[j].t < FROM || (ok && !ok(j)) || rnd() > 1 / every) continue;
     const dir = rnd() < .5 ? 1 : -1, sl = slPool[Math.floor(rnd() * slPool.length)], t = rb[j].t + resMs;
     const res = sim(rb, resMs, maxAge, j + 1, rb[j].close, dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
     RAND[m].push({ ...res, margin: g.margin }); } }
@@ -193,7 +193,7 @@ async function main() { const t0 = Date.now();
   const shSl = [];
   await pool(base.slice(0, SH.n), async s => { const x = await runShooter(s); if (!x) return;
     const mine = CANDS.filter(c => c.s === s && c.m === 'x').map(c => c.sl); shSl.push(...mine);
-    randomEntries('x', s, x.rb, SH.tfMs, SH.maxAge, 2500, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null); });
+    randomEntries('x', s, x.rb, SH.tfMs, SH.maxAge, 8, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar, pero con la misma volatilidad que exige SHOOTER
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
 
   const ops = pick(), cal = { medio: {}, x: {} };
