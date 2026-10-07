@@ -161,6 +161,10 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 .vbar-w{display:flex;align-items:center;gap:6px;margin:0 12px 8px}.vbar{flex:1;min-width:0;display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;-webkit-overflow-scrolling:touch}.vbar::-webkit-scrollbar{display:none}
 .vbar .mut{font-size:11px;white-space:nowrap}.vb{flex:none;display:flex;flex-direction:column;align-items:flex-start;gap:1px;border:1px solid var(--line);background:#1b2130;color:var(--txt);border-radius:8px;padding:4px 9px;font-size:11.5px;cursor:pointer;white-space:nowrap;line-height:1.2}
 .vb b{font-size:12px}.vb small{font-size:10px;color:var(--mut)}.vb.cheap{background:#0d5c36;border-color:#00c853}.vb.exp{background:#7a1622;border-color:#ff1744}.vb.cheap small,.vb.exp small{color:#fff;opacity:.9}.vb.warm{border-color:#ff1744;border-style:dashed}.vb.cool{border-color:#00c853;border-style:dashed}
+.sigpops{position:fixed;top:8px;left:50%;transform:translateX(-50%);z-index:9998;display:flex;flex-direction:column;gap:6px;width:min(440px,calc(100vw - 24px))}
+.sigpop{display:flex;align-items:flex-start;gap:10px;background:var(--panel);border:1px solid var(--line);border-left:4px solid #26a69a;border-radius:10px;padding:9px 10px 9px 12px;box-shadow:0 8px 24px rgba(0,0,0,.5);font-size:13px;cursor:pointer;color:var(--txt)}
+.sigpop.short{border-left-color:#ef5350}.sigpop.plus{background:#2a2410}.sigpop .sp-b{flex:1;min-width:0;line-height:1.35}.sigpop .sp-t{font-weight:700}.sigpop .sp-s{color:var(--mut);font-size:12px}
+.sigpop .sp-x{background:none;border:0;color:var(--mut);font-size:20px;line-height:1;padding:0 2px;cursor:pointer}.sigpop .sp-x:hover{color:var(--txt)}
 .srv-toast{position:fixed;left:50%;bottom:76px;transform:translateX(-50%);z-index:90;background:#1b2130;border:1px solid #2962ff;color:var(--txt);border-radius:10px;padding:9px 14px;font-size:13px;box-shadow:0 8px 24px #000a;cursor:pointer;max-width:92vw}
 .ltabs button{flex:1;background:none;border:1px solid var(--line);color:var(--mut);border-radius:6px;padding:5px;font-size:12px;cursor:pointer}
 .ltabs button.on{color:var(--txt);border-color:#3a4256;background:#1b2130}
@@ -2069,7 +2073,7 @@ function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
   const s=o.liqD||lossOf(o)/notOf(o);
   return `<span>🛟 Salvavidas si llega a</span><b class="llb">${fp(o.llAt)} (${pc(o.llAt)}) · pérdida en ese momento ≈ ${llMoney(o.m,notOf(o)*s*LLTH)} · suma ${llMoney(o.m,o.llMargin||SIM[o.m].margin/2)} (× ${SIM[o.m].lev}) si los datos confirman</b>`;}
 function addSig(m,f){
-  SIG[m].push(f);const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||m==='a'||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
+  SIG[m].push(f);try{sigPop(m,f);}catch(e){}const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||m==='a'||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
   OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
@@ -2220,6 +2224,21 @@ async function notifyLocal(title,body,tag,data){
     const o={body,tag:tag||undefined,icon:'icon-192.png',badge:'icon-192.png',data:data||{},vibrate:[120,60,120],renotify:!!tag};
     if(reg)await reg.showNotification(title,o);else new Notification(title,o);}catch(e){}
 }
+/* aviso de señal nueva arriba de la pantalla: dura 30 minutos (desde que salió la señal) y se puede cerrar con la X */
+const SIGPOP_MS=30*6e4;var SIGPOPS=[];try{SIGPOPS=JSON.parse(localStorage.getItem('cv_sigpops')||'[]').filter(x=>Date.now()-x.t<SIGPOP_MS);}catch(e){}
+const saveSigPops=()=>{try{localStorage.setItem('cv_sigpops',JSON.stringify(SIGPOPS))}catch(e){}};
+function sigPopRender(){let box=document.querySelector('.sigpops');const now=Date.now();SIGPOPS=SIGPOPS.filter(x=>now-x.t<SIGPOP_MS);
+  if(!SIGPOPS.length){if(box)box.remove();return;}if(!box){box=document.createElement('div');box.className='sigpops';document.body.appendChild(box);
+    box.onclick=e=>{const it=e.target.closest('.sigpop');if(!it)return;const id=it.dataset.id,x=SIGPOPS.find(y=>y.id===id);SIGPOPS=SIGPOPS.filter(y=>y.id!==id);saveSigPops();sigPopRender();
+      if(!e.target.closest('.sp-x')&&x){if(x.m!==mode)applyMode(x.m);if(typeof setView==='function')setView('sig');renderSignals();const c=document.querySelector(`#sigList [data-op="${CSS.escape(id)}"]`);if(c)c.scrollIntoView({block:'center'});}};}
+  box.innerHTML=SIGPOPS.slice(-4).reverse().map(x=>{const left=Math.max(1,Math.ceil((SIGPOP_MS-(now-x.t))/6e4));
+    return `<div class="sigpop${x.dir>0?'':' short'}${x.plus?' plus':''}" data-id="${esc(x.id)}" title="Tocá para ver la señal"><div class="sp-b"><div class="sp-t">${x.plus?'🟨 TRADING+':esc(x.name)}: <span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲ LONG':'▼ SHORT'} ${esc(x.sym)}</span> · ${x.conf} %</div><div class="sp-s">${esc(x.txt)} · se oculta en ${left} min</div></div><button type="button" class="sp-x" aria-label="Cerrar aviso" title="Cerrar">×</button></div>`;}).join('');}
+function sigPop(m,f){if(!f||!f.op||Date.now()-(f.t||0)>=SIGPOP_MS||SIGPOPS.some(x=>x.id===f.op))return;
+  SIGPOPS.push({id:f.op,t:f.t||Date.now(),m,name:SIGCFG[m].name,plus:!!(f.plus||f.setup==='tp-x'),dir:f.dir,sym:f.sym.replace('USDT',''),conf:f.conf,txt:`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp0||f.tp1)} · Stop ${fp(f.sl)}`});
+  saveSigPops();sigPopRender();
+  /* la notificación del sistema también se cierra a la media hora si la página sigue abierta */
+  setTimeout(async()=>{try{const reg=swReg||(navigator.serviceWorker&&await navigator.serviceWorker.getRegistration());if(reg)(await reg.getNotifications({tag:f.op})).forEach(n=>n.close());}catch(e){}},Math.max(0,SIGPOP_MS-(Date.now()-(f.t||Date.now()))));}
+setInterval(sigPopRender,6e4);setTimeout(sigPopRender,1500);
 function notifySig(m,f){if(window.__importing)return;
   if(!NTF[m]||!ntfAny())return;
   window.__skipRmt=!!(RMT.srv&&(m==='medio'||m==='x'));
@@ -3243,10 +3262,10 @@ $('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;
 rmtRender();
 
 /* ---------- resultados de las señales (un solo bloque) ---------- */
-function renderRes(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
+function renderRes(force){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
   const mine=ledOps(m).filter(o=>o.t>=t0||o.state==='open'||PINS.has(String(o.id)));
   $('histSum').textContent=S.n?`${pc0(S.o1)} al objetivo 1 · ${intMoney(S.net)}${S.open?' · '+S.open+' en curso':''}`:(S.open?S.open+' en curso':'todavía sin operaciones cerradas');
-  const rs=$('resStats');if(!rs.contains(document.activeElement))rs.innerHTML=ledHTML();
+  const rs=$('resStats');if(force===true||!rs.contains(document.activeElement)||document.activeElement.tagName==='BUTTON')rs.innerHTML=ledHTML();
   const resTxt=o=>{if(o.state==='open'&&o.lite)return `<span class="live">EN CURSO</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Liquidada · ${fusd2(o.pnl)}</span>`;
@@ -3255,9 +3274,9 @@ function renderRes(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=ledSta
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
   const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,HSRC==='sim'?100:40));
   $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';}
-$('resStats').onclick=e=>{const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes();return;}
-  const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes();return;}
-  const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes();return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
+$('resStats').onclick=e=>{const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
+  const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes(true);return;}
+  const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes(true);return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
 $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
 /* ---------- controles de las zonas de liquidación, debajo de los indicadores ---------- */
 (function(){const lo=document.querySelector('.lopts');if(!lo)return;const row=document.createElement('div');row.className='liq-row';row.id='liqOptsRow';
@@ -3466,7 +3485,7 @@ srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.
   srvSeen=true;
   if(ch){saveSig();renderSignals();renderHist();setTimeout(()=>{try{syncOps();}catch(e){}},800);}
   if(fresh.length)srvToast(fresh[fresh.length-1]);}catch(e){}};
-function srvToast(f){document.querySelectorAll('.srv-toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='srv-toast';
+function srvToast(f){return;/* reemplazado por el aviso de arriba (sigPop) */document.querySelectorAll('.srv-toast').forEach(x=>x.remove());const d=document.createElement('div');d.className='srv-toast';
   d.innerHTML=`📡 Nueva señal ${SIGCFG[f.m].name}: <b class="${f.dir>0?'up':'dn'}">${f.dir>0?'▲ LONG':'▼ SHORT'} ${f.sym.replace('USDT','')}</b> · tocá para verla`;
   d.onclick=()=>{d.remove();if(f.m!==mode)applyMode(f.m);if(typeof setView==='function')setView('sig');renderSignals();};document.body.appendChild(d);setTimeout(()=>d.remove(),20000);}
 setInterval(()=>{if(!document.hidden)srvImport();},30000);
