@@ -3005,12 +3005,69 @@ var AZAR={medio:{p:67,p3:null,n:3212,usd:-3.2},x:{p:62,p3:null,n:1228,usd:-.6}};
 let INT_T='reg',LEDP=30;try{INT_T=localStorage.getItem('cv_intT')||'reg';}catch(e){}if(INT_T==='led')INT_T='reg';
 const intMoney=v=>{const a=false;return (v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{maximumFractionDigits:a?0:2,minimumFractionDigits:a?0:2})+(a?' ARS':' USD');};
 const pc0=v=>v==null?'—':Math.round(v)+' %';
-function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=OPS.filter(o=>o.m===m&&o.t>=t0),cl=a.filter(o=>o.state!=='open'),n=cl.length;
+/* ---------- Resultados: último año simulado ----------
+   TRADING, TRADING+ y SHOOTER salen de historial.json (herramientas/historial-anual.js, GitHub Actions, todos los días:
+   365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
+   ACCIONES se calcula acá con las velas diarias que ya usa la página. */
+var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10))HIST_A=c.ops;}catch(e){}
+const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
+function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
+  HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
+    state:kind===0?'open':kind===1?'fail':hit>0?'win':'exp',why:kind===5&&hit>0?'llegó al objetivo '+hit+' y venció el plazo':kind===3?'llegó al objetivo '+hit+' y '+HKIND[3]:HKIND[kind]||''}));
+  HIST_OPS_U=j.upd;return HIST_OPS;}
+/* seguimiento igual que stepOp, con salvavidas, aviso de salida y comisión */
+function histFollow(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o.tp2];let ae=o.entry,sz=1,fail=o.fail,loss=o.loss,real=0,hit=0,llNo=!o.llAt;const now=Date.now();
+  const pnlAt=px=>real+(1-hit/3)*sz*o.not*d*(px/ae-1);
+  const close=(state,px,ts,why,pnl)=>{Object.assign(o,{state,px,closeAt:ts,why,hit,pnl:Math.round((pnl-o.not*sz*fee*2)*100)/100});if(o.ll)Object.assign(o,{ae,fail,loss});return o;};
+  let j=0;while(j<rb.length&&rb[j].t<o.t)j++;
+  for(;j<rb.length;j++){const b=rb[j],ts=Math.max(b.t,o.t),adv=d>0?b.low:b.high,fav=d>0?b.high:b.low;
+    if(!hit&&o.llAt&&!o.ll&&!llNo&&d*(adv-o.llAt)<=0){if(llConf(ts,d)){const px=o.llAt;ae=(o.entry+.5*px)/1.5;sz=1.5;fail=ae*(1-d*o.liqD);loss=1.5*o.not*o.liqD;o.ll={t:ts,px,margin:o.llMargin};}else llNo=true;}
+    if(!hit&&d*(adv-fail)<=0)return close('fail',fail,ts,(o.ll?'con salvavidas · ':'')+'tocó el stop',-loss);
+    if(hit>0&&d*(adv-ae)<=0)return close('win',ae,ts,'llegó al objetivo '+hit+' y el resto se cerró en la entrada',real);
+    while(hit<3&&d*(fav-T[hit])>=0){real+=sz*o.not/3*d*(T[hit]/ae-1);hit++;}
+    if(hit===3)return close('win',T[2],ts,'llegó a los 3 objetivos',real);
+    if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,hit>0?'llegó al objetivo '+hit+' y venció el plazo':'venció el plazo sin llegar a un objetivo',Math.max(-loss,pnlAt(px)));}
+    if(o.cutAt&&!hit&&b.t+resMs<=now&&d*(b.close-o.cutAt)<=0){const r=close('exp',b.close,b.t+resMs,'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',pnlAt(b.close));r.cut=true;return r;}}
+  o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;}
+/* ACCIONES: último año con las reglas actuales (S&P 500 a favor, impulso o retroceso, stop 2 × ATR diario, × 8, salvavidas) */
+async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.length)return;histABusy=true;
+  try{const NOW=Date.now(),FROM=NOW-365*864e5,D=864e5,ops=[];
+    const j=await getJ(`${D912}/historical/usa_stocks/SPY`,25000),sp=j.dates.map((d,i)=>({t:Date.parse(d+'T00:00:00Z'),c:+j.prices[i]})).filter(x=>x.c>0),se=emaArr(sp.map(x=>x.c),50);
+    const spyUp=t=>{let lo=0,hi=sp.length;while(lo<hi){const m=(lo+hi)>>1;if(sp[m].t+D<=t)lo=m+1;else hi=m;}const i=lo-1;return i>=0&&se[i]!=null?(sp[i].c>se[i]?1:-1):0;};
+    for(const s of U){let b;try{b=await stkHist(s);}catch(e){continue;}if(!STKH[s]||!STKH[s].ced||b.length<260)continue;
+      withCandles(b,()=>{const cl=closes(),n=b.length,A=calcADX(14).adx,M=calcMACD(),R=calcRSI(14),st=calcST(10,3).dir,e21=emaArr(cl,21),e50=emaArr(cl,50),e200=emaArr(cl,200),atr=wilder(trArr(),14);
+        const llConf=(t,d)=>{let i=-1;for(let k=n-1;k>=0;k--)if(b[k].t+D<=t){i=k;break;}return i>=0&&e50[i]!=null&&(d>0?b[i].close>e50[i]:b[i].close<e50[i]);};
+        let free=0;
+        for(let i=210;i<n;i++){const t=b[i].t+D;if(t<FROM||t<free)continue;if(A[i]==null||M.hist[i]==null||M.hist[i-1]==null||R[i]==null)continue;if(spyUp(t)!==1)continue;
+          const L=lastBarStats(b,i),c=b[i].close;let setup=null;
+          if(st[i]===1&&e21[i]>e50[i]&&c>e200[i]&&R[i]<45&&L.vr<1)setup='c-pb';
+          else if(A[i]>=30&&L.body>.5&&L.flow>0&&htfTrend(aggBars(b.slice(0,i+1),'1w'))>0)setup='c-mom';
+          if(!setup)continue;
+          const sl=Math.min(STKG.max,Math.max(.004,STKG.a*atr[i]/c)),not=SIM.a.margin*SIM.a.lev,P=v=>+v.toPrecision(8);
+          const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+sl)),tp1:P(c*(1+2*sl)),tp2:P(c*(1+3*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:P(c*(1-sl*LLTH)),llMargin:SIM.a.margin/2,lev:SIM.a.lev,conf:57,hist:1};
+          histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:Math.max(t+D,o.closeAt);}});
+      await new Promise(r=>setTimeout(r,20));}
+    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),ops}));}catch(e){}
+  }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
+function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
+  if(m==='medio'&&HSUB!=='all')L=L.filter(o=>HSUB==='plus'?o.setup==='tp-x':o.setup!=='tp-x');return L;}
+const ledLoading=m=>HSRC==='sim'&&(m==='a'?!HIST_A:!histOps());
+/* detalle corto de una operación del historial simulado (no guarda precios) */
+function histDet(o){const cfg=SIGCFG[o.m],c=(CAL[o.m]||{})[o.setup];
+  return `<div class="hdet"><div class="g"><span>Modo</span><b>${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}/USDT</b>${c?`<span>Tipo de señal</span><b>${c.txt}</b>`:''}
+    <span>Abierta</span><b>${fdate(o.t)}</b>${o.closeAt?`<span>Cerrada</span><b>${fdate(o.closeAt)}</b><span>Duración</span><b>${fdur(o.closeAt-o.t)}</b>`:''}
+    <span>Objetivos tocados</span><b>${o.hit}/3</b>${o.ll?'<span>Salvavidas</span><b class="llb">🛟 sí</b>':''}<span>Resultado</span><b class="${o.pnl>=0?'up':'dn'}">${o.state==='open'?'en curso':fusd2(o.pnl)}</b>
+    <span>Simulación</span><b>${o.setup==='tp-x'?PLUSG.label:SIM[o.m].label} · con comisiones</b></div></div>`;}
+function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=ledOps(m).filter(o=>o.t>=t0),cl=a.filter(o=>o.state!=='open'),n=cl.length;
   const g=cl.filter(o=>o.pnl>0).reduce((s,o)=>s+o.pnl,0),l=cl.filter(o=>o.pnl<=0).reduce((s,o)=>s+o.pnl,0);
   return {all:a.length,open:a.length-n,n,o1:n?cl.filter(o=>o.hit>=1).length/n*100:null,o3:n?cl.filter(o=>o.hit>=3).length/n*100:null,win:n?cl.filter(o=>o.pnl>0).length/n*100:null,
     liq:cl.filter(o=>o.state==='fail').length,ll:a.filter(o=>o.ll).length,llOk:cl.filter(o=>o.ll&&o.state!=='fail').length,g,l,net:g+l,pf:l<0?g/-l:null,avg:n?(g+l)/n:null,cl};}
-function ledHTML(){const m=mode,S=ledStats(m,LEDP),cal=Object.values(CAL[m]||{})[0],az=AZAR[m];
-  const per=[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']].map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
+function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=Object.values(CAL[m]||{})[0],az=AZAR[m];
+  const per=(HSRC==='sim'?[[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año']]:[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']]).map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
+  const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button>${m==='medio'?`<span class="mut" style="margin-left:6px">Ver:</span><button data-sub="all" class="${HSUB==='all'?'on':''}">Todas</button><button data-sub="core" class="${HSUB==='core'?'on':''}">TRADING</button><button data-sub="plus" class="${HSUB==='plus'?'on':''}">TRADING+</button>`:''}</div>`;
+  if(ledLoading(m))return srcRow+`<div class="int-v">⏳ ${m==='a'?'Calculando el último año de ACCIONES con las reglas actuales (unos segundos)…':'Cargando el último año simulado…'}</div>`;
+  const simNote=HSRC==='sim'?`<div class="int-v mut" style="font-size:12px">📅 Simulación de los últimos 365 días con las reglas que usa hoy la página, sobre ${m==='a'?'velas diarias reales de NYSE (comisión 0,1 % por lado)':'velas reales de Binance (comisión 0,05 % por lado)'}. Se recalcula todos los días: entra el día nuevo y sale el más viejo.${m!=='a'&&window.HISTYR?` Actualizado ${fdate(window.HISTYR.upd)}.`:''}${m==='a'?' No incluye el termómetro de noticias de las acciones.':''}</div>`:'';
   let verdict;if(!S.n)verdict='Todavía no hay operaciones cerradas en este período. Las señales se registran solas apenas aparecen.';
   else if(S.n<20)verdict=`Muestra chica (${S.n} cerradas): con menos de 20 el porcentaje puede moverse decenas de puntos por azar. Todavía no alcanza para sacar conclusiones.`;
   else if(az&&az.usd!=null&&S.avg!=null){const ed=S.avg-az.usd;
@@ -3018,7 +3075,7 @@ function ledHTML(){const m=mode,S=ledStats(m,LEDP),cal=Object.values(CAL[m]||{})
       +`Llega al objetivo 1 el ${Math.round(S.o1)} % (azar ${az.p} %). Lo que importa es la plata por operación, no el porcentaje: un objetivo cerca da mucho acierto pero poca ganancia.`;}
   else if(az)verdict=S.o1-az.p>=5?`En vivo llega al objetivo 1 ${Math.round(S.o1-az.p)} puntos más que operar al azar con el mismo stop y objetivos (${az.p} %): la señal aporta.`:S.o1-az.p>-5?`En vivo está en línea con el azar (${az.p} %): por ahora la señal no muestra ventaja clara.`:`En vivo está ${Math.round(az.p-S.o1)} puntos por debajo del azar (${az.p} %): algo no está funcionando.`;
   else verdict=`${S.n} operaciones cerradas.`;
-  return `<div class="int-p">${per}<span class="mut">Modo ${SIGCFG[m]?.name||m}</span></div>
+  return `${srcRow}${simNote}<div class="int-p">${per}<span class="mut">Modo ${SIGCFG[m]?.name||m}${m==='medio'&&HSUB!=='all'?' · '+(HSUB==='plus'?'TRADING+':'solo TRADING'):''}</span></div>
     <div class="int-g"><div>Señales<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
       <div>Llegó al objetivo 1<b>${pc0(S.o1)}</b><small>backtest ${cal?cal.p+' %':'—'}${az?` · azar ${az.p} %`:''}</small></div>
       <div>Llegó a los 3 objetivos<b>${pc0(S.o3)}</b><small>backtest ${cal&&cal.p3!=null?cal.p3+' %':'—'}${az&&az.p3!=null?` · azar ${az.p3} %`:''}</small></div>
@@ -3186,19 +3243,21 @@ $('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;
 rmtRender();
 
 /* ---------- resultados de las señales (un solo bloque) ---------- */
-function renderRes(){const m=mode,S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
-  const mine=OPS.filter(o=>o.m===m&&(o.t>=t0||o.state==='open'||PINS.has(String(o.id))));
+function renderRes(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
+  const mine=ledOps(m).filter(o=>o.t>=t0||o.state==='open'||PINS.has(String(o.id)));
   $('histSum').textContent=S.n?`${pc0(S.o1)} al objetivo 1 · ${intMoney(S.net)}${S.open?' · '+S.open+' en curso':''}`:(S.open?S.open+' en curso':'todavía sin operaciones cerradas');
   const rs=$('resStats');if(!rs.contains(document.activeElement))rs.innerHTML=ledHTML();
-  const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
+  const resTxt=o=>{if(o.state==='open'&&o.lite)return `<span class="live">EN CURSO</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Liquidada · ${fusd2(o.pnl)}</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
-  const row=o=>{const pn=PINS.has(String(o.id));return `<div class="hrow${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></div>${HOPEN.has(o.id)?opDetail(o):''}`;};
+  const row=o=>{const pn=PINS.has(String(o.id));return `<div class="hrow${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></div>${HOPEN.has(o.id)?(o.lite?histDet(o):opDetail(o)):''}`;};
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
-  const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,40));
+  const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,HSRC==='sim'?100:40));
   $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';}
-$('resStats').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes();return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
+$('resStats').onclick=e=>{const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes();return;}
+  const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes();return;}
+  const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes();return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
 $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
 /* ---------- controles de las zonas de liquidación, debajo de los indicadores ---------- */
 (function(){const lo=document.querySelector('.lopts');if(!lo)return;const row=document.createElement('div');row.className='liq-row';row.id='liqOptsRow';
@@ -3240,7 +3299,7 @@ async function histYrLoad(){try{const j=await (await fetch(HIST_URL+'?t='+Date.n
   const minN=j.minN||20;let k=0;
   for(const m in j.cal)for(const s in j.cal[m]){const x=j.cal[m][s];if(!x||!(x.n>=minN)||!CAL[m]||!CAL[m][s])continue;Object.assign(CAL[m][s],{p:x.p,p3:x.p3,n:x.n,usd:x.usd,yr:true});k++;}
   for(const m in (j.azar||{})){const a=j.azar[m];if(a&&a.n>=50&&window.AZAR){AZAR[m]=Object.assign({p3:null},a);if(m==='medio')AZAR.p=AZAR.medio;}}
-  window.HISTYR=j;
+  window.HISTYR=j;HIST_OPS=null;try{renderRes();}catch(e){}
   if(k){try{renderSignals();}catch(e){}}}catch(e){}}
 setTimeout(histYrLoad,2500);setInterval(histYrLoad,6*36e5);
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
