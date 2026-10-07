@@ -21,8 +21,8 @@ const SIGCFG = {
    TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
 const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 10 } };
 const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
-const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 65, p3: 25, n: 218 } };
-const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 65 };
+const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
+const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71 };
 const MINCERT = { medio: 62, x: 56 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
@@ -70,9 +70,9 @@ function evalShooter(cs, hc) { const cc = cs.slice(0, -1);
     const [bm, bs] = smaStd(cl, 20), r7 = calcRSI(7)[i], htf = htfTrend(hc), z = bs[i] ? (cb - bm[i]) / bs[i] : 0;
     const out = { dir: 0, c, atr, reasons: [] };
     if (r7 == null || !(atrP > .04 / 3 && atrP <= .04 / 1.5)) return out;
-    if (!(Math.abs(z) >= 2 && (z < 0 ? r7 <= 35 : r7 >= 65))) return out;
+    if (!(Math.abs(z) >= 2 && (z < 0 ? r7 <= 25 : r7 >= 75))) return out; // RSI 7 extremo (antes 35 / 65)
     const dir = z < 0 ? 1 : -1; if (Math.sign(htf) !== dir) return out;
-    out.dir = dir; out.reasons.push(dir > 0 ? 'cerró bajo la banda inferior' : 'cerró sobre la banda superior', 'RSI 7 en ' + r7.toFixed(0), 'tendencia de 15m a favor');
+    out.dir = dir; out.reasons.push(dir > 0 ? 'cerró bajo la banda inferior' : 'cerró sobre la banda superior', 'RSI 7 en ' + r7.toFixed(0) + ' (extremo)', 'tendencia de 15m a favor');
     return out; }); }
 function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
@@ -142,6 +142,7 @@ async function main() {
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
     const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
+    if (m === 'x') { try { const bk = await kl('BTCUSDT', '1h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     if (m === 'medio') { try { const bk = await kl('BTCUSDT', '4h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     for (const s of U) {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
@@ -151,7 +152,7 @@ async function main() {
         const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc, rankOf[s]); if (!e.dir) continue;
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
-        if (m === 'medio') { if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); } // TRADING solo a favor de BTC
+        if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); // TRADING (4h) y SHOOTER (1h) solo a favor de BTC
         if (conf < MINCERT[m]) continue;
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
