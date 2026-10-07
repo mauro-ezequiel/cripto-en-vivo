@@ -569,7 +569,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 10, salvavidas 175 USD · solo a favor de BTC</small></button>
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas · RSI extremo y BTC a favor</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
-    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · impulso o retroceso con el S&P 500 a favor · stop 2 × ATR diario · objetivos 1 / 2 / 3 veces el stop · simulación 500 USD × 8</small></button></div>
+    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de la Bolsa de Nueva York (NYSE) en dólares · velas diarias · impulso con el S&P 500 a favor · stop 3 × ATR diario · objetivos 1 / 2 / 3 veces el stop · simulación 500 USD × 8, sin salvavidas</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
     <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
@@ -1887,7 +1887,7 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
-const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:57,p3:23,n:256,usd:16.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1950,7 +1950,11 @@ async function futData(m,syms){
    stop 2 × ATR diario (máx. 9,6 % con × 8) con objetivos 1 / 2 / 3 × stop. Backtest 6 años, 68 acciones de NYSE, comisión 0,1 %:
    6,4 señales/mes · 57 % al objetivo 1 · +3,3 % del margen por operación (factor 1,25) · último año +1,8 %.
    Antes (solo c-mom, stop 7 %, objetivos +1,75 / 3,5 / 5,25 %): 7,1/mes · 78 % · −0,4 % por operación · último año −1,0 %. */
-const STKG={a:2,r:1,max:.096};
+/* ACCIONES v3 (octubre 2026, probado con 224 acciones de NYSE, 6 años): solo impulso con el S&P 500 a favor,
+   stop 3 × ATR diario (máx. 9,6 %), objetivos 1 / 2 / 3 × stop, sin salvavidas.
+   Primeros 5 años: 673 operaciones · 51 % al objetivo 1 · +2,4 % del margen por operación (factor 1,15).
+   Último año: 113 operaciones · 47 % · +2,8 % (factor 1,11). Con el retroceso y stop 2 × ATR daba −0,8 % el último año. */
+const STKG={a:3,r:1,max:.096};
 const TGTS={'t-pb':[.0125,.025,.0375],'sh-r':[.016,.032,.048],'a-mom':[.0175,.035,.0525],'c-mom':[.0175,.035,.0525],'a-rev':[.028,.056,.084]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
@@ -2053,7 +2057,7 @@ setInterval(checkSignals,2000);
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
            x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 2 × ATR diario (máx. 9,6 % = −384 USD) · salvavidas 250 USD'};
+SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 3 × ATR diario (máx. 9,6 % = −384 USD) · sin salvavidas'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 /* operaciones descartadas al rehacer el historial con las reglas nuevas: no se vuelven a importar del servidor ni de la nube */
@@ -2075,7 +2079,7 @@ function llInfo(o,pc){if(!o||!o.llAt||o.ll||o.state!=='open')return '';
 function addSig(m,f){
   SIG[m].push(f);try{sigPop(m,f);}catch(e){}const c=SIM[m],plus=f.setup==='tp-x',not=c.margin*(plus?PLUSG.lev:c.lev),sd=f.sl?Math.abs(f.sl/f.entry-1):0,liqD=sd>0&&(plus||m==='a'||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||m==='a'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
 /* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada (promedio si hubo salvavidas) */
@@ -2604,8 +2608,8 @@ function evalStock(sym,cs,hc){
     if(q.kind==='AR'){if(adx>=25&&L.body>.5&&L.vr>=1.8&&mh>0&&mh>mh1){dir=1;setup='a-mom';}
       else if(adx>=30&&L.body<-.5&&mh<0&&mh<mh1&&r1>65&&r<r1){dir=-1;setup='a-rev';}}
     else{const cl=closes(),st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],mk=window.__spyUp;
-      if(mk===1&&adx>=30&&L.body>.5&&L.flow>0&&out.htf>0){dir=1;setup='c-mom';}
-      else if(mk===1&&st===1&&e21>e50&&cc[i].close>e200&&r<45&&L.vr<1){dir=1;setup='c-pb';}}
+      if(mk===1&&adx>=30&&L.body>.5&&L.flow>0&&out.htf>0){dir=1;setup='c-mom';}}
+      /* retroceso (c-pb) quitado en octubre 2026: con 224 acciones perdía en todos los períodos (−3 % a −10 % por operación) */
     if(!dir)return out;
     const sc=stkScore(cc,q);if(dir*(sc-50)<0)return out;
     out.dir=dir;out.score=dir;out.setup=setup;
@@ -3029,7 +3033,7 @@ const pc0=v=>v==null?'—':Math.round(v)+' %';
    365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
    ACCIONES se calcula acá con las velas diarias que ya usa la página. */
 var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
-try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10))HIST_A=c.ops;}catch(e){}
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===3)HIST_A=c.ops;}catch(e){}
 const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
   HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
@@ -3049,7 +3053,7 @@ function histFollow(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o
     if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,hit>0?'llegó al objetivo '+hit+' y venció el plazo':'venció el plazo sin llegar a un objetivo',Math.max(-loss,pnlAt(px)));}
     if(o.cutAt&&!hit&&b.t+resMs<=now&&d*(b.close-o.cutAt)<=0){const r=close('exp',b.close,b.t+resMs,'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',pnlAt(b.close));r.cut=true;return r;}}
   o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;}
-/* ACCIONES: último año con las reglas actuales (S&P 500 a favor, impulso o retroceso, stop 2 × ATR diario, × 8, salvavidas) */
+/* ACCIONES: último año con las reglas actuales (S&P 500 a favor, impulso, stop 3 × ATR diario, × 8, sin salvavidas) */
 async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.length)return;histABusy=true;
   try{const NOW=Date.now(),FROM=NOW-365*864e5,D=864e5,ops=[];
     const j=await getJ(`${D912}/historical/usa_stocks/SPY`,25000),sp=j.dates.map((d,i)=>({t:Date.parse(d+'T00:00:00Z'),c:+j.prices[i]})).filter(x=>x.c>0),se=emaArr(sp.map(x=>x.c),50);
@@ -3060,14 +3064,13 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
         let free=0;
         for(let i=210;i<n;i++){const t=b[i].t+D;if(t<FROM||t<free)continue;if(A[i]==null||M.hist[i]==null||M.hist[i-1]==null||R[i]==null)continue;if(spyUp(t)!==1)continue;
           const L=lastBarStats(b,i),c=b[i].close;let setup=null;
-          if(st[i]===1&&e21[i]>e50[i]&&c>e200[i]&&R[i]<45&&L.vr<1)setup='c-pb';
-          else if(A[i]>=30&&L.body>.5&&L.flow>0&&htfTrend(aggBars(b.slice(0,i+1),'1w'))>0)setup='c-mom';
+          if(A[i]>=30&&L.body>.5&&L.flow>0&&htfTrend(aggBars(b.slice(0,i+1),'1w'))>0)setup='c-mom';
           if(!setup)continue;
           const sl=Math.min(STKG.max,Math.max(.004,STKG.a*atr[i]/c)),not=SIM.a.margin*SIM.a.lev,P=v=>+v.toPrecision(8);
-          const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+sl)),tp1:P(c*(1+2*sl)),tp2:P(c*(1+3*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:P(c*(1-sl*LLTH)),llMargin:SIM.a.margin/2,lev:SIM.a.lev,conf:57,hist:1};
+          const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+sl)),tp1:P(c*(1+2*sl)),tp2:P(c*(1+3*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:null,llMargin:SIM.a.margin/2,lev:SIM.a.lev,conf:CAL.a['c-mom'].p,hist:1};
           histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:Math.max(t+D,o.closeAt);}});
       await new Promise(r=>setTimeout(r,20));}
-    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),ops}));}catch(e){}
+    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:3,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
 function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
   if(m==='medio'&&HSUB!=='all')L=L.filter(o=>HSUB==='plus'?o.setup==='tp-x':o.setup!=='tp-x');return L;}
