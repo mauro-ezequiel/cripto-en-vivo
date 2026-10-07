@@ -222,7 +222,7 @@ body.fs-on .fsbar{display:flex}
 .hist summary .mut{font-weight:400}
 .hist>div{padding:0 12px 10px}
 .hrow,.srow{display:grid;gap:8px;align-items:center;padding:5px 0;border-bottom:1px solid #1d222c;font-size:12px;font-variant-numeric:tabular-nums}
-.hrow{grid-template-columns:92px 64px 58px minmax(0,1fr)}
+.hrow{grid-template-columns:92px 64px 58px minmax(0,1fr) 30px}
 .srow{grid-template-columns:92px 50px 58px minmax(0,1fr) 70px 100px}.srow b:last-child{text-align:right}
 .ht{color:var(--mut);font-size:11px}.hd{font-weight:700;font-size:11px}.neu{color:var(--mut)}
 .sst{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:8px}
@@ -235,7 +235,7 @@ body.fs-on .fsbar{display:flex}
   .fac-more{display:block}
   .sst{grid-template-columns:1fr 1fr}
   .srow{grid-template-columns:70px 44px 48px minmax(0,1fr) 84px}.srow .mut{display:none}
-  .hrow{grid-template-columns:70px 58px 48px minmax(0,1fr)}
+  .hrow{grid-template-columns:66px 54px 46px minmax(0,1fr) 28px}
 }
 .live{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:#fff;background:var(--dn);border-radius:4px;padding:1px 6px;letter-spacing:.04em}
 .live:before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;animation:lv 1.2s infinite}
@@ -284,7 +284,7 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow{cursor:pointer;border-radius:6px}.hrow:hover{background:#1a1f29}
+.hrow{cursor:pointer;border-radius:6px}.hrow:hover{background:#1a1f29}.hpin{background:none;border:1px solid #3a4150;border-radius:7px;padding:3px 0;cursor:pointer;font-size:13px;line-height:1;filter:grayscale(1);opacity:.55}.hpin.on{border-color:#ffd600;filter:none;opacity:1}.hrow.pin{box-shadow:0 0 0 2px #ffd600 inset}
 .hdet{background:#141922;border:1px solid var(--line);border-radius:8px;margin:4px 0 10px;padding:10px 12px;font-size:12px}
 .hdet .st{font-weight:800;margin-bottom:8px;font-size:13px}
 .hdet .g{display:grid;grid-template-columns:auto minmax(0,1fr);gap:5px 14px;font-variant-numeric:tabular-nums}
@@ -2031,7 +2031,7 @@ function renderSignals(){
       <button type="button" class="sg-go">📈 Ver en el gráfico: entrada y objetivos</button><div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
 $('sigList').onclick=e=>{const pk=e.target.closest('.sg-pin');if(pk){e.stopPropagation();const i=pk.querySelector('input');if(e.target!==i)return;
-    if(i.checked)PINS.add(i.dataset.pin);else PINS.delete(i.dataset.pin);savePins();renderSignals();return;}
+    if(i.checked)PINS.add(i.dataset.pin);else PINS.delete(i.dataset.pin);savePins();renderSignals();try{renderHist();}catch(_){}return;}
   const c=e.target.closest('.sig');if(!c)return;
   if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
   select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});};
@@ -2324,7 +2324,9 @@ function checkAlerts(){let ch=false;
   if(ch)saveAlr();if($('drw').classList.contains('open'))renderAlrList();}
 setInterval(checkAlerts,1500);
 /* historial: tocar una señal despliega sus datos */
-$('histList').onclick=e=>{const g=e.target.closest('[data-go]');
+$('histList').onclick=e=>{const hp=e.target.closest('[data-hpin]');
+  if(hp){e.stopPropagation();const id=hp.dataset.hpin;PINS.has(id)?PINS.delete(id):PINS.add(id);savePins();renderHist();try{renderSignals();}catch(_){}return;}
+  const g=e.target.closest('[data-go]');
   if(g){openFromNotif({sym:g.dataset.go,tf:g.dataset.tf,m:g.dataset.m});$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
   const r=e.target.closest('.hrow');if(!r)return;const id=r.dataset.op;HOPEN.has(id)?HOPEN.delete(id):HOPEN.add(id);renderHist();};
 
@@ -3185,15 +3187,16 @@ rmtRender();
 
 /* ---------- resultados de las señales (un solo bloque) ---------- */
 function renderRes(){const m=mode,S=ledStats(m,LEDP),t0=LEDP?Date.now()-LEDP*864e5:0;
-  const mine=OPS.filter(o=>o.m===m&&(o.t>=t0||o.state==='open'));
+  const mine=OPS.filter(o=>o.m===m&&(o.t>=t0||o.state==='open'||PINS.has(String(o.id))));
   $('histSum').textContent=S.n?`${pc0(S.o1)} al objetivo 1 · ${intMoney(S.net)}${S.open?' · '+S.open+' en curso':''}`:(S.open?S.open+' en curso':'todavía sin operaciones cerradas');
   const rs=$('resStats');if(!rs.contains(document.activeElement))rs.innerHTML=ledHTML();
   const resTxt=o=>{if(o.state==='open'){const p=tickers[o.sym]?.c,v=p?pnlAt(o,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="neu">· ${o.hit}/3 objetivos</span>`;}
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Liquidada · ${fusd2(o.pnl)}</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
-  const row=o=>`<div class="hrow${o.ll?' ll':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span></div>${HOPEN.has(o.id)?opDetail(o):''}`;
-  const L=mine.slice().sort((a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t).slice(0,40);
+  const row=o=>{const pn=PINS.has(String(o.id));return `<div class="hrow${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></div>${HOPEN.has(o.id)?opDetail(o):''}`;};
+  const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
+  const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,40));
   $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';}
 $('resStats').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes();return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
 $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
@@ -3309,7 +3312,7 @@ function sovDraw(force){
     if(i>=0&&r&&(i<r.from+3||i>r.to))ts.setVisibleLogicalRange({from:Math.max(0,i-25),to:candles.length+8});
     else if(i<0&&ti==null&&c)c.innerHTML+=' <span class="mut">(la entrada es anterior a las velas cargadas)</span>';}
 }
-document.addEventListener('click',e=>{if(e.target.closest('.sg-pin'))return;const c=e.target.closest('#sigList .sig[data-op], #histList [data-op]');if(!c||!c.dataset.op)return;
+document.addEventListener('click',e=>{if(e.target.closest('.sg-pin,.hpin'))return;const c=e.target.closest('#sigList .sig[data-op], #histList [data-op]');if(!c||!c.dataset.op)return;
   SFOC={id:c.dataset.op};try{localStorage.setItem('cv_sfoc',JSON.stringify(SFOC))}catch(_){}SOV.key='';setTimeout(()=>sovDraw(true),700);},true);
 {const _rl=restoreLines;restoreLines=function(){_rl.apply(this,arguments);try{sovDraw(true);}catch(e){}};}
 setInterval(()=>{try{sovDraw(false);}catch(e){}},3000);
