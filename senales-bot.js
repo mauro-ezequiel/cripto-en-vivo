@@ -118,8 +118,14 @@ async function ghPublish() { const tok = process.env.GH_TOKEN, repo = process.en
 let S = { last: {}, open: [], boot: 0, hist: [] };
 try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } catch (e) {}
 
+/* % de acierto del último año (los recalcula herramientas/historial-anual.js cada día) */
+async function calYear() { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/historial.json?t=' + Date.now()); if (!r.ok) return;
+    const j = await r.json(), minN = j.minN || 20; for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
+
+let calT = 0;
 async function main() {
   const now = Date.now();
+  if (now - calT > 6 * 36e5) { await calYear(); calT = now; }
   if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.', false); }
   if (!S.canal && TOKEN && CHAT && CANAL) { if (await sendTo(CANAL, '📈 CRIPTO-LIVE · Señales en vivo\nAcá se publican las señales de TRADING (4 h) y SHOOTER (5 min) apenas aparecen, con entrada, objetivos, stop y salvavidas, y después cuando tocan cada objetivo o el stop.\nGráfico y detalles: ' + PAGE + '\nℹ️ Solo informativo: no es consejo financiero. Operar con apalancamiento puede hacerte perder todo el margen.')) S.canal = now; }
   if (!(S.hist && S.hist.length) && S.open.length) { S.hist = S.open.map(o => ({ m: o.m, sym: o.sym, dir: o.dir, entry: o.entry, zl: o.entry, zh: o.entry, tp: o.tp, sl: o.sl, ll: o.ll, conf: CAL[o.m].p, setup: o.m === 'medio' ? 't-pb' : 'sh-r', reasons: [], t: o.t })); S.histDirty = true; }
