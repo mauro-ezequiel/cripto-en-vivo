@@ -606,8 +606,8 @@ const MODES = {
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
-    info: ['Temporalidad inicial: 3m', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
-    tf: '3m', bars: 180,
+    info: ['Temporalidad inicial: 15m (señales en 15 y 30 min)', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
+    tf: '15m', bars: 180,
     inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd','kon']
   },
   p: {
@@ -1803,8 +1803,8 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    la moneda tiene volatilidad para recorrer el movimiento mínimo y el riesgo/beneficio es ≥ 1,4.
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
-  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'3m',htf:'1h',min:.016,maxAtr:.027,H:12,every:45e3,uni:'top',n:30,thr:.5,maxAge:36e5*1.5}};
+  medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:400,thr:.5,maxAge:36e5*24},
+  x:{name:'SHOOTER',tf:'15m',htf:'1h',min:.016,maxAtr:.027,H:12,every:120e3,uni:'top',n:400,thr:.5,maxAge:36e5*3}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
@@ -1818,7 +1818,13 @@ function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
   if(cfg.uni==='safe')return SAFE.filter(s=>tickers[s]);
   /* todas las líquidas menos las impredecibles: sin estables ni tokens apalancados, con volumen real y sin pumps/dumps de ±25 % en 24 h
      (la volatilidad excesiva se descarta después con el ATR de cada regla) */
-  return Object.values(tickers).filter(t=>!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
+  /* octubre 2026: todas las cripto con más de 2 M USD de volumen (antes solo las 40–80 primeras); las impredecibles se descartan con wildOK */
+  return Object.values(tickers).filter(t=>!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
+/* moneda impredecible: rango promedio de las velas de 1 h de la última semana mayor a 2,5 % (memes en plena locura, listados nuevos).
+   En el año probado, sacarlas mejoró el resultado de todos los modos. Se revisa una vez por hora y por moneda. */
+const UNI_MINVOL=2e6,WILD_MAX=2.5,WILDC={};
+async function wildOK(s,hc){const c=WILDC[s];if(!hc&&c&&Date.now()-c.t<36e5)return c.ok;
+  try{const b=(hc&&hc.length>=169?hc:await kl(s,'1h',170)).slice(0,-1).slice(-168);if(b.length<100)return true;const v=b.reduce((a,x)=>a+(x.high-x.low)/x.close,0)/b.length*100;WILDC[s]={t:Date.now(),ok:v<=WILD_MAX,v};return v<=WILD_MAX;}catch(e){return true;}}
 const kl=(s,t,n)=>getJ(`${API}/klines?symbol=${s}&interval=${t}&limit=${n}`).then(d=>d.map(toBar));
 function evalCoin(m,cs,hc){
   return withCandles(cs,()=>{
@@ -1895,8 +1901,8 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    SHOOTER v3: RSI 7 ≤ 25 / ≥ 75 (antes 35 / 65) y solo a favor de BTC (1h vs EMA 50). Backtest 6 meses: 0,4 señales/día · 71 % al objetivo 1 ·
    +3,6 % del margen por operación (antes +2,6 %) · peor racha −2,8 márgenes (antes −5,0) · primeros 5 meses +3,4 % (antes −0,1 %).
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
-var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
-const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
+var PLUSG={a:3,r:.35,lev:10,max:.076,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
+const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.35,max:.05}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
 const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:76,p3:27,n:319,usd:52,txt:'rebote tras una caída moderada (sin desplome ni subida histórica)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
@@ -1913,25 +1919,22 @@ function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDe
    que la liquidación real del exchange (≈ 5 %). Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65)
    con la tendencia de 15m a favor, en monedas con ATR de 5m entre 1,33 % y 2,67 %.
    Backtest 30 días × 60 criptos (con salvavidas): objetivo 1 el 80 %, los 3 objetivos el 37 %, +12,6 % del margen por operación. */
-/* SHOOTER v3 (octubre 2026) · velas de 3 minutos, solo LONG. Rebote tras una caída fuerte:
-   la moneda cayó 3 % o más en la última hora, la vela de 3 min cerró bajo la banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35,
-   la tendencia de 1 h sigue a favor (precio sobre la EMA 50 de 1 h) y la volatilidad de 3 min está entre 0,4 % y 1,2 % por vela.
-   Stop 3 × ATR (1,2 a 3,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas.
-   Probado con velas de 1 minuto de 30 criptos en 120 días (también en 1 y 5 min, que rindieron menos), comisión 0,05 % por lado:
-   2,3 señales por día · objetivo 1 el 77 % · +0,41 % del precio por operación (× 10 = +4,1 % del margen); primeros 80 días +0,46 %, últimos 40 +0,37 %.
-   La regla anterior (5 min, RSI 7 extremo con 15m y BTC a favor) dio en esos mismos días 0,1 señales por día, 54 % y −0,8 % del precio. Los SHORT perdían. */
-function evalShooter(cs,hc){
-  const cc=cs.slice(0,-1);
+/* SHOOTER v4 (octubre 2026) · velas de 15 y 30 minutos, solo LONG. Rebote tras una caída fuerte:
+   cayó 3 % o más en la última hora, la vela cerró bajo la banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35 y la tendencia de 1 h sigue a favor.
+   Stop 3 × ATR (si no entra en el 5 %, no se opera: con × 15 la liquidación está a ~6 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h.
+   Probado un año entero en todas las cripto con volumen (sin las impredecibles). En 3 minutos los primeros 8 meses daban pérdida. */
+function evalShooter(cs,hc,mins=15){
+  const cc=cs.slice(0,-1),back=Math.round(60/mins);
   return withCandles(cc,()=>{
     const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
     const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],z=bs[i]?(cb-bm[i])/bs[i]:0;
     const h=hc.slice(0,-1),he=emaArr(h.map(b=>b.close),50),hk=h.length-1,up1h=hk>=0&&he[hk]!=null&&h[hk].close>he[hk];
-    const drop=i>=20?(cb/cc[i-20].close-1)*100:0;
+    const drop=i>=back?(cb/cc[i-back].close-1)*100:0;
     const out={keep:true,score:0,dir:0,c,atr,adx,htf:up1h?1:-1,mid:bm[i],reasons:[],setup:null};
-    if(r7==null||!(atrP>=.004&&atrP<=.012))return out;
+    if(r7==null||!(atrP>0)||3*atrP>NEWG.x.max)return out;
     if(!(z<=-1.8&&r7<=35&&drop<=-3&&up1h))return out;
     out.dir=1;out.score=1;out.setup='sh-c';
-    out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','volatilidad justa para el stop');
+    out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora (velas de '+mins+' min)','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','la moneda no está en modo impredecible');
     return out;
   });
 }
@@ -2019,12 +2022,16 @@ async function scanSignals(mm){
     if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
     for(const s of U){
       if(m==='a'&&OPS.some(o=>o.m==='a'&&o.sym===s&&Date.now()-o.t<15*864e5))continue; // ACCIONES: una señal por acción cada 15 días (como en la prueba)
-      try{const [cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
-        const e=m==='x'?evalShooter(cs,hc):m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc),ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
+      try{let cs,hc,e,tf30=false;
+        if(m==='x'){let c30;[cs,c30,hc]=await Promise.all([kl(s,'15m',300),kl(s,'30m',300),kl(s,'1h',200)]);if(cs.length<150||hc.length<60)continue;
+          e=evalShooter(cs,hc,15);if(!e.dir){const e2=evalShooter(c30,hc,30);if(e2.dir){e=e2;tf30=true;}}if(e.dir&&!(await wildOK(s,hc)))e.dir=0;}
+        else{[cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
+          e=m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc);if(m==='medio'&&e.dir&&!(await wildOK(s)))e.dir=0;}
+        const ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
         if(ex){ex.score=e.score;if(!e.keep&&(Math.sign(e.score)!==ex.dir||Math.abs(e.score)<.2))lose(ex,'los indicadores ya no confirman la dirección');}
-        else{const sg=buildSignalV2(m,s,e,fd);if(sg)fresh.push(sg);}
+        else{const sg=buildSignalV2(m,s,e,fd);if(sg){if(tf30)sg.tf='30m';fresh.push(sg);}}
       }catch(err){}
-      await new Promise(r=>setTimeout(r,120));
+      await new Promise(r=>setTimeout(r,m==='x'?60:120));
     }
     const live=SIG[m].filter(x=>x.state==='live'&&!x.plus);fresh.sort((a,b)=>b.conf-a.conf);
     for(const f of fresh){
@@ -2085,7 +2092,7 @@ setInterval(checkSignals,2000);
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
-           x:{margin:50,lev:10,maxLoss:18,maxAge:4*36e5,kl:'3m',klMs:18e4,label:'50 USD × 10 · stop 3 × ATR de 3 min (máx. 3,6 % = −18 USD) · sin salvavidas'}};
+           x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 3 × ATR (máx. 5 % = −37,5 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 3 × ATR diario (máx. 9,6 % = −384 USD) · sin salvavidas'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
@@ -3630,13 +3637,13 @@ scanPlus=async function(){if(plusBusy||!Object.keys(tickers).length)return;plusB
   try{const cfg=SIGCFG.medio,now=Date.now();
     /* TRADING+ solo opera a favor de BTC (4h sobre/bajo su EMA 50): se actualiza acá por si TRADING no escaneó todavía */
     try{const bk=await kl('BTCUSDT','4h',80);if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;window.__btcT=now;}}catch(e){}
-    const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,80).map(t=>t.s);
+    const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).map(t=>t.s);
     const fresh=[];
     for(let r=0;r<U.length;r++){const s=U[r];
       if(SIG.medio.some(x=>x.sym===s&&x.state==='live'))continue;
       if(OPS.some(o=>o.m==='medio'&&o.sym===s&&now-o.t<24*36e5))continue;
       try{const [cs,hc]=await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<250||hc.length<30)continue;
-        const e=evalTradingPlus(cs,hc,r);if(!e.dir)continue;const sg=buildSignalV2('medio',s,e,null);if(sg){sg.plus=!!e.plus;fresh.push(sg);}}catch(err){}
+        const e=evalTradingPlus(cs,hc,r);if(!e.dir||!(await wildOK(s)))continue;const sg=buildSignalV2('medio',s,e,null);if(sg){sg.plus=!!e.plus;fresh.push(sg);}}catch(err){}
       await new Promise(z=>setTimeout(z,120));}
     fresh.sort((a,b)=>b.conf-a.conf);
     const liveC=SIG.medio.filter(x=>x.state==='live'&&!x.plus),liveP=SIG.medio.filter(x=>x.state==='live'&&x.plus);
@@ -3881,7 +3888,7 @@ trnPill();
    ===================================================================== */
 const IA_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia.json';
 var IAM=null,IAOPEN=false,IAST={},IABUSY=false;try{IAST=JSON.parse(localStorage.getItem('cv_ia_st')||'{}')||{};}catch(e){}
-const IARES={tr:{tf:'1h',ms:36e5},sh:{tf:'3m',ms:18e4}};
+const IARES={tr:{tf:'1h',ms:36e5},sh:{tf:'15m',ms:9e5}};
 async function iaLoad(){try{const j=await (await fetch(IA_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(j&&j.ver)IAM=j;}catch(e){}if(IAOPEN)iaRender();}
 const iaBars={};
 async function iaKl(s,f){const k=s+f,c=iaBars[k];if(c&&Date.now()-c.t<6e4)return c.b;const b=await kl(s,IARES[f].tf,300);iaBars[k]={t:Date.now(),b};return b;}
@@ -3932,7 +3939,7 @@ async function iaTick(force){if(IABUSY||!IAM||!window.IA)return;IABUSY=true;
   }finally{IABUSY=false;if(IAOPEN)iaRender();}}
 /* puntaje de entrada de las señales vivas */
 async function iaEntryScore(s){const f=s.m==='x'?'sh':'tr',E=IAM&&IAM[f]&&IAM[f].entry;if(!E||!window.IA)return null;
-  const tf=s.m==='x'?'3m':'4h',b=(await kl(s.sym,tf,300)).slice(0,-1);if(b.length<80)return null;const P=IA.prep(b),j=b.length-1;
+  const tf=s.m==='x'?(s.tf||'15m'):'4h',b=(await kl(s.sym,tf,300)).slice(0,-1);if(b.length<80)return null;const P=IA.prep(b),j=b.length-1;
   let btc=0;try{const bb=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(bb.map(x=>x.close),50);btc=bb.at(-1).close>e.at(-1)?1:-1;}catch(e){}
   const x=IA.entryX(P,j,s.dir,btc),p=IA.predict(E.model,x);return {p,lvl:p>=E.q[2]?'alto':p<=E.q[0]?'bajo':'medio',why:IA.explain(E.model,x,IA.ENTRY_F).slice(0,3)};}
 var IASIG={};
@@ -3943,7 +3950,7 @@ function iaImp(list){const top=(list||[]).filter(x=>x[1]>0).slice(0,8),mx=top.le
   return top.map(([k,v])=>`<div class="ia-bar"><span>${esc(IA.NAMES[k]||k)}</span><i style="width:${Math.max(4,Math.round(v/mx*100))}%"></i></div>`).join('')||'<div class="mut">Todavía sin datos.</div>';}
 function iaRender(){const box=$('iaBody');if(!box)return;
   if(!IAM){box.innerHTML='<div class="mut">Cargando lo que estudió la IA…</div>';return;}
-  const d=new Date(IAM.upd),fam=[['tr','TRADING y TRADING+ (velas de 1 h)'],['sh','SHOOTER (velas de 3 min)']];
+  const d=new Date(IAM.upd),fam=[['tr','TRADING y TRADING+ (velas de 1 h)'],['sh','SHOOTER (velas de 15 y 30 min)']];
   const res=fam.map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test,pm=T.por_modo||{},RG=IAM[f].reglas||{};
     const rg=Object.entries(RG).map(([g,v])=>`<div class="mut">${g}: probó ${v.probadas} maneras de salir · la mejor en los meses de aprendizaje dio ${iaPct(v.prueba.ia)} en la prueba contra ${iaPct(v.prueba.bot)} del bot → ${v.activa?'<b class="up">la usa</b>':'sigue el bot'}</div>`).join('');
     return `<div class="ia-card"><b>${nm}</b> · <span class="${E.activa?'up':'mut'}">${E.activa?'IA activa: le ganó al bot':'modo aprendizaje: todavía no le gana al bot'}</span><div class="ia-g"><span>Bot (objetivos fijos)</span><b class="${T.bot.pct>=0?'up':'dn'}">${iaPct(T.bot.pct)} por operación</b><span>IA (decide sola)</span><b class="${T.ia.pct>=0?'up':'dn'}">${iaPct(T.ia.pct)} por operación</b>
