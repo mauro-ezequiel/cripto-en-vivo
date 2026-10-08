@@ -137,7 +137,70 @@ def fam_exit(ops, K, H):
         b = by.setdefault(k, {'n': 0, 'bot': 0, 'ia': 0})
         b['n'] += 1; b['bot'] += o['botPct']; b['ia'] += v
     res['por_modo'] = {k: {'n': b['n'], 'bot': round(b['bot'] / b['n'], 2), 'ia': round(b['ia'] / b['n'], 2)} for k, b in by.items()}
-    return {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'K': K, 'H': H, 'test': res, 'imp': imp}
+    # solo se usa en vivo si le ganó al bot en los meses que no vio (y de verdad predice algo)
+    res['activa'] = bool(res['ia']['pct'] > res['bot']['pct'] + .3 and auc >= .53)
+    return {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
+
+
+def run_rule(op, noprog=None, after3='close', k=2.0, lock=True, take=(1 / 3, 1 / 3)):
+    """Gestión por reglas: parciales en objetivo 1 y 2, stop a la entrada (y al objetivo anterior si lock), después del 3.º cerrar o seguir
+    con stop móvil a k ATR del máximo; salir si en `noprog` velas no tocó el objetivo 1. TRADING+ mantiene su aviso de salida a mitad del stop."""
+    d, e, sl, r, B = op['dir'], op['entry'], op['sl'], op['r'], op['B']
+    tps = [e * (1 + d * q * r * sl) for q in (1, 2, 3)]
+    cut = .5 if op['setup'] == 'tp-x' else None
+    stop, size, real, hits, peak = e * (1 - d * sl), 1.0, 0.0, 0, e
+    lim = int(round(len(B) / 1.5)) if after3 == 'close' else len(B)
+    end = lambda px: 100 * op['L'] * (real + size * d * (px / e - 1) - 2 * FEE)
+    for j, (h, l, c, a) in enumerate(B):
+        if j >= lim:
+            return end(c)
+        adv, fav = (l, h) if d > 0 else (h, l)
+        if d * (stop - adv) >= 0:
+            return end(stop)
+        while hits < 3 and d * (fav - tps[hits]) >= 0:
+            if hits < 2:
+                q = take[hits]; real += q * d * (tps[hits] / e - 1); size -= q
+            elif after3 == 'close':
+                real += size * d * (tps[2] / e - 1); size = 0; return end(e)
+            hits += 1
+            stop = e if hits == 1 else (tps[hits - 2] if lock else e)
+        peak = max(peak, h) if d > 0 else min(peak, l)
+        if hits >= 3 and after3 == 'trail':
+            ts = peak - d * k * a
+            if d * (ts - stop) > 0:
+                stop = ts
+        if cut is not None and hits == 0 and d * (e - c) / e >= cut * sl:
+            return end(c)
+        if noprog and hits == 0 and j + 1 >= noprog:
+            return end(c)
+    return end(B[-1][2])
+
+
+def rules_search(ops, fam):
+    """Prueba muchas maneras de salir; elige con los primeros meses y la compara con el bot en los últimos (que no vio)."""
+    import itertools
+    groups = {'tr': {'TRADING': ('t-pb', 'tp-r55', 'tp-u80'), 'TRADING+': ('tp-x',)}, 'sh': {'SHOOTER': ('sh-c',)}}[fam]
+    NP = [None, 6, 12, 24, 48] if fam == 'tr' else [None, 5, 10, 20, 40]
+    cut = np.quantile([o['t'] for o in ops], 2 / 3); out = {}
+    for g, setups in groups.items():
+        G = [o for o in ops if o['setup'] in setups]
+        tr = [o for o in G if o['t'] < cut]; te = [o for o in G if o['t'] >= cut]
+        if len(tr) < 30 or len(te) < 15:
+            continue
+        ev = lambda L, kw: float(np.mean([run_rule(o, **kw) for o in L]))
+        bot = {}
+        best = None; n = 0
+        for noprog, after3, k, lock, take in itertools.product(NP, ['close', 'trail'], [1, 2, 3], [True, False], [(1 / 3, 1 / 3), (1 / 3, 0), (0, 0), (.5, .25)]):
+            if after3 == 'close' and k != 2:
+                continue
+            kw = dict(noprog=noprog, after3=after3, k=k, lock=lock, take=take); v = ev(tr, kw); n += 1
+            if best is None or v > best[0]:
+                best = (v, kw)
+        b_tr, b_te = ev(tr, {}), ev(te, {})
+        ia_te = ev(te, best[1])
+        out[g] = {'probadas': n, 'regla': {**best[1], 'take': [round(x, 3) for x in best[1]['take']]}, 'entren': {'bot': round(b_tr, 2), 'ia': round(best[0], 2)},
+                  'prueba': {'bot': round(b_te, 2), 'ia': round(ia_te, 2), 'n': len(te)}, 'activa': bool(ia_te > b_te + .3 and best[0] > b_tr + .3)}
+    return out
 
 
 def importance(m, X, Y, names, reps=2):
@@ -175,6 +238,8 @@ for f, cfg in FAM.items():
         OUT[f]['exit'] = fam_exit(part['ops'], cfg['K'], cfg['H'])
         print(f, 'salida', json.dumps(OUT[f]['exit']['test'], ensure_ascii=False), OUT[f]['exit']['theta'], OUT[f]['exit']['minhold'], OUT[f]['exit']['variant'])
         print(f, 'importa (salida)', OUT[f]['exit']['imp'][:8])
+        OUT[f]['reglas'] = rules_search([o for o in part['ops'] if len(o['B']) > 2], f)
+        print(f, 'reglas', json.dumps(OUT[f]['reglas'], ensure_ascii=False))
     e = fam_entry(part['ent'])
     if e:
         OUT[f]['entry'] = e
