@@ -9,8 +9,8 @@ const TOKEN = process.env.TELEGRAM_TOKEN, CHAT = process.env.TELEGRAM_CHAT;
 const STATE_FILE = 'estado.json';
 
 const SIGCFG = {
-  medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 80, cool: 24 * 36e5, maxAge: 7 * 864e5 },
-  x: { name: 'SHOOTER', tf: '3m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
+  medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 999, cool: 24 * 36e5, maxAge: 7 * 864e5 },
+  x: { name: 'SHOOTER', tf: '15m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 36e5, maxAge: 12 * 36e5 } // SHOOTER v4: 15 y 30 min, las 30 con más volumen
 };
 /* octubre 2026 · medidas nuevas v2: apalancamiento, stop y objetivos elegidos juntos (más aciertos sin ganar menos).
    Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
@@ -19,8 +19,13 @@ const SIGCFG = {
    SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD).
    SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas.
    TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
-const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 10 } };
-const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
+const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 } };
+const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .35, maxSl: .05 } };
+/* universo (octubre 2026, 14 variantes probadas): TRADING todas con más de 10 M USD de volumen, SHOOTER las 30 con más volumen.
+   Las de menos volumen eran las impredecibles. El filtro de rango de 1 h no mejoró nada: apagado (WILD_MAX = 0). */
+const MINVOL = 1e7, WILD_MAX = 0, WILDC = {};
+async function wildOK(s, hc) { if (!WILD_MAX) return true; const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
+  try { const b = (hc && hc.length >= 169 ? hc : await kl(s, '1h', 170)).slice(0, -1).slice(-168); if (b.length < 100) return true; const v = b.reduce((a, x) => a + (x.high - x.low) / x.close, 0) / b.length * 100; WILDC[s] = { t: Date.now(), ok: v <= WILD_MAX }; return v <= WILD_MAX; } catch (e) { return true; } }
 const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
 const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71, 'sh-c': 77 };
 const MINCERT = { medio: 62, x: 56 };
@@ -65,18 +70,17 @@ function lastBarStats(cc, i) { let fl = 0, vv = 0, vs = 0; for (let j = i - 2; j
   const b = cc[i]; return { flow: vv ? fl / vv : 0, vr: b.v / ((vs / Math.min(i + 1, 20)) || 1), body: (b.close - b.open) / ((b.high - b.low) || 1) }; }
 
 /* ---------- reglas ---------- */
-/* SHOOTER v3 (octubre 2026, igual que la página): velas de 3 min, solo LONG. Cayó 3 % o más en la última hora, cerró bajo la
-   banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35, la tendencia de 1 h a favor (sobre la EMA 50 de 1 h) y ATR de 3 min entre 0,4 y 1,2 %.
-   120 días, 30 criptos: 2,3 señales por día, objetivo 1 el 77 %, +4,1 % del margen por operación con × 10. */
-function evalShooter(cs, hc) { const cc = cs.slice(0, -1);
+/* SHOOTER v4 (octubre 2026, igual que la página): velas de 15 y 30 min, solo LONG. Cayó 3 % o más en la última hora, cerró bajo la
+   banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35 y la tendencia de 1 h a favor. Stop 3 ATR con tope del 5 % (× 15). */
+function evalShooter(cs, hc, mins = 15) { const cc = cs.slice(0, -1), back = Math.round(60 / mins);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
     const [bm, bs] = smaStd(cl, 20), r7 = calcRSI(7)[i], z = bs[i] ? (cb - bm[i]) / bs[i] : 0;
     const h = hc.slice(0, -1), he = emaArr(h.map(b => b.close), 50), hk = h.length - 1, up1h = hk >= 0 && he[hk] != null && h[hk].close > he[hk];
-    const drop = i >= 20 ? (cb / cc[i - 20].close - 1) * 100 : 0;
+    const drop = i >= back ? (cb / cc[i - back].close - 1) * 100 : 0;
     const out = { dir: 0, c, atr, reasons: [], setup: null };
-    if (r7 == null || !(atrP >= .004 && atrP <= .012)) return out;
+    if (r7 == null || !(atrP > 0)) return out; // el stop se recorta al tope (5 %)
     if (!(z <= -1.8 && r7 <= 35 && drop <= -3 && up1h)) return out;
-    out.dir = 1; out.setup = 'sh-c'; out.reasons.push('cayó ' + Math.abs(drop).toFixed(1) + ' % en la última hora', 'cerró bajo la banda inferior de Bollinger', 'RSI 7 en ' + r7.toFixed(0) + ' (sobreventa)', 'la tendencia de 1 h sigue a favor');
+    out.dir = 1; out.setup = 'sh-c'; out.reasons.push('cayó ' + Math.abs(drop).toFixed(1) + ' % en la última hora (velas de ' + mins + ' min)', 'cerró bajo la banda inferior de Bollinger', 'RSI 7 en ' + r7.toFixed(0) + ' (sobreventa)', 'la tendencia de 1 h sigue a favor');
     return out; }); }
 function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
@@ -136,7 +140,7 @@ async function main() {
   if (!(S.hist && S.hist.length) && S.open.length) { S.hist = S.open.map(o => ({ m: o.m, sym: o.sym, dir: o.dir, entry: o.entry, zl: o.entry, zh: o.entry, tp: o.tp, sl: o.sl, ll: o.ll, conf: CAL[o.m].p, setup: o.m === 'medio' ? 't-pb' : 'sh-r', reasons: [], t: o.t })); S.histDirty = true; }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
-  const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25)
+  const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume);
 
   /* 1) seguimiento de las señales ya enviadas */
@@ -159,8 +163,11 @@ async function main() {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
       if (S.open.some(o => o.sym === s && o.m === m)) continue;
       try {
-        const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
-        const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc, rankOf[s]); if (!e.dir) continue;
+        let e;
+        if (m === 'x') { const [c15, c30, hc] = await Promise.all([kl(s, '15m', 300), kl(s, '30m', 300), kl(s, '1h', 200)]); if (c15.length < 150 || hc.length < 60) continue;
+          e = evalShooter(c15, hc, 15); if (!e.dir) e = evalShooter(c30, hc, 30); if (!e.dir || !(await wildOK(s, hc))) continue; }
+        else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
+          e = evalTrading(cs, hc, rankOf[s]); if (!e.dir || !(await wildOK(s))) continue; }
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
         if (m === 'medio') { if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
@@ -184,6 +191,6 @@ async function main() {
 /* vuelta larga: revisa cada 5 minutos durante LOOP_MIN minutos (así no depende de la puntualidad del horario de GitHub) */
 async function run() { const LOOP = +(process.env.LOOP_MIN || 0) * 6e4, start = Date.now();
   while (true) { const t0 = Date.now(); try { await main(); } catch (e) { console.error(e); }
-    if (!LOOP) break; const wait = 18e4 - (Date.now() - t0); /* cada 3 minutos: SHOOTER usa velas de 3 min */ if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
+    if (!LOOP) break; const wait = 3e5 - (Date.now() - t0); /* cada 5 minutos (SHOOTER usa velas de 15 y 30 min) */ if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
   try { if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} }
 run();

@@ -1,6 +1,7 @@
 name: Historial del último año
 # Todos los días recalcula las señales de los últimos 365 días con velas de Binance
 # y guarda historial.json en la rama "datos" (el día nuevo entra y el de hace un año sale).
+# Después la IA estudia esas mismas señales vela a vela y publica lo aprendido en ia.json.
 on:
   schedule:
     - cron: '7 6 * * *' # 03:07 de Argentina
@@ -20,6 +21,23 @@ jobs:
         with:
           node-version: '20'
       - name: Recalcular el último año y publicarlo
-        run: node herramientas/historial-anual.js
+        run: node --max-old-space-size=6500 herramientas/historial-anual.js
         env:
           GH_TOKEN: ${{ github.token }}
+          IA: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: La IA estudia las señales del año
+        continue-on-error: true
+        run: |
+          pip install --quiet numpy scikit-learn
+          python herramientas/ia-entrenar.py ia-datos.json.gz
+          node herramientas/publicar.js ia.json "IA: estudio diario"
+        env:
+          GH_TOKEN: ${{ github.token }}
+      - name: Guardar los datos de estudio (rama ia-datos)
+        continue-on-error: true
+        run: |
+          mkdir out && cp ia-datos.json.gz ia.json out/ 2>/dev/null; cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Datos de estudio de la IA"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:ia-datos

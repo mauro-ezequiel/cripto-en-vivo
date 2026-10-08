@@ -8,6 +8,8 @@
    Ojo: usa las monedas con más volumen de hoy (las que se hundieron en el año y ya no están no cuentan).
    Prueba local sin internet: BT_MOCK=1 node herramientas/historial-anual.js */
 const fs = require('fs');
+const IA = require('../ia-core.js'), IAON = !!process.env.IA; // con IA=1 también guarda el recorrido de cada señal para que la IA estudie
+const IAD = { tr: { ent: [], ops: [] }, sh: { ent: [], ops: [] } };
 const API = process.env.BT_API || 'https://data-api.binance.vision/api/v3';
 const MOCK = !!process.env.BT_MOCK;
 const DAY = 864e5, NOW = +(process.env.BT_NOW || Date.now()), SPAN = +(process.env.BT_DAYS || 365) * DAY, FROM = NOW - SPAN, FEE = .0005;
@@ -16,12 +18,21 @@ const MIN_N = 20; // con menos casos el % no se publica como acierto
 
 /* medidas vigentes (idénticas a la página: SIM, NEWG y PLUSG) */
 const T4 = { tf: '4h', tfMs: 4 * 36e5, res: '1h', resMs: 36e5, n: +(process.env.BT_NT || 80), cool: 24 * 36e5, maxAge: 7 * DAY };
-const SH = { tf: '3m', tfMs: 18e4, htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 30), cool: 1.5 * 36e5, maxAge: 4 * 36e5 }; // SHOOTER v3: velas de 3 min
+/* SHOOTER v4 (octubre 2026): velas de 15 y 30 min (antes 3 min). Una operación por moneda a la vez entre las dos temporalidades. */
+const SH = { tfs: (process.env.SH_TFS || '15m,30m').split(','), htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 30), cool: 36e5, maxAge: 12 * 36e5 };
+const TFMIN = { '3m': 3, '5m': 5, '15m': 15, '30m': 30 };
+/* universo (probado en octubre 2026 con 14 variantes): todas las cripto con más de 10 M USD de volumen para TRADING y TRADING+,
+   y las 30 con más volumen para SHOOTER. Sumar las de menos volumen (2–10 M) o más monedas en SHOOTER empeoró todos los modos:
+   esas son las "impredecibles". El filtro de rango de 1 h (BT_WILD) no mejoró nada y queda apagado. */
+const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || 1e7), WILD = +(process.env.BT_WILD || 0);
+function wildArr(hb) { const out = Array(hb.length).fill(null); let s = 0; for (let i = 0; i < hb.length; i++) { s += (hb[i].high - hb[i].low) / hb[i].close * 100; if (i >= 168) s -= (hb[i - 168].high - hb[i - 168].low) / hb[i - 168].close * 100; if (i >= 167) out[i] = s / 168; } return out; }
+const tooWild = (hb, W, t) => { if (!WILD) return false; const i = lastClosed(hb, 36e5, t); return i >= 0 && W[i] != null && W[i] > WILD; };
 const GEO = {
   core: { L: 10, a: 3, cap: .036, floor: .004, r: .5, ex: 'no', ll: true, margin: 350 },   // TRADING
-  plus: { L: 7, a: 3, cap: .11, floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+
-  sh:   { L: 10, a: 3, cap: .076, floor: .004, r: .5, ex: 'no', ll: false, margin: 50 }   // SHOOTER
+  plus: { L: +(process.env.PLUS_LEV || 10), a: 3, cap: +(process.env.PLUS_CAP || .076), floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+ (× 10 desde octubre 2026)
+  sh:   { L: +(process.env.SH_LEV || 15), a: 3, cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .35), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
 };
+const SH_SKIP = (process.env.SH_CAPMODE || 'cap') === 'skip'; // por defecto el stop se recorta al tope (5 % con × 15); 'skip' no opera
 const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x' };
 
 /* ---------- matemáticas (idénticas al bot) ---------- */
@@ -76,7 +87,7 @@ function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = clos
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let mockSeed = 1; const rnd = () => (mockSeed = (mockSeed * 16807) % 2147483647) / 2147483647;
 function mockKlines(url) { const q = new URL(url), s = q.searchParams.get('symbol'), tf = q.searchParams.get('interval');
-  const ms = { '3m': 18e4, '5m': 3e5, '15m': 9e5, '1h': 36e5, '4h': 144e5 }[tf], st = +q.searchParams.get('startTime'), en = +q.searchParams.get('endTime');
+  const ms = { '3m': 18e4, '5m': 3e5, '15m': 9e5, '30m': 18e5, '1h': 36e5, '4h': 144e5 }[tf], st = +q.searchParams.get('startTime'), en = +q.searchParams.get('endTime');
   let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) % 1e6;
   const f = t => { const m = Math.floor(t / 3e5), n = Math.sin(m * 12.9898 + h) * 43758.5453; // mismo precio en todas las temporalidades
     return 100 * Math.exp(Math.sin(t / 2e9 + h) * .5 + Math.sin(t / 3e8 + h * 2) * .2 + Math.sin(t / 4e7 + h * 3) * .06 + Math.sin(t / 6e6 + h) * .012 + (n - Math.floor(n) - .5) * .01); };
@@ -124,30 +135,59 @@ const btcDirAt = (B, ms, t) => { const i = lastClosed(B.b, ms, t); return i >= 0
 
 async function run4h(s, rank) {
   const tb = await klRange(s, T4.tf, T4.tfMs, FROM - 300 * T4.tfMs, NOW); if (tb.length < 350) return;
-  const rb = await klRange(s, T4.res, T4.resMs, FROM, NOW); if (rb.length < 50) return;
+  const rb = await klRange(s, T4.res, T4.resMs, FROM - 300 * T4.resMs, NOW); if (rb.length < 50) return; const W1 = wildArr(rb);
   candles = tb; const e200 = emaArr(closes(), 200);
+  const P1 = IAON ? IA.prep(rb) : null, P4 = IAON ? IA.prep(tb) : null;
   const llConf = (t, dir) => { const i = lastClosed(tb, T4.tfMs, t); return i >= 0 && e200[i] != null && (dir > 0 ? tb[i].close > e200[i] : tb[i].close < e200[i]); };
   for (let i = 299; i < tb.length; i++) { const t = tb[i].t + T4.tfMs; if (t < FROM) continue;
+    if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf);
     const c = classify4h(tb.slice(i - 298, i + 1), rank); if (!c) continue;
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) continue; // solo a favor de BTC (4h vs EMA 50), como la página
-    const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close;
-    const res = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
-    CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, cool: T4.cool, margin: g.margin, ...res }); }
+    if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
+    const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
+    const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
+    CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, ...res,
+      ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
   return { rb, tb, llConf }; }
 
 async function runShooter(s) {
-  const tb = await klRange(s, SH.tf, SH.tfMs, FROM - 300 * SH.tfMs, NOW); if (tb.length < 400) return;
-  const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 130 * SH.htfMs, NOW); if (hb.length < 60) return;
-  candles = tb; const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), [bm, bs] = smaStd(cl, 20);
-  const he = emaArr(hb.map(b => b.close), 50);
-  for (let i = 299; i < tb.length; i++) { const t = tb[i].t + SH.tfMs; if (t < FROM) continue;
-    const cb = tb[i].close, atrP = atr[i] / cb; if (r7[i] == null || !(atrP >= .004 && atrP <= .012)) continue;
-    const z = bs[i] ? (cb - bm[i]) / bs[i] : 0, drop = (cb / tb[i - 20].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
-    const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
-    const dir = 1, g = GEO.sh, sl = slOf(g, atrP);
-    const res = sim(tb, SH.tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
-    CANDS.push({ m: 'x', setup: 'sh-c', s, t, dir, sl, cool: SH.cool, margin: g.margin, ...res }); }
-  return { rb: tb, ok: j => atr[j] != null && atr[j] / tb[j].close >= .004 && atr[j] / tb[j].close <= .012 }; }
+  const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 300 * SH.htfMs, NOW); if (hb.length < 200) return;
+  const he = emaArr(hb.map(b => b.close), 50), W1 = wildArr(hb); let first = null;
+  for (const tf of SH.tfs) { const tfMs = TFMIN[tf] * 6e4, back = Math.round(60 / TFMIN[tf]);
+    const tb = await klRange(s, tf, tfMs, FROM - 300 * tfMs, NOW); if (tb.length < 400) continue;
+    candles = tb; const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), [bm, bs] = smaStd(cl, 20), P3 = IAON ? IA.prep(tb) : null;
+    for (let i = 299; i < tb.length; i++) { const t = tb[i].t + tfMs; if (t < FROM) continue;
+      const cb = tb[i].close, atrP = atr[i] / cb; if (r7[i] == null || !bs[i] || !(atrP > 0)) continue;
+      const z = (cb - bm[i]) / bs[i];
+      if (IAON && z <= -1.8 && r7[i] <= 35 && rnd() < .3) { // candidatas para aprender a entrar
+        const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
+        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2)]); }
+      const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
+      const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
+      if (tooWild(hb, W1, t)) continue;
+      const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
+      const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
+      CANDS.push({ m: 'x', setup: 'sh-c', tf, s, t, dir, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, ...res,
+        ia: IAON ? iaPath(P3, i + 1, cb, dir, sl, g.r, SH.maxAge, t, tfMs) : null }); }
+    if (!first) first = { rb: tb, tfMs, ok: j => atr[j] != null }; }
+  return first; }
+
+/* ---------- datos para la IA ---------- */
+/* recorrido de una operación vela a vela (hasta 1,5 × el plazo): lo que veía la IA en cada cierre y el precio que vino después */
+function iaPath(P, j0, entry, dir, sl, r, maxAge, t0, resMs) {
+  const X = [], B = [], tps = [1, 2, 3].map(k => entry * (1 + dir * k * r * sl)); let peak = entry, hits = 0;
+  for (let j = j0; j < P.bars.length && j < j0 + Math.ceil(1.5 * maxAge / resMs); j++) { const b = P.bars[j];
+    peak = dir > 0 ? Math.max(peak, b.high) : Math.min(peak, b.low); while (hits < 3 && dir * (peak - tps[hits]) >= 0) hits++;
+    const tc = b.t + resMs;
+    X.push(IA.exitX(P, j, { dir, entry, sl, peak, hits, age: (tc - t0) / maxAge }, btcDirAt(BTC1, 36e5, tc)).map(v => +v.toFixed(3)));
+    B.push([b.high, b.low, b.close, +(P.atr[j] || 0).toPrecision(5)]); }
+  return { X, B }; }
+/* entradas posibles de 4h (tendencia alineada) y si llegaron al objetivo 1 con las medidas de TRADING */
+function iaEntry4h(P4, P1, rb, i, t, llConf) { const b = P4.bars[i], st = P4.st[i];
+  if (!st || P4.e200[i] == null || P4.e21[i] == null || P4.e50[i] == null) return;
+  if (Math.sign(P4.e21[i] - P4.e50[i]) !== st || Math.sign(b.close - P4.e200[i]) !== st || rnd() > .5) return;
+  const g = GEO.core, atrP = (P4.atr[i] || 0) / b.close, o = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), b.close, st, slOf(g, atrP), g.r, g.L, g.ex, g.ll ? llConf : null, t);
+  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2)]); }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
 function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
@@ -178,36 +218,42 @@ async function publish(body) { const tok = process.env.GH_TOKEN, repo = process.
 
 async function main() { const t0 = Date.now();
   const T = await getJ(`${API}/ticker/24hr`);
-  const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25)
+  const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume).map(t => t.symbol);
+  const n4 = UNI === 'all' ? base.length : T4.n, nS = Math.min(SH.n, base.length); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
   { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50) }; }
   { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; BTC1 = { b, e: emaArr(closes(), 50) }; }
   const err = [], par = +(process.env.BT_PAR || 3);
   const pool = async (list, fn) => { let q = 0; await Promise.all(Array.from({ length: par }, async () => { while (q < list.length) { const r = q++; try { await fn(list[r], r); } catch (e) { err.push(list[r] + ': ' + e.message); } } })); };
   /* TRADING / TRADING+ */
   const keep4 = {};
-  await pool(base.slice(0, T4.n), async (s, r) => { const x = await run4h(s, r); if (x) keep4[s] = x; });
+  await pool(base.slice(0, n4), async (s, r) => { const x = await run4h(s, r); if (x) keep4[s] = x; });
   console.log('TRADING listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
   const slCore = CANDS.filter(c => c.m === 'medio' && c.setup !== 'tp-x').map(c => c.sl);
   for (const s in keep4) randomEntries('medio', s, keep4[s].rb, T4.resMs, T4.maxAge, 60, slCore, GEO.core, keep4[s].llConf);
   for (const k in keep4) delete keep4[k];
   /* SHOOTER (velas de 5 min: más pesado, una moneda a la vez por memoria) */
   const shSl = [];
-  await pool(base.slice(0, SH.n), async s => { const x = await runShooter(s); if (!x) return;
+  await pool(base.slice(0, nS), async s => { const x = await runShooter(s); if (!x) return;
     const mine = CANDS.filter(c => c.s === s && c.m === 'x').map(c => c.sl); shSl.push(...mine);
-    randomEntries('x', s, x.rb, SH.tfMs, SH.maxAge, 8, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar, pero con la misma volatilidad que exige SHOOTER
+    randomEntries('x', s, x.rb, x.tfMs, SH.maxAge, 30, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar con el mismo stop
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
 
   const ops = pick(), cal = { medio: {}, x: {} };
   for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
-  const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: Math.min(T4.n, base.length), shooter: Math.min(SH.n, base.length) },
+  const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
     cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin] */
     ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd]) };
   const body = JSON.stringify(out);
   fs.writeFileSync('historial.json', body);
+  if (IAON) { const zlib = require('zlib');
+    for (const o of ops) if (o.ia && !o.open) (o.m === 'x' ? IAD.sh : IAD.tr).ops.push({ m: o.m, setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.r, L: o.L,
+      maxAge: o.m === 'x' ? SH.maxAge : T4.maxAge, botPct: +o.pct.toFixed(3), botHit: o.hit, kind: o.kind, X: o.ia.X, B: o.ia.B });
+    fs.writeFileSync('ia-datos.json.gz', zlib.gzipSync(JSON.stringify({ upd: NOW, fee: FEE, exitF: IA.EXIT_F, entryF: IA.ENTRY_F, ...IAD })));
+    console.log('IA: operaciones', IAD.tr.ops.length, IAD.sh.ops.length, 'entradas', IAD.tr.ent.length, IAD.sh.ent.length); }
   console.log(JSON.stringify({ cal, azar, ops: ops.length, errores: err.length, secs: out.secs }, null, 1));
-  if (MOCK) return;
+  if (MOCK || process.env.NO_PUBLISH) return;
   if (await publish(body)) console.log('Publicado historial.json en la rama datos'); else if (process.env.GH_TOKEN) { console.log('No se pudo publicar'); process.exitCode = 1; } }
 main().catch(e => { console.error(e); process.exitCode = 1; });
