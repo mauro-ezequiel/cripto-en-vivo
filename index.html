@@ -1804,7 +1804,7 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
   medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:400,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'15m',htf:'1h',min:.016,maxAtr:.027,H:12,every:120e3,uni:'top',n:400,thr:.5,maxAge:36e5*3}};
+  x:{name:'SHOOTER',tf:'15m',htf:'1h',min:.016,maxAtr:.027,H:12,every:120e3,uni:'top',n:30,thr:.5,maxAge:36e5*3}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
@@ -1818,12 +1818,12 @@ function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
   if(cfg.uni==='safe')return SAFE.filter(s=>tickers[s]);
   /* todas las líquidas menos las impredecibles: sin estables ni tokens apalancados, con volumen real y sin pumps/dumps de ±25 % en 24 h
      (la volatilidad excesiva se descarta después con el ATR de cada regla) */
-  /* octubre 2026: todas las cripto con más de 2 M USD de volumen (antes solo las 40–80 primeras); las impredecibles se descartan con wildOK */
+  /* octubre 2026 (14 variantes probadas en un año): TRADING y TRADING+ miran todas las cripto con más de 10 M USD de volumen; SHOOTER, las 30 con más volumen.
+     Las de menos volumen son las impredecibles: sumarlas empeoró todos los modos. Siguen afuera las que se movieron ±25 % en 24 h. */
   return Object.values(tickers).filter(t=>!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
-/* moneda impredecible: rango promedio de las velas de 1 h de la última semana mayor a 2,5 % (memes en plena locura, listados nuevos).
-   En el año probado, sacarlas mejoró el resultado de todos los modos. Se revisa una vez por hora y por moneda. */
-const UNI_MINVOL=2e6,WILD_MAX=2.5,WILDC={};
-async function wildOK(s,hc){const c=WILDC[s];if(!hc&&c&&Date.now()-c.t<36e5)return c.ok;
+/* filtro opcional de monedas en modo "locura" (rango promedio de 1 h de la semana): en la prueba del año no mejoró nada, queda apagado (WILD_MAX=0) */
+const UNI_MINVOL=1e7,WILD_MAX=0,WILDC={};
+async function wildOK(s,hc){if(!WILD_MAX)return true;const c=WILDC[s];if(!hc&&c&&Date.now()-c.t<36e5)return c.ok;
   try{const b=(hc&&hc.length>=169?hc:await kl(s,'1h',170)).slice(0,-1).slice(-168);if(b.length<100)return true;const v=b.reduce((a,x)=>a+(x.high-x.low)/x.close,0)/b.length*100;WILDC[s]={t:Date.now(),ok:v<=WILD_MAX,v};return v<=WILD_MAX;}catch(e){return true;}}
 const kl=(s,t,n)=>getJ(`${API}/klines?symbol=${s}&interval=${t}&limit=${n}`).then(d=>d.map(toBar));
 function evalCoin(m,cs,hc){
@@ -1921,8 +1921,8 @@ function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDe
    Backtest 30 días × 60 criptos (con salvavidas): objetivo 1 el 80 %, los 3 objetivos el 37 %, +12,6 % del margen por operación. */
 /* SHOOTER v4 (octubre 2026) · velas de 15 y 30 minutos, solo LONG. Rebote tras una caída fuerte:
    cayó 3 % o más en la última hora, la vela cerró bajo la banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35 y la tendencia de 1 h sigue a favor.
-   Stop 3 × ATR (si no entra en el 5 %, no se opera: con × 15 la liquidación está a ~6 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h.
-   Probado un año entero en todas las cripto con volumen (sin las impredecibles). En 3 minutos los primeros 8 meses daban pérdida. */
+   Stop 3 × ATR con tope del 5 % (con × 15 la liquidación está a ~6 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h. Las 30 cripto con más volumen.
+   Un año entero: 1,5 señales por día, objetivo 1 el 75 %, +2,4 % del margen por operación, +3,7 % por día. En 3 minutos los primeros 8 meses daban pérdida. */
 function evalShooter(cs,hc,mins=15){
   const cc=cs.slice(0,-1),back=Math.round(60/mins);
   return withCandles(cc,()=>{
@@ -1931,7 +1931,7 @@ function evalShooter(cs,hc,mins=15){
     const h=hc.slice(0,-1),he=emaArr(h.map(b=>b.close),50),hk=h.length-1,up1h=hk>=0&&he[hk]!=null&&h[hk].close>he[hk];
     const drop=i>=back?(cb/cc[i-back].close-1)*100:0;
     const out={keep:true,score:0,dir:0,c,atr,adx,htf:up1h?1:-1,mid:bm[i],reasons:[],setup:null};
-    if(r7==null||!(atrP>0)||3*atrP>NEWG.x.max)return out;
+    if(r7==null||!(atrP>0))return out; // el stop se recorta al 5 % si 3 ATR es más (así se probó)
     if(!(z<=-1.8&&r7<=35&&drop<=-3&&up1h))return out;
     out.dir=1;out.score=1;out.setup='sh-c';
     out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora (velas de '+mins+' min)','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','la moneda no está en modo impredecible');
@@ -2092,7 +2092,7 @@ setInterval(checkSignals,2000);
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
-           x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 3 × ATR (máx. 5 % = −37,5 USD) · sin salvavidas'}};
+           x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 3 × ATR con tope 5 % (−37,5 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 3 × ATR diario (máx. 9,6 % = −384 USD) · sin salvavidas'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];

@@ -19,10 +19,12 @@ const MIN_N = 20; // con menos casos el % no se publica como acierto
 /* medidas vigentes (idénticas a la página: SIM, NEWG y PLUSG) */
 const T4 = { tf: '4h', tfMs: 4 * 36e5, res: '1h', resMs: 36e5, n: +(process.env.BT_NT || 80), cool: 24 * 36e5, maxAge: 7 * DAY };
 /* SHOOTER v4 (octubre 2026): velas de 15 y 30 min (antes 3 min). Una operación por moneda a la vez entre las dos temporalidades. */
-const SH = { tfs: (process.env.SH_TFS || '15m,30m').split(','), htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 0) || null, cool: 36e5, maxAge: 12 * 36e5 };
+const SH = { tfs: (process.env.SH_TFS || '15m,30m').split(','), htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 30), cool: 36e5, maxAge: 12 * 36e5 };
 const TFMIN = { '3m': 3, '5m': 5, '15m': 15, '30m': 30 };
-/* universo: todas las cripto con volumen suficiente, menos las "impredecibles" (rango promedio de 1 h de la última semana mayor a BT_WILD %) */
-const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || (UNI === 'all' ? 2e6 : 1e7)), WILD = +(process.env.BT_WILD ?? 2.5);
+/* universo (probado en octubre 2026 con 14 variantes): todas las cripto con más de 10 M USD de volumen para TRADING y TRADING+,
+   y las 30 con más volumen para SHOOTER. Sumar las de menos volumen (2–10 M) o más monedas en SHOOTER empeoró todos los modos:
+   esas son las "impredecibles". El filtro de rango de 1 h (BT_WILD) no mejoró nada y queda apagado. */
+const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || 1e7), WILD = +(process.env.BT_WILD || 0);
 function wildArr(hb) { const out = Array(hb.length).fill(null); let s = 0; for (let i = 0; i < hb.length; i++) { s += (hb[i].high - hb[i].low) / hb[i].close * 100; if (i >= 168) s -= (hb[i - 168].high - hb[i - 168].low) / hb[i - 168].close * 100; if (i >= 167) out[i] = s / 168; } return out; }
 const tooWild = (hb, W, t) => { if (!WILD) return false; const i = lastClosed(hb, 36e5, t); return i >= 0 && W[i] != null && W[i] > WILD; };
 const GEO = {
@@ -30,7 +32,7 @@ const GEO = {
   plus: { L: +(process.env.PLUS_LEV || 10), a: 3, cap: +(process.env.PLUS_CAP || .076), floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+ (× 10 desde octubre 2026)
   sh:   { L: +(process.env.SH_LEV || 15), a: 3, cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .35), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
 };
-const SH_SKIP = (process.env.SH_CAPMODE || 'skip') === 'skip'; // si el stop de 3 ATR no entra antes de la liquidación: no se opera
+const SH_SKIP = (process.env.SH_CAPMODE || 'cap') === 'skip'; // por defecto el stop se recorta al tope (5 % con × 15); 'skip' no opera
 const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x' };
 
 /* ---------- matemáticas (idénticas al bot) ---------- */
@@ -218,7 +220,7 @@ async function main() { const t0 = Date.now();
   const T = await getJ(`${API}/ticker/24hr`);
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume).map(t => t.symbol);
-  const n4 = UNI === 'all' ? base.length : T4.n, nS = SH.n || (UNI === 'all' ? base.length : 30); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
+  const n4 = UNI === 'all' ? base.length : T4.n, nS = Math.min(SH.n, base.length); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
   { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50) }; }
   { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; BTC1 = { b, e: emaArr(closes(), 50) }; }
   const err = [], par = +(process.env.BT_PAR || 3);

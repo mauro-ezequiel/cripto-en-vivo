@@ -10,7 +10,7 @@ const STATE_FILE = 'estado.json';
 
 const SIGCFG = {
   medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 999, cool: 24 * 36e5, maxAge: 7 * 864e5 },
-  x: { name: 'SHOOTER', tf: '15m', htf: '1h', min: .016, maxAtr: .027, n: 999, cool: 36e5, maxAge: 12 * 36e5 } // SHOOTER v4: 15 y 30 min
+  x: { name: 'SHOOTER', tf: '15m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 36e5, maxAge: 12 * 36e5 } // SHOOTER v4: 15 y 30 min, las 30 con más volumen
 };
 /* octubre 2026 · medidas nuevas v2: apalancamiento, stop y objetivos elegidos juntos (más aciertos sin ganar menos).
    Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
@@ -21,9 +21,10 @@ const SIGCFG = {
    TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
 const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 } };
 const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .35, maxSl: .05 } };
-/* universo (octubre 2026): todas las cripto con más de 2 M USD de volumen, menos las impredecibles (rango promedio de 1 h de la semana > 2,5 %) */
-const MINVOL = 2e6, WILD_MAX = 2.5, WILDC = {};
-async function wildOK(s, hc) { const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
+/* universo (octubre 2026, 14 variantes probadas): TRADING todas con más de 10 M USD de volumen, SHOOTER las 30 con más volumen.
+   Las de menos volumen eran las impredecibles. El filtro de rango de 1 h no mejoró nada: apagado (WILD_MAX = 0). */
+const MINVOL = 1e7, WILD_MAX = 0, WILDC = {};
+async function wildOK(s, hc) { if (!WILD_MAX) return true; const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
   try { const b = (hc && hc.length >= 169 ? hc : await kl(s, '1h', 170)).slice(0, -1).slice(-168); if (b.length < 100) return true; const v = b.reduce((a, x) => a + (x.high - x.low) / x.close, 0) / b.length * 100; WILDC[s] = { t: Date.now(), ok: v <= WILD_MAX }; return v <= WILD_MAX; } catch (e) { return true; } }
 const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
 const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71, 'sh-c': 77 };
@@ -70,14 +71,14 @@ function lastBarStats(cc, i) { let fl = 0, vv = 0, vs = 0; for (let j = i - 2; j
 
 /* ---------- reglas ---------- */
 /* SHOOTER v4 (octubre 2026, igual que la página): velas de 15 y 30 min, solo LONG. Cayó 3 % o más en la última hora, cerró bajo la
-   banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35 y la tendencia de 1 h a favor. Si el stop de 3 ATR no entra en el tope, no se opera. */
+   banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35 y la tendencia de 1 h a favor. Stop 3 ATR con tope del 5 % (× 15). */
 function evalShooter(cs, hc, mins = 15) { const cc = cs.slice(0, -1), back = Math.round(60 / mins);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
     const [bm, bs] = smaStd(cl, 20), r7 = calcRSI(7)[i], z = bs[i] ? (cb - bm[i]) / bs[i] : 0;
     const h = hc.slice(0, -1), he = emaArr(h.map(b => b.close), 50), hk = h.length - 1, up1h = hk >= 0 && he[hk] != null && h[hk].close > he[hk];
     const drop = i >= back ? (cb / cc[i - back].close - 1) * 100 : 0;
     const out = { dir: 0, c, atr, reasons: [], setup: null };
-    if (r7 == null || !(atrP > 0) || 3 * atrP > GEOM.x.maxSl) return out;
+    if (r7 == null || !(atrP > 0)) return out; // el stop se recorta al tope (5 %)
     if (!(z <= -1.8 && r7 <= 35 && drop <= -3 && up1h)) return out;
     out.dir = 1; out.setup = 'sh-c'; out.reasons.push('cayó ' + Math.abs(drop).toFixed(1) + ' % en la última hora (velas de ' + mins + ' min)', 'cerró bajo la banda inferior de Bollinger', 'RSI 7 en ' + r7.toFixed(0) + ' (sobreventa)', 'la tendencia de 1 h sigue a favor');
     return out; }); }
