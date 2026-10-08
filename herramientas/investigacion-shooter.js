@@ -87,22 +87,23 @@ const slOf = (g, atrP) => Math.min(g.cap, Math.max(g.floor, g.a * atrP));
 const M1 = 6e4, H1 = 36e5;
 const r3 = x => x == null || !isFinite(x) ? null : Math.round(x * 1000) / 1000;
 const barDelta = b => { const tb = b.tb != null && !isNaN(b.tb) ? b.tb : b.v / 2; return 2 * tb - b.v; };
-function agg(b1, k) { if (k === 1) return b1; const out = []; let cur = null, key = null; const ms = k * M1;
+const BASE = +(process.env.BT_BASE || 1), TFS = (process.env.BT_TFS || '1,3,5').split(',').map(Number), MAXH = +(process.env.BT_MAXH || 4), BI = BASE + 'm';
+function agg(b1, k) { if (k === BASE) return b1; const out = []; let cur = null, key = null; const ms = k * M1;
   for (const x of b1) { const kk = Math.floor(x.t / ms); if (kk !== key) { key = kk; cur = { t: kk * ms, open: x.open, high: x.high, low: x.low, close: x.close, v: x.v, tb: x.tb, n: 1 }; out.push(cur); }
     else { cur.high = Math.max(cur.high, x.high); cur.low = Math.min(cur.low, x.low); cur.close = x.close; cur.v += x.v; cur.tb += x.tb; cur.n++; } }
-  return out.filter(b => b.n === k); }
+  return out.filter(b => b.n === k / BASE); }
 function htfArr(bars) { candles = bars; const cl = closes(), e = emaArr(cl, 21); return cl.map((c, i) => i < 4 || e[i] == null || e[i - 3] == null ? 0 : (c > e[i] ? .5 : -.5) + (e[i] > e[i - 3] ? .5 : -.5)); }
 function flowN(bars, n) { return bars.map((b, i) => { let f = 0, v = 0; for (let j = Math.max(0, i - n + 1); j <= i; j++) { f += barDelta(bars[j]); v += bars[j].v; } return v ? f / v : 0; }); }
 function volRatio(bars) { let s = 0; return bars.map((b, i) => { s += b.v; if (i >= 20) s -= bars[i - 20].v; return b.v / ((s / Math.min(i + 1, 20)) || 1); }); }
 const GEOS = [[2, .5], [3, .5], [3, .35], [2, 1], [3, 1], [1.5, 1]];
 const CSH = ['t', 's', 'rank', 'tf', 'typ', 'dir', 'z', 'r7', 'r14', 'adx', 'di', 'atrP', 'vr', 'body', 'fl3', 'st', 'al', 'e200', 'vw', 'h15', 'h1', 'btc1', 'btcR', 'r1h', 'hr', ...GEOS.flatMap((g, k) => ['H' + k, 'P' + k])];
 const ROWS = []; let BTC = null;
-async function loadBTC() { const b1 = await klRange('BTCUSDT', '1m', M1, FROM - 3 * DAY, NOW); const h = agg(b1, 60); candles = h; const e = emaArr(closes(), 50); BTC = { b1, h, e }; }
+async function loadBTC() { const b1 = await klRange('BTCUSDT', BI, BASE * M1, FROM - 3 * DAY, NOW); const h = agg(b1, 60); candles = h; const e = emaArr(closes(), 50); BTC = { b1, h, e }; }
 const sideAt = (b, e, ms, t) => { const i = lastClosed(b, ms, t); return i >= 0 && e[i] != null ? Math.sign(b[i].close - e[i]) : 0; };
 async function runCoin(s, rank) {
-  const b1 = await klRange(s, '1m', M1, FROM - 3 * DAY, NOW); if (b1.length < 20000) return;
+  const b1 = await klRange(s, BI, BASE * M1, FROM - 3 * DAY, NOW); if (b1.length < 20000 / BASE) return;
   const h15 = agg(b1, 15), h15t = htfArr(h15), hh = agg(b1, 60); candles = hh; const he = emaArr(closes(), 50);
-  for (const k of [1, 3, 5]) { const tb = agg(b1, k), ms = k * M1; candles = tb;
+  for (const k of TFS) { const tb = agg(b1, k), ms = k * M1; candles = tb;
     const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), r14 = calcRSI(14), A = calcADX(14), [bm, bs] = smaStd(cl, 20), st = calcST(10, 3).dir, e21 = emaArr(cl, 21), e50 = emaArr(cl, 50), e200 = emaArr(cl, 200), f3 = flowN(tb, 3), vr = volRatio(tb);
     const vw = Array(tb.length); { let day = -1, pv = 0, vv = 0; for (let i = 0; i < tb.length; i++) { const b = tb[i], dd = Math.floor(b.t / DAY); if (dd !== day) { day = dd; pv = 0; vv = 0; } const tp = (b.high + b.low + b.close) / 3; pv += tp * b.v; vv += b.v; vw[i] = vv ? pv / vv : b.close; } }
     const nb = Math.round(H1 / ms), last = [-1e9, -1e9, -1e9], cool = 6;
@@ -112,9 +113,9 @@ async function runCoin(s, rank) {
       { const d = st[i]; if (d && (e21[i] > e50[i] ? 1 : -1) === d && (cb > e200[i] ? 1 : -1) === d && (d > 0 ? r14[i] : 100 - r14[i]) < 45) cands.push([1, d]); }
       { let hi = -1e18, lo = 1e18; for (let j = i - 20; j < i; j++) { hi = Math.max(hi, tb[j].high); lo = Math.min(lo, tb[j].low); } const d = cb > hi ? 1 : cb < lo ? -1 : 0; if (d && st[i] === d && vr[i] >= 1.5) cands.push([2, d]); }
       for (const [typ, d] of cands) { if (i - last[typ] < cool) continue; last[typ] = i;
-        const outs = GEOS.map(([a, r]) => { const sl = Math.min(.076, Math.max(.002, a * atrP)); return sim(tb, ms, 4 * H1, i + 1, cb, d, sl, r, 1, 'no', null, t); });
-        const k15 = lastClosed(h15, 15 * M1, t), k1 = lastClosed(hh, H1, t), bi = lastClosed(BTC.b1, M1, t);
-        const btcR = bi >= 60 ? d * (BTC.b1[bi].close / BTC.b1[bi - 60].close - 1) * 100 : null;
+        const outs = GEOS.map(([a, r]) => { const sl = Math.min(.076, Math.max(.002, a * atrP)); return sim(tb, ms, MAXH * H1, i + 1, cb, d, sl, r, 1, 'no', null, t); });
+        const k15 = lastClosed(h15, 15 * M1, t), k1 = lastClosed(hh, H1, t), bi = lastClosed(BTC.b1, BASE * M1, t), lb = 60 / BASE;
+        const btcR = bi >= lb ? d * (BTC.b1[bi].close / BTC.b1[bi - lb].close - 1) * 100 : null;
         ROWS.push([t, rank, rank, k, typ, d, r3(d * z), r3(d > 0 ? r7[i] : 100 - r7[i]), r3(d > 0 ? r14[i] : 100 - r14[i]), r3(A.adx[i]), r3((A.pdi[i] - A.mdi[i]) / ((A.pdi[i] + A.mdi[i]) || 1) * d), r3(atrP * 100), r3(vr[i]),
           r3(d * (b.close - b.open) / ((b.high - b.low) || 1)), r3(d * f3[i]), st[i] * d, (e21[i] > e50[i] ? 1 : -1) * d, (cb > e200[i] ? 1 : -1) * d, r3(d * (cb - vw[i]) / at),
           k15 >= 0 ? h15t[k15] * d : 0, k1 >= 0 && he[k1] != null ? Math.sign(hh[k1].close - he[k1]) * d : 0, sideAt(BTC.h, BTC.e, H1, t) * d, r3(btcR), r3(d * (cb / tb[i - nb].close - 1) * 100), new Date(t).getUTCHours(),
