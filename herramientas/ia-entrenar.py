@@ -288,19 +288,35 @@ def fam_entry(ent, fam):
     # ENTRADAS PROPIAS: la IA busca sola en todas las velas candidatas (no solo en las señales de los bots) las que puntúa más alto.
     # Umbral elegido con los meses de aprendizaje (mejor 10 %), resultado medido en los meses que no vio, una por moneda cada 24 h (TRADING) o 1 h (SHOOTER).
     samp, cool = (.5, 24 * 36e5) if fam == 'tr' else (.3, 36e5)
-    ptr = m.predict_proba(X[tr])[:, 1]; thr = float(np.quantile(ptr, .9))
-    sel = np.where(te)[0][p >= thr]; last = {}; pick = []
-    for i in sel[np.argsort(t[sel])]:
-        k = int(RK[i])
-        if k in last and t[i] - last[k] < cool:
+
+    def picks(idx, pr, thr):
+        sel = idx[pr >= thr]; last = {}; out = []
+        for i in sel[np.argsort(t[sel])]:
+            k = int(RK[i])
+            if k in last and t[i] - last[k] < cool:
+                continue
+            last[k] = t[i]; out.append(i)
+        return np.array(out, int)
+    # UMBRAL DINÁMICO: se elige con la última parte de los meses de aprendizaje (validación), sin mirar la prueba.
+    # Puntaje = ganancia total con las pérdidas pesando 1,5 veces: más señales mientras sigan siendo eficientes, y castiga perder.
+    trI = np.where(tr)[0]; c1 = np.quantile(t[trI], .7); a, v = trI[t[trI] < c1], trI[t[trI] >= c1]
+    mv = gbc(120).fit(X[a], Y[a]); pv = mv.predict_proba(X[v])[:, 1]; pa = mv.predict_proba(X[a])[:, 1]
+    best_q, best_s = .9, -1e18
+    for q in (.5, .6, .7, .75, .8, .85, .9, .93, .95, .97):
+        pk = picks(v, pv, float(np.quantile(pa, q)))
+        if len(pk) < 15:
             continue
-        last[k] = t[i]; pick.append(i)
-    pick = np.array(pick, int); dias = (t[te].max() - t[te].min()) / DAY if te.sum() else 1
-    res['propias'] = {'n': int(len(pick)), 'por_dia': round(len(pick) / max(dias, 1) / samp, 2), 'obj1': round(float(Y[pick].mean() * 100), 1) if len(pick) else None,
+        PP = P[pk]; sc = PP.sum() + .5 * PP[PP < 0].sum()
+        if PP.mean() > 0 and Y[pk].mean() >= Y[v].mean() and sc > best_s:
+            best_q, best_s = q, sc
+    ptr = m.predict_proba(X[tr])[:, 1]; thr = float(np.quantile(ptr, best_q))
+    pick = picks(np.where(te)[0], p, thr); dias = (t[te].max() - t[te].min()) / DAY if te.sum() else 1
+    PP = P[pick] if len(pick) else np.array([0.])
+    res['propias'] = {'n': int(len(pick)), 'q': best_q, 'por_dia': round(len(pick) / max(dias, 1) / samp, 2), 'obj1': round(float(Y[pick].mean() * 100), 1) if len(pick) else None,
                       'pct': round(float(P[pick].mean()), 2) if len(pick) else None, 'gana': round(float((P[pick] > 0).mean() * 100), 1) if len(pick) else None,
-                      'base_obj1': round(float(Y[te].mean() * 100), 1), 'base_pct': round(float(P[te].mean()), 2)}
+                      'peor': round(float(PP.min()), 2), 'base_obj1': round(float(Y[te].mean() * 100), 1), 'base_pct': round(float(P[te].mean()), 2)}
     mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
-    return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, .9)), 4)}
+    return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
 
 
 t0 = time.time()
@@ -328,7 +344,7 @@ def progreso(R, prev):
     """La IA se autoevalúa: cuánto de la ganancia de los bots consigue (100 % = iguala, más = los supera), en los últimos 3 meses."""
     b = sum((x.get('bot_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
     i = sum((x.get('ia_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
-    val = None if b <= 0 else round(max(0, min(200, 100 * i / b)), 1)
+    val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 1)
     hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
     notas = []
     pc = lambda v: (f'{v:+.1f}').replace('.', ',')

@@ -383,6 +383,12 @@ body.trn-on{overflow:hidden}
 .ia-prog{background:#0f1a2d;border:1px solid #1c2c47;border-radius:10px;padding:9px 10px;margin:8px 0}.ia-prog-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ia-prog-t span{font-size:18px;font-weight:800;color:#c2d0e6}
 .ia-bar2{position:relative;height:12px;background:#16243b;border-radius:6px;overflow:hidden}.ia-bar2 i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}.ia-bar2 em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#c2d0e6;opacity:.7}
 .ia-spark{width:100%;height:30px;margin-top:6px}.ia-nota{color:#9fb2cf;font-size:12.5px;margin-top:4px;line-height:1.4}.ia-lnk{color:#6f8fc4}
+.ia-lvl{font-size:12px;margin:0 0 6px;color:#9fb2cf}.ia-lvl span{color:#6f8fc4}.ia-bar-l{display:flex;justify-content:space-between;font-size:10.5px;color:#6e819f;margin-top:2px}
+.ia-metas{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.ia-metas span{font-size:10.5px;padding:2px 6px;border-radius:9px;background:#16243b;color:#5d6f8c}.ia-metas .ok{background:rgba(46,157,106,.18);color:#5fc495}.ia-metas .cur{background:#2b4a7a;color:#c2d0e6;font-weight:700}
+.ia-goals{margin-top:8px;border-top:1px solid #16243b;padding-top:6px}.ia-goal{display:flex;gap:8px;align-items:flex-start;padding:3px 0;font-size:12.5px}.ia-goal i{font-style:normal;width:16px;color:#b04040;font-weight:800}.ia-goal.ok i{color:#2e9d6a}.ia-goal small{display:block;color:#6e819f;font-size:11px}
+.ia-ops-h{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:6px}.ia-tabs{display:flex;gap:4px}.ia-tabs button{background:#0f1a2d;color:#9fb2cf;border:1px solid #1c2c47;border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}.ia-tabs button.on{background:#2b4a7a;color:#e3ebf7}
+.iab.on{background:#1f5a44;border-color:#2e9d6a;color:#d6f5e6}.ia-g>div{background:#0f1a2d;border-color:#1c2c47;color:#6e819f}.ia-g b{color:#c2d0e6}.ia-g b.up,.ia-g .up{color:#4fbf8a}.ia-g b.dn,.ia-g .dn{color:#d26a6a}
+.ia-orow{padding:7px 10px;border-bottom:1px solid #16243b;border-left:3px solid #3d6db3;line-height:1.45}.ia-orow.win{border-left-color:#2e9d6a}.ia-orow.fail{border-left-color:#b04040}.ia-orow.exp{border-left-color:#6e819f}.ia-orow small{color:#6e819f}.ia-orow .ht{color:#6e819f;font-size:11.5px}
 .ia-op.idea{border-left-color:#2e9d6a}.ia-news{padding:5px 0;border-bottom:1px solid #16243b;line-height:1.35}.ia-news small{color:#6e819f}
 .ia-chat{background:#0f1a2d;border:1px solid #1c2c47;border-radius:10px;padding:8px}#iaChatLog{max-height:300px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px}
 .iam{max-width:88%;padding:7px 10px;border-radius:10px;line-height:1.45;font-size:13px}.iam.user{align-self:flex-end;background:#1b2f52;color:#c2d0e6}.iam.assistant{align-self:flex-start;background:#121f36;color:#a9bbd6;border:1px solid #1c2c47}
@@ -4036,47 +4042,117 @@ async function iaCmpOpen(id){let o=OPS.find(x=>x.id===id)||(histOps()||[]).find(
       ${bp!=null&&(!open||sh.done)?`<div class="iac-v ${sh.pct>bp?'up':sh.pct<bp?'dn':''}">${sh.pct>bp+.05?`La IA va ${iaPct(sh.pct-bp).replace('+','')} arriba del bot`:sh.pct<bp-.05?`El bot va ${iaPct(bp-sh.pct).replace('+','')} arriba de la IA`:'Van parejos'}</div>`:''}
       <div class="ia-mut">% del margen, con comisiones. ${sh.E.activa?'':'La IA todavía no le gana al bot en los meses de prueba: esto es su práctica, no un consejo.'}</div>`;
   }catch(e){body.innerHTML='<div class="ia-mut">No pude bajar las velas para calcularlo. Probá de nuevo en un rato.</div>';}}
-/* ---------- autoevaluación: cuánto aprendió comparado con los bots ---------- */
+/* ---------- autoevaluación: objetivos que nunca terminan ---------- */
+/* al llegar a un objetivo pasa al siguiente: 100 % = iguala a los bots, 125 % = les saca 25 % más, y así */
+const IA_META=[100,125,150,200,300,500,750,1000,1500,2000];
+const iaModoOf=r=>r[0]==='x'?'SHOOTER':r[1]==='tp-x'?'TRADING+':'TRADING';
+function iaGoals(){const R=iaRecs().filter(r=>r[3]>=Date.now()-90*864e5),G=[],avg=a=>a.reduce((s,v)=>s+v,0)/(a.length||1),wr=a=>a.filter(v=>v>0).length/(a.length||1)*100;
+  if(R.length>=5){const b=R.map(r=>r[4]),i=R.map(r=>r[6]),lb=b.filter(v=>v<0),li=i.filter(v=>v<0);
+    G.push(['Gana más por operación que los bots',avg(i)>=avg(b),`${iaPct(avg(i))} contra ${iaPct(avg(b))}`]);
+    G.push(['Gana tantas veces como los bots',wr(i)>=wr(b),`${Math.round(wr(i))} % contra ${Math.round(wr(b))} %`]);
+    G.push(['Su peor operación pierde menos',Math.min(...i)>=Math.min(...b),`${iaPct(Math.min(...i))} contra ${iaPct(Math.min(...b))}`]);
+    G.push(['Cuando pierde, pierde menos',avg(li)>=avg(lb),`${li.length?iaPct(avg(li)):'—'} contra ${lb.length?iaPct(avg(lb)):'—'} en promedio`]);
+    const by={};for(const r of R)(by[iaModoOf(r)]=by[iaModoOf(r)]||[]).push(r);
+    for(const [k,L] of Object.entries(by))if(L.length>=5){const a=avg(L.map(r=>r[6])),c=avg(L.map(r=>r[4]));G.push([`Le gana al bot en ${k}`,a>c,`${iaPct(a)} contra ${iaPct(c)} por operación`]);}}
+  let pd=0;for(const [f,nm] of [['tr','TRADING'],['sh','SHOOTER']]){const p=IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;if(!p||!p.n)continue;const ok=p.pct>0&&p.pct>p.base_pct;if(ok)pd+=p.por_dia||0;
+    G.push([`Encuentra sola entradas de ${nm} que ganan`,ok,`${iaPct(p.pct)} por operación en la prueba (todas las entradas posibles: ${iaPct(p.base_pct)})`]);}
+  G.push(['Da 3 o más entradas propias por día',pd>=3,`unas ${iaN(pd,1)} por día que ganaron en la prueba`]);
+  const C=IAOPS.filter(x=>x.st!=='open');if(C.length>=5){const net=C.reduce((s,x)=>s+(x.pnl||0),0);G.push(['Sus operaciones en vivo ganan plata',net>0,`${fusd2(net)} en ${C.length} cerradas`]);}
+  return G;}
 function iaProg(){const P=IAM&&IAM.progreso;if(!P)return '';const v=P.valor,h=(P.hist||[]).filter(x=>x[1]!=null).slice(-30);
-  const w=v==null?0:Math.min(100,v/1.5),col=v==null?'#3d6db3':v>=100?'#2e9d6a':v>=60?'#3d6db3':'#8a5a2b';
-  const pts=h.length>1?h.map((x,i)=>`${(i/(h.length-1)*100).toFixed(1)},${(28-Math.min(150,x[1])/150*26).toFixed(1)}`).join(' '):'';
+  const lv=v==null?0:IA_META.filter(g=>v>=g).length,prev=lv?IA_META[lv-1]:0,next=IA_META[lv]||null;
+  const w=v==null?0:next?Math.max(2,Math.min(100,(v-prev)/(next-prev)*100)):100,col=v==null?'#3d6db3':lv?'#2e9d6a':v>=60?'#3d6db3':'#8a5a2b';
+  const top=Math.max(150,...h.map(x=>x[1]),next||0);
+  const pts=h.length>1?h.map((x,i)=>`${(i/(h.length-1)*100).toFixed(1)},${(28-Math.min(top,x[1])/top*26).toFixed(1)}`).join(' '):'';
+  const G=iaGoals(),ok=G.filter(g=>g[1]).length,nxt=next===100?'igualar a los bots (100 %)':next?`sacar ${iaN(next/100,next%100?2:0)} veces la ganancia de los bots (${next} %)`:'superó todos los objetivos';
   return `<div class="ia-prog"><div class="ia-prog-t"><b>Aprendizaje de la IA contra los bots</b><span>${v==null?'sin datos':iaN(v,0)+' %'}</span></div>
-    <div class="ia-bar2"><i style="width:${w}%;background:${col}"></i><em style="left:${100/1.5}%" title="100 % = iguala a los bots"></em></div>
-    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes para medirse.':`En los últimos 3 meses la IA saca el ${iaN(v,0)} % de la ganancia que sacan los bots con las mismas señales (la marca es el 100 %: igualarlos).`}</div>
+    <div class="ia-lvl"><b>Nivel ${lv}</b> ${lv?`· ya superó el ${prev} %`:'· todavía no iguala a los bots'} · <span>próximo objetivo: ${nxt}</span></div>
+    <div class="ia-bar2"><i style="width:${w}%;background:${col}"></i></div>
+    <div class="ia-bar-l"><span>${prev} %</span><span>${next?next+' %':'🏆'}</span></div>
+    <div class="ia-metas">${IA_META.map((g,i)=>`<span class="${i<lv?'ok':i===lv?'cur':''}">${i<lv?'✓ ':''}${g} %</span>`).join('')}</div>
+    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes para medirse.':`En los últimos 3 meses la IA saca el ${iaN(v,0)} % de la ganancia que sacan los bots con las mismas señales. Cuando llega a un objetivo no se detiene: pasa al siguiente.`}</div>
     ${pts?`<svg class="ia-spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#6f8fc4" stroke-width="1.5"/></svg><div class="ia-mut">Evolución de los últimos ${h.length} estudios diarios.</div>`:''}
+    ${G.length?`<div class="ia-goals"><div class="ia-prog-t"><b>Objetivos de calidad</b><span style="font-size:14px">${ok} de ${G.length}</span></div>${G.map(g=>`<div class="ia-goal ${g[1]?'ok':''}"><i>${g[1]?'✓':'✗'}</i><div>${esc(g[0])}<small>${esc(g[2])}</small></div></div>`).join('')}
+      <div class="ia-mut">Siempre en este orden: que cada operación sea eficiente, perder lo mínimo y, sin perder eso, dar la mayor cantidad de señales.</div></div>`:''}
     ${(P.notas||[]).map(n=>`<div class="ia-nota">• ${esc(n)}</div>`).join('')}</div>`;}
-/* ---------- entradas propias: la IA busca sola en todas las monedas ---------- */
-var IAIDEAS=[],IAIH=[],IAIBUSY=false,IAIT=0;try{IAIH=JSON.parse(localStorage.getItem('cv_ia_ideas')||'[]')||[];}catch(e){}
-const saveIAIH=()=>{try{localStorage.setItem('cv_ia_ideas',JSON.stringify(IAIH.slice(-200)))}catch(e){}};
+/* ---------- operaciones propias: la IA busca sola en todas las monedas y opera en simulación ---------- */
+const IAOP_CFG={tr:{mg:350,lev:10,age:7*864e5,nm:'TRADING',cool:24*36e5,max:4},sh:{mg:50,lev:15,age:12*36e5,nm:'SHOOTER',cool:36e5,max:6}};
+const IA_FEE=.0008; // comisiones de entrada y salida sobre el tamaño de la posición
+var IAIDEAS=[],IAOPS=[],IAIBUSY=false,IAIT=0,IATRK=false,IANTF=false,IAOF='all';
+function iaOpFix(x){const c=IAOP_CFG[x.f]||IAOP_CFG.sh;x.mg=x.mg||c.mg;x.lev=x.lev||c.lev;x.age=x.age||c.age;x.hit=x.hit||0;
+  if(x.real==null){x.real=0;for(let k=0;k<x.hit;k++)x.real+=x.dir*(x.tps[k]/x.entry-1)/3;}
+  if(x.st!=='open'&&x.pnl==null){const r=x.res!=null?x.res:x.real;x.real=r;x.pnl=Math.max(-x.mg,x.mg*x.lev*(r-IA_FEE));x.closeT=x.closeT||x.t;}if(x.st!=='open'&&!x.why)x.why=x.st==='fail'?'Tocó el stop':x.hit>=3?'Llegó a los 3 objetivos':x.st==='exp'?'Se cumplió el tiempo máximo':`Tocó ${x.hit}/3 objetivos`;return x;}
+try{IAOPS=JSON.parse(localStorage.getItem('cv_ia_ops')||'null');if(!Array.isArray(IAOPS))IAOPS=(JSON.parse(localStorage.getItem('cv_ia_ideas')||'[]')||[]);IAOPS=IAOPS.map(iaOpFix);IANTF=localStorage.getItem('cv_ia_ntf')==='1';}catch(e){IAOPS=[];}
+const saveIAOPS=()=>{try{localStorage.setItem('cv_ia_ops',JSON.stringify(IAOPS.slice(-300)))}catch(e){}};
+const iaOpLive=(x,p)=>x.mg*x.lev*(x.real+x.dir*(p/x.entry-1)*(3-x.hit)/3-IA_FEE);
+function iaNtf(title,body,x){if(!IANTF)return;try{notify('🧠 IA · '+title,body,'ia-'+x.id,{sym:x.sym,tf:x.tf});}catch(e){}}
+const iaOpNm=x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} (${(IAOP_CFG[x.f]||{}).nm||''} ${x.tf})`;
+function iaOpClose(x,px,st,why,t){x.real+=x.dir*(px/x.entry-1)*(3-x.hit)/3;x.st=st;x.why=why;x.closeT=t||Date.now();x.closePx=px;x.res=x.real;
+  x.pnl=Math.max(-x.mg,x.mg*x.lev*(x.real-IA_FEE));iaNtf(`${st==='fail'?'✕':'✓'} cerró ${iaOpNm(x)}`,`${why} · ${fusd2(x.pnl)} (${x.mg} USD × ${x.lev})`,x);}
+/* una vela de 1 min: primero el stop (lo más prudente), después los objetivos. Tocado el objetivo 1, el stop pasa a la entrada */
+function iaOpStep(x,k){if(x.st!=='open')return false;const d=x.dir,stop=x.hit?x.entry:x.stop;
+  if(d>0?k.low<=stop:k.high>=stop){iaOpClose(x,stop,x.hit?'win':'fail',x.hit?`Tocó ${x.hit}/3 objetivos y salió en la entrada`:'Tocó el stop',k.t+6e4);return true;}
+  let ch=false;while(x.hit<3&&(d>0?k.high>=x.tps[x.hit]:k.low<=x.tps[x.hit])){x.real+=d*(x.tps[x.hit]/x.entry-1)/3;x.hit++;ch=true;
+    if(x.hit<3)iaNtf(`🎯 objetivo ${x.hit} en ${iaOpNm(x)}`,`Cerró 1/3 en ${fp(x.tps[x.hit-1])}${x.hit===1?' · el stop pasa a la entrada: ya no puede perder':''}`,x);}
+  if(x.hit>=3){x.st='win';x.why='Llegó a los 3 objetivos';x.closeT=k.t+6e4;x.closePx=x.tps[2];x.res=x.real;x.pnl=x.mg*x.lev*(x.real-IA_FEE);iaNtf(`✓ 3 objetivos en ${iaOpNm(x)}`,`${fusd2(x.pnl)} (${x.mg} USD × ${x.lev})`,x);}
+  return ch;}
+/* seguimiento con velas de 1 minuto desde que abrió (aunque la página haya estado cerrada) */
+async function iaOpsTrack(){if(IATRK)return;IATRK=true;let ch=false;
+  try{for(const x of IAOPS){if(x.st!=='open')continue;let from=x.chk||x.t;
+      for(let g=0;g<15&&x.st==='open';g++){let b=null;try{b=(await getJ(`${API}/klines?symbol=${x.sym}&interval=1m&startTime=${from}&limit=1000`)).map(toBar);}catch(e){}
+        if(!b){const p=tickers[x.sym]&&tickers[x.sym].c;if(p&&iaOpStep(x,{t:Date.now()-6e4,high:p,low:p,close:p}))ch=true;break;}
+        const now=Date.now();let n=0;for(const k of b){if(k.t+6e4>now)break;if(k.t>=x.t+x.age)break;n++;if(iaOpStep(x,k))ch=true;from=k.t+6e4;if(x.st!=='open')break;}
+        x.chk=from;ch=true;if(b.length<1000||!n)break;}
+      if(x.st==='open'&&Date.now()>=x.t+x.age){const p=tickers[x.sym]&&tickers[x.sym].c||x.entry;iaOpClose(x,p,x.hit||x.dir*(p-x.entry)>0?'win':'exp','Se cumplió el tiempo máximo');ch=true;}}}
+  finally{IATRK=false;if(ch){saveIAOPS();if(IAOPEN)iaRender();}}}
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
-    for(const [f,tf,U,cap,r] of [['tr','4h',universe('medio'),.036,.5],['sh','15m',universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;if(!E||E.thr==null||!PR||!(PR.pct>0&&PR.pct>PR.base_pct))continue; // solo busca donde sus entradas propias ganaron en la pruebaconst bs=await btcSide(tf);
-      for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
-          if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
-          else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
-          if(!d)continue;const p=IA.predict(E.model,IA.entryX(P,j,d,bs));if(p<E.thr)continue;
-          const sl=Math.min(cap,Math.max(.004,3*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],why:IA.explain(E.model,IA.entryX(P,j,d,bs),IA.ENTRY_F).slice(0,3)});}catch(e){}
-        await new Promise(z=>setTimeout(z,80));}}
-    IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,8);
-    for(const x of IAIDEAS)if(!IAIH.some(y=>y.sym===x.sym&&y.f===x.f&&x.t-y.t<(x.f==='tr'?24*36e5:36e5)))IAIH.push({id:x.id,f:x.f,tf:x.tf,sym:x.sym,dir:x.dir,p:x.p,entry:x.entry,sl:x.sl,tps:x.tps,stop:x.stop,t:x.t,hit:0,st:'open'});
-    saveIAIH();}finally{IAIBUSY=false;if(IAOPEN)iaRender();}}
-/* seguimiento de las ideas pasadas con el precio en vivo (stop a la entrada después del objetivo 1) */
-function iaIdeasTrack(){let ch=false;const now=Date.now();
-  for(const x of IAIH){if(x.st!=='open')continue;const p=tickers[x.sym]&&tickers[x.sym].c;if(!p)continue;const d=x.dir;
-    while(x.hit<3&&d*(p-x.tps[x.hit])>=0){x.hit++;ch=true;}
-    const stop=x.hit?x.entry:x.stop,maxAge=x.f==='tr'?7*864e5:12*36e5;
-    if(x.hit>=3){x.st='win';x.res=d*(x.tps[2]/x.entry-1);ch=true;}else if(d*(stop-p)>=0){x.st=x.hit?'win':'fail';x.res=x.hit?d*(x.tps[0]/x.entry-1)/3:-x.sl;ch=true;}
-    else if(now-x.t>maxAge){x.st=x.hit?'win':'exp';x.res=d*(p/x.entry-1);ch=true;}}
-  if(ch)saveIAIH();}
-function iaIdeasHTML(){const T=f=>IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;
-  const st=[['tr','Para TRADING (4 h)'],['sh','Para SHOOTER (15 min)']].map(([f,nm])=>{const x=T(f);if(!x||!x.n)return '';
-    const ok=x.pct>0&&x.pct>x.base_pct;return `<div class="ia-mut">${nm}: en los meses que no vio, sus entradas propias llegaron al objetivo 1 el ${iaN(x.obj1,0)} % (todas las entradas posibles: ${iaN(x.base_obj1,0)} %), con ${iaPct(x.pct)} por operación (todas: ${iaPct(x.base_pct)}) y unas ${iaN(x.por_dia,1)} por día. ${ok?'<b class="up">Las muestra.</b>':'<b>No las muestra todavía: no ganaron plata.</b>'}</div>`;}).join('');
-  const now=IAIDEAS.length?IAIDEAS.map(x=>`<div class="ia-op idea"><div class="ia-h">💡 <b>${x.sym.replace('USDT','')} ${x.dir>0?'▲ LONG':'▼ SHORT'}</b> <small>idea propia · velas de ${x.tf} · puntaje ${Math.round(x.p*100)} %</small></div>
-      <div>Entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}</div><div class="ia-mut">Lo que más pesa: ${esc(iaWhy(x.why))}</div></div>`).join('')
-    :`<div class="ia-mut">${IAIBUSY||!IAIT?'Buscando entradas en todas las monedas…':'Ahora no encontró ninguna entrada con puntaje alto.'}</div>`;
-  const done=IAIH.filter(x=>x.st!=='open'),won=done.filter(x=>x.res>0).length;
-  return `${now}${st}${done.length?`<div class="ia-mut">Desde que empezó a buscar en este navegador: ${done.length} ideas cerradas, ${won} ganadas (${Math.round(won/done.length*100)} %), ${IAIH.filter(x=>x.st==='open').length} en curso.</div>`:''}
-    <div class="ia-mut">No son señales de los bots: la IA las encontró sola mirando todas las monedas. Están en práctica: no son un consejo.</div>`;}
+    for(const [f,tfs,U,cap,r] of [['tr',['4h'],universe('medio'),.036,.5],['sh',['15m','30m'],universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
+      if(!E||E.thr==null||!PR||!(PR.pct>0&&PR.pct>PR.base_pct))continue; // solo busca donde sus entradas propias ganaron en la prueba
+      for(const tf of tfs){const bs=await btcSide(tf);
+        for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
+            if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
+            else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
+            if(!d)continue;const xv=IA.entryX(P,j,d,bs),p=IA.predict(E.model,xv);if(p<E.thr)continue;
+            const sl=Math.min(cap,Math.max(.004,3*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],why:IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
+          await new Promise(z=>setTimeout(z,80));}}}
+    IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
+    for(const x of IAIDEAS){const C=IAOP_CFG[x.f];if(Date.now()-x.t>TF_MS[x.tf])continue; // solo velas recién cerradas: precio de entrada real
+      if(IAOPS.some(y=>y.sym===x.sym&&y.f===x.f&&(y.st==='open'||x.t-y.t<C.cool)))continue;
+      if(IAOPS.filter(y=>y.f===x.f&&y.st==='open').length>=C.max)continue;
+      const o=iaOpFix({id:x.id,f:x.f,tf:x.tf,sym:x.sym,dir:x.dir,p:x.p,entry:x.entry,sl:x.sl,tps:x.tps,stop:x.stop,t:x.t,hit:0,st:'open',why0:iaWhy(x.why)});IAOPS.push(o);
+      iaNtf(`nueva operación ${iaOpNm(o)}`,`Entrada ${fp(o.entry)} · objetivo 1 ${fp(o.tps[0])} · stop ${fp(o.stop)} · puntaje ${Math.round(o.p*100)} % · ${o.mg} USD × ${o.lev}`,o);}
+    saveIAOPS();}finally{IAIBUSY=false;if(IAOPEN)iaRender();}}
+function iaOpsStats(L){const C=L.filter(x=>x.st!=='open'),g=C.filter(x=>x.pnl>0).reduce((s,x)=>s+x.pnl,0),l=C.filter(x=>x.pnl<0).reduce((s,x)=>s+x.pnl,0),n=C.length;
+  return {all:L.length,n,open:L.length-n,o1:n?C.filter(x=>x.hit>=1).length/n*100:null,o3:n?C.filter(x=>x.hit>=3).length/n*100:null,stop:C.filter(x=>x.st==='fail').length,
+    win:n?C.filter(x=>x.pnl>0).length/n*100:null,g,l,net:g+l,avg:n?(g+l)/n:null,pf:l<0?g/-l:null,worst:n?Math.min(...C.map(x=>x.pnl)):null,best:n?Math.max(...C.map(x=>x.pnl)):null};}
+function iaOpsHTML(){const L=IAOPS.filter(x=>IAOF==='all'||x.f===IAOF),S=iaOpsStats(L),T=f=>IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;
+  const d0=IAOPS.length?Math.min(...IAOPS.map(x=>x.t)):0;
+  const res=x=>{if(x.st==='open'){const p=tickers[x.sym]&&tickers[x.sym].c,v=p?iaOpLive(x,p):0;return `<span class="live">EN VIVO</span> <span class="${v>=0?'up':'dn'}">${fusd2(v)}</span> <span class="ia-mut">· ${x.hit}/3</span>`;}
+    return `<span class="${x.pnl>=0?'up':'dn'}">${x.st==='fail'?'✕':'✓'} ${esc(x.why||'')} · ${fusd2(x.pnl||0)}</span>`;};
+  const rows=L.slice().sort((a,b)=>(a.st==='open'?0:1)-(b.st==='open'?0:1)||b.t-a.t).slice(0,60).map(x=>`<div class="ia-orow ${x.st}"><div><span class="ht">${new Date(x.t).toLocaleString('es-AR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}</span> <b>${x.sym.replace('USDT','')}</b> <span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲ LONG':'▼ SHORT'}</span> <small>${(IAOP_CFG[x.f]||{}).nm} · ${x.tf} · puntaje ${Math.round(x.p*100)} % · ${x.mg} USD × ${x.lev}</small></div>
+      <div>${res(x)}</div><div class="ia-mut">Entrada ${fp(x.entry)} · objetivos ${x.tps.map(fp).join(' / ')} · stop ${fp(x.hit?x.entry:x.stop)}${x.hit&&x.st==='open'?' (en la entrada)':''}${x.why0?` · por qué entró: ${esc(x.why0)}`:''}</div></div>`).join('');
+  const pr=[['tr','TRADING (4 h)'],['sh','SHOOTER (15 y 30 min)']].map(([f,nm])=>{const x=T(f);if(!x||!x.n)return '';const ok=x.pct>0&&x.pct>x.base_pct;
+    return `<div class="ia-mut">${nm}: en los meses que no vio, sus entradas llegaron al objetivo 1 el ${iaN(x.obj1,0)} % (todas las posibles: ${iaN(x.base_obj1,0)} %), ${iaPct(x.pct)} por operación (todas: ${iaPct(x.base_pct)}), unas ${iaN(x.por_dia,1)} por día${x.peor!=null?`, peor operación ${iaPct(x.peor)}`:''}. ${ok?'<b class="up">Opera.</b>':'<b>No opera todavía: no ganaron plata.</b>'}</div>`;}).join('');
+  const ideas=IAIDEAS.length?`<div class="ia-mut">Mejores puntajes ahora: ${IAIDEAS.slice(0,5).map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'▲':'▼'} ${x.tf} (${Math.round(x.p*100)} %)`).join(' · ')}</div>`:`<div class="ia-mut">${IAIBUSY||!IAIT?'Buscando entradas en todas las monedas…':'En la última búsqueda no encontró ninguna entrada con puntaje alto. Busca de nuevo cada 15 minutos.'}</div>`;
+  return `<div class="ia-ops-h"><div class="ia-tabs">${[['all','Todas'],['tr','TRADING'],['sh','SHOOTER']].map(([k,t])=>`<button type="button" data-iaof="${k}" class="${IAOF===k?'on':''}">${t}</button>`).join('')}</div>
+      <button type="button" class="iab ${IANTF?'on':''}" data-iantf="1">🔔 Avisos de la IA: ${IANTF?'activados':'desactivados'}</button></div>
+    <div class="int-g ia-g"><div>Operaciones<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
+      <div>Llegó al objetivo 1<b>${pc0(S.o1)}</b><small>ganadas: ${pc0(S.win)}</small></div>
+      <div>Llegó a los 3 objetivos<b>${pc0(S.o3)}</b><small>de las cerradas</small></div>
+      <div>Tocaron el stop<b class="dn">${S.stop}</b><small>${S.n?Math.round(S.stop/S.n*100)+' % de las cerradas':'—'}</small></div>
+      <div>Ganado / perdido<b><span class="up">${intMoney(S.g)}</span></b><small class="dn">${intMoney(S.l)}</small></div>
+      <div>Resultado neto<b class="${S.net>=0?'up':'dn'}">${intMoney(S.net)}</b><small>${S.avg!=null?intMoney(S.avg)+' por operación':'—'}</small></div>
+      <div>Factor de ganancia<b>${S.pf!=null?S.pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div>
+      <div>Mejor / peor<b class="up">${S.best!=null?intMoney(S.best):'—'}</b><small class="dn">${S.worst!=null?intMoney(S.worst):'—'}</small></div></div>
+    <div class="ia-mut">Simulación: ${IAOP_CFG.tr.mg} USD × ${IAOP_CFG.tr.lev} en TRADING y ${IAOP_CFG.sh.mg} USD × ${IAOP_CFG.sh.lev} en SHOOTER, con comisiones. Cierra 1/3 en cada objetivo y, tocado el objetivo 1, el stop pasa a la entrada. Se sigue con velas de 1 minuto${d0?` · desde el ${new Date(d0).toLocaleDateString('es-AR')}`:''}.</div>
+    ${ideas}${pr}
+    <div class="ia-list ia-olist">${rows||'<div class="ia-mut" style="padding:8px">Todavía no abrió ninguna operación. Abre sola cuando una entrada supera su umbral, solo en los modos donde sus entradas ganaron en la prueba. La búsqueda corre mientras la página está abierta.</div>'}</div>
+    <div class="ia-mut">No son señales de los bots: la IA las encontró sola mirando todas las monedas. Es una simulación en práctica, no un consejo.</div>`;}
+function iaOpsTxt(){const S=iaOpsStats(IAOPS);if(!S.all)return 'Todavía no abrí ninguna operación propia. Abro solas cuando una entrada supera mi umbral y solo en los modos donde mis entradas ganaron en la prueba (hoy: '+(['tr','sh'].filter(f=>{const p=IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;return p&&p.pct>0&&p.pct>p.base_pct;}).map(f=>IAOP_CFG[f].nm).join(' y ')||'ninguno')+').';
+  const open=IAOPS.filter(x=>x.st==='open');
+  return `Mis operaciones propias (simulación): ${S.all} en total, ${S.n} cerradas y ${S.open} en curso.${S.n?`\nLlegaron al objetivo 1 el ${Math.round(S.o1)} %, ganadas el ${Math.round(S.win)} %, ${S.stop} tocaron el stop. Resultado neto ${intMoney(S.net)} (${intMoney(S.avg)} por operación), factor de ganancia ${S.pf!=null?S.pf.toFixed(2):'—'}.`:''}`
+    +(open.length?'\nAbiertas ahora:\n'+open.map(x=>{const p=tickers[x.sym]&&tickers[x.sym].c;return `${iaOpNm(x)} · entrada ${fp(x.entry)} · ${x.hit}/3 objetivos${p?` · ahora ${fusd2(iaOpLive(x,p))}`:''}`;}).join('\n'):'');}
 /* ---------- noticias que mueven el mercado ---------- */
 function iaNewsHTML(){const L=(NTOP&&NTOP.items&&NTOP.items.length?NTOP.items:NEWS.items.filter(n=>n.imp>=2)).slice(0,5),N=IAM&&IAM.noticias||{};
   const it=L.length?L.map(n=>`<div class="ia-news"><span class="${n.sent>0?'up':n.sent<0?'dn':'ia-mut'}">${n.sent>0?'▲':n.sent<0?'▼':'•'}</span> ${esc(n.title)} <small>${esc(n.source||'')} · ${ago(n.t)}</small></div>`).join(''):'<div class="ia-mut">Cargando noticias…</div>';
@@ -4098,7 +4174,9 @@ function iaContext(q){const R=IAM||{},syms=iaSymsIn(q),recs=iaRecs(),fmtRec=r=>`
 Reglas: usá solo los datos de abajo para hablar de resultados, no inventes números; si no tenés el dato, decilo. Explicá el porqué de cada salida con los datos (objetivos tocados, stop, probabilidad, indicadores). No des asesoramiento financiero personalizado ni prometas ganancias: aclará que es información para que la persona decida. Sé honesto: hoy la IA todavía no le gana a los bots en los meses de prueba.
 CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; TRADING+: tendencia muy fuerte ya moviéndose a favor con flujo a favor, 350 USD × 10; SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída moderada, 500 USD × 8). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
 EFECTIVIDAD (operaciones ganadas y ganancia por operación en % del margen): ${JSON.stringify(R.resumen||{})}
-AUTOEVALUACIÓN: saca el ${R.progreso&&R.progreso.valor} % de la ganancia de los bots. ${(R.progreso&&R.progreso.notas||[]).join(' ')}
+AUTOEVALUACIÓN: saca el ${R.progreso&&R.progreso.valor} % de la ganancia de los bots (objetivos sucesivos: ${IA_META.join(', ')} %; cuando llega a uno sigue con el próximo). Objetivos de calidad: ${iaGoals().map(g=>(g[1]?'✓ ':'✗ ')+g[0]+' ('+g[2]+')').join('; ')}.
+OPERACIONES PROPIAS DE LA IA: ${iaOpsTxt().replace(/\n/g,' · ')}
+ ${(R.progreso&&R.progreso.notas||[]).join(' ')}
 PRUEBA DE SALIDAS: TRADING/TRADING+ ${JSON.stringify(R.tr&&R.tr.exit&&R.tr.exit.test&&{bot:R.tr.exit.test.bot,ia:R.tr.exit.test.ia,auc:R.tr.exit.test.auc})} · SHOOTER ${JSON.stringify(R.sh&&R.sh.exit&&R.sh.exit.test&&{bot:R.sh.exit.test.bot,ia:R.sh.exit.test.ia,auc:R.sh.exit.test.auc})}
 INDICADORES QUE MÁS PESAN PARA SALIR: ${(R.tr&&R.tr.exit&&R.tr.exit.imp||[]).slice(0,6).map(x=>IA.NAMES[x[0]]||x[0]).join(', ')}
 ENTRADAS PROPIAS (prueba): TRADING ${JSON.stringify(R.tr&&R.tr.entry&&R.tr.entry.test.propias)} SHOOTER ${JSON.stringify(R.sh&&R.sh.entry&&R.sh.entry.test.propias)}
@@ -4158,7 +4236,7 @@ const iaTol=w=>w.length>=8?2:w.length>=4?1:0;
 /* ¿aparece alguna de estas palabras (o algo parecido)? las que terminan en * aceptan cualquier final */
 function iaHas(n,words){const toks=n.split(' ');for(const w of words){if(w.includes(' ')){if(n.includes(w))return true;continue;}
     const pre=w.endsWith('*'),k=pre?w.slice(0,-1):w;for(const t of toks){if(pre?t.startsWith(k)||(t.length>=k.length-1&&[k.length-1,k.length,k.length+1].some(L=>iaLev(t.slice(0,L),k)<=iaTol(k))):t===k||iaLev(t,k)<=iaTol(k))return true;}}return false;}
-const IA_STOP=new Set('que por con los las del una hoy mas muy sin bot vos ves hay son como esta para entro tengo cual cuando donde algo todo todas bien mal buena bueno entrar salir sali gane gano perdi modo modos dame decime ahora esto ese esa eso tal vez dia dias hora horas semana mes meses ano entre sobre bajo alto alta baja precio long short subir bajar compra venta comprar vender senal senales moneda monedas cripto criptos crypto ganar perder'.split(' '));
+const IA_STOP=new Set('uso usar pongo pone meto invierto stop objetivo objetivos apalancamiento margen riesgo cuanto cuanta abriste operacion operaciones tus vos conviene cual donde nivel niveles soporte resistencia liquidacion tamano posicion compara comparar versus capital tengo dolares usd usdt que por con los las del una hoy mas muy sin bot vos ves hay son como esta para entro tengo cual cuando donde algo todo todas bien mal buena bueno entrar salir sali gane gano perdi modo modos dame decime ahora esto ese esa eso tal vez dia dias hora horas semana mes meses ano entre sobre bajo alto alta baja precio long short subir bajar compra venta comprar vender senal senales moneda monedas cripto criptos crypto ganar perder'.split(' '));
 function iaSymsIn2(q){const out=new Set(),n=iaNorm(q),toks=n.split(' ');
   const all=Object.values(tickers).filter(t=>/USDT$/.test(t.s)&&!STABLE.test(t.s)&&t.q>2e6).sort((a,b)=>b.q-a.q).map(t=>t.s.replace('USDT','').toLowerCase());
   for(const t of toks){if(t.length<2||IA_STOP.has(t))continue;
@@ -4179,12 +4257,51 @@ function iaEficiencia(){const j=window.HISTYR,R=IAM&&IAM.resumen;if(!j||!j.ops)r
   for(const o of j.ops){if(o[6]===0)continue;const k=o[0]==='x'?'SHOOTER':o[1]==='tp-x'?'TRADING+':'TRADING';const b=by[k]=by[k]||{n:0,h:0,u:0};b.n++;if(o[5]>=1)b.h++;b.u+=o[7];}
   const mg={TRADING:350,'TRADING+':350,SHOOTER:50},tf={TRADING:'4 h','TRADING+':'4 h',SHOOTER:'15 y 30 min'};
   return 'Eficiencia de cada modo en el último año (simulación con Binance):\n'+Object.entries(by).map(([k,b])=>`${k} (${tf[k]}): llega al objetivo 1 el ${Math.round(b.h/b.n*100)} %, ${iaPct(b.u/b.n/mg[k]*100)} del margen por operación, ${iaN(b.n/365,1)} señales por día`).join('\n')+'\nACCIONES (diario): llega al objetivo 1 el 69 %, +5,9 % por operación, unas 8 por mes.'+(R?`\nLa IA en los últimos 3 meses: ${['TRADING','TRADING+','SHOOTER'].map(m=>R['3meses'][m]&&R['3meses'][m].n?`${m} ${iaN(R['3meses'][m].ia_gana,0)} % ganadas (${iaPct(R['3meses'][m].ia_pct)})`:'').filter(Boolean).join(' · ')}.`:'');}
+/* niveles de una moneda con la misma geometría que usan los bots (stop 3 × ATR con tope, objetivos en fracciones del stop) */
+async function iaGeo(sym){const s=sym+'USDT';if(!tickers[s])return null;
+  const [b4,b15]=await Promise.all([kl(s,'4h',300),kl(s,'15m',300)]);const c4=b4.slice(0,-1),c15=b15.slice(0,-1),P=IA.prep(c4),Q=IA.prep(c15),j=c4.length-1,k=c15.length-1,px=tickers[s].c;
+  const st=P.st[j]||1,mk=(atr,cap,r,d)=>{const sl=Math.min(cap,Math.max(.004,3*atr/px));return {d,sl,stop:px*(1-d*sl),tps:[1,2,3].map(n=>px*(1+d*n*r*sl))};};
+  let p=null;const E=IAM&&IAM.tr&&IAM.tr.entry;if(E){try{p=IA.predict(E.model,IA.entryX(P,j,st,0));}catch(e){}}
+  return {px,st,tr:mk(P.atr[j]||0,.036,.5,st),sh:mk(Q.atr[k]||0,.05,.35,1),atr4:(P.atr[j]||0)/px,atr15:(Q.atr[k]||0)/px,r14:P.r14[j],adx:P.adx[j],p,
+    al:st===Math.sign(P.e21[j]-P.e50[j])&&(P.e200[j]==null||st===Math.sign(px-P.e200[j]))};}
+const iaLiqLev=sl=>Math.max(1,Math.floor(.8/sl)); // apalancamiento máximo para que la liquidación quede bien lejos del stop
+async function iaLevTxt(sym,q){const cap=(q.match(/(?:^|[^x\w$])(\d[\d.,]*)(?!\s*x)(?!\s*%)/i)||[])[1],C0=cap?+cap.replace(/\.(?=\d{3}\b)/g,'').replace(',','.'):null,C=C0&&C0>=20?C0:null;
+  const lines=['Cómo dimensionar la operación (lo que usa la página):','• TRADING y TRADING+: 350 USD × 10. SHOOTER: 50 USD × 15. ACCIONES: 500 USD × 8.','• Regla de oro: que el stop esté antes que la liquidación. Con × 10 te liquidan con un movimiento de ~10 % en contra; con × 15, de ~6,5 %; con × 20, de ~5 %.','• Arriesgá 1 a 2 % de tu capital por operación: margen = capital × riesgo ÷ (distancia al stop × apalancamiento).'];
+  if(sym){try{const g=await iaGeo(sym);if(g){lines.push(`\n${sym} ahora (${fp(g.px)}): se mueve ${iaN(g.atr4*100,1)} % por vela de 4 h y ${iaN(g.atr15*100,2)} % por vela de 15 min.`);
+      lines.push(`• En 4 h el stop queda a ${iaN(g.tr.sl*100,1)} % → apalancamiento máximo sensato × ${Math.min(20,iaLiqLev(g.tr.sl))} (la página usa × 10).`);
+      lines.push(`• En 15 min el stop queda a ${iaN(g.sh.sl*100,1)} % → máximo × ${Math.min(25,iaLiqLev(g.sh.sl))} (la página usa × 15).`);
+      if(C){const r1=C*.01,r2=C*.02,lv=Math.min(10,iaLiqLev(g.tr.sl));lines.push(`• Con ${C} USD y riesgo de 1–2 %: en 4 h con × ${lv}, margen de ${iaN(r1/(g.tr.sl*lv),0)} a ${iaN(r2/(g.tr.sl*lv),0)} USD (si toca el stop perdés ${iaN(r1,0)} a ${iaN(r2,0)} USD).`);}}}catch(e){lines.push(`\nNo pude bajar las velas de ${sym} para calcular su volatilidad.`);}}
+  else if(C)lines.push(`\nCon ${C} USD: arriesgando 1–2 % perdés como mucho ${iaN(C*.01,0)} a ${iaN(C*.02,0)} USD si toca el stop. Decime la moneda y te calculo el margen.`);
+  lines.push('Es una guía general de manejo de riesgo, no un consejo de inversión.');return lines.join('\n');}
+async function iaLevels(sym){const s=sym+'USDT',live=['medio','x'].flatMap(m=>(SIG[m]||[]).filter(x=>x.state==='live'&&x.sym===s).map(x=>({m,x})));
+  const own=IAOPS.filter(x=>x.st==='open'&&x.sym===s),out=[];
+  for(const {m,x} of live)out.push(`Señal viva de ${m==='x'?'SHOOTER':x.plus?'TRADING+':'TRADING'} (${x.dir>0?'LONG':'SHORT'}): entrada ${fp(x.zl)} – ${fp(x.zh)} · objetivo 1 ${fp(x.tp0||x.tp1)} · stop ${fp(x.sl)}.`);
+  for(const x of own)out.push(`Mi operación propia ${iaOpNm(x)}: objetivos ${x.tps.map(fp).join(' / ')} · stop ${fp(x.hit?x.entry:x.stop)}.`);
+  try{const g=await iaGeo(sym);if(!g)return `No encuentro ${sym} entre las monedas con USDT.`;const D=g.tr.d>0?'LONG':'SHORT';
+    out.push(`Si entraras ahora a ${fp(g.px)} con las reglas de la página:`);
+    out.push(`• 4 h (${D}, a favor del Supertrend${g.al?', tendencia alineada':', ojo: tendencia mezclada'}): stop ${fp(g.tr.stop)} (${iaN(g.tr.sl*100,1)} %) · objetivos ${g.tr.tps.map(fp).join(' / ')}.`);
+    out.push(`• 15 min (LONG de rebote, como SHOOTER): stop ${fp(g.sh.stop)} (${iaN(g.sh.sl*100,1)} %) · objetivos ${g.sh.tps.map(fp).join(' / ')}.`);
+    out.push('Manejo: cerrá 1/3 en cada objetivo y, al tocar el objetivo 1, pasá el stop a la entrada. El stop sale de 3 veces el ATR (lo que se mueve normalmente) con un tope, para no salir por ruido.');}catch(e){out.push('No pude bajar las velas para calcular los niveles.');}
+  if(!live.length)out.push('Ahora no hay una señal de los bots en esta moneda: esto son niveles de referencia, no una señal.');
+  return `🎯 ${sym}\n`+out.join('\n');}
+async function iaCompare(syms){const G=await Promise.all(syms.slice(0,3).map(s=>iaGeo(s).catch(()=>null)));const L=[];
+  syms.slice(0,3).forEach((s,i)=>{const g=G[i];if(!g){L.push(`${s}: sin datos.`);return;}
+    const live=['medio','x'].some(m=>(SIG[m]||[]).some(x=>x.state==='live'&&x.sym===s+'USDT'));
+    g.sc=(g.p||0)*100+(g.al?15:0)+(live?25:0)+(g.adx>=25?5:0)-(g.r14>75||g.r14<25?10:0);
+    L.push(`${s}: ${g.st>0?'tendencia alcista':'tendencia bajista'} en 4 h${g.al?' y alineada':' pero mezclada'}, RSI ${g.r14!=null?g.r14.toFixed(0):'—'}, ADX ${g.adx!=null?g.adx.toFixed(0):'—'}, puntaje de la IA ${g.p!=null?Math.round(g.p*100)+' %':'—'}, volatilidad ${iaN(g.atr4*100,1)} % por vela${live?' · tiene señal viva de un bot':''}.`);});
+  const ok=G.map((g,i)=>[g,syms[i]]).filter(x=>x[0]).sort((a,b)=>b[0].sc-a[0].sc);
+  if(ok.length>1)L.push(`\nHoy se ve mejor ${ok[0][1]}${ok[0][0].sc-ok[1][0].sc<8?', aunque por poco':''}: ${ok[0][0].al?'tendencia más ordenada':'mejor puntaje'}${ok[0][0].atr4<ok[1][0].atr4?' y se mueve menos (stop más corto)':''}. No es un consejo de inversión.`);
+  return '⚖️ Comparación\n'+L.join('\n');}
 async function iaLocalAnswer2(q){const n=iaNorm(q),syms=iaSymsIn2(q),sym=syms[0];
   if(iaHas(n,['explica*','significa*','que es','que son','como funciona','para que sirve','que hace','definicion'])){const e=iaExplain(n);if(e)return e;}
   const why=iaHas(n,['por que','porque','motivo','razon','como fue']),out=iaHas(n,['sali*','cerr*','perdi*','gan*','stop','terminaste','termino']);
   if(sym&&why&&out){const r=iaLocalAnswer(sym);if(!/^Sin clave/.test(r))return r;
     const o=[...OPS].reverse().find(x=>x.sym===sym+'USDT'&&(x.m==='medio'||x.m==='x'));if(o){const sh=await iaShadowOp(o).catch(()=>null);return `${sym}: el bot ${o.state==='open'?'sigue en curso':'cerró'} (${o.hit||0}/3 objetivos${o.why?', '+o.why:''}). ${sh&&!sh.wait?`La IA ${sh.done?`${IAKIND[sh.kind]||sh.kind} a las ${iaHrs(sh.t-o.t)} de entrar (${iaPct(sh.pct)} del margen)`:`sigue adentro con ${Math.round((sh.p||0)*100)} % de probabilidad de seguir a favor`}.`:''}`;}
     return `No tengo operaciones de ${sym} en los últimos 3 meses.`;}
+  if(iaHas(n,['tus operaciones','tus propias','operaciones propias','abriste','tus entradas','como te va','como te fue','te fue','tu simulacion']))return iaOpsTxt();
+  if(iaHas(n,['apalanc*','cuanto pongo','cuanto invierto','cuanto meto','margen','tamano','liquid*','riesgo','gestion','x5','x10','x15','x20','x25','x50']))return iaLevTxt(sym,q);
+  if(syms.length>=2&&iaHas(n,['compar*','vs','versus','cual','mejor','conviene','o']))return iaCompare(syms);
+  if(sym&&iaHas(n,['stop','objetivo*','take profit','tp','donde salgo','donde pongo','nivel*','soporte*','resistencia*','target*']))return iaLevels(sym);
   if(sym&&iaHas(n,['hago','mantengo','mantener','cierro','cerrar','salgo','salir','aguanto','vendo','como va','como esta','que onda'])){const L=IALIVE.filter(([x])=>x.sym===sym+'USDT');
     if(L.length)return L.map(([x,a])=>`${sym} ${x.dir>0?'LONG':'SHORT'} (${x.src}): ${IALAB[a.st][0]} ${IALAB[a.st][1]}. ${iaAdvTxt(a,x)}\nLo que más pesa: ${iaWhy(a.why)}.`).join('\n\n');
     return (await iaAnalyze(sym))+'\n(No veo una operación abierta tuya ni de los bots en esta moneda; si la tenés, cargala en PILOTEAR y la sigo.)';}
@@ -4193,13 +4310,13 @@ async function iaLocalAnswer2(q){const n=iaNorm(q),syms=iaSymsIn2(q),sym=syms[0]
   if(iaHas(n,['eficien*','efectividad','porcentaje*','acierto*','precision','rendimiento','estadistica*']))return iaEficiencia();
   if(iaHas(n,['como vas','como venis','progreso','aprend*','contra los bots','contra el bot','le ganas','evaluacion']))return iaResumenTxt();
   if(iaHas(n,['noticia*','news','que pasa','mercado hoy','macro','fed','guerra','inflacion']))return iaStrip(iaNewsHTML().replace(/<\/div>/g,'\n'));
-  if(iaHas(n,['idea*','que ves','propia*','encontraste','buscaste']))return IAIDEAS.length?'Entradas que encontré sola ahora (en práctica):\n'+IAIDEAS.map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} en ${x.tf} · puntaje ${Math.round(x.p*100)} % · entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}`).join('\n'):'Ahora no encuentro ninguna entrada con puntaje alto. Busco de nuevo cada 15 minutos.';
+  if(iaHas(n,['idea*','que ves','encontraste','buscaste']))return (IAIDEAS.length?'Entradas que encontré sola ahora (en práctica):\n'+IAIDEAS.map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} en ${x.tf} · puntaje ${Math.round(x.p*100)} % · entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}`).join('\n'):'Ahora no encuentro ninguna entrada con puntaje alto. Busco de nuevo cada 15 minutos.')+'\n\n'+iaOpsTxt();
   if(iaHas(n,['cuanto gane','cuanto perdi','mis resultados','resultado*','balance','esta semana','ganancias']))return iaMisResultados();
   if(iaHas(n,['senal*','alerta*'])){const L=['medio','x','a'].flatMap(m=>(SIG[m]||[]).filter(x=>x.state==='live').map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} (${m==='x'?'SHOOTER':m==='a'?'ACCIONES':x.plus?'TRADING+':'TRADING'}, ${x.conf} %)`));return L.length?'Señales vivas ahora: '+L.join(' · '):'Ahora no hay señales vivas de los bots.';}
   if(iaHas(n,['temporalidad*','que modo','cual modo','mejor modo','velas']))return iaEficiencia()+'\n\nTemporalidad: TRADING y TRADING+ usan velas de 4 h (operaciones de horas a días), SHOOTER de 15 y 30 min (horas), ACCIONES diarias (días a semanas).';
   if(iaHas(n,['indicador*','que sirve','que importa','que mira*'])){const f=L=>(L||[]).filter(x=>x[1]>0).slice(0,5).map(x=>IA.NAMES[x[0]]||x[0]).join(', ');return `Para salir a tiempo lo que más me sirve: ${f(IAM&&IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}.\nPara elegir entradas: ${f(IAM&&IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}.\nEn el análisis de un año, el que más ayudó a acertar fue la EMA 200 (que el precio esté lejos a favor), seguido por la pendiente de la EMA 50 y la tendencia alineada.`;}
   {const e=iaExplain(n);if(e)return e;}
-  return 'No te entendí del todo. Probá, por ejemplo: "conviene entrar en XRP", "qué cripto está buena para entrar", "porcentaje de acierto de cada modo", "qué hago con ONDO", "por qué saliste en BTC", "cómo venís contra los bots", "qué noticias pesan", "cuánto gané esta semana" o "explicame el RSI". No hace falta poner signos ni escribir perfecto.';}
+  return 'No te entendí del todo. Probá, por ejemplo: "conviene entrar en XRP", "qué cripto está buena para entrar", "porcentaje de acierto de cada modo", "qué hago con ONDO", "por qué saliste en BTC", "cómo venís contra los bots", "qué noticias pesan", "cuánto gané esta semana" o "explicame el RSI", "cuánto apalancamiento uso en SOL", "dónde pongo el stop en ETH", "BTC o ETH cuál conviene", "qué operaciones abriste". No hace falta poner signos ni escribir perfecto.';}
 function iaSuggest(){const out=['¿Qué cripto está buena para entrar y en qué temporalidad?'];
   for(const [q] of IALIVE.slice(0,1))out.push(`¿Qué hago con ${q.sym.replace('USDT','')}?`);
   const r=iaRecs()[0];if(r)out.push(`¿Por qué saliste en ${r[2]}?`);
@@ -4208,8 +4325,11 @@ function iaSuggest(){const out=['¿Qué cripto está buena para entrar y en qué
   const pick=big.sort((a,b)=>b.q-a.q).slice(0,25);if(pick.length){const x=pick[Math.floor(Date.now()/36e5)%pick.length];out.push(`¿Cómo ves ${x.s.replace('USDT','')}?`);}
   out.push('¿Qué porcentaje de acierto tiene cada modo?','¿Cómo venís contra los bots?','¿Qué noticias pesan hoy?');
   const exps=['el RSI','el Supertrend','el ADX','las bandas de Bollinger','el apalancamiento','el salvavidas'];out.push(`Explicame ${exps[Math.floor(Date.now()/6e5)%exps.length]}`);
+  out.push('¿Qué operaciones abriste vos?');
+  if(pick.length>1){const a=pick[Math.floor(Date.now()/9e5)%pick.length].s.replace('USDT',''),b=pick[(Math.floor(Date.now()/9e5)+3)%pick.length].s.replace('USDT','');if(a!==b)out.push(`¿${a} o ${b}, cuál conviene?`);
+    const c=pick[(Math.floor(Date.now()/6e5)+1)%pick.length].s.replace('USDT','');out.push(`¿Cuánto apalancamiento uso en ${c}?`,`¿Dónde pongo el stop en ${c}?`);}
   if(IAIDEAS.length)out.push('¿Qué entradas encontraste sola?');out.push('¿Cuánto gané esta semana?');
-  return [...new Set(out)].slice(0,8);}
+  return [...new Set(out)].slice(0,12);}
 async function iaAsk(q){IACHAT.push({r:'user',t:q,ts:Date.now()});saveChat();iaChatRender(true);
   const key=iaKey();let ans;
   if(!key){try{ans=await iaLocalAnswer2(q);}catch(e){ans=iaLocalAnswer(q);}}
@@ -4244,9 +4364,10 @@ function iaRender(){const box=$('iaBody');if(!box)return;
   const fam=[['tr','TRADING y TRADING+'],['sh','SHOOTER']].map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test;return `<div class="ia-card"><b>${nm}</b> · ${E.activa?'<span class="up">IA activa: le ganó al bot</span>':'<span class="ia-mut">en práctica: todavía no le gana al bot</span>'}<div class="ia-mut">Prueba de ${T.n_test} operaciones: bot ${iaPct(T.bot.pct)} · IA ${iaPct(T.ia.pct)} por operación · precisión ${iaN(T.auc,2)} (0,50 = azar)</div></div>`;}).join('');
   box.innerHTML=`${iaKpi()}${iaProg()}
     <div class="ia-mut">Estudió por última vez el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})}. Cada día suma el día nuevo y vuelve a aprender.</div>
-    <h4>Operaciones abiertas: la IA contra el bot</h4>${live}
+    <h4>🧠 Operaciones propias de la IA</h4>${iaOpsHTML()}
+    <h4>Operaciones de los bots: la IA contra el bot</h4>${live}
     <h4>Operaciones terminadas (últimos 3 meses)</h4><div class="ia-list">${done}</div>
-    <h4>💡 Entradas que encontró sola</h4>${iaIdeasHTML()}
+    
     <h4>📰 Noticias que mueven el mercado</h4>${iaNewsHTML()}
     <h4>Estado de la IA</h4>${fam}
     <h4>Lo que aprendió que sirve</h4><div class="ia-two"><div><b>Para salir a tiempo</b>${iaImp(IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}</div><div><b>Para entrar (TRADING)</b>${iaImp(IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}</div></div>
@@ -4258,8 +4379,12 @@ function iaShow(on){IAOPEN=on;$('iaPanel').hidden=!on;$('iaTab').hidden=on;docum
   const cm=document.createElement('div');cm.id='iaCmp';cm.hidden=true;cm.innerHTML='<div class="iac-box"><button type="button" class="iac-x" aria-label="Cerrar">×</button><div class="iac-b"></div></div>';
   document.body.appendChild(tab);document.body.appendChild(pn);document.body.appendChild(cm);
   pn.querySelector('.ia-back').onclick=()=>iaShow(false);cm.onclick=e=>{if(e.target===cm||e.target.closest('.iac-x'))cm.hidden=true;};
+  document.addEventListener('click',e=>{const t=e.target.closest('[data-iaof],[data-iantf]');if(!t)return;e.preventDefault();
+    if(t.dataset.iaof){IAOF=t.dataset.iaof;iaRender();return;}
+    IANTF=!IANTF;try{localStorage.setItem('cv_ia_ntf',IANTF?'1':'0');}catch(e){}
+    if(IANTF&&!ntfAny())askNotif();else if(IANTF)notify('🧠 Avisos de la IA activados','Te aviso cuando la IA abra una operación propia, toque un objetivo o cierre.','cl-ok',null);iaRender();});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-iacmp]');if(!b)return;e.preventDefault();e.stopPropagation();iaCmpOpen(b.dataset.iacmp);},true);
-  iaLoad().then(()=>{iaTick();iaSigTick();try{renderRes();renderSignals();}catch(e){}});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);setInterval(iaIdeasTrack,6e4);setInterval(()=>{if(IAM)iaIdeasScan();},15*6e4);setTimeout(()=>{if(IAM)iaIdeasScan();},20000);})();
+  iaLoad().then(()=>{iaTick();iaSigTick();try{renderRes();renderSignals();}catch(e){}});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);setInterval(iaOpsTrack,6e4);setTimeout(iaOpsTrack,8000);setInterval(()=>{if(IAM)iaIdeasScan();},15*6e4);setTimeout(()=>{if(IAM)iaIdeasScan();},20000);})();
 </script>
 </body>
 </html>
