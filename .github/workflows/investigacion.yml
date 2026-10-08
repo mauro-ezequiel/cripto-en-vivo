@@ -7,7 +7,7 @@ on:
         description: 'Días hacia atrás'
         default: '365'
       que:
-        description: 'cripto, acciones o todo'
+        description: 'cripto, acciones, shooter o todo'
         default: 'cripto'
 permissions:
   contents: write
@@ -21,13 +21,16 @@ jobs:
         with:
           node-version: '20'
       - name: Bajar velas y medir (cripto)
-        if: inputs.que != 'acciones'
+        if: inputs.que == 'cripto' || inputs.que == 'todo'
         run: node --max-old-space-size=6000 herramientas/investigacion.js
         env:
           BT_DAYS: ${{ inputs.dias }}
       - name: Bajar velas y medir (acciones)
-        if: inputs.que != 'cripto'
+        if: inputs.que == 'acciones' || inputs.que == 'todo'
         run: node --max-old-space-size=6000 herramientas/investigacion-acciones.js
+      - name: Bajar velas y medir (SHOOTER en temporalidades bajas)
+        if: inputs.que == 'shooter'
+        run: node --max-old-space-size=6000 herramientas/investigacion-shooter.js
       - name: Guardar los datos en una rama aparte (investigacion-<número de corrida>)
         run: |
           mkdir out && mv *.json.gz out/
