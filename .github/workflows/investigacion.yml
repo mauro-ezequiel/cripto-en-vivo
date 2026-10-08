@@ -10,7 +10,7 @@ on:
         description: 'cripto, acciones o todo'
         default: 'cripto'
 permissions:
-  contents: read
+  contents: write
 jobs:
   investigar:
     runs-on: ubuntu-latest
@@ -28,8 +28,8 @@ jobs:
       - name: Bajar velas y medir (acciones)
         if: inputs.que != 'cripto'
         run: node --max-old-space-size=6000 herramientas/investigacion-acciones.js
-      - uses: actions/upload-artifact@v4
-        with:
-          name: investigacion
-          path: '*.json.gz'
-          retention-days: 7
+      - name: Guardar los datos en una rama aparte (investigacion-<número de corrida>)
+        run: |
+          mkdir out && mv *.json.gz out/
+          cd out && git init -q && git checkout -q -b datos-inv && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Datos de investigación"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} datos-inv:investigacion-${{ github.run_id }}
