@@ -66,25 +66,28 @@ function simS(rb, j0, entry, dir, sl, r, L, maxBars) { let hit = 0, real = 0, ki
     if (hit >= 3) { pnl = real; kind = 4; break; } }
   const open = pnl == null && j >= rb.length; if (pnl == null) { const px = rb[Math.min(j, rb.length - 1)].close; pnl = Math.max(-sl, val(px)); }
   return { pct: 100 * L * (pnl - 2 * FEE_S), hit, kind: open ? 0 : kind }; }
-const CA = ['t', 's', 'dir', 'adx', 'di', 'mh', 'mhUp', 'rsi', 'rsi1', 'vr', 'body', 'fl3', 'wk', 'spy', 'spyW', 'st', 'al', 'ab200', 'atrP', 'z', 'd21', 'r5', 'r20', 'hi52', 'gap', 'wd', 'H', 'K', 'P', 'H2', 'P2'];
+const CA = ['t', 's', 'dir', 'adx', 'di', 'mh', 'mhUp', 'rsi', 'rsi1', 'vr', 'body', 'fl3', 'wk', 'spy', 'spyW', 'st', 'al', 'ab200', 'atrP', 'z', 'd21', 'r5', 'r20', 'hi52', 'gap', 'wd', 'H', 'K', 'P', 'H2', 'P2', 'lo52', 'ath', 'h3y', 'r60', 'r120', 'r250', 'dd20', 'spyDD', 'H3', 'P3'];
 async function main() { const t0 = Date.now(), zlib = require('zlib');
   const html = fs.readFileSync('index.html', 'utf8'), m = html.match(/const NYSE=new Set\(\[([^\]]+)\]\)/); const list = m[1].match(/'([^']+)'/g).map(x => x.slice(1, -1));
   const spyJ = await getJs(`${D912}/historical/usa_stocks/SPY`); const spyD = spyJ.dates, spyC = spyJ.prices.map(Number); const spyE = emaArr(spyC, 50);
   const spyB = spyD.map((d, i) => ({ t: Date.parse(d + 'T00:00:00Z'), open: spyC[i], high: spyC[i], low: spyC[i], close: spyC[i], v: 1 })); const [spyWk, spyMap] = weeklyIdx(spyB), spyWH = htfArr(spyWk);
+  const spyDD = new Map(); { for (let i = 0; i < spyC.length; i++) { let h = 0; for (let j = Math.max(0, i - 251); j <= i; j++) h = Math.max(h, spyC[j]); spyDD.set(spyD[i], (spyC[i] / h - 1) * 100); } }
   const spyAt = new Map(spyD.map((d, i) => [d, [spyE[i] == null ? 0 : Math.sign(spyC[i] - spyE[i]), spyMap[i] > 0 ? spyWH[spyMap[i] - 1] : 0]]));
   const FROM = Date.now() - +(process.env.BT_YEARS || 6) * 365 * 864e5, rows = [], syms = []; let q = 0, ok = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < list.length) { const sym = list[q++]; try {
     const b = await stkBars(sym); if (!b || b.length < 260) continue; const si = syms.length; syms.push(sym); ok++;
     candles = b; const cl = closes(), atr = wilder(trArr(), 14), A = calcADX(14), R = calcRSI(14), mh = macdHist(cl), st = calcST(10, 3).dir, e21 = emaArr(cl, 21), e50 = emaArr(cl, 50), e200 = emaArr(cl, 200), [bm, bs] = smaStd(cl, 20), f3 = flowN(b, 3), vr = volRatio(b);
-    const [wk, wmap] = weeklyIdx(b), wH = htfArr(wk);
+    const [wk, wmap] = weeklyIdx(b), wH = htfArr(wk); const ath = []; { let m = 0; for (const y of b) { m = Math.max(m, y.high); ath.push(m); } }
     for (let i = 210; i < b.length - 1; i++) { const x = b[i]; if (x.t < FROM || !x.real) continue; if (A.adx[i] == null || mh[i] == null || mh[i - 1] == null || R[i] == null || !atr[i]) continue;
       const body = (x.close - x.open) / ((x.high - x.low) || 1); if (body < .2) continue; // solo velas que cierran arriba (ACCIONES es solo long)
       const atrP = atr[i] / x.close, sl = Math.min(.096, 3 * atrP), o = simS(b, i + 1, x.close, 1, sl, 1, 8, 42), o2 = simS(b, i + 1, x.close, 1, Math.min(.096, 2 * atrP), 1, 8, 42);
-      let h52 = 0; for (let j = Math.max(0, i - 251); j <= i; j++) h52 = Math.max(h52, b[j].high); const sp = spyAt.get(x.date) || [0, 0];
+      let h52 = 0, l52 = 1e18, h3 = 0, mn20 = 1e18; for (let j = Math.max(0, i - 251); j <= i; j++) { h52 = Math.max(h52, b[j].high); l52 = Math.min(l52, b[j].low); }
+      for (let j = Math.max(0, i - 755); j <= i; j++) h3 = Math.max(h3, b[j].high); let hh20 = 0; for (let j = Math.max(0, i - 19); j <= i; j++) hh20 = Math.max(hh20, b[j].high);
+      const o3 = simS(b, i + 1, x.close, 1, sl, .5, 8, 42), sdd = spyDD.get(x.date); const sp = spyAt.get(x.date) || [0, 0];
       rows.push([x.t, si, 1, r3(A.adx[i]), r3((A.pdi[i] - A.mdi[i]) / ((A.pdi[i] + A.mdi[i]) || 1)), r3(mh[i] / atr[i]), mh[i] > mh[i - 1] ? 1 : 0, r3(R[i]), r3(R[i - 1]), r3(vr[i]), r3(body), r3(f3[i]),
         wmap[i] > 0 ? wH[wmap[i] - 1] : 0, sp[0], sp[1], st[i], e21[i] > e50[i] ? 1 : -1, e200[i] == null ? null : x.close > e200[i] ? 1 : -1, r3(atrP), r3(bs[i] ? (x.close - bm[i]) / bs[i] : 0), r3((x.close - e21[i]) / atr[i]),
         r3((x.close / b[i - 5].close - 1) * 100), r3((x.close / b[i - 20].close - 1) * 100), r3((x.close / h52 - 1) * 100), r3((x.open / b[i - 1].close - 1) * 100), new Date(x.t).getUTCDay(),
-        o.hit, o.kind, r3(o.pct), o2.hit, r3(o2.pct)]); } } catch (e) { console.log(sym, e.message); } } }));
+        o.hit, o.kind, r3(o.pct), o2.hit, r3(o2.pct), r3((x.close / l52 - 1) * 100), r3((x.close / ath[i] - 1) * 100), r3((x.close / h3 - 1) * 100), r3((x.close / b[i - 60].close - 1) * 100), r3((x.close / b[i - 120].close - 1) * 100), r3((x.close / b[i - 250].close - 1) * 100), r3((x.close / hh20 - 1) * 100), sdd == null ? null : r3(sdd), o3.hit, r3(o3.pct)]); } } catch (e) { console.log(sym, e.message); } } }));
   console.log('acciones', ok, 'filas', rows.length, ((Date.now() - t0) / 1000).toFixed(0), 's');
   fs.writeFileSync('invacc.json.gz', zlib.gzipSync(JSON.stringify({ upd: Date.now(), cols: CA, syms, rows }))); }
 main().catch(e => { console.error(e); process.exitCode = 1; });
