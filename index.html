@@ -612,7 +612,7 @@ const MODES = {
   a: {
     name: 'ACCIONES', tag: 'NYSE · USD',
     desc: 'Acciones que cotizan en la Bolsa de Nueva York (NYSE), en dólares',
-    info: ['Velas diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Simulación: 500 USD × 8, stop al 7 % (−280 USD), salvavidas 250 USD'],
+    info: ['Velas diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
     def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
@@ -1802,7 +1802,7 @@ const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX'
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
-if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom','c-pb','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
+if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
@@ -1888,7 +1888,7 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
-const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:76,p3:27,n:319,usd:52,txt:'rebote tras una caída moderada (sin desplome ni subida histórica)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -1955,7 +1955,17 @@ async function futData(m,syms){
    stop 3 × ATR diario (máx. 9,6 %), objetivos 1 / 2 / 3 × stop, sin salvavidas.
    Primeros 5 años: 673 operaciones · 51 % al objetivo 1 · +2,4 % del margen por operación (factor 1,15).
    Último año: 113 operaciones · 47 % · +2,8 % (factor 1,11). Con el retroceso y stop 2 × ATR daba −0,8 % el último año. */
-const STKG={a:3,r:1,max:.096};
+/* ACCIONES v4 (octubre 2026): antes de dar la señal se mira la historia de la acción.
+   Rebote tras una caída moderada: bajó 10 % o más en los últimos 6 meses (120 ruedas), no se desplomó más de 35 % bajo
+   su máximo del año (eso suele seguir cayendo) y no viene de una subida histórica (100 % o más sobre su mínimo del año).
+   Entra con una vela alcista fuerte. Stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas.
+   Probado en 61 acciones de NYSE con CEDEAR, 2020–2026 (comisión 0,1 %, una señal por acción cada 15 días):
+   objetivo 1 el 75,5 % · +10,4 % del margen por operación · ningún año en pérdida · último año 70 % y +7,9 %.
+   La regla anterior (impulso con tendencia semanal y S&P 500 a favor) daba 47,8 % y +1,7 %, con 4 años en pérdida. */
+const STKG={a:3,r:.5,max:.096};
+function stkHistory(cc,i){let h=0,l=1e18;for(let j=Math.max(0,i-251);j<=i;j++){h=Math.max(h,cc[j].high);l=Math.min(l,cc[j].low);}
+  const c=cc[i].close;return {r6:i>=120?(c/cc[i-120].close-1)*100:null,fromHi:(c/h-1)*100,fromLo:(c/l-1)*100};}
+const stkRebote=H=>H.r6!=null&&H.r6<=-10&&H.fromHi>-35&&H.fromLo<100;
 const TGTS={'t-pb':[.0125,.025,.0375],'sh-r':[.016,.032,.048],'a-mom':[.0175,.035,.0525],'c-mom':[.0175,.035,.0525],'a-rev':[.028,.056,.084]};
 function buildSignalV2(m,sym,e,fd){
   const cfg=SIGCFG[m],c=e.c,atrP=e.atr/c;if(!(atrP>0)||(atrP>cfg.maxAtr&&!(e.setup==='tp-x'&&atrP<=.03)))return null;
@@ -1963,7 +1973,7 @@ function buildSignalV2(m,sym,e,fd){
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
   if(setup==='tp-x'&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING+ solo a favor de BTC
   if(m==='medio'&&NEWG_SET[setup]&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING solo a favor de BTC
-  if(setup==='c-mom'||setup==='c-pb'){const slD=Math.min(STKG.max,Math.max(.004,STKG.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*STKG.r*slD));sl=c*(1-dir*slD);}
+  if(setup==='c-reb'||setup==='c-mom'||setup==='c-pb'){const slD=Math.min(STKG.max,Math.max(.004,STKG.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*STKG.r*slD));sl=c*(1-dir*slD);}
   else if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
   else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
   else if(T){const liqD=S.maxLoss/(S.margin*S.lev);[tp0,tp1,tp2]=T.map(x=>c*(1+dir*x));sl=c*(1-dir*liqD);}
@@ -1990,6 +2000,7 @@ async function scanSignals(mm){
     if(m==='x'){const bk=await safe(kl('BTCUSDT','1h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir1h=cl.at(-1)>e.at(-1)?1:-1;}}
     if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
     for(const s of U){
+      if(m==='a'&&OPS.some(o=>o.m==='a'&&o.sym===s&&Date.now()-o.t<15*864e5))continue; // ACCIONES: una señal por acción cada 15 días (como en la prueba)
       try{const [cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
         const e=m==='x'?evalShooter(cs,hc):m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc),ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
         if(ex){ex.score=e.score;if(!e.keep&&(Math.sign(e.score)!==ex.dir||Math.abs(e.score)<.2))lose(ex,'los indicadores ya no confirman la dirección');}
@@ -2585,7 +2596,8 @@ function renderStkMarket(){const el=$('market'),q=STK[symbol];if(!q){el.innerHTM
    - c-mom (CEDEARs, LONG): vela fuerte cerrando en máximos, tendencia semanal alcista, ADX ≥30 → 63–66 %
    Acierto = llegar a +5 % antes de −5 % (la liquidación de la simulación) en 15 ruedas. Los shorts en CEDEARs no superaron el 58 %: no se usan.
    Además, el termómetro del activo (indicadores, amplitud del mercado y noticias) no puede estar en contra. */
-function stkUniverse(){return Object.values(STK).filter(x=>x.kind==='US'&&x.q>0&&x.c>0).sort((a,b)=>b.q-a.q).slice(0,30).map(x=>x.s);}
+/* ACCIONES v4: todas las acciones de NYSE que tienen CEDEAR (antes solo las 30 con más volumen: quedaban 18 con CEDEAR) */
+function stkUniverse(){return Object.values(STK).filter(x=>x.kind==='US'&&x.q>0&&x.c>0&&x.v>1).sort((a,b)=>b.q-a.q).slice(0,130).map(x=>x.s);}
 async function stkKl(sym){const b=withLive(sym,await stkHist(sym)).slice(-320);return [b,aggBars(b,'1w')];}
 async function stkKlines(sym){const b=withLive(sym,await stkHist(sym));return b.slice(-60).map(x=>[x.t,x.open,x.high,x.low,x.close]);}
 function stkClosed(cs){const d=artNow(),m=d.getUTCHours()*60+d.getUTCMinutes(),last=cs.at(-1);return last&&last.date===artDay()&&m<16*60+10?cs.slice(0,-1):cs;}
@@ -2609,12 +2621,13 @@ function evalStock(sym,cs,hc){
     if(q.kind==='AR'){if(adx>=25&&L.body>.5&&L.vr>=1.8&&mh>0&&mh>mh1){dir=1;setup='a-mom';}
       else if(adx>=30&&L.body<-.5&&mh<0&&mh<mh1&&r1>65&&r<r1){dir=-1;setup='a-rev';}}
     else{const cl=closes(),st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],mk=window.__spyUp;
-      if(mk===1&&adx>=30&&L.body>.5&&L.flow>0&&out.htf>0){dir=1;setup='c-mom';}}
+      var SH=stkHistory(cc,i);if(L.body>.5&&stkRebote(SH)){dir=1;setup='c-reb';}}
       /* retroceso (c-pb) quitado en octubre 2026: con 224 acciones perdía en todos los períodos (−3 % a −10 % por operación) */
     if(!dir)return out;
-    const sc=stkScore(cc,q);if(dir*(sc-50)<0)return out;
+    const sc=stkScore(cc,q);if(setup!=='c-reb'&&dir*(sc-50)<0)return out; // en el rebote el termómetro suele estar bajista: no se usa
     out.dir=dir;out.score=dir;out.setup=setup;
     out.reasons.push(setup==='a-rev'?`RSI venía de ${r1.toFixed(0)} y gira`:setup==='a-mom'?`vela fuerte con ${L.vr.toFixed(1)}× de volumen`:setup==='c-pb'?`retroceso en tendencia: RSI 14 en ${r.toFixed(0)} con volumen bajo`:'vela fuerte cerrando en máximos',`ADX ${adx.toFixed(0)} · MACD ${dir>0?'acelerando':'cayendo'}`,`termómetro ${sc}/100 a favor`);
+    if(setup==='c-reb')out.reasons.splice(0,out.reasons.length,`viene de bajar ${Math.abs(SH.r6).toFixed(0)} % en 6 meses`,`está ${Math.abs(SH.fromHi).toFixed(0)} % bajo su máximo del año (no es un desplome)`,`${SH.fromLo.toFixed(0)} % sobre su mínimo del año (no viene de una subida histórica)`,'vela alcista fuerte: arranca el rebote');
     if(setup==='c-mom')out.reasons.push('tendencia semanal alcista');
     if(setup==='c-mom'||setup==='c-pb')out.reasons.push('S&P 500 sobre su promedio de 50 días');
     return out;});}
@@ -3034,7 +3047,7 @@ const pc0=v=>v==null?'—':Math.round(v)+' %';
    365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
    ACCIONES se calcula acá con las velas diarias que ya usa la página. */
 var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
-try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===3)HIST_A=c.ops;}catch(e){}
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===4)HIST_A=c.ops;}catch(e){}
 const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
   HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
@@ -3063,15 +3076,15 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
       withCandles(b,()=>{const cl=closes(),n=b.length,A=calcADX(14).adx,M=calcMACD(),R=calcRSI(14),st=calcST(10,3).dir,e21=emaArr(cl,21),e50=emaArr(cl,50),e200=emaArr(cl,200),atr=wilder(trArr(),14);
         const llConf=(t,d)=>{let i=-1;for(let k=n-1;k>=0;k--)if(b[k].t+D<=t){i=k;break;}return i>=0&&e50[i]!=null&&(d>0?b[i].close>e50[i]:b[i].close<e50[i]);};
         let free=0;
-        for(let i=210;i<n;i++){const t=b[i].t+D;if(t<FROM||t<free)continue;if(A[i]==null||M.hist[i]==null||M.hist[i-1]==null||R[i]==null)continue;if(spyUp(t)!==1)continue;
+        for(let i=210;i<n;i++){const t=b[i].t+D;if(t<FROM||t<free)continue;if(A[i]==null||M.hist[i]==null||M.hist[i-1]==null||R[i]==null)continue;
           const L=lastBarStats(b,i),c=b[i].close;let setup=null;
-          if(A[i]>=30&&L.body>.5&&L.flow>0&&htfTrend(aggBars(b.slice(0,i+1),'1w'))>0)setup='c-mom';
+          if(L.body>.5&&stkRebote(stkHistory(b,i)))setup='c-reb';
           if(!setup)continue;
           const sl=Math.min(STKG.max,Math.max(.004,STKG.a*atr[i]/c)),not=SIM.a.margin*SIM.a.lev,P=v=>+v.toPrecision(8);
-          const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+sl)),tp1:P(c*(1+2*sl)),tp2:P(c*(1+3*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:null,llMargin:SIM.a.margin/2,lev:SIM.a.lev,conf:CAL.a['c-mom'].p,hist:1};
-          histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:Math.max(t+D,o.closeAt);}});
+          const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+STKG.r*sl)),tp1:P(c*(1+2*STKG.r*sl)),tp2:P(c*(1+3*STKG.r*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:null,llMargin:SIM.a.margin/2,lev:SIM.a.lev,conf:CAL.a[setup].p,hist:1};
+          histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:Math.max(t+15*D,o.closeAt);}});
       await new Promise(r=>setTimeout(r,20));}
-    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:3,ops}));}catch(e){}
+    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:4,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
 function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
   if(m==='medio'&&HSUB!=='all')L=L.filter(o=>HSUB==='plus'?o.setup==='tp-x':o.setup!=='tp-x');return L;}
@@ -3086,7 +3099,7 @@ function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=ledOps(m).filt
   const g=cl.filter(o=>o.pnl>0).reduce((s,o)=>s+o.pnl,0),l=cl.filter(o=>o.pnl<=0).reduce((s,o)=>s+o.pnl,0);
   return {all:a.length,open:a.length-n,n,o1:n?cl.filter(o=>o.hit>=1).length/n*100:null,o3:n?cl.filter(o=>o.hit>=3).length/n*100:null,win:n?cl.filter(o=>o.pnl>0).length/n*100:null,
     liq:cl.filter(o=>o.state==='fail').length,ll:a.filter(o=>o.ll).length,llOk:cl.filter(o=>o.ll&&o.state!=='fail').length,g,l,net:g+l,pf:l<0?g/-l:null,avg:n?(g+l)/n:null,cl};}
-function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-mom']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
+function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-reb']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
   const per=(HSRC==='sim'?[[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año']]:[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']]).map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
   const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button>${m==='medio'?`<span class="mut" style="margin-left:6px">Ver:</span><button data-sub="all" class="${HSUB==='all'?'on':''}">Todas</button><button data-sub="core" class="${HSUB==='core'?'on':''}">TRADING</button><button data-sub="plus" class="${HSUB==='plus'?'on':''}">TRADING+</button>`:''}</div>`;
   if(ledLoading(m))return srcRow+`<div class="int-v">⏳ ${m==='a'?'Calculando el último año de ACCIONES con las reglas actuales (unos segundos)…':'Cargando el último año simulado…'}</div>`;
