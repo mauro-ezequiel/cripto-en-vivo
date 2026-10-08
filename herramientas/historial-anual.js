@@ -140,7 +140,7 @@ async function run4h(s, rank) {
   const P1 = IAON ? IA.prep(rb) : null, P4 = IAON ? IA.prep(tb) : null;
   const llConf = (t, dir) => { const i = lastClosed(tb, T4.tfMs, t); return i >= 0 && e200[i] != null && (dir > 0 ? tb[i].close > e200[i] : tb[i].close < e200[i]); };
   for (let i = 299; i < tb.length; i++) { const t = tb[i].t + T4.tfMs; if (t < FROM) continue;
-    if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf);
+    if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf, rank);
     const c = classify4h(tb.slice(i - 298, i + 1), rank); if (!c) continue;
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) continue; // solo a favor de BTC (4h vs EMA 50), como la página
     if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
@@ -150,7 +150,7 @@ async function run4h(s, rank) {
       ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
   return { rb, tb, llConf }; }
 
-async function runShooter(s) {
+async function runShooter(s, rank = 0) {
   const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 300 * SH.htfMs, NOW); if (hb.length < 200) return;
   const he = emaArr(hb.map(b => b.close), 50), W1 = wildArr(hb); let first = null;
   for (const tf of SH.tfs) { const tfMs = TFMIN[tf] * 6e4, back = Math.round(60 / TFMIN[tf]);
@@ -161,7 +161,7 @@ async function runShooter(s) {
       const z = (cb - bm[i]) / bs[i];
       if (IAON && z <= -1.8 && r7[i] <= 35 && rnd() < .3) { // candidatas para aprender a entrar
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
-        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2)]); }
+        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf]]); }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       if (tooWild(hb, W1, t)) continue;
@@ -183,11 +183,11 @@ function iaPath(P, j0, entry, dir, sl, r, maxAge, t0, resMs) {
     B.push([b.high, b.low, b.close, +(P.atr[j] || 0).toPrecision(5)]); }
   return { X, B }; }
 /* entradas posibles de 4h (tendencia alineada) y si llegaron al objetivo 1 con las medidas de TRADING */
-function iaEntry4h(P4, P1, rb, i, t, llConf) { const b = P4.bars[i], st = P4.st[i];
+function iaEntry4h(P4, P1, rb, i, t, llConf, rank) { const b = P4.bars[i], st = P4.st[i];
   if (!st || P4.e200[i] == null || P4.e21[i] == null || P4.e50[i] == null) return;
   if (Math.sign(P4.e21[i] - P4.e50[i]) !== st || Math.sign(b.close - P4.e200[i]) !== st || rnd() > .5) return;
   const g = GEO.core, atrP = (P4.atr[i] || 0) / b.close, o = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), b.close, st, slOf(g, atrP), g.r, g.L, g.ex, g.ll ? llConf : null, t);
-  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2)]); }
+  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, st]); }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
 function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
@@ -234,7 +234,7 @@ async function main() { const t0 = Date.now();
   for (const k in keep4) delete keep4[k];
   /* SHOOTER (velas de 5 min: más pesado, una moneda a la vez por memoria) */
   const shSl = [];
-  await pool(base.slice(0, nS), async s => { const x = await runShooter(s); if (!x) return;
+  await pool(base.slice(0, nS), async (s, r) => { const x = await runShooter(s, r); if (!x) return;
     const mine = CANDS.filter(c => c.s === s && c.m === 'x').map(c => c.sl); shSl.push(...mine);
     randomEntries('x', s, x.rb, x.tfMs, SH.maxAge, 30, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar con el mismo stop
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
@@ -251,7 +251,7 @@ async function main() { const t0 = Date.now();
   if (IAON) { const zlib = require('zlib');
     for (const o of ops) if (o.ia && !o.open) (o.m === 'x' ? IAD.sh : IAD.tr).ops.push({ m: o.m, setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.r, L: o.L,
       tf: o.tf || '4h', maxAge: o.m === 'x' ? SH.maxAge : T4.maxAge, botPct: +o.pct.toFixed(3), botHit: o.hit, kind: o.kind, X: o.ia.X, B: o.ia.B });
-    fs.writeFileSync('ia-datos.json.gz', zlib.gzipSync(JSON.stringify({ upd: NOW, fee: FEE, exitF: IA.EXIT_F, entryF: IA.ENTRY_F, ...IAD })));
+    fs.writeFileSync('ia-datos.json.gz', zlib.gzipSync(JSON.stringify({ upd: NOW, fee: FEE, exitF: IA.EXIT_F, entryF: IA.ENTRY_F, syms: base.slice(0, Math.max(n4, nS)).map(x => x.replace('USDT', '')), ...IAD })));
     console.log('IA: operaciones', IAD.tr.ops.length, IAD.sh.ops.length, 'entradas', IAD.tr.ent.length, IAD.sh.ent.length); }
   console.log(JSON.stringify({ cal, azar, ops: ops.length, errores: err.length, secs: out.secs }, null, 1));
   if (MOCK || process.env.NO_PUBLISH) return;

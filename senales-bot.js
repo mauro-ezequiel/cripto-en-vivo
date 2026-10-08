@@ -140,6 +140,7 @@ async function main() {
   if (!(S.hist && S.hist.length) && S.open.length) { S.hist = S.open.map(o => ({ m: o.m, sym: o.sym, dir: o.dir, entry: o.entry, zl: o.entry, zh: o.entry, tp: o.tp, sl: o.sl, ll: o.ll, conf: CAL[o.m].p, setup: o.m === 'medio' ? 't-pb' : 'sh-r', reasons: [], t: o.t })); S.histDirty = true; }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
+  if (!S.newsT || now - S.newsT >= 36e5) { S.newsT = now; try { await require('./herramientas/noticias-lib.js').record(px.BTCUSDT); } catch (e) { console.log('noticias', e.message); } } // la IA aprende de las noticias
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume);
 

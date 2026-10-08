@@ -32,6 +32,8 @@ jobs:
         continue-on-error: true
         run: |
           pip install --quiet numpy scikit-learn
+          curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/ia.json" -o prev-ia.json || true
+          curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/noticias.json" -o noticias.json || true
           python herramientas/ia-entrenar.py ia-datos.json.gz
           node herramientas/publicar.js ia.json "IA: estudio diario"
         env:

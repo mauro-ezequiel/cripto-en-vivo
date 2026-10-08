@@ -273,19 +273,34 @@ def importance(m, X, Y, names, reps=2):
     return sorted(out, key=lambda x: -x[1])
 
 
-def fam_entry(ent):
-    A = np.array(ent, float)
+def fam_entry(ent, fam):
+    A = np.array([r[:1 + len(ENF) + 5] for r in ent], float)
     if len(A) < 500:
         return None
-    t, X, Y, P = A[:, 0], A[:, 1:1 + len(ENF)], A[:, 1 + len(ENF)], A[:, -1]
+    k0 = 1 + len(ENF)
+    t, X, Y, P, RK, SD = A[:, 0], A[:, 1:k0], A[:, k0], A[:, k0 + 2], A[:, k0 + 3], A[:, k0 + 4]
     cut = np.quantile(t, 2 / 3); tr, te = t < cut, t >= cut
     m = gbc(120).fit(X[tr], Y[tr]); p = m.predict_proba(X[te])[:, 1]
     auc = roc_auc_score(Y[te], p); top = p >= np.quantile(p, .8)
     res = {'n': int(len(A)), 'auc': round(auc, 3), 'base': round(float(Y[te].mean() * 100), 1), 'top20': round(float(Y[te][top].mean() * 100), 1),
            'top20_pct': round(float(P[te][top].mean()), 2), 'base_pct': round(float(P[te].mean()), 2)}
     imp = importance(m, X[te], Y[te], ENF)
-    mF = gbc(120).fit(X, Y)
-    return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(mF.predict_proba(X)[:, 1], [.2, .5, .8])]}
+    # ENTRADAS PROPIAS: la IA busca sola en todas las velas candidatas (no solo en las señales de los bots) las que puntúa más alto.
+    # Umbral elegido con los meses de aprendizaje (mejor 10 %), resultado medido en los meses que no vio, una por moneda cada 24 h (TRADING) o 1 h (SHOOTER).
+    samp, cool = (.5, 24 * 36e5) if fam == 'tr' else (.3, 36e5)
+    ptr = m.predict_proba(X[tr])[:, 1]; thr = float(np.quantile(ptr, .9))
+    sel = np.where(te)[0][p >= thr]; last = {}; pick = []
+    for i in sel[np.argsort(t[sel])]:
+        k = int(RK[i])
+        if k in last and t[i] - last[k] < cool:
+            continue
+        last[k] = t[i]; pick.append(i)
+    pick = np.array(pick, int); dias = (t[te].max() - t[te].min()) / DAY if te.sum() else 1
+    res['propias'] = {'n': int(len(pick)), 'por_dia': round(len(pick) / max(dias, 1) / samp, 2), 'obj1': round(float(Y[pick].mean() * 100), 1) if len(pick) else None,
+                      'pct': round(float(P[pick].mean()), 2) if len(pick) else None, 'gana': round(float((P[pick] > 0).mean() * 100), 1) if len(pick) else None,
+                      'base_obj1': round(float(Y[te].mean() * 100), 1), 'base_pct': round(float(P[te].mean()), 2)}
+    mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
+    return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, .9)), 4)}
 
 
 t0 = time.time()
@@ -299,13 +314,66 @@ for f, cfg in FAM.items():
         print(f, 'importa (salida)', OUT[f]['exit']['imp'][:8])
         OUT[f]['reglas'] = rules_search([o for o in part['ops'] if len(o['B']) > 2], f)
         print(f, 'reglas', json.dumps(OUT[f]['reglas'], ensure_ascii=False))
-    e = fam_entry(part['ent'])
+    e = fam_entry(part['ent'], f)
     if e:
         OUT[f]['entry'] = e
         print(f, 'entrada', e['test'], e['imp'][:8])
 allrec = [r for f in FAM for r in (OUT[f].get('exit', {}).get('ops') or [])]
 OUT['resumen'] = resumen(allrec, D['upd'])
 print('resumen', json.dumps(OUT['resumen'], ensure_ascii=False))
+OUT['syms'] = D.get('syms', [])
+
+
+def progreso(R, prev):
+    """La IA se autoevalúa: cuánto de la ganancia de los bots consigue (100 % = iguala, más = los supera), en los últimos 3 meses."""
+    b = sum((x.get('bot_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
+    i = sum((x.get('ia_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
+    val = None if b <= 0 else round(max(0, min(200, 100 * i / b)), 1)
+    hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
+    notas = []
+    for m, x in R['3meses'].items():
+        if not x.get('n'):
+            continue
+        if x['ia_pct'] >= x['bot_pct']:
+            notas.append(f"En {m} ya saca igual o más que el bot por operación ({x['ia_pct']:+.1f} % contra {x['bot_pct']:+.1f} %).")
+        elif x['ia_gana'] < x['bot_gana'] - 10:
+            notas.append(f"En {m} sale demasiado pronto: gana el {x['ia_gana']:.0f} % de las veces contra el {x['bot_gana']:.0f} % del bot. Tiene que aprender a aguantar los retrocesos normales.")
+        else:
+            notas.append(f"En {m} acierta parecido al bot ({x['ia_gana']:.0f} % contra {x['bot_gana']:.0f} %) pero gana menos por operación ({x['ia_pct']:+.1f} % contra {x['bot_pct']:+.1f} %): suelta las ganancias antes de tiempo.")
+    old = [h for h in hist[:-1] if h[1] is not None and h[0] <= D['upd'] - 6.5 * DAY]
+    if old and val is not None:
+        d = val - old[-1][1]
+        notas.append(f"Hace una semana sacaba el {old[-1][1]:.0f} % de lo de los bots: {'mejoró' if d > 0 else 'empeoró' if d < 0 else 'quedó igual'} {abs(d):.0f} puntos.")
+    return {'valor': val, 'hist': hist, 'notas': notas}
+
+
+def noticias():
+    """Noticias: el bot guarda cada hora el clima de las noticias y el precio de BTC. Con eso la IA mide si las noticias mueven el precio."""
+    try:
+        H = json.load(open('noticias.json'))['h']
+    except Exception:
+        return {'dias': 0}
+    H = [h for h in H if h.get('btc')]
+    if len(H) < 2:
+        return {'dias': 0, 'n': len(H)}
+    dias = (H[-1]['t'] - H[0]['t']) / DAY; out = {'dias': round(dias, 1), 'n': len(H)}
+    xs, ys = [], []
+    for k, h in enumerate(H):
+        fut = next((g for g in H[k + 1:] if g['t'] >= h['t'] + 4 * 3600e3), None)
+        if fut and h.get('n', 0) >= 3:
+            xs.append(h['s']); ys.append(fut['btc'] / h['btc'] - 1)
+    if len(xs) >= 200:
+        c = float(np.corrcoef(xs, ys)[0, 1]); out['corr'] = round(c, 3); out['muestras'] = len(xs)
+    return out
+
+
+try:
+    prev = json.load(open('prev-ia.json'))
+except Exception:
+    prev = {}
+OUT['progreso'] = progreso(OUT['resumen'], prev)
+OUT['noticias'] = noticias()
+print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'])
 OUT['secs'] = round(time.time() - t0)
 json.dump(OUT, open('ia.json', 'w'), separators=(',', ':'))
 print('ia.json listo', round(time.time() - t0), 's')
