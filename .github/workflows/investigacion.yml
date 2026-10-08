@@ -6,6 +6,9 @@ on:
       dias:
         description: 'Días hacia atrás'
         default: '365'
+      que:
+        description: 'cripto, acciones o todo'
+        default: 'cripto'
 permissions:
   contents: read
 jobs:
@@ -17,10 +20,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Bajar velas y medir
+      - name: Bajar velas y medir (cripto)
+        if: inputs.que != 'acciones'
         run: node --max-old-space-size=6000 herramientas/investigacion.js
         env:
           BT_DAYS: ${{ inputs.dias }}
+      - name: Bajar velas y medir (acciones)
+        if: inputs.que != 'cripto'
+        run: node --max-old-space-size=6000 herramientas/investigacion-acciones.js
       - uses: actions/upload-artifact@v4
         with:
           name: investigacion
