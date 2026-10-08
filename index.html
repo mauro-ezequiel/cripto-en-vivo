@@ -387,7 +387,7 @@ body.trn-on{overflow:hidden}
 .ia-chat{background:#0f1a2d;border:1px solid #1c2c47;border-radius:10px;padding:8px}#iaChatLog{max-height:380px;overflow:auto;display:flex;flex-direction:column;gap:6px;padding:4px}
 .iam{max-width:88%;padding:7px 10px;border-radius:10px;line-height:1.45;font-size:13px}.iam.user{align-self:flex-end;background:#1b2f52;color:#c2d0e6}.iam.assistant{align-self:flex-start;background:#121f36;color:#a9bbd6;border:1px solid #1c2c47}
 .ia-chat-f{display:flex;gap:6px;margin-top:6px}.ia-chat-f input,.ia-cfg input,.ia-cfg select{flex:1;background:#0a111e;color:#c2d0e6;border:1px solid #2b4a7a;border-radius:8px;padding:8px;font-size:13px}.ia-chat-f button,.ia-cfg button{background:#1b2f52;color:#c2d0e6;border:1px solid #2b4a7a;border-radius:8px;padding:7px 12px;cursor:pointer}
-.ia-cfg{margin-top:8px}.ia-cfg summary{cursor:pointer;color:#6f8fc4;font-size:12.5px}.ia-cfg input{width:100%;margin:6px 0;box-sizing:border-box}
+.ia-sug{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}.ia-sug button{background:#12203a;color:#9fb2cf;border:1px solid #2b4a7a;border-radius:14px;padding:4px 10px;font-size:12px;cursor:pointer}.ia-cfg{margin-top:8px}.ia-cfg summary{cursor:pointer;color:#6f8fc4;font-size:12.5px}.ia-cfg input{width:100%;margin:6px 0;box-sizing:border-box}
 #iaCmp{position:fixed;inset:0;z-index:9800;background:rgba(0,0,0,.6);display:flex;align-items:center;justify-content:center;padding:12px}#iaCmp[hidden]{display:none}
 .iac-box{position:relative;width:min(520px,100%);max-height:90vh;overflow:auto;background:#0a111e;color:#9fb2cf;border:1px solid #2b4a7a;border-radius:12px;padding:14px;font-size:13px;box-shadow:0 12px 40px #000c}.iac-x{position:absolute;right:8px;top:4px;background:none;border:0;color:#6e819f;font-size:24px;cursor:pointer}
 .iac-h{color:#c2d0e6;font-weight:700;margin:0 24px 10px 0}.iac-g{display:grid;grid-template-columns:1fr 1fr;gap:8px}.iac-bot,.iac-ia{border:1px solid #1c2c47;border-radius:10px;padding:9px;line-height:1.45}.iac-bot{background:#111722}.iac-ia{background:#0f1a2d;border-color:#2b4a7a}
@@ -4111,25 +4111,90 @@ NOTICIAS MÁS RELEVANTES AHORA: ${news.join(' | ')||'sin datos'} · ${(typeof ne
 HORA: ${new Date().toISOString()}`;}
 function iaLocalAnswer(q){const syms=iaSymsIn(q),recs=iaRecs().filter(r=>syms.includes(r[2])).slice(0,3);
   if(recs.length)return recs.map(r=>`${r[2]} (${IAMODO(r)}, ${new Date(r[3]).toLocaleString('es-AR')}): el bot hizo ${iaPct(r[4])} con ${r[5]}/3 objetivos. La IA hizo ${iaPct(r[6])}: ${IAKIND[r[9]]||r[9]} a las ${r[8]+1} velas de ${r[0]==='x'?(r[12]||'15m'):'1 h'}, en ${fp(r[10])}${r[9]==='ia'?', porque su probabilidad de que siguiera a favor bajó del umbral':r[9]==='seguro'?', porque el precio volvió a su stop de seguridad después de tocar un objetivo':''}.`).join('\n\n')+'\n\nPara charlar de cualquier tema (noticias, por qué conviene o no una entrada, etc.) cargá tu clave de API abajo.';
-  return 'Sin clave de API puedo responder solo sobre operaciones: escribí el nombre de una moneda (por ejemplo "¿por qué salió en BTC?"). Para preguntar cualquier cosa, cargá tu clave de API de Anthropic abajo: se guarda solo en este navegador.';}
+  return 'Sin clave de API respondo con los datos de la página: escribí el nombre de una moneda (por ejemplo "¿por qué salió en BTC?"). Para preguntar cualquier cosa, cargá tu clave de API de Anthropic abajo: se guarda solo en este navegador.';}
+/* ---------- chat sin clave: entiende preguntas y calcula la respuesta con los datos en vivo ---------- */
+const IA_NOMBRES={bitcoin:'BTC',ethereum:'ETH',ether:'ETH',solana:'SOL',cardano:'ADA',ripple:'XRP',dogecoin:'DOGE',doge:'DOGE',litecoin:'LTC',polkadot:'DOT',chainlink:'LINK',avalanche:'AVAX',binance:'BNB',tron:'TRX',polygon:'POL',near:'NEAR',sui:'SUI',pepe:'PEPE',shiba:'SHIB',ton:'TON',aptos:'APT',arbitrum:'ARB',optimism:'OP',worldcoin:'WLD',ondo:'ONDO'};
+const iaNorm=q=>q.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+function iaSymsIn2(q){const out=new Set(iaSymsIn(q));const n=iaNorm(q);for(const [k,v] of Object.entries(IA_NOMBRES))if(new RegExp('\\b'+k+'\\b').test(n))out.add(v);
+  for(const w of (q.match(/\b[a-zA-Z0-9]{2,10}\b/g)||[]))if(tickers[w.toUpperCase()+'USDT']&&w.length>=3&&!/^(que|por|con|los|las|del|una|hoy|mas|muy|sin|bot|vos|ves|hay|son|como|esta|para|entro|tengo)$/i.test(w))out.add(w.toUpperCase());return [...out].slice(0,3);}
+const iaStrip=h=>String(h||'').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
+const iaModoTxt={trading:'TRADING (4 h): busca un retroceso dentro de una tendencia alineada (Supertrend, EMA 21/50/200) con BTC a favor y volumen bajo; el retroceso tiene que frenar antes de la EMA 50. 350 USD × 10, stop 3 × ATR (máx. 3,6 %), objetivos 0,5 / 1 / 1,5 × stop.',
+  'trading+':'TRADING+ (4 h): tendencia muy fuerte (ADX ≥ 35) que ya se movió 1 % a favor en 24 h con el flujo de órdenes a favor. 350 USD × 10, stop 3 × ATR (máx. 7,6 %), objetivos 0,35 / 0,7 / 1,05 × stop y aviso de salida si se da vuelta.',
+  shooter:'SHOOTER (15 y 30 min): compra el rebote cuando una moneda cae 3 % en una hora, cierra bajo la banda inferior de Bollinger con RSI 7 en sobreventa y la tendencia de 1 h sigue a favor. 50 USD × 15, stop 3 × ATR (máx. 5 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h.',
+  acciones:'ACCIONES (diario): rebote tras una caída moderada (bajó 10 % en 6 meses, sin desplome mayor al 35 % ni subida histórica) con una vela alcista fuerte. 500 USD × 8, stop 3 × ATR (máx. 9,6 %).',
+  pilotear:'PILOTEAR: cargás tu operación real y la página te sigue: stop sugerido de 3 × ATR, aviso si una vela de 1 h cierra a mitad de camino al stop, y un semáforo con 5 factores de la entrada.',
+  salvavidas:'Salvavidas (solo TRADING): si el precio llega al 65 % del camino al stop sin tocar objetivos y los datos siguen confirmando, se suma medio margen para mejorar la entrada promedio.',
+  ia:'La IA usa las mismas entradas que los bots pero decide sola cuándo salir: en cada cierre de vela estima la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR. Se reentrena cada día con el último año y solo cambia el plan del bot cuando le gana en meses que no usó para aprender.'};
+async function iaAnalyze(sym){const s=sym+'USDT',t=tickers[s];if(!t)return `No encuentro ${sym} entre las monedas con USDT.`;
+  const out=[`📊 ${sym} ahora: ${fp(t.c)} (${iaPct(t.p||0).replace(' %','')} % en 24 h).`];
+  try{const [b4,b15]=await Promise.all([kl(s,'4h',300),kl(s,'15m',300)]);const c4=b4.slice(0,-1),P=IA.prep(c4),j=c4.length-1,c=c4[j].close;
+    const st=P.st[j],al=Math.sign(P.e21[j]-P.e50[j]),ab=P.e200[j]!=null?Math.sign(c-P.e200[j]):0,r14=P.r14[j],adx=P.adx[j],d50=P.atr[j]?(c-P.e50[j])/P.atr[j]:0;
+    const tend=st===al&&al===ab?(st>0?'alcista y alineada (Supertrend, EMA 21/50 y precio sobre la EMA 200)':'bajista y alineada (Supertrend, EMA 21/50 y precio bajo la EMA 200)'):'mezclada: los indicadores de tendencia no coinciden';
+    out.push(`Tendencia de 4 h ${tend}. RSI 14 en ${r14!=null?r14.toFixed(0):'—'}${r14>70?' (sobrecompra)':r14<30?' (sobreventa)':''}, ADX ${adx!=null?adx.toFixed(0):'—'}${adx>=25?' (tendencia con fuerza)':' (sin mucha fuerza)'}, precio a ${iaN(Math.abs(d50),1)} ATR ${d50>=0?'sobre':'bajo'} la EMA 50.`);
+    const E=IAM&&IAM.tr&&IAM.tr.entry;if(E&&st){let btc=0;try{const bb=(await kl('BTCUSDT','4h',80)).slice(0,-1),e=IA._.ema(bb.map(x=>x.close),50);btc=bb.at(-1).close>e.at(-1)?1:-1;}catch(e){}
+      const p=IA.predict(E.model,IA.entryX(P,j,st,btc));out.push(`Puntaje de entrada de la IA para un ${st>0?'LONG':'SHORT'} en 4 h: ${Math.round(p*100)} % (${p>=E.thr?'alto: está entre sus mejores':p<=E.q[0]?'bajo':'medio'}). BTC está ${btc>0?'sobre':'bajo'} su EMA 50 de 4 h${btc===st?', a favor':', en contra'}.`);}
+    const c15=b15.slice(0,-1),Q=IA.prep(c15),k=c15.length-1,z=Q.bs[k]?(c15[k].close-Q.bm[k])/Q.bs[k]:0,drop=(c15[k].close/c15[k-4].close-1)*100;
+    out.push(`En 15 min: ${z<=-1.8?'está bajo la banda inferior de Bollinger':z>=1.8?'está sobre la banda superior de Bollinger':'dentro de las bandas de Bollinger'}, RSI 7 en ${Q.r7[k]!=null?Q.r7[k].toFixed(0):'—'}, ${iaPct(drop)} en la última hora.${drop<=-3&&z<=-1.8?' Es el tipo de caída que busca SHOOTER (falta que la tendencia de 1 h esté a favor).':''}`);
+    try{const D=await pilData(s);for(const d of [1,-1]){const S=pilSemaforo(D,d);if(S&&(d===st||!st))out.push(`Semáforo para un ${d>0?'LONG':'SHORT'}: ${S.k}/5 · ${S.lab}.`);}}catch(e){}
+  }catch(e){out.push('No pude bajar las velas para analizarla ahora.');}
+  const sig=['medio','x'].flatMap(m=>(SIG[m]||[]).filter(x=>x.state==='live'&&x.sym===s).map(x=>[m,x]));
+  out.push(sig.length?`Hay una señal viva: ${sig.map(([m,x])=>`${m==='x'?'SHOOTER':x.plus?'TRADING+':'TRADING'} ${x.dir>0?'LONG':'SHORT'} con ${x.conf} % de acierto histórico (entrada ${fp(x.zl)} – ${fp(x.zh)}, objetivo 1 ${fp(x.tp0||x.tp1)}, stop ${fp(x.sl)})`).join('; ')}.`:'Ningún bot tiene una señal viva en esta moneda: según sus reglas no es un buen momento para entrar.');
+  const id=IAIDEAS.find(x=>x.sym===s);if(id)out.push(`💡 Además está entre las entradas que encontró la IA sola: ${id.dir>0?'LONG':'SHORT'} en ${id.tf}, entrada ${fp(id.entry)}, objetivo 1 ${fp(id.tps[0])}, stop ${fp(id.stop)}.`);
+  out.push('Es información para que decidas vos, no un consejo de inversión.');return out.join('\n');}
+function iaResumenTxt(){const R=IAM&&IAM.resumen,P=IAM&&IAM.progreso;if(!R)return 'Todavía no tengo el resumen de la comparación.';
+  const l=['TRADING','TRADING+','SHOOTER'].map(m=>{const x=R['3meses'][m];return x&&x.n?`${m}: bot ${iaN(x.bot_gana,0)} % ganadas y ${iaPct(x.bot_pct)} por operación · IA ${iaN(x.ia_gana,0)} % y ${iaPct(x.ia_pct)}`:'';}).filter(Boolean);
+  return `${P&&P.valor!=null?`Hoy saco el ${iaN(P.valor,0)} % de la ganancia de los bots en los últimos 3 meses (100 % = igualarlos).\n`:''}${l.join('\n')}\n${(P&&P.notas||[]).join('\n')}`;}
+function iaMisResultados(){const now=Date.now(),L=OPS.filter(o=>now-o.t<7*864e5&&o.state!=='open'&&(o.m==='medio'||o.m==='x'||o.m==='a'));if(!L.length)return 'En los últimos 7 días no se cerró ninguna operación en esta página.';
+  const by={};for(const o of L){const k=o.m==='x'?'SHOOTER':o.m==='a'?'ACCIONES':o.setup==='tp-x'?'TRADING+':'TRADING';const b=by[k]=by[k]||{n:0,w:0,u:0};b.n++;if((o.pnl||0)>0)b.w++;b.u+=o.pnl||0;}
+  const tot=L.reduce((a,o)=>a+(o.pnl||0),0);return `Últimos 7 días (simulación de la página): ${L.length} operaciones cerradas, resultado ${tot>=0?'+':''}${tot.toFixed(2).replace('.',',')} USD.\n`+Object.entries(by).map(([k,b])=>`${k}: ${b.n} operaciones, ${b.w} ganadas (${Math.round(b.w/b.n*100)} %), ${b.u>=0?'+':''}${b.u.toFixed(2).replace('.',',')} USD`).join('\n');}
+function iaExplain(n){const T=typeof TL!=='undefined'?TL:{};
+  for(const k of ['trading+','trading','shooter','acciones','pilotear','salvavidas','ia'])if(new RegExp('(^|[^a-z])'+k.replace('+','\\+')+(k==='trading'?'(?!\\+)':'')+'(?![a-z])').test(n))return iaModoTxt[k];
+  let best=null;for(const [k,v] of Object.entries(T)){const words=iaNorm(iaStrip(v.t)).replace(/[^a-z0-9 ]/g,' ').split(/\s+/).filter(w=>w.length>=3);if(n.includes(k)||words.some(w=>n.includes(w))){best=v;break;}}
+  return best?`${iaStrip(best.t)}: ${iaStrip(best.b)}${best.h?'\nCómo usarlo: '+best.h.map(iaStrip).join(' · '):''}`:null;}
+async function iaLocalAnswer2(q){const n=iaNorm(q),syms=iaSymsIn2(q),sym=syms[0];
+  if(/\b(explica|explicame|que es|que significa|como funciona|para que sirve|que hace)\b/.test(n)){const e=iaExplain(n);if(e)return e;}
+  if(sym&&/(por ?que|porque|motivo|razon).*(sali|cerr|perd|gan|stop)|(sali|cerr)\w* .*(por ?que|porque)/.test(n)){const r=iaLocalAnswer(q);if(!/^Sin clave/.test(r))return r;
+    const o=[...OPS].reverse().find(x=>x.sym===sym+'USDT'&&(x.m==='medio'||x.m==='x'));if(o){const sh=await iaShadowOp(o).catch(()=>null);return `${sym}: el bot ${o.state==='open'?'sigue en curso':'cerró'} (${o.hit||0}/3 objetivos${o.why?', '+o.why:''}). ${sh&&!sh.wait?`La IA ${sh.done?`${IAKIND[sh.kind]||sh.kind} a las ${iaHrs(sh.t-o.t)} de entrar (${iaPct(sh.pct)} del margen)`:`sigue adentro con ${Math.round((sh.p||0)*100)} % de probabilidad de seguir a favor`}.`:''}`;}
+    return `No tengo operaciones de ${sym} en los últimos 3 meses.`;}
+  if(sym&&/(que hago|mantengo|mantener|cierro|cerrar|salgo|salir|como va|como esta|aguanto|vendo)/.test(n)){const L=IALIVE.filter(([x])=>x.sym===sym+'USDT');
+    if(L.length)return L.map(([x,a])=>`${sym} ${x.dir>0?'LONG':'SHORT'} (${x.src}): ${IALAB[a.st][0]} ${IALAB[a.st][1]}. ${iaAdvTxt(a,x)}\nLo que más pesa: ${iaWhy(a.why)}.`).join('\n\n');
+    return (await iaAnalyze(sym))+'\n(No veo una operación abierta tuya ni de los bots en esta moneda; si la tenés, cargala en PILOTEAR y la sigo.)';}
+  if(sym)return iaAnalyze(sym);
+  if(/(como vas|como venis|progreso|aprend|contra (los )?bots?|efectividad|rendimiento|le ganas)/.test(n))return iaResumenTxt();
+  if(/(noticia|news|que pasa|mercado hoy|macro|fed|guerra)/.test(n))return iaStrip(iaNewsHTML().replace(/<\/div>/g,'\n'));
+  if(/(idea|oportunidad|que ves|recomend|propia|encontraste|buscaste)/.test(n))return IAIDEAS.length?'Entradas que encontré sola ahora (en práctica):\n'+IAIDEAS.map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} en ${x.tf} · puntaje ${Math.round(x.p*100)} % · entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}`).join('\n'):'Ahora no encuentro ninguna entrada con puntaje alto. Busco de nuevo cada 15 minutos.';
+  if(/(cuanto gan|cuanto perd|mis resultados|resultado|balance|esta semana)/.test(n))return iaMisResultados();
+  if(/(senal|senales) (viva|activa|ahora|hay)|hay (alguna )?senal/.test(n)){const L=['medio','x','a'].flatMap(m=>(SIG[m]||[]).filter(x=>x.state==='live').map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} (${m==='x'?'SHOOTER':m==='a'?'ACCIONES':x.plus?'TRADING+':'TRADING'}, ${x.conf} %)`));return L.length?'Señales vivas ahora: '+L.join(' · '):'Ahora no hay señales vivas de los bots.';}
+  if(/(mejor modo|que modo|cual modo|conviene mas)/.test(n))return 'Último año (simulación): TRADING es el más preciso (81 % al objetivo 1, +11,4 % del margen por operación, 0,3 señales por día); TRADING+ el que más gana en total (+7,2 % por operación, 1 señal por día); SHOOTER el de más movimiento (75 %, +2,4 % por operación, 1,5 por día); ACCIONES +5,9 % por operación.\n'+iaResumenTxt();
+  if(/(indicador|que sirve|que importa|que mira)/.test(n)){const f=L=>(L||[]).filter(x=>x[1]>0).slice(0,5).map(x=>IA.NAMES[x[0]]||x[0]).join(', ');return `Para salir a tiempo lo que más me sirve: ${f(IAM&&IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}.\nPara elegir entradas: ${f(IAM&&IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}.\nEn el análisis de un año, el que más ayudó a acertar fue la EMA 200 (que el precio esté lejos a favor), seguido por la pendiente de la EMA 50 y la tendencia alineada.`;}
+  if(/(modo|trading|shooter|acciones|pilotear|salvavidas)/.test(n)){const e=iaExplain(n);if(e)return e;}
+  return 'Te puedo contestar, por ejemplo: "¿Conviene entrar en SOL?", "¿Qué hago con ONDO?", "¿Por qué saliste en BTC?", "¿Cómo venís contra los bots?", "¿Qué noticias pesan hoy?", "¿Qué entradas ves?", "¿Cuánto gané esta semana?", "Explicame el RSI". Con una clave de API puedo charlar de cualquier cosa.';}
+/* preguntas sugeridas que cambian con lo que pasa ahora */
+function iaSuggest(){const out=[];
+  for(const [q] of IALIVE.slice(0,2))out.push(`¿Qué hago con ${q.sym.replace('USDT','')}?`);
+  const r=iaRecs()[0];if(r)out.push(`¿Por qué saliste en ${r[2]}?`);
+  const mov=Object.values(tickers).filter(t=>/USDT$/.test(t.s)&&t.q>2e7&&!STABLE.test(t.s)).sort((a,b)=>Math.abs(b.p||0)-Math.abs(a.p||0))[0];if(mov)out.push(`¿Conviene entrar en ${mov.s.replace('USDT','')}?`);
+  out.push('¿Cómo venís contra los bots?');if(IAIDEAS.length)out.push('¿Qué entradas ves?');out.push('¿Qué noticias pesan hoy?');out.push('¿Cuánto gané esta semana?');
+  return [...new Set(out)].slice(0,6);}
 async function iaAsk(q){IACHAT.push({r:'user',t:q,ts:Date.now()});saveChat();iaChatRender(true);
   const key=iaKey();let ans;
-  if(!key)ans=iaLocalAnswer(q);
+  if(!key){try{ans=await iaLocalAnswer2(q);}catch(e){ans=iaLocalAnswer(q);}}
   else{try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
         body:JSON.stringify({model:iaModel(),max_tokens:900,system:iaContext(q+' '+IACHAT.slice(-6).map(m=>m.t).join(' ')),messages:IACHAT.slice(-10).map(m=>({role:m.r,content:m.t}))})});
       const j=await r.json();ans=r.ok?(j.content||[]).map(c=>c.text||'').join('').trim():`No pude preguntarle a la IA (${(j.error&&j.error.message)||r.status}). Revisá la clave de API.`;}
     catch(e){ans='No pude conectarme con la IA. Probá de nuevo en un rato.';}}
   IACHAT.push({r:'assistant',t:ans||'…',ts:Date.now()});saveChat();iaChatRender(false);}
 function iaChatRender(wait){const box=$('iaChatLog');if(!box)return;
-  box.innerHTML=(IACHAT.length?IACHAT:[{r:'assistant',t:'Hola. Preguntame por qué salió una operación, cómo vengo contra los bots, qué noticias pesan hoy o qué entradas veo.'}]).map(m=>`<div class="iam ${m.r}">${esc(m.t).replace(/\n/g,'<br>')}</div>`).join('')+(wait?'<div class="iam assistant ia-mut">Pensando…</div>':'');
-  box.scrollTop=box.scrollHeight;}
+  box.innerHTML=(IACHAT.length?IACHAT:[{r:'assistant',t:'Hola. Preguntame si conviene entrar en una moneda, qué hacer con una operación, por qué salí en alguna, cómo vengo contra los bots, qué noticias pesan o qué entradas veo. Tocá una de las sugerencias para empezar.'}]).map(m=>`<div class="iam ${m.r}">${esc(m.t).replace(/\n/g,'<br>')}</div>`).join('')+(wait?'<div class="iam assistant ia-mut">Pensando…</div>':'');
+  box.scrollTop=box.scrollHeight;const sg=$('iaChatSug');if(sg)sg.innerHTML=iaSuggest().map(x=>`<button type="button" data-iasug="${esc(x)}">${esc(x)}</button>`).join('');}
 function iaChatHTML(){const k=iaKey();return `<div class="ia-chat"><div id="iaChatLog"></div>
-  <form id="iaChatF" class="ia-chat-f"><input id="iaChatQ" type="text" placeholder="Preguntale a la IA… (ej.: ¿por qué saliste en BTC?)" autocomplete="off"><button type="submit">Enviar</button></form>
+  <div id="iaChatSug" class="ia-sug"></div><form id="iaChatF" class="ia-chat-f"><input id="iaChatQ" type="text" placeholder="Preguntale a la IA… (ej.: ¿por qué saliste en BTC?)" autocomplete="off"><button type="submit">Enviar</button></form>
   <details class="ia-cfg"><summary>${k?'🔑 Clave cargada · cambiar modelo o clave':'🔑 Cargar clave de API para charlar de todo'}</summary>
     <div class="ia-mut">El chat usa Claude con tu propia clave de API de Anthropic (se paga por uso en console.anthropic.com). La clave se guarda solo en este navegador y se manda únicamente a api.anthropic.com. Sin clave, la IA responde solo sobre operaciones.</div>
     <input id="iaKeyIn" type="password" placeholder="sk-ant-…" autocomplete="off"> <select id="iaModelIn">${IA_MODELS.map(([v,l])=>`<option value="${v}"${v===iaModel()?' selected':''}>${l}</option>`).join('')}</select>
     <button type="button" id="iaKeySave">Guardar</button>${k?' <button type="button" id="iaKeyDel">Borrar clave</button>':''} <button type="button" id="iaChatClr">Borrar charla</button></details></div>`;}
 function iaChatBind(){const f=$('iaChatF');if(!f)return;iaChatRender(false);
+  const sg=$('iaChatSug');if(sg)sg.onclick=e=>{const b=e.target.closest('[data-iasug]');if(b)iaAsk(b.dataset.iasug);};
   f.onsubmit=e=>{e.preventDefault();const q=$('iaChatQ').value.trim();if(!q)return;$('iaChatQ').value='';iaAsk(q);};
   const sv=$('iaKeySave');if(sv)sv.onclick=()=>{const v=$('iaKeyIn').value.trim();try{if(v)localStorage.setItem('cv_ia_key',v);localStorage.setItem('cv_ia_model',$('iaModelIn').value);}catch(e){}iaChatMount();};
   const dl=$('iaKeyDel');if(dl)dl.onclick=()=>{try{localStorage.removeItem('cv_ia_key');}catch(e){}iaChatMount();};
