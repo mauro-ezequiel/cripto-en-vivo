@@ -3905,7 +3905,7 @@ async function iaEvalPos(q){const E=IAM&&IAM[q.fam]&&IAM[q.fam].exit;if(!E||!win
   else st=hits>=3?'plan3':'plan';
   return {p,st,mode,hits,g,why,theta:E.theta,safe:extra||safe,tps,age,RG};}
 const IALAB={mantener:['🟢','MANTENER'],seguir:['🚀','SEGUÍ ADENTRO'],asegurar:['🟠','ASEGURÁ LA GANANCIA'],salir:['🔴','SALÍ ANTES DEL STOP'],plan:['📋','SEGUÍ EL PLAN DEL BOT'],plan3:['✅','PLAN CUMPLIDO']};
-function iaAdvTxt(a,q){const pp=Math.round(a.p*100),th=Math.round(a.theta*100),gg=(a.g>=0?'+':'')+a.g.toFixed(2)+' % del precio';
+function iaAdvTxt(a,q){const pp=Math.round(a.p*100),th=Math.round(a.theta*100),gg=(a.g>=0?'+':'')+iaN(a.g,2)+' % del precio';
   if(a.mode==='plan'){const nx=a.hits<3?a.tps[a.hits]:null;return a.st==='plan3'?`Llegó a los 3 objetivos. En las pruebas, quedarse más tiempo no le ganó a cerrar acá. Ganancia ${gg}.`
     :`Próximo objetivo en ${fp(nx)} · stop en ${fp(a.safe)} · ahora ${gg}. La IA todavía no le gana al bot en los meses de prueba, así que por ahora no cambia el plan (su estimación de seguir a favor: ${pp} %, sin valor suficiente).`;}
   if(a.mode==='regla'){const K=a.RG.regla;if(a.st==='seguir')return `Ya pasó el objetivo 3: en vez de cerrar, la IA sigue con un stop móvil a ${K.k} ATR del máximo (ahora en ${fp(a.safe)}). Así le fue mejor que al bot en los meses de prueba.`;
@@ -3937,7 +3937,7 @@ async function iaEntryScore(s){const f=s.m==='x'?'sh':'tr',E=IAM&&IAM[f]&&IAM[f]
   const x=IA.entryX(P,j,s.dir,btc),p=IA.predict(E.model,x);return {p,lvl:p>=E.q[2]?'alto':p<=E.q[0]?'bajo':'medio',why:IA.explain(E.model,x,IA.ENTRY_F).slice(0,3)};}
 var IASIG={};
 async function iaSigTick(){if(!IAM)return;for(const m of ['medio','x'])for(const s of (SIG[m]||[]).filter(x=>x.state==='live')){if(IASIG[s.op])continue;try{IASIG[s.op]=await iaEntryScore({...s,m});}catch(e){}}if(IAOPEN)iaRender();}
-const iaPct=v=>(v>=0?'+':'')+(+v).toFixed(1)+' %';
+const iaN=(v,n=1)=>(+v).toFixed(n).replace('.',','),iaPct=v=>(v>=0?'+':'')+iaN(v)+' %';
 const iaWhy=w=>w.map(([k,v])=>`${IA.NAMES[k]||k} ${v>=0?'↑':'↓'}`).join(' · ');
 function iaImp(list){const top=(list||[]).filter(x=>x[1]>0).slice(0,8),mx=top.length?top[0][1]:1;
   return top.map(([k,v])=>`<div class="ia-bar"><span>${esc(IA.NAMES[k]||k)}</span><i style="width:${Math.max(4,Math.round(v/mx*100))}%"></i></div>`).join('')||'<div class="mut">Todavía sin datos.</div>';}
@@ -3947,9 +3947,9 @@ function iaRender(){const box=$('iaBody');if(!box)return;
   const res=fam.map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test,pm=T.por_modo||{},RG=IAM[f].reglas||{};
     const rg=Object.entries(RG).map(([g,v])=>`<div class="mut">${g}: probó ${v.probadas} maneras de salir · la mejor en los meses de aprendizaje dio ${iaPct(v.prueba.ia)} en la prueba contra ${iaPct(v.prueba.bot)} del bot → ${v.activa?'<b class="up">la usa</b>':'sigue el bot'}</div>`).join('');
     return `<div class="ia-card"><b>${nm}</b> · <span class="${E.activa?'up':'mut'}">${E.activa?'IA activa: le ganó al bot':'modo aprendizaje: todavía no le gana al bot'}</span><div class="ia-g"><span>Bot (objetivos fijos)</span><b class="${T.bot.pct>=0?'up':'dn'}">${iaPct(T.bot.pct)} por operación</b><span>IA (decide sola)</span><b class="${T.ia.pct>=0?'up':'dn'}">${iaPct(T.ia.pct)} por operación</b>
-      <span>Operaciones que mejoró</span><b>${T.mejora_ops} %</b><span>Ganadas bot / IA</span><b>${T.bot.gana} % / ${T.ia.gana} %</b><span>Peor operación bot / IA</span><b>${iaPct(T.bot.peor)} / ${iaPct(T.ia.peor)}</b></div>
+      <span>Operaciones que mejoró</span><b>${iaN(T.mejora_ops,0)} %</b><span>Ganadas bot / IA</span><b>${iaN(T.bot.gana,0)} % / ${iaN(T.ia.gana,0)} %</b><span>Peor operación bot / IA</span><b>${iaPct(T.bot.peor)} / ${iaPct(T.ia.peor)}</b></div>
       ${Object.entries(pm).map(([k,v])=>`<div class="mut">${k}: bot ${iaPct(v.bot)} → IA ${iaPct(v.ia)} (${v.n} operaciones)</div>`).join('')}
-      <div class="mut">Prueba en ${T.n_test} operaciones de los últimos meses que la IA no usó para aprender · % del margen, con comisiones · precisión de la predicción ${T.auc} (0,50 = azar).</div>${rg}</div>`;}).join('');
+      <div class="mut">Prueba en ${T.n_test} operaciones de los últimos meses que la IA no usó para aprender · % del margen, con comisiones · precisión de la predicción ${iaN(T.auc,2)} (0,50 = azar).</div>${rg}</div>`;}).join('');
   const live=IALIVE.length?IALIVE.map(([q,a])=>{const L=IALAB[a.st];return `<div class="ia-op ${a.st}" data-ias="${q.sym}" data-iam="${q.fam==='sh'?'x':'medio'}"><div class="ia-h">${L[0]} <b>${L[1]}</b> · ${q.sym.replace('USDT','')} ${q.dir>0?'▲ LONG':'▼ SHORT'} <small>${esc(q.src)}${q.botHit!=null?` · bot: ${q.botHit}/3 objetivos`:''}</small></div><div>${iaAdvTxt(a,q)}</div><div class="mut">Lo que más pesa: ${esc(iaWhy(a.why))}</div></div>`;}).join('')
     :`<div class="mut">${iaPositions().length?'Analizando las operaciones abiertas…':'No hay operaciones abiertas. Cuando un bot dé una señal o cargues una en PILOTEAR, la IA la sigue acá y te avisa cuándo salir.'}</div>`;
   const sigs=['medio','x'].flatMap(m=>(SIG[m]||[]).filter(s=>s.state==='live').map(s=>[m,s])).map(([m,s])=>{const v=IASIG[s.op];
@@ -3957,7 +3957,7 @@ function iaRender(){const box=$('iaBody');if(!box)return;
   box.innerHTML=`<div class="mut">Estudió por última vez el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}: todas las señales del último año de los bots, vela a vela. Cada día suma el día nuevo y vuelve a aprender.</div>
     <h4>Operaciones abiertas: qué hacer ahora</h4>${live}
     <h4>Cómo sale la IA contra el bot</h4>${res}
-    <h4>Señales vivas: puntaje de entrada de la IA</h4>${sigs}${IAM.tr&&IAM.tr.entry?`<div class="mut">En la prueba, el 20 % de entradas con mejor puntaje llegó al objetivo 1 el ${IAM.tr.entry.test.top20} % (promedio ${IAM.tr.entry.test.base} %). Precisión ${IAM.tr.entry.test.auc}: ayuda poco; las reglas de los bots ya filtran mejor.</div>`:''}
+    <h4>Señales vivas: puntaje de entrada de la IA</h4>${sigs}${IAM.tr&&IAM.tr.entry?`<div class="mut">En la prueba, el 20 % de entradas con mejor puntaje llegó al objetivo 1 el ${iaN(IAM.tr.entry.test.top20,0)} % (promedio ${iaN(IAM.tr.entry.test.base,0)} %). Precisión ${iaN(IAM.tr.entry.test.auc,2)}: ayuda poco; las reglas de los bots ya filtran mejor.</div>`:''}
     <h4>Lo que aprendió que sirve</h4><div class="ia-two"><div><b>Para salir a tiempo</b>${iaImp(IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}</div><div><b>Para entrar (TRADING)</b>${iaImp(IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}</div></div>
     <div class="mut" style="margin-top:8px">Regla de oro: la IA solo cambia el plan del bot cuando, en los meses que no usó para aprender, sacó más ganancia que el bot. Si no, te muestra lo que estima pero te dice que sigas el plan. Cómo decide: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR. Si baja del umbral, sale (aunque no haya llegado al próximo objetivo); si sigue alta, mantiene aunque el bot ya haya llegado al objetivo 3. Para no devolver ganancia usa un stop de seguridad: al tocar el objetivo 1 pasa a la entrada y después sube al objetivo anterior. No es asesoramiento financiero.</div>`;}
 function iaShow(on){IAOPEN=on;$('iaPanel').hidden=!on;$('iaTab').hidden=on;if(on){iaRender();iaTick();iaSigTick();}}
