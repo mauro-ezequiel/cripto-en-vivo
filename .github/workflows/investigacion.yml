@@ -1,0 +1,28 @@
+name: Investigación de indicadores
+# Se corre a mano: guarda cada situación candidata del último año con todos los indicadores y su resultado.
+on:
+  workflow_dispatch:
+    inputs:
+      dias:
+        description: 'Días hacia atrás'
+        default: '365'
+permissions:
+  contents: read
+jobs:
+  investigar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Bajar velas y medir
+        run: node --max-old-space-size=6000 herramientas/investigacion.js
+        env:
+          BT_DAYS: ${{ inputs.dias }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: investigacion
+          path: '*.json.gz'
+          retention-days: 7
