@@ -4165,7 +4165,7 @@ function iaSymsIn2(q){const out=new Set(),n=iaNorm(q),toks=n.split(' ');
     if(IA_NOMBRES[t]){out.add(IA_NOMBRES[t]);continue;}
     if(t.length>=2&&tickers[t.toUpperCase()+'USDT']&&(t.length>=3||/[0-9]/.test(t)||q.includes(t.toUpperCase()))){out.add(t.toUpperCase());continue;}
     if(t.length>=5){const nm=Object.keys(IA_NOMBRES).find(k=>iaLev(t,k)<=iaTol(k));if(nm){out.add(IA_NOMBRES[nm]);continue;}}
-    if(t.length>=4){const s=all.slice(0,150).find(x=>x.length>=4&&iaLev(t,x)===1);if(s)out.add(s.toUpperCase());}}
+    if(t.length>=4){const s=all.slice(0,150).find(x=>x.length>=3&&iaLev(t,x)===1);if(s)out.add(s.toUpperCase());}}
   return [...out].slice(0,3);}
 async function iaBest(){const L=[];
   for(const m of ['medio','x'])for(const x of (SIG[m]||[]).filter(s=>s.state==='live'))L.push({k:3+x.conf/100,t:`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} en ${m==='x'?(x.tf||'15m')+' (SHOOTER)':'4 h ('+(x.plus?'TRADING+':'TRADING')+')'}: señal viva de un bot con ${x.conf} % de acierto histórico · entrada ${fp(x.zl)} – ${fp(x.zh)} · objetivo 1 ${fp(x.tp0||x.tp1)} · stop ${fp(x.sl)}`});
