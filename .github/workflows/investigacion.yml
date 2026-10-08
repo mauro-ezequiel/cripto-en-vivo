@@ -28,7 +28,7 @@ jobs:
       - name: Bajar velas y medir (acciones)
         if: inputs.que == 'acciones' || inputs.que == 'todo'
         run: node --max-old-space-size=6000 herramientas/investigacion-acciones.js
-      - name: Bajar velas y medir (SHOOTER en temporalidades bajas)
+      - name: Bajar velas y medir (SHOOTER 1, 3 y 5 minutos)
         if: inputs.que == 'shooter'
         run: node --max-old-space-size=6000 herramientas/investigacion-shooter.js
       - name: Guardar los datos en una rama aparte (investigacion-<número de corrida>)
