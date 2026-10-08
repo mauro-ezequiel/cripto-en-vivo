@@ -82,6 +82,7 @@ function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
     const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0;
     if (!dir || L.vr >= 1 || !(atrP > .01 && atrP <= .05 / 3)) return out;
     const pull = dir > 0 ? r14 < 50 : r14 > 50, soft = dir > 0 ? r14 < 55 : r14 > 45, adx = calcADX(14).adx[i];
+    if (pull && dir * (cb - e50) / atr < .5) return out; // octubre 2026: el retroceso tiene que frenar al menos media ATR antes de la EMA 50
     if (pull) out.setup = rank < 40 ? 't-pb' : 'tp-u80';
     else if (rank < 40 && soft && adx != null && adx >= 25) out.setup = 'tp-r55';
     else return out;

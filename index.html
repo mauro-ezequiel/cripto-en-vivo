@@ -1933,8 +1933,10 @@ function evalTrading(cs,hc){
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
     if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.05/3))return out;
+    /* octubre 2026: el retroceso tiene que frenar al menos media ATR antes de la EMA 50 (1 año, 55 monedas: objetivo 1 del 79 al 84 %, ganancia por operación de +7,5 a +13 % del margen) */
+    const d50=dir*(cb-e50)/atr;if(!(d50>=.5))return out;
     out.setup='t-pb';out.dir=dir;out.score=dir;
-    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','volatilidad justa para el stop');
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'el retroceso frenó antes de la EMA 50 ('+d50.toFixed(1)+' ATR)','volumen bajo en el retroceso','volatilidad justa para el stop');
     if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;
   });
@@ -2939,7 +2941,16 @@ async function pilData(s){const D=PILD[s];if(D&&Date.now()-D.t<60e3)return D;
     return {tr:e200==null?0:((st||0)+Math.sign(e21-e50)+Math.sign(cl[i]-e200))/3,rsi:calcRSI(14)[i],adx:A.adx[i]||0,di:Math.sign((A.pdi[i]||0)-(A.mdi[i]||0)),atrP:wilder(trArr(),14)[i]/cl[i]};});};
   const cc=h1.slice(0,-1),n=cc.length,lows=[],highs=[];
   for(let i=Math.max(3,n-123);i<n-3;i++){let L=true,H=true;for(let j=1;j<=3;j++){if(cc[i].low>cc[i-j].low||cc[i].low>cc[i+j].low)L=false;if(cc[i].high<cc[i-j].high||cc[i].high<cc[i+j].high)H=false;}if(L)lows.push(cc[i].low);if(H)highs.push(cc[i].high);}
-  return PILD[s]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),lows,highs,c1:n?cc[n-1].close:null,t1:n?cc[n-1].t+36e5:0};}
+  /* semáforo de entrada (octubre 2026): 5 factores de 4h que en un año de datos subieron el acierto de entradas al azar */
+  const q4=(()=>{const c4=h4.slice(0,-1);return withCandles(c4,()=>{const i=c4.length-1,cl=closes(),atr=wilder(trArr(),14)[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i];
+    let f6=0,v6=0;for(let j=Math.max(0,i-5);j<=i;j++){f6+=barDelta(c4[j]);v6+=c4[j].v;}
+    return {st:calcST(10,3).dir[i]||0,al:Math.sign(e21-e50),ab:e200==null?0:Math.sign(cl[i]-e200),d50:atr?(cl[i]-e50)/atr:0,fl6:v6?f6/v6:0,r24:i>=6?(cl[i]/cl[i-6]-1)*100:0};});})();
+  try{if(!window.__btc4p||Date.now()-window.__btc4p.t>10*6e4){const bk=await kl('BTCUSDT','4h',80),bc=bk.slice(0,-1).map(b=>b.close),be=emaArr(bc,50);window.__btc4p={t:Date.now(),d:bc.at(-1)>be.at(-1)?1:-1};}q4.btc=window.__btc4p.d;}catch(e){q4.btc=0;}
+  return PILD[s]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),q4,lows,highs,c1:n?cc[n-1].close:null,t1:n?cc[n-1].t+36e5:0};}
+function pilSemaforo(D,d){const q=D.q4;if(!q)return null;
+  const F=[['BTC a favor',q.btc===d],['tendencia alineada',q.st===d&&q.al===d&&q.ab===d],['lejos de la EMA 50',d*q.d50>=.5],['flujo (CVD) a favor',d*q.fl6>=0],['24 h a favor',d*q.r24>=0]],k=F.filter(x=>x[1]).length;
+  const lab=k>=5?'🟢 entrada fuerte: en la prueba llegó al objetivo el 74 %':k>=3?`🟡 entrada media: en la prueba llegó al objetivo el ${k===4?'71':'68'} %`:'🔴 entrada floja: en la prueba llegó al objetivo el 64–67 %';
+  return {k,lab,txt:`Semáforo de entrada ${k}/5 · ${lab} · `+F.map(x=>(x[1]?'✓ ':'✗ ')+x[0]).join(' · ')};}
 /* análisis: devuelve el estado y los textos que se muestran */
 /* octubre 2026 · PILOTEAR v2: stop recomendado (3 × ATR de 4h, como máximo el 80 % del camino a la liquidación) y
    aviso de salida si una vela de 1 h cierra a mitad de camino a ese stop. El salvavidas ya no se sugiere.
@@ -2958,6 +2969,7 @@ function pilAnalyze(p,D,c){
   const z=symbol===p.sym&&LIQ&&LIQ.cl?LIQ.cl:null,zA=z?(d>0?z.longs:z.shorts)[0]:null,zF=z?(d>0?z.shorts:z.longs)[0]:null;
   const inval=sup!=null?sup*(1-d*.5*atr):null,exitAt=inval!=null&&d*(inval-liq)>0?inval:null;
   const r=[],why=[];const tdir=v=>v>.33?'a favor':v<-.33?'en contra':'neutral';
+  const sem=pilSemaforo(D,d);if(sem)why.push(sem.txt);
   why.push(`tendencia 15m ${tdir(d*D.f15.tr)} · 1h ${tdir(d*D.f1.tr)} · 4h ${tdir(d*D.f4.tr)}`,`RSI 1h ${D.f1.rsi!=null?D.f1.rsi.toFixed(0):'—'} · ADX 1h ${D.f1.adx.toFixed(0)}${D.f1.adx>22?(D.f1.di===d?' empujando a favor':' empujando en contra'):''}`);
   if(zA)why.push(`zona de liquidez de ${d>0?'longs':'shorts'} en ${fp(zA.p)} (${fpct((zA.p/c-1)*100)}): el precio puede ir a barrerla`);
   if(zF)why.push(`zona de liquidez de ${d>0?'shorts':'longs'} en ${fp(zF.p)} (${fpct((zF.p/c-1)*100)}): imán a favor`);
@@ -3585,10 +3597,16 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null,plus:false};
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;if(!dir)return out;
-    const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3;
+    const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3,d50=dir*(cb-e50)/atr;
+    let fl6=0,v6=0;for(let j=i-5;j<=i;j++){fl6+=barDelta(cc[j]);v6+=cc[j].v;}fl6=v6?dir*fl6/v6:0;const r24=dir*(cb/cc[i-6].close-1)*100;
+    if(core&&rank>=40&&rr<50&&d50<.5)return out; // retroceso demasiado hondo (octubre 2026)
     if(core&&rank>=40&&rr<50){out.setup='tp-u80';out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso','moneda fuera de las 40 con más volumen');}
     else if(core&&rank<40&&rr>=50&&rr<55&&adx!=null&&adx>=25){out.setup='tp-r55';out.reasons.push('tendencia alineada y fuerte (ADX '+adx.toFixed(0)+')','retroceso suave: RSI 14 en '+r14.toFixed(0),'volumen bajo en el retroceso');}
-    else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=35&&L.vr<1&&atrP>.008&&atrP<=.03){out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y muy fuerte (ADX '+adx.toFixed(0)+')','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volumen bajo','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
+    else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=35&&L.vr<1&&atrP>.008&&atrP<=.03){
+      /* octubre 2026: además ya tiene que venir moviéndose a favor (≥ 1 % en 24 h) con el flujo de órdenes (CVD de 6 velas) a favor.
+         1 año, 55 monedas: objetivo 1 del 68 al 75 %, ganancia por operación de +1,9 a +4,9 % del margen; últimos 4 meses de −0,3 a +2,8 %. */
+      if(!(r24>=1&&fl6>=.01))return out;
+      out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y muy fuerte (ADX '+adx.toFixed(0)+')','ya se movió '+r24.toFixed(1)+' % a favor en 24 h','flujo de órdenes (CVD) a favor','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volumen bajo','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
     else return out;
     out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;});};
