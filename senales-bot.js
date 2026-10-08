@@ -10,7 +10,7 @@ const STATE_FILE = 'estado.json';
 
 const SIGCFG = {
   medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 80, cool: 24 * 36e5, maxAge: 7 * 864e5 },
-  x: { name: 'SHOOTER', tf: '5m', htf: '15m', min: .016, maxAtr: .027, n: 45, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
+  x: { name: 'SHOOTER', tf: '3m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 1.5 * 36e5, maxAge: 4 * 36e5 }
 };
 /* octubre 2026 · medidas nuevas v2: apalancamiento, stop y objetivos elegidos juntos (más aciertos sin ganar menos).
    Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
@@ -22,7 +22,7 @@ const SIGCFG = {
 const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 10 } };
 const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .5, maxSl: .076 } };
 const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
-const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71 };
+const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71, 'sh-c': 77 };
 const MINCERT = { medio: 62, x: 56 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
@@ -65,14 +65,18 @@ function lastBarStats(cc, i) { let fl = 0, vv = 0, vs = 0; for (let j = i - 2; j
   const b = cc[i]; return { flow: vv ? fl / vv : 0, vr: b.v / ((vs / Math.min(i + 1, 20)) || 1), body: (b.close - b.open) / ((b.high - b.low) || 1) }; }
 
 /* ---------- reglas ---------- */
+/* SHOOTER v3 (octubre 2026, igual que la página): velas de 3 min, solo LONG. Cayó 3 % o más en la última hora, cerró bajo la
+   banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35, la tendencia de 1 h a favor (sobre la EMA 50 de 1 h) y ATR de 3 min entre 0,4 y 1,2 %.
+   120 días, 30 criptos: 2,3 señales por día, objetivo 1 el 77 %, +4,1 % del margen por operación con × 10. */
 function evalShooter(cs, hc) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
-    const [bm, bs] = smaStd(cl, 20), r7 = calcRSI(7)[i], htf = htfTrend(hc), z = bs[i] ? (cb - bm[i]) / bs[i] : 0;
-    const out = { dir: 0, c, atr, reasons: [] };
-    if (r7 == null || !(atrP > .04 / 3 && atrP <= .04 / 1.5)) return out;
-    if (!(Math.abs(z) >= 2 && (z < 0 ? r7 <= 25 : r7 >= 75))) return out; // RSI 7 extremo (antes 35 / 65)
-    const dir = z < 0 ? 1 : -1; if (Math.sign(htf) !== dir) return out;
-    out.dir = dir; out.reasons.push(dir > 0 ? 'cerró bajo la banda inferior' : 'cerró sobre la banda superior', 'RSI 7 en ' + r7.toFixed(0) + ' (extremo)', 'tendencia de 15m a favor');
+    const [bm, bs] = smaStd(cl, 20), r7 = calcRSI(7)[i], z = bs[i] ? (cb - bm[i]) / bs[i] : 0;
+    const h = hc.slice(0, -1), he = emaArr(h.map(b => b.close), 50), hk = h.length - 1, up1h = hk >= 0 && he[hk] != null && h[hk].close > he[hk];
+    const drop = i >= 20 ? (cb / cc[i - 20].close - 1) * 100 : 0;
+    const out = { dir: 0, c, atr, reasons: [], setup: null };
+    if (r7 == null || !(atrP >= .004 && atrP <= .012)) return out;
+    if (!(z <= -1.8 && r7 <= 35 && drop <= -3 && up1h)) return out;
+    out.dir = 1; out.setup = 'sh-c'; out.reasons.push('cayó ' + Math.abs(drop).toFixed(1) + ' % en la última hora', 'cerró bajo la banda inferior de Bollinger', 'RSI 7 en ' + r7.toFixed(0) + ' (sobreventa)', 'la tendencia de 1 h sigue a favor');
     return out; }); }
 function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
@@ -159,7 +163,7 @@ async function main() {
         const e = m === 'x' ? evalShooter(cs, hc) : evalTrading(cs, hc, rankOf[s]); if (!e.dir) continue;
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
         const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
-        if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); // TRADING (4h) y SHOOTER (1h) solo a favor de BTC
+        if (m === 'medio') { if (btcDir !== d) continue; conf += 2; e.reasons.push('BTC a favor'); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
         if (conf < MINCERT[m]) continue;
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
@@ -180,6 +184,6 @@ async function main() {
 /* vuelta larga: revisa cada 5 minutos durante LOOP_MIN minutos (así no depende de la puntualidad del horario de GitHub) */
 async function run() { const LOOP = +(process.env.LOOP_MIN || 0) * 6e4, start = Date.now();
   while (true) { const t0 = Date.now(); try { await main(); } catch (e) { console.error(e); }
-    if (!LOOP) break; const wait = 3e5 - (Date.now() - t0); if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
+    if (!LOOP) break; const wait = 18e4 - (Date.now() - t0); /* cada 3 minutos: SHOOTER usa velas de 3 min */ if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
   try { if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} }
 run();

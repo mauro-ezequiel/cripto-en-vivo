@@ -597,8 +597,8 @@ const MODES = {
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
-    info: ['Temporalidad inicial: 5m', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
-    tf: '5m', bars: 180,
+    info: ['Temporalidad inicial: 3m', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
+    tf: '3m', bars: 180,
     inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd','kon']
   },
   p: {
@@ -1795,14 +1795,14 @@ loadNews();setInterval(loadNews,5*60e3);setInterval(renderNews,60e3);
    La señal se mantiene hasta que se pierde la oportunidad; luego queda 30 s y se quita. */
 const SIGCFG={
   medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:40,thr:.5,maxAge:36e5*24},
-  x:{name:'SHOOTER',tf:'5m',htf:'15m',min:.016,maxAtr:.027,H:12,every:45e3,uni:'top',n:45,thr:.5,maxAge:36e5*1.5}};
+  x:{name:'SHOOTER',tf:'3m',htf:'1h',min:.016,maxAtr:.027,H:12,every:45e3,uni:'top',n:30,thr:.5,maxAge:36e5*1.5}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
-if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
+if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-c','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
@@ -1869,7 +1869,7 @@ function lose(sg,why,win){if(sg.state!=='live')return;sg.state='lost';sg.why=why
    "Acierto histórico" = % de veces que, en el backtest, el precio llegó al objetivo 1 antes de moverse lo mismo en contra.
    Se mezcla con tus propias operaciones simuladas a medida que se acumulan. */
 const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la tendencia con volumen bajo'}},
-           x:{'sh-r':{p:71,p3:17,n:70,usd:1.8,txt:'rebote desde el extremo (RSI 7 ≤ 25 / ≥ 75) con la tendencia de 15m y BTC a favor'}}};
+           x:{'sh-r':{p:71,p3:17,n:70,usd:1.8,txt:'rebote desde el extremo (RSI 7 ≤ 25 / ≥ 75) con la tendencia de 15m y BTC a favor'},'sh-c':{p:77,p3:27,n:275,usd:2.1,txt:'rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor'}}};
 /* octubre 2026 · MEDIDAS NUEVAS v2 (TRADING y SHOOTER): apalancamiento, stop y objetivos elegidos juntos para tener más aciertos
    sin ganar menos. Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
    Backtest 6 meses con datos de Binance, mismas entradas, con salvavidas y comisiones (0,05 % por lado):
@@ -1887,7 +1887,7 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    +3,6 % del margen por operación (antes +2,6 %) · peor racha −2,8 márgenes (antes −5,0) · primeros 5 meses +3,4 % (antes −0,1 %).
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:7,max:.11,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
-const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1};
+const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.5,max:.076}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
 const MINCERT={medio:62,x:56,p:0,a:50},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:76,p3:27,n:319,usd:52,txt:'rebote tras una caída moderada (sin desplome ni subida histórica)'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
@@ -1904,18 +1904,25 @@ function lastBarStats(cc,i){let fl=0,vv=0,vs=0;for(let j=i-2;j<=i;j++){fl+=barDe
    que la liquidación real del exchange (≈ 5 %). Regla: rebote desde el extremo de Bollinger (z ≥ 2 y RSI 7 ≤ 35 / ≥ 65)
    con la tendencia de 15m a favor, en monedas con ATR de 5m entre 1,33 % y 2,67 %.
    Backtest 30 días × 60 criptos (con salvavidas): objetivo 1 el 80 %, los 3 objetivos el 37 %, +12,6 % del margen por operación. */
+/* SHOOTER v3 (octubre 2026) · velas de 3 minutos, solo LONG. Rebote tras una caída fuerte:
+   la moneda cayó 3 % o más en la última hora, la vela de 3 min cerró bajo la banda inferior de Bollinger (z ≤ −1,8) con RSI 7 ≤ 35,
+   la tendencia de 1 h sigue a favor (precio sobre la EMA 50 de 1 h) y la volatilidad de 3 min está entre 0,4 % y 1,2 % por vela.
+   Stop 3 × ATR (1,2 a 3,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas.
+   Probado con velas de 1 minuto de 30 criptos en 120 días (también en 1 y 5 min, que rindieron menos), comisión 0,05 % por lado:
+   2,3 señales por día · objetivo 1 el 77 % · +0,41 % del precio por operación (× 10 = +4,1 % del margen); primeros 80 días +0,46 %, últimos 40 +0,37 %.
+   La regla anterior (5 min, RSI 7 extremo con 15m y BTC a favor) dio en esos mismos días 0,1 señales por día, 54 % y −0,8 % del precio. Los SHORT perdían. */
 function evalShooter(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
     const i=cc.length-1,cl=closes(),c=cs[cs.length-1].close,cb=cc[i].close,atr=wilder(trArr(),14)[i],atrP=atr/cb;
-    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],htf=htfTrend(hc),z=bs[i]?(cb-bm[i])/bs[i]:0;
-    const out={keep:true,score:0,dir:0,c,atr,adx,htf,mid:bm[i],reasons:[],setup:null};
-    if(r7==null||!(atrP>.04/3&&atrP<=.04/1.5))return out;
-    if(!(Math.abs(z)>=2&&(z<0?r7<=25:r7>=75)))return out; // RSI 7 extremo (octubre 2026: antes 35 / 65)
-    const dir=z<0?1:-1;if(Math.sign(htf)!==dir)return out;
-    if(!window.__btcDir1h||window.__btcDir1h!==dir)return out; // solo a favor de BTC (1h vs EMA 50)
-    out.dir=dir;out.score=dir;out.setup='sh-r';
-    out.reasons.push(dir>0?'cerró bajo la banda inferior':'cerró sobre la banda superior','RSI 7 en '+r7.toFixed(0)+' (extremo)','tendencia de 15m a favor','BTC a favor','volatilidad justa para el stop');
+    const [bm,bs]=smaStd(cl,20),r7=calcRSI(7)[i],adx=calcADX().adx[i],z=bs[i]?(cb-bm[i])/bs[i]:0;
+    const h=hc.slice(0,-1),he=emaArr(h.map(b=>b.close),50),hk=h.length-1,up1h=hk>=0&&he[hk]!=null&&h[hk].close>he[hk];
+    const drop=i>=20?(cb/cc[i-20].close-1)*100:0;
+    const out={keep:true,score:0,dir:0,c,atr,adx,htf:up1h?1:-1,mid:bm[i],reasons:[],setup:null};
+    if(r7==null||!(atrP>=.004&&atrP<=.012))return out;
+    if(!(z<=-1.8&&r7<=35&&drop<=-3&&up1h))return out;
+    out.dir=1;out.score=1;out.setup='sh-c';
+    out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','volatilidad justa para el stop');
     return out;
   });
 }
@@ -2069,7 +2076,7 @@ setInterval(checkSignals,2000);
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
-           x:{margin:50,lev:10,maxLoss:38,maxAge:4*36e5,kl:'5m',klMs:3e5,label:'50 USD × 10 · stop 3 × ATR (máx. 7,6 % = −38 USD) · sin salvavidas'}};
+           x:{margin:50,lev:10,maxLoss:18,maxAge:4*36e5,kl:'3m',klMs:18e4,label:'50 USD × 10 · stop 3 × ATR de 3 min (máx. 3,6 % = −18 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:384,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × 8 · stop 3 × ATR diario (máx. 9,6 % = −384 USD) · sin salvavidas'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
@@ -3258,7 +3265,7 @@ function rmtRender(){const el=$('rmtBox');if(!el)return;const tg=RMT.tg,wa=RMT.w
   <div class="tg"><div>✈️ Telegram<small>${tg.chat?(tOn?'Conectado':'Conectado · pausado'):'Sin conectar · tocá para configurar'}</small></div><button class="tsw${tOn?' on':''}" data-r="tg" role="switch" aria-checked="${tOn}" aria-label="Avisos por Telegram"></button></div>
   ${rmtOpen==='tg'?`<div class="rmt-f"><ol><li>En Telegram buscá <b>@BotFather</b>, mandale <b>/newbot</b> y elegí un nombre. Te da un <b>token</b> (algo como 123456789:AAH…).</li><li>Abrí el chat con tu bot nuevo y mandale cualquier mensaje, por ejemplo "hola".</li><li>Pegá el token acá y tocá Conectar.</li></ol><input id="rmtTok" type="text" autocomplete="off" spellcheck="false" placeholder="Token de tu bot" value="${esc(tg.token)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="tgGo">Conectar</button></div></div>`:''}
   ${rmtOpen==='wa'?`<div class="rmt-f"><ol><li>Seguí los pasos de <a href="https://www.callmebot.com/blog/free-api-whatsapp-messages/" target="_blank" rel="noopener">CallMeBot</a> (servicio gratis): agendá su número y mandale por WhatsApp el mensaje que indica. Te responde con tu <b>apikey</b>.</li><li>Poné tu número con código de país y la apikey.</li></ol><input id="rmtPh" type="tel" autocomplete="off" placeholder="Tu número, ej. +5491122334455" value="${esc(wa.phone)}"><input id="rmtKey" type="text" autocomplete="off" spellcheck="false" placeholder="apikey de CallMeBot" value="${esc(wa.key)}"><div class="rmt-a"><button data-r="cancel">Cancelar</button><button class="pri" data-r="waGo">Conectar</button></div></div>`:''}
-  ${tg.chat&&!rmtOpen?`<div class="rmt-f"><b>🖥️ Avisos 24 h con la página cerrada</b><br>Un servidor gratis de GitHub revisa TRADING y SHOOTER cada 5 minutos y te escribe por este mismo bot: señales nuevas, objetivos, zona de salvavidas y stop. Para activarlo, en GitHub abrí <a href="https://github.com/mauro-ezequiel/cripto-en-vivo/settings/secrets/actions/new" target="_blank" rel="noopener">Settings → Secrets → New repository secret</a> y creá dos:<ol><li>Nombre <b>TELEGRAM_TOKEN</b>, valor: el token de tu bot <button data-r="cpyT">Copiar token</button></li><li>Nombre <b>TELEGRAM_CHAT</b>, valor: <code>${esc(tg.chat)}</code> <button data-r="cpyC">Copiar</button></li></ol>Cuando el servidor arranque te llega "✅ CRIPTO-LIVE 24 h activo". Después activá esto para que la página no te repita las mismas señales:<div class="tg" style="border:0;padding:6px 0 0"><div>El servidor ya me avisa las señales<small>la página deja de mandar TRADING y SHOOTER por Telegram</small></div><button class="tsw${RMT.srv?' on':''}" data-r="srv" role="switch" aria-checked="${!!RMT.srv}" aria-label="El servidor ya avisa las señales"></button></div></div>`:''}
+  ${tg.chat&&!rmtOpen?`<div class="rmt-f"><b>🖥️ Avisos 24 h con la página cerrada</b><br>Un servidor gratis de GitHub revisa TRADING y SHOOTER cada 3 minutos y te escribe por este mismo bot: señales nuevas, objetivos, zona de salvavidas y stop. Para activarlo, en GitHub abrí <a href="https://github.com/mauro-ezequiel/cripto-en-vivo/settings/secrets/actions/new" target="_blank" rel="noopener">Settings → Secrets → New repository secret</a> y creá dos:<ol><li>Nombre <b>TELEGRAM_TOKEN</b>, valor: el token de tu bot <button data-r="cpyT">Copiar token</button></li><li>Nombre <b>TELEGRAM_CHAT</b>, valor: <code>${esc(tg.chat)}</code> <button data-r="cpyC">Copiar</button></li></ol>Cuando el servidor arranque te llega "✅ CRIPTO-LIVE 24 h activo". Después activá esto para que la página no te repita las mismas señales:<div class="tg" style="border:0;padding:6px 0 0"><div>El servidor ya me avisa las señales<small>la página deja de mandar TRADING y SHOOTER por Telegram</small></div><button class="tsw${RMT.srv?' on':''}" data-r="srv" role="switch" aria-checked="${!!RMT.srv}" aria-label="El servidor ya avisa las señales"></button></div></div>`:''}
   ${rmtMsg?`<div class="rmt-m">${rmtMsg}</div>`:''}
   ${(tg.chat||wa.key)&&!rmtOpen?`<div class="rmt-a"><button data-r="test">Mandar mensaje de prueba</button>${tg.chat?'<button data-r="tgEdit">Cambiar Telegram</button>':''}</div>`:''}`;}
 $('rmtBox').onclick=async e=>{const b=e.target.closest('[data-r]');if(!b)return;const r=b.dataset.r;
