@@ -331,15 +331,16 @@ def progreso(R, prev):
     val = None if b <= 0 else round(max(0, min(200, 100 * i / b)), 1)
     hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
     notas = []
+    pc = lambda v: (f'{v:+.1f}').replace('.', ',')
     for m, x in R['3meses'].items():
         if not x.get('n'):
             continue
         if x['ia_pct'] >= x['bot_pct']:
-            notas.append(f"En {m} ya saca igual o más que el bot por operación ({x['ia_pct']:+.1f} % contra {x['bot_pct']:+.1f} %).")
+            notas.append(f"En {m} ya saca igual o más que el bot por operación ({pc(x['ia_pct'])} % contra {pc(x['bot_pct'])} %).")
         elif x['ia_gana'] < x['bot_gana'] - 10:
             notas.append(f"En {m} sale demasiado pronto: gana el {x['ia_gana']:.0f} % de las veces contra el {x['bot_gana']:.0f} % del bot. Tiene que aprender a aguantar los retrocesos normales.")
         else:
-            notas.append(f"En {m} acierta parecido al bot ({x['ia_gana']:.0f} % contra {x['bot_gana']:.0f} %) pero gana menos por operación ({x['ia_pct']:+.1f} % contra {x['bot_pct']:+.1f} %): suelta las ganancias antes de tiempo.")
+            notas.append(f"En {m} acierta parecido al bot ({x['ia_gana']:.0f} % contra {x['bot_gana']:.0f} %) pero gana menos por operación ({pc(x['ia_pct'])} % contra {pc(x['bot_pct'])} %): suelta las ganancias antes de tiempo.")
     old = [h for h in hist[:-1] if h[1] is not None and h[0] <= D['upd'] - 6.5 * DAY]
     if old and val is not None:
         d = val - old[-1][1]

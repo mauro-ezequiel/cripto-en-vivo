@@ -4050,7 +4050,7 @@ var IAIDEAS=[],IAIH=[],IAIBUSY=false,IAIT=0;try{IAIH=JSON.parse(localStorage.get
 const saveIAIH=()=>{try{localStorage.setItem('cv_ia_ideas',JSON.stringify(IAIH.slice(-200)))}catch(e){}};
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
-    for(const [f,tf,U,cap,r] of [['tr','4h',universe('medio'),.036,.5],['sh','15m',universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry;if(!E||E.thr==null)continue;const bs=await btcSide(tf);
+    for(const [f,tf,U,cap,r] of [['tr','4h',universe('medio'),.036,.5],['sh','15m',universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;if(!E||E.thr==null||!PR||!(PR.pct>0&&PR.pct>PR.base_pct))continue; // solo busca donde sus entradas propias ganaron en la pruebaconst bs=await btcSide(tf);
       for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
           if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
           else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
@@ -4070,7 +4070,7 @@ function iaIdeasTrack(){let ch=false;const now=Date.now();
   if(ch)saveIAIH();}
 function iaIdeasHTML(){const T=f=>IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;
   const st=[['tr','Para TRADING (4 h)'],['sh','Para SHOOTER (15 min)']].map(([f,nm])=>{const x=T(f);if(!x||!x.n)return '';
-    return `<div class="ia-mut">${nm}: en los meses que no vio, sus entradas propias llegaron al objetivo 1 el ${iaN(x.obj1,0)} % (todas las entradas posibles: ${iaN(x.base_obj1,0)} %), con ${iaPct(x.pct)} por operación (todas: ${iaPct(x.base_pct)}) y unas ${iaN(x.por_dia,1)} por día.</div>`;}).join('');
+    const ok=x.pct>0&&x.pct>x.base_pct;return `<div class="ia-mut">${nm}: en los meses que no vio, sus entradas propias llegaron al objetivo 1 el ${iaN(x.obj1,0)} % (todas las entradas posibles: ${iaN(x.base_obj1,0)} %), con ${iaPct(x.pct)} por operación (todas: ${iaPct(x.base_pct)}) y unas ${iaN(x.por_dia,1)} por día. ${ok?'<b class="up">Las muestra.</b>':'<b>No las muestra todavía: no ganaron plata.</b>'}</div>`;}).join('');
   const now=IAIDEAS.length?IAIDEAS.map(x=>`<div class="ia-op idea"><div class="ia-h">💡 <b>${x.sym.replace('USDT','')} ${x.dir>0?'▲ LONG':'▼ SHORT'}</b> <small>idea propia · velas de ${x.tf} · puntaje ${Math.round(x.p*100)} %</small></div>
       <div>Entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}</div><div class="ia-mut">Lo que más pesa: ${esc(iaWhy(x.why))}</div></div>`).join('')
     :`<div class="ia-mut">${IAIBUSY||!IAIT?'Buscando entradas en todas las monedas…':'Ahora no encontró ninguna entrada con puntaje alto.'}</div>`;
