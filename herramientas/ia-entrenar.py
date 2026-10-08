@@ -89,6 +89,63 @@ def policy(op, p, theta, minhold, variant):
     return 100 * op['L'] * (out - 2 * FEE), hits
 
 
+def policy2(op, p, theta, minhold, variant):
+    """Igual que policy (y que IA.shadow de la página), pero devuelve cómo y cuándo salió la IA."""
+    d, e, sl, r, B = op['dir'], op['entry'], op['sl'], op['r'], op['B']
+    tps = [e * (1 + d * k * r * sl) for k in (1, 2, 3)]
+    stop, size, real, hits = e * (1 - d * sl), 1.0, 0.0, 0
+    for k, (h, l, c, a) in enumerate(B):
+        adv, fav = (l, h) if d > 0 else (h, l)
+        if d * (stop - adv) >= 0:
+            return {'pct': 100 * op['L'] * (real + size * d * (stop / e - 1) - 2 * FEE), 'hits': hits, 'k': k, 'kind': 'stop' if hits == 0 else 'seguro', 'px': stop}
+        while hits < 3 and d * (fav - tps[hits]) >= 0:
+            if variant == 'B' and hits == 0:
+                real += d * (tps[0] / e - 1) / 3; size -= 1 / 3
+            hits += 1
+            stop = e if hits == 1 else tps[hits - 2]
+        if k + 1 >= minhold and p[k] < theta:
+            return {'pct': 100 * op['L'] * (real + size * d * (c / e - 1) - 2 * FEE), 'hits': hits, 'k': k, 'kind': 'ia', 'px': c, 'p': float(p[k])}
+    c = B[-1][2]
+    return {'pct': 100 * op['L'] * (real + size * d * (c / e - 1) - 2 * FEE), 'hits': hits, 'k': len(B) - 1, 'kind': 'plazo', 'px': c}
+
+
+DAY = 864e5
+
+
+def walk_forward(ops, E, rows, days=100):
+    """Resultado de la IA operación por operación en los últimos `days` días, sin trampa: para cada mes la IA
+    solo aprendió con operaciones que ya habían terminado antes de que empezara ese mes."""
+    end = max(o['t'] for o in ops); start = end - days * DAY; out = []
+    edges = [start + i * 30 * DAY for i in range(int(days / 30) + 2)]
+    for a, b in zip(edges[:-1], edges[1:]):
+        win = [o for o in ops if a <= o['t'] < b]
+        if not win:
+            continue
+        past = [o for o in ops if o['t'] + 1.5 * o['maxAge'] < a]
+        if len(past) < 60:
+            continue
+        m = gbc().fit(*rows(past))
+        for o in win:
+            r = policy2(o, m.predict_proba(np.array(o['X'], float))[:, 1], E['theta'], E['minhold'], E['variant'])
+            out.append([o['m'], o['setup'], o['s'].replace('USDT', ''), o['t'], round(o['botPct'], 2), o['botHit'], round(r['pct'], 2), r['hits'], r['k'], r['kind'], float('%.6g' % r['px']), o['L'], o.get('tf', '4h')])
+    return out
+
+
+def resumen(recs, now):
+    """Efectividad (operaciones ganadas) y ganancia por operación: bot vs IA, última semana y últimos 3 meses."""
+    res = {}
+    for nm, days in (('semana', 7), ('3meses', 90)):
+        res[nm] = {}
+        for modo in ('TRADING', 'TRADING+', 'SHOOTER'):
+            L = [r for r in recs if r[3] >= now - days * DAY and (('SHOOTER' if r[0] == 'x' else 'TRADING+' if r[1] == 'tp-x' else 'TRADING') == modo)]
+            if not L:
+                res[nm][modo] = {'n': 0}; continue
+            b = np.array([r[4] for r in L]); i = np.array([r[6] for r in L])
+            res[nm][modo] = {'n': len(L), 'bot_gana': round(float((b > 0).mean() * 100), 1), 'ia_gana': round(float((i > 0).mean() * 100), 1),
+                             'bot_pct': round(float(b.mean()), 2), 'ia_pct': round(float(i.mean()), 2), 'bot_obj1': round(float(np.mean([r[5] >= 1 for r in L]) * 100), 1)}
+    return res
+
+
 def fam_exit(ops, K, H):
     ops = [o for o in ops if len(o['B']) > 2]
     ts = np.array([o['t'] for o in ops])
@@ -139,7 +196,9 @@ def fam_exit(ops, K, H):
     res['por_modo'] = {k: {'n': b['n'], 'bot': round(b['bot'] / b['n'], 2), 'ia': round(b['ia'] / b['n'], 2)} for k, b in by.items()}
     # solo se usa en vivo si le ganó al bot en los meses que no vio (y de verdad predice algo)
     res['activa'] = bool(res['ia']['pct'] > res['bot']['pct'] + .3 and auc >= .53)
-    return {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
+    E = {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
+    E['ops'] = walk_forward(ops, E, rows)
+    return E
 
 
 def run_rule(op, noprog=None, after3='close', k=2.0, lock=True, take=(1 / 3, 1 / 3)):
@@ -244,6 +303,9 @@ for f, cfg in FAM.items():
     if e:
         OUT[f]['entry'] = e
         print(f, 'entrada', e['test'], e['imp'][:8])
+allrec = [r for f in FAM for r in (OUT[f].get('exit', {}).get('ops') or [])]
+OUT['resumen'] = resumen(allrec, D['upd'])
+print('resumen', json.dumps(OUT['resumen'], ensure_ascii=False))
 OUT['secs'] = round(time.time() - t0)
 json.dump(OUT, open('ia.json', 'w'), separators=(',', ':'))
 print('ia.json listo', round(time.time() - t0), 's')

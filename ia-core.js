@@ -71,6 +71,24 @@
   IA.NAMES = { gR: 'ganancia actual', peakR: 'máximo alcanzado', ddR: 'retroceso desde el máximo', hits: 'objetivos tocados', age: 'tiempo en la operación',
     r14: 'RSI 14', r7: 'RSI 7', adx: 'ADX (fuerza)', di: 'DMI (quién empuja)', d21: 'distancia a la EMA 21', d50: 'distancia a la EMA 50', d200: 'distancia a la EMA 200',
     st: 'Supertrend', fl6: 'CVD (flujo de órdenes)', r6: 'impulso reciente', vr: 'volumen', z: 'Bollinger', body: 'última vela', atrP: 'volatilidad', btc: 'BTC' };
+  /* la IA "en práctica" sobre una operación: recorre las velas cerradas desde la entrada y decide igual que en el estudio diario
+     (stop del bot; al tocar el objetivo 1 el stop pasa a la entrada y después al objetivo anterior; sale si la probabilidad de seguir
+     a favor cae bajo el umbral). pos = {dir, entry, sl, r, maxAge, t0, resMs}; btcAt(t) = lado de BTC (1 / −1) en ese momento.
+     Devuelve la ganancia como fracción del precio (sin apalancamiento ni comisión). */
+  IA.shadow = function (P, j0, pos, E, btcAt) {
+    const d = pos.dir, e = pos.entry, tps = [1, 2, 3].map(k => e * (1 + d * k * pos.r * pos.sl)), lim = j0 + Math.ceil(1.5 * pos.maxAge / pos.resMs);
+    let stop = e * (1 - d * pos.sl), size = 1, real = 0, hits = 0, peak = e, last = null;
+    const n = Math.min(P.bars.length, lim);
+    for (let j = j0, k = 0; j < n; j++, k++) { const b = P.bars[j], adv = d > 0 ? b.low : b.high, fav = d > 0 ? b.high : b.low, tc = b.t + pos.resMs;
+      if (d * (stop - adv) >= 0) return { done: true, frac: real + size * d * (stop / e - 1), hits, k, kind: hits ? 'seguro' : 'stop', px: stop, t: tc };
+      while (hits < 3 && d * (fav - tps[hits]) >= 0) { if (E.variant === 'B' && hits === 0) { real += d * (tps[0] / e - 1) / 3; size -= 1 / 3; } hits++; stop = hits === 1 ? e : tps[hits - 2]; }
+      peak = d > 0 ? Math.max(peak, b.high) : Math.min(peak, b.low);
+      const x = IA.exitX(P, j, { dir: d, entry: e, sl: pos.sl, peak, hits, age: (tc - pos.t0) / pos.maxAge }, btcAt(tc)), p = IA.predict(E.model, x);
+      if (k + 1 >= E.minhold && p < E.theta) return { done: true, frac: real + size * d * (b.close / e - 1), hits, k, kind: 'ia', px: b.close, t: tc, p, x };
+      last = { p, x, c: b.close, t: tc }; }
+    if (!last) return { done: false, frac: 0, hits: 0, k: 0, stop, p: null };
+    return { done: n >= lim, frac: real + size * d * (last.c / e - 1), hits, k: n - j0 - 1, kind: n >= lim ? 'plazo' : null, px: last.c, t: last.t, stop, size, p: last.p, x: last.x };
+  };
   IA._ = { ema, wilder, rsi, adx, supertrend, smaStd, flow, volRatio };
   if (typeof module !== 'undefined' && module.exports) module.exports = IA; else root.IA = IA;
 })(typeof self !== 'undefined' ? self : this);
