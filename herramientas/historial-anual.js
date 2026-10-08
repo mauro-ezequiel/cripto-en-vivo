@@ -16,13 +16,13 @@ const MIN_N = 20; // con menos casos el % no se publica como acierto
 
 /* medidas vigentes (idénticas a la página: SIM, NEWG y PLUSG) */
 const T4 = { tf: '4h', tfMs: 4 * 36e5, res: '1h', resMs: 36e5, n: +(process.env.BT_NT || 80), cool: 24 * 36e5, maxAge: 7 * DAY };
-const SH = { tf: '5m', tfMs: 3e5, htf: '15m', htfMs: 9e5, n: +(process.env.BT_NS || 45), cool: 1.5 * 36e5, maxAge: 4 * 36e5 };
+const SH = { tf: '3m', tfMs: 18e4, htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 30), cool: 1.5 * 36e5, maxAge: 4 * 36e5 }; // SHOOTER v3: velas de 3 min
 const GEO = {
   core: { L: 10, a: 3, cap: .036, floor: .004, r: .5, ex: 'no', ll: true, margin: 350 },   // TRADING
   plus: { L: 7, a: 3, cap: .11, floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+
   sh:   { L: 10, a: 3, cap: .076, floor: .004, r: .5, ex: 'no', ll: false, margin: 50 }   // SHOOTER
 };
-const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-r': 'x' };
+const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x' };
 
 /* ---------- matemáticas (idénticas al bot) ---------- */
 let candles = [];
@@ -63,17 +63,20 @@ function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = clos
   const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0; if (!dir) return null;
   let vs = 0; for (let j = Math.max(0, i - 19); j <= i; j++) vs += cc[j].v; const vr = cc[i].v / ((vs / Math.min(i + 1, 20)) || 1);
   const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 && atrP <= .05 / 3 && atrP <= .017;
-  if (core && rr < 50) return { k: 'core', dir, atrP, setup: rank < 40 ? 't-pb' : 'tp-u80' };
+  const d50 = dir * (cb - emaArr(cl, 50)[i]) / (atrP * cb); // octubre 2026: el retroceso tiene que frenar antes de la EMA 50
+  if (core && rr < 50) return d50 >= .5 ? { k: 'core', dir, atrP, setup: rank < 40 ? 't-pb' : 'tp-u80' } : null;
   const adx = calcADX(14).adx[i]; if (adx == null || adx < 25) return null;
   if (core && rank < 40 && rr < 55) return { k: 'core', dir, atrP, setup: 'tp-r55' };
-  if (rr < 70 && adx >= 35 && vr < 1 && atrP > .008 && atrP <= .03) return { k: 'plus', dir, atrP, setup: 'tp-x' };
+  let f6 = 0, v6 = 0; for (let j = i - 5; j <= i; j++) { const b = cc[j], tb = b.tb != null && !isNaN(b.tb) ? b.tb : b.v / 2; f6 += 2 * tb - b.v; v6 += b.v; }
+  const fl6 = v6 ? dir * f6 / v6 : 0, r24 = dir * (cb / cc[i - 6].close - 1) * 100; // octubre 2026: TRADING+ ya moviéndose a favor y con el flujo a favor
+  if (rr < 70 && adx >= 35 && vr < 1 && atrP > .008 && atrP <= .03 && r24 >= 1 && fl6 >= .01) return { k: 'plus', dir, atrP, setup: 'tp-x' };
   return null; }
 
 /* ---------- datos ---------- */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 let mockSeed = 1; const rnd = () => (mockSeed = (mockSeed * 16807) % 2147483647) / 2147483647;
 function mockKlines(url) { const q = new URL(url), s = q.searchParams.get('symbol'), tf = q.searchParams.get('interval');
-  const ms = { '5m': 3e5, '15m': 9e5, '1h': 36e5, '4h': 144e5 }[tf], st = +q.searchParams.get('startTime'), en = +q.searchParams.get('endTime');
+  const ms = { '3m': 18e4, '5m': 3e5, '15m': 9e5, '1h': 36e5, '4h': 144e5 }[tf], st = +q.searchParams.get('startTime'), en = +q.searchParams.get('endTime');
   let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) % 1e6;
   const f = t => { const m = Math.floor(t / 3e5), n = Math.sin(m * 12.9898 + h) * 43758.5453; // mismo precio en todas las temporalidades
     return 100 * Math.exp(Math.sin(t / 2e9 + h) * .5 + Math.sin(t / 3e8 + h * 2) * .2 + Math.sin(t / 4e7 + h * 3) * .06 + Math.sin(t / 6e6 + h) * .012 + (n - Math.floor(n) - .5) * .01); };
@@ -86,7 +89,7 @@ async function getJ(url, tries = 6) {
   for (let k = 0; k < tries; k++) { try { const r = await fetch(url); if (r.ok) return await r.json();
       if (r.status === 429 || r.status === 418 || r.status >= 500) { await sleep(5000 * (k + 1)); continue; } throw new Error(r.status + ' ' + url); }
     catch (e) { if (k === tries - 1) throw e; await sleep(3000); } } }
-const toBar = k => ({ t: k[0], open: +k[1], high: +k[2], low: +k[3], close: +k[4], v: +k[5] });
+const toBar = k => ({ t: k[0], open: +k[1], high: +k[2], low: +k[3], close: +k[4], v: +k[5], tb: +k[9] });
 async function klRange(s, tf, tfMs, from, to) { const out = []; let st = from;
   while (st < to) { const d = await getJ(`${API}/klines?symbol=${s}&interval=${tf}&startTime=${st}&endTime=${to}&limit=1000`); if (!d || !d.length) break;
     for (const k of d) out.push(toBar(k)); st = d[d.length - 1][0] + tfMs; if (d.length < 1000) break; if (!MOCK) await sleep(60); }
@@ -134,19 +137,17 @@ async function run4h(s, rank) {
 
 async function runShooter(s) {
   const tb = await klRange(s, SH.tf, SH.tfMs, FROM - 300 * SH.tfMs, NOW); if (tb.length < 400) return;
-  const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 130 * SH.htfMs, NOW); if (hb.length < 30) return;
+  const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 130 * SH.htfMs, NOW); if (hb.length < 60) return;
   candles = tb; const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), [bm, bs] = smaStd(cl, 20);
-  const he = emaArr(hb.map(b => b.close), 21);
+  const he = emaArr(hb.map(b => b.close), 50);
   for (let i = 299; i < tb.length; i++) { const t = tb[i].t + SH.tfMs; if (t < FROM) continue;
-    const cb = tb[i].close, atrP = atr[i] / cb; if (r7[i] == null || !(atrP > .04 / 3 && atrP <= .04 / 1.5) || atrP > .027) continue;
-    const z = bs[i] ? (cb - bm[i]) / bs[i] : 0; if (!(Math.abs(z) >= 2 && (z < 0 ? r7[i] <= 25 : r7[i] >= 75))) continue;
-    const dir = z < 0 ? 1 : -1, k = lastClosed(hb, SH.htfMs, t);
-    const htf = k >= 4 && he[k] != null && he[k - 3] != null ? (hb[k].close > he[k] ? .5 : -.5) + (he[k] > he[k - 3] ? .5 : -.5) : 0;
-    if (Math.sign(htf) !== dir || btcDirAt(BTC1, 36e5, t) !== dir) continue;
-    const g = GEO.sh, sl = slOf(g, atrP);
+    const cb = tb[i].close, atrP = atr[i] / cb; if (r7[i] == null || !(atrP >= .004 && atrP <= .012)) continue;
+    const z = bs[i] ? (cb - bm[i]) / bs[i] : 0, drop = (cb / tb[i - 20].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
+    const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
+    const dir = 1, g = GEO.sh, sl = slOf(g, atrP);
     const res = sim(tb, SH.tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
-    CANDS.push({ m: 'x', setup: 'sh-r', s, t, dir, sl, cool: SH.cool, margin: g.margin, ...res }); }
-  return { rb: tb, ok: j => atr[j] != null && atr[j] / tb[j].close > .04 / 3 && atr[j] / tb[j].close <= .04 / 1.5 }; }
+    CANDS.push({ m: 'x', setup: 'sh-c', s, t, dir, sl, cool: SH.cool, margin: g.margin, ...res }); }
+  return { rb: tb, ok: j => atr[j] != null && atr[j] / tb[j].close >= .004 && atr[j] / tb[j].close <= .012 }; }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
 function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
