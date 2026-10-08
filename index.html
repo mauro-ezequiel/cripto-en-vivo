@@ -16,6 +16,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+<script src="ia-core.js"></script>
 <style>
 :root{--bg:#0f1115;--panel:#161a22;--line:#262b36;--txt:#d1d4dc;--mut:#7c8394;--up:#26a69a;--dn:#ef5350;--acc:#2962ff}
 *{box-sizing:border-box}
@@ -363,6 +364,14 @@ body.trn-on{overflow:hidden}
 .trn-bar{height:12px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:10px 0 6px}.trn-bar i{display:block;height:100%;background:linear-gradient(90deg,#e0b030,#00c853)}
 .trn-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.trn-stats div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.trn-stats small{display:block;color:var(--mut);font-size:10px}.trn-stats b{font-size:14px}
 .trn-reset{width:100%;border:1px solid var(--line);background:none;color:var(--mut);border-radius:10px;padding:10px;cursor:pointer}
+#iaTab{position:fixed;right:0;top:42%;z-index:8600;background:#2a1f4a;color:#fff;border:1px solid #7c5cff;border-right:0;border-radius:10px 0 0 10px;padding:8px 6px;font-size:18px;line-height:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;box-shadow:0 6px 18px #000a}#iaTab span{font-size:11px;font-weight:800;letter-spacing:.05em}#iaTab[hidden]{display:none}
+#iaPanel{position:fixed;top:0;right:0;bottom:0;width:min(440px,100vw);z-index:9300;background:var(--panel);border-left:1px solid #7c5cff;box-shadow:-10px 0 30px #000a;overflow:auto;padding:12px 14px 80px;color:var(--txt);font-size:13px}#iaPanel[hidden]{display:none}
+#iaPanel .ia-top{display:flex;justify-content:space-between;align-items:center;font-size:15px;margin-bottom:6px;position:sticky;top:-12px;background:var(--panel);padding:6px 0}#iaPanel .ia-x{background:none;border:0;color:var(--mut);font-size:24px;cursor:pointer}
+#iaPanel h4{margin:14px 0 6px;font-size:13px;color:#b9a7ff;text-transform:uppercase;letter-spacing:.04em}
+.ia-card,.ia-op{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:9px 10px;margin-bottom:8px;line-height:1.4}.ia-g{display:grid;grid-template-columns:1fr auto;gap:2px 10px;margin:6px 0}
+.ia-op{cursor:pointer;border-left:4px solid #26a69a}.ia-op.asegurar{border-left-color:#ff9800}.ia-op.salir{border-left-color:#ef5350}.ia-op.seguir{border-left-color:#7c5cff}.ia-op .ia-h{margin-bottom:4px}
+.ia-sig{display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--line)}.ia-two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ia-bar{position:relative;font-size:11.5px;padding:3px 4px;margin-top:3px}.ia-bar i{position:absolute;left:0;top:0;bottom:0;background:rgba(124,92,255,.28);border-radius:4px;z-index:0}.ia-bar span{position:relative;z-index:1}
 #trnPill{position:fixed;left:12px;bottom:78px;z-index:80;background:#7a5c00;color:#fff;border:1px solid #e0b030;border-radius:999px;padding:8px 14px;font-weight:700;font-size:12.5px;box-shadow:0 6px 18px #000a;cursor:pointer}#trnPill[hidden]{display:none}
 @media (min-width:801px){#trnPill{bottom:20px}}
 .trn-toast{position:fixed;left:50%;top:70px;transform:translateX(-50%);z-index:9800;background:#1b2130;border:1px solid #e0b030;color:var(--txt);border-radius:10px;padding:10px 14px;font-size:13px;box-shadow:0 8px 24px #000a;max-width:92vw}
@@ -3864,6 +3873,88 @@ $('drwModes').addEventListener('click',e=>{const s=e.target.closest('.chip-i');i
 {const _ac=applyCloudView;applyCloudView=function(d,nav){_ac.apply(this,arguments);try{if(d.train&&typeof d.train.bal==='number'&&d.trainT>+(localStorage.getItem('cv_train_t')||0)){TR=d.train;TR.pos=TR.pos||[];TR.hist=TR.hist||[];TR.done=TR.done||{};TR.quiz=TR.quiz||{};try{localStorage.setItem('cv_train',JSON.stringify(TR));localStorage.setItem('cv_train_t',String(d.trainT));}catch(e){}trnRender();trnPill();}}catch(e){}};}
 setInterval(()=>{if(TR.pos.length)trnSave(false);},30000);
 trnPill();
+
+/* =====================================================================
+   🧠 IA · panel flotante. Lo que estudia cada día en GitHub (ia.json) lo usa acá en vivo:
+   para cada operación abierta (señales de los bots y tus operaciones de PILOTEAR) calcula la probabilidad de que el precio
+   siga a favor y decide MANTENER, ASEGURAR o SALIR, sin esperar a los objetivos fijos (y sin cerrar en el 3.º si sigue el impulso).
+   ===================================================================== */
+const IA_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia.json';
+var IAM=null,IAOPEN=false,IAST={},IABUSY=false;try{IAST=JSON.parse(localStorage.getItem('cv_ia_st')||'{}')||{};}catch(e){}
+const IARES={tr:{tf:'1h',ms:36e5},sh:{tf:'3m',ms:18e4}};
+async function iaLoad(){try{const j=await (await fetch(IA_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(j&&j.ver)IAM=j;}catch(e){}if(IAOPEN)iaRender();}
+const iaBars={};
+async function iaKl(s,f){const k=s+f,c=iaBars[k];if(c&&Date.now()-c.t<6e4)return c.b;const b=await kl(s,IARES[f].tf,300);iaBars[k]={t:Date.now(),b};return b;}
+let iaBtc={t:0,d:0};
+async function iaBtcSide(){if(Date.now()-iaBtc.t<5*6e4)return iaBtc.d;try{const b=(await kl('BTCUSDT','1h',80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);iaBtc={t:Date.now(),d:b.at(-1).close>e.at(-1)?1:-1};}catch(e){}return iaBtc.d;}
+/* q = {sym, fam ('tr' 1h · 'sh' 3m), dir, entry, sl (fracción), r (objetivos × stop), t (inicio), maxAge} */
+async function iaEvalPos(q){const E=IAM&&IAM[q.fam]&&IAM[q.fam].exit;if(!E||!window.IA)return null;
+  const R=IARES[q.fam],b=(await iaKl(q.sym,q.fam)).slice(0,-1);if(b.length<80)return null;
+  const P=IA.prep(b),j=b.length-1,live=tickers[q.sym]&&tickers[q.sym].c,d=q.dir;let peak=q.entry,hits=0;
+  for(const x of b){if(x.t+R.ms<=q.t)continue;peak=d>0?Math.max(peak,x.high):Math.min(peak,x.low);}
+  if(live)peak=d>0?Math.max(peak,live):Math.min(peak,live);
+  const tps=[1,2,3].map(k=>q.entry*(1+d*k*q.r*q.sl));while(hits<3&&d*(peak-tps[hits])>=0)hits++;
+  const age=(b[j].t+R.ms-q.t)/q.maxAge,x=IA.exitX(P,j,{dir:d,entry:q.entry,sl:q.sl,peak,hits,age},await iaBtcSide());
+  const p=IA.predict(E.model,x),why=IA.explain(E.model,x,IA.EXIT_F).slice(0,3),c=live||b[j].close,g=d*(c/q.entry-1)*100;
+  const safe=hits>=2?tps[hits-2]:hits>=1?q.entry:q.entry*(1-d*q.sl);
+  let st=p<E.theta?(g>0?'asegurar':'salir'):hits>=3?'seguir':'mantener';if(age>1.5)st=g>0?'asegurar':'salir';
+  return {p,st,hits,g,why,theta:E.theta,safe,tps,age};}
+const IALAB={mantener:['🟢','MANTENER'],seguir:['🚀','SEGUÍ ADENTRO'],asegurar:['🟠','ASEGURÁ LA GANANCIA'],salir:['🔴','SALÍ ANTES DEL STOP']};
+function iaAdvTxt(a,q){const pp=Math.round(a.p*100),th=Math.round(a.theta*100),gg=(a.g>=0?'+':'')+a.g.toFixed(2)+' % del precio';
+  if(a.st==='seguir')return `Ya pasó el objetivo 3: el bot cerraría acá, pero la IA ve que el movimiento sigue (${pp} % de seguir a favor). Mantené con el stop de seguridad en ${fp(a.safe)} y salí cuando la IA avise.`;
+  if(a.st==='mantener')return `Probabilidad de seguir a favor ${pp} % (la IA sale bajo ${th} %). Ganancia ahora ${gg}.${a.hits?` Stop de seguridad en ${fp(a.safe)}.`:''}`;
+  if(a.st==='asegurar')return `La probabilidad de seguir a favor bajó a ${pp} % (umbral ${th} %): no esperes al próximo objetivo, cerrá ahora con ${gg}.`;
+  return `La probabilidad de que se recupere es ${pp} % (umbral ${th} %): salir ahora (${gg}) suele perder menos que esperar al stop.`;}
+function iaPositions(){const L=[];
+  for(const o of OPS){if(o.state!=='open'||!(o.m==='medio'||o.m==='x'))continue;
+    const plus=o.setup==='tp-x',r=o.m==='x'?NEWG.x.r:plus?PLUSG.r:(NEWG.medio.r);
+    L.push({key:'op:'+o.id,src:o.m==='x'?'SHOOTER':plus?'TRADING+':'TRADING',sym:o.sym,fam:o.m==='x'?'sh':'tr',dir:o.dir,entry:o.ae||o.entry,sl:o.liqD||.03,r,t:o.t,maxAge:SIM[o.m].maxAge,botHit:o.hit});}
+  for(const p of PIL){if(p.closed)continue;const P=p.plan||{};L.push({key:'pil:'+p.id,src:'PILOTEAR · tuya × '+p.lev,sym:p.sym,fam:'tr',dir:p.dir,entry:pilAvg(p),sl:P.sl||.03,r:.5,t:p.t,maxAge:7*864e5,mine:true});}
+  return L;}
+var IALIVE=[];
+async function iaTick(force){if(IABUSY||!IAM||!window.IA)return;IABUSY=true;
+  try{const L=iaPositions(),out=[];
+    for(const q of L){try{const a=await iaEvalPos(q);if(!a)continue;out.push([q,a]);
+        const prev=IAST[q.key];if(prev!==a.st){IAST[q.key]=a.st;
+          if(prev&&(a.st==='asegurar'||a.st==='salir'||a.st==='seguir')&&typeof notify==='function'){const L2=IALAB[a.st];
+            notify(`🧠 IA · ${L2[1]} · ${q.sym.replace('USDT','')} ${q.dir>0?'LONG':'SHORT'} (${q.src})`,iaAdvTxt(a,q),'ia-'+q.key,{sym:q.sym,tf:IARES[q.fam].tf,m:q.fam==='sh'?'x':'medio'});}}}catch(e){}}
+    IALIVE=out;const keep=new Set(L.map(q=>q.key));for(const k in IAST)if(!keep.has(k))delete IAST[k];try{localStorage.setItem('cv_ia_st',JSON.stringify(IAST));}catch(e){}
+  }finally{IABUSY=false;if(IAOPEN)iaRender();}}
+/* puntaje de entrada de las señales vivas */
+async function iaEntryScore(s){const f=s.m==='x'?'sh':'tr',E=IAM&&IAM[f]&&IAM[f].entry;if(!E||!window.IA)return null;
+  const tf=s.m==='x'?'3m':'4h',b=(await kl(s.sym,tf,300)).slice(0,-1);if(b.length<80)return null;const P=IA.prep(b),j=b.length-1;
+  let btc=0;try{const bb=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(bb.map(x=>x.close),50);btc=bb.at(-1).close>e.at(-1)?1:-1;}catch(e){}
+  const x=IA.entryX(P,j,s.dir,btc),p=IA.predict(E.model,x);return {p,lvl:p>=E.q[2]?'alto':p<=E.q[0]?'bajo':'medio',why:IA.explain(E.model,x,IA.ENTRY_F).slice(0,3)};}
+var IASIG={};
+async function iaSigTick(){if(!IAM)return;for(const m of ['medio','x'])for(const s of (SIG[m]||[]).filter(x=>x.state==='live')){if(IASIG[s.op])continue;try{IASIG[s.op]=await iaEntryScore({...s,m});}catch(e){}}if(IAOPEN)iaRender();}
+const iaPct=v=>(v>=0?'+':'')+(+v).toFixed(1)+' %';
+const iaWhy=w=>w.map(([k,v])=>`${IA.NAMES[k]||k} ${v>=0?'↑':'↓'}`).join(' · ');
+function iaImp(list){const top=(list||[]).filter(x=>x[1]>0).slice(0,8),mx=top.length?top[0][1]:1;
+  return top.map(([k,v])=>`<div class="ia-bar"><span>${esc(IA.NAMES[k]||k)}</span><i style="width:${Math.max(4,Math.round(v/mx*100))}%"></i></div>`).join('')||'<div class="mut">Todavía sin datos.</div>';}
+function iaRender(){const box=$('iaBody');if(!box)return;
+  if(!IAM){box.innerHTML='<div class="mut">Cargando lo que estudió la IA…</div>';return;}
+  const d=new Date(IAM.upd),fam=[['tr','TRADING y TRADING+ (velas de 1 h)'],['sh','SHOOTER (velas de 3 min)']];
+  const res=fam.map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test,pm=T.por_modo||{};
+    return `<div class="ia-card"><b>${nm}</b><div class="ia-g"><span>Bot (objetivos fijos)</span><b class="${T.bot.pct>=0?'up':'dn'}">${iaPct(T.bot.pct)} por operación</b><span>IA (decide sola)</span><b class="${T.ia.pct>=0?'up':'dn'}">${iaPct(T.ia.pct)} por operación</b>
+      <span>Operaciones que mejoró</span><b>${T.mejora_ops} %</b><span>Ganadas bot / IA</span><b>${T.bot.gana} % / ${T.ia.gana} %</b><span>Peor operación bot / IA</span><b>${iaPct(T.bot.peor)} / ${iaPct(T.ia.peor)}</b></div>
+      ${Object.entries(pm).map(([k,v])=>`<div class="mut">${k}: bot ${iaPct(v.bot)} → IA ${iaPct(v.ia)} (${v.n} operaciones)</div>`).join('')}
+      <div class="mut">Prueba en ${T.n_test} operaciones de los últimos meses que la IA no usó para aprender · % del margen, con comisiones.</div></div>`;}).join('');
+  const live=IALIVE.length?IALIVE.map(([q,a])=>{const L=IALAB[a.st];return `<div class="ia-op ${a.st}" data-ias="${q.sym}" data-iam="${q.fam==='sh'?'x':'medio'}"><div class="ia-h">${L[0]} <b>${L[1]}</b> · ${q.sym.replace('USDT','')} ${q.dir>0?'▲ LONG':'▼ SHORT'} <small>${esc(q.src)}${q.botHit!=null?` · bot: ${q.botHit}/3 objetivos`:''}</small></div><div>${iaAdvTxt(a,q)}</div><div class="mut">Lo que más pesa: ${esc(iaWhy(a.why))}</div></div>`;}).join('')
+    :`<div class="mut">${iaPositions().length?'Analizando las operaciones abiertas…':'No hay operaciones abiertas. Cuando un bot dé una señal o cargues una en PILOTEAR, la IA la sigue acá y te avisa cuándo salir.'}</div>`;
+  const sigs=['medio','x'].flatMap(m=>(SIG[m]||[]).filter(s=>s.state==='live').map(s=>[m,s])).map(([m,s])=>{const v=IASIG[s.op];
+    return `<div class="ia-sig"><span>${s.sym.replace('USDT','')} ${s.dir>0?'▲':'▼'} <small>${m==='x'?'SHOOTER':s.plus?'TRADING+':'TRADING'}</small></span><b class="${v?(v.lvl==='alto'?'up':v.lvl==='bajo'?'dn':''):''}">${v?`IA ${Math.round(v.p*100)} % · ${v.lvl}`:'…'}</b></div>`;}).join('')||'<div class="mut">Sin señales vivas ahora.</div>';
+  box.innerHTML=`<div class="mut">Estudió por última vez el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}: todas las señales del último año de los bots, vela a vela. Cada día suma el día nuevo y vuelve a aprender.</div>
+    <h4>Operaciones abiertas: qué hacer ahora</h4>${live}
+    <h4>Cómo sale la IA contra el bot</h4>${res}
+    <h4>Señales vivas: puntaje de entrada de la IA</h4>${sigs}
+    <h4>Lo que aprendió que sirve</h4><div class="ia-two"><div><b>Para salir a tiempo</b>${iaImp(IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}</div><div><b>Para entrar (TRADING)</b>${iaImp(IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}</div></div>
+    <div class="mut" style="margin-top:8px">Cómo decide: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR. Si baja del umbral, sale (aunque no haya llegado al próximo objetivo); si sigue alta, mantiene aunque el bot ya haya llegado al objetivo 3. Para no devolver ganancia usa un stop de seguridad: al tocar el objetivo 1 pasa a la entrada y después sube al objetivo anterior. No es asesoramiento financiero.</div>`;}
+function iaShow(on){IAOPEN=on;$('iaPanel').hidden=!on;$('iaTab').hidden=on;if(on){iaRender();iaTick();iaSigTick();}}
+(function iaInit(){const tab=document.createElement('button');tab.id='iaTab';tab.type='button';tab.innerHTML='🧠<span>IA</span>';tab.title='IA: cuándo entrar y cuándo salir';tab.onclick=()=>iaShow(true);
+  const pn=document.createElement('aside');pn.id='iaPanel';pn.hidden=true;pn.innerHTML='<div class="ia-top"><b>🧠 IA de CRIPTO-LIVE</b><button type="button" class="ia-x" aria-label="Cerrar">×</button></div><div id="iaBody"></div>';
+  document.body.appendChild(tab);document.body.appendChild(pn);pn.querySelector('.ia-x').onclick=()=>iaShow(false);
+  pn.addEventListener('click',e=>{const o=e.target.closest('[data-ias]');if(!o)return;const m=o.dataset.iam;if(m&&m!==mode)applyMode(m);if(typeof setView==='function')setView('main');select(o.dataset.ias);});
+  iaLoad().then(()=>{iaTick();iaSigTick();});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);})();
 </script>
 </body>
 </html>
