@@ -1,0 +1,30 @@
+name: Variantes del historial
+# Se corre a mano: recalcula el último año con otras medidas (sin publicar) y guarda el resultado en la rama var-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Rama con el código'
+        default: 'ia'
+      env:
+        description: 'Variables, por ejemplo: BT_UNI=all BT_WILD=2.5'
+        default: ''
+permissions:
+  contents: write
+jobs:
+  variante:
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Recalcular
+        run: env ${{ inputs.env }} NO_PUBLISH=1 node --max-old-space-size=6500 herramientas/historial-anual.js | tail -5
+      - name: Guardar el resultado
+        run: |
+          mkdir out && cp historial.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "${{ inputs.env }}"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:var-${{ github.run_id }}
