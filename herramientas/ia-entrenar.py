@@ -160,10 +160,16 @@ def resumen(recs, now):
     return res
 
 
+VENTANA = float(__import__('os').environ.get('IA_VENTANA', 365))  # días de aprendizaje antes de la prueba
+
+
 def fam_exit(ops, K, H):
     ops = [o for o in ops if len(o['B']) > 2]
     ts = np.array([o['t'] for o in ops])
     cut = cut_of(ts)
+    # el mercado cambia: para decidir salidas aprende con el último año (lo más viejo queda en la memoria para medir si alguna vez ayuda)
+    ops = [o for o in ops if o['t'] >= cut - VENTANA * DAY]
+    ts = np.array([o['t'] for o in ops])
     for o in ops:
         o['y'] = labels(o, K, H)
     def rows(sel):
@@ -173,19 +179,28 @@ def fam_exit(ops, K, H):
             X += [x for x, ok in zip(o['X'], m) if ok]; Y += list(o['y'][m])
         return np.array(X, float), np.array(Y)
     tr = [o for o in ops if o['t'] < cut]; te = [o for o in ops if o['t'] >= cut]
-    trA = [o for o in tr if o['t'] < np.quantile([x['t'] for x in tr], .6)]; trB = [o for o in tr if o not in trA]
-    # 1) elegir umbral con un modelo que no vio la parte de validación
-    mA = gbc().fit(*rows(trA))
-    pB = [mA.predict_proba(np.array(o['X'], float))[:, 1] for o in trB]
-    best = None
-    for variant in ('A', 'B', 'C', 'D'):
-        for hold in ((.5, .6, .7) if variant == 'D' else (.55,)):
-            for minhold in (1, 2, 4):
-                for theta in np.arange(.20, .66, .05):
-                    v = np.mean([policy(o, pp, theta, minhold, variant, hold)[0] for o, pp in zip(trB, pB)])
-                    if best is None or v > best[0]:
-                        best = (v, round(float(theta), 2), minhold, variant, hold)
+    # 1) elegir la forma de manejar la operación de manera ESTABLE: se prueba en 3 tramos de tiempo distintos del aprendizaje
+    #    (cada uno con un modelo que solo vio lo anterior) y gana la que rinde bien en todos, no la que tuvo suerte en uno.
+    #    Puntaje = promedio de los tramos − la mitad de su dispersión.
+    ttr = np.array([o['t'] for o in tr]); qs = np.quantile(ttr, [.4, .6, .8])
+    folds, fa = [], []
+    for i, q in enumerate(qs):
+        fit = [o for o in tr if o['t'] < q]; val = [o for o in tr if q <= o['t'] < (qs[i + 1] if i + 1 < len(qs) else cut)]
+        if len(fit) >= 60 and len(val) >= 15:
+            mA = gbc().fit(*rows(fit)); folds.append((val, [mA.predict_proba(np.array(o['X'], float))[:, 1] for o in val]))
+            Xv, Yv = rows(val); fa.append(roc_auc_score(Yv, mA.predict_proba(Xv)[:, 1]) if len(set(Yv)) > 1 else .5)
+    # PRUDENCIA: si en los tramos el modelo no predice (precisión < 0,53), la IA no toma el control: solo corrige el plan del bot (D)
+    predice = bool(fa and np.mean(fa) >= .53)
+    grid = [(v, h, mh, round(float(th), 2)) for v in (('A', 'B', 'C', 'D') if predice else ('D',)) for h in ((.5, .6, .7) if v == 'D' else (.55,)) for mh in (1, 2, 4) for th in np.arange(.20, .66, .05)]
+    best, sel = None, []
+    for variant, hold, minhold, theta in grid:
+        sc = [np.mean([policy(o, pp, theta, minhold, variant, hold)[0] for o, pp in zip(val, P)]) for val, P in folds]
+        v = float(np.mean(sc) - .5 * np.std(sc)) if sc else 0.
+        if best is None or v > best[0]:
+            best = (v, theta, minhold, variant, hold)
+        sel.append([variant, hold, minhold, theta, round(v, 2)])
     _, theta, minhold, variant, hold = best
+    eleccion = {'tramos': len(folds), 'puntaje': round(best[0], 2), 'por_variante': {v: max(x[4] for x in sel if x[0] == v) for v in 'ABCD' if any(x[0] == v for x in sel)}, 'auc_tramos': round(float(np.mean(fa)), 3) if fa else None, 'predice': predice}
     # 2) prueba honesta: modelo con todo el entrenamiento, evaluado en los últimos meses
     Xtr, Ytr = rows(tr); Xte, Yte = rows(te)
     mT = gbc().fit(Xtr, Ytr)
@@ -202,7 +217,7 @@ def fam_exit(ops, K, H):
     res = {'n_ops': len(ops), 'n_test': len(te), 'auc': round(auc, 3),
            'bot': {'pct': round(float(bot.mean()), 2), 'gana': round(float((bot > 0).mean() * 100), 1), 'peor': round(float(bot.min()), 1)},
            'ia': {'pct': round(float(ia.mean()), 2), 'gana': round(float((ia > 0).mean() * 100), 1), 'peor': round(float(ia.min()), 1)},
-           'mejora_ops': round(better / len(te) * 100, 1), 'desde_prueba': int(cut)}
+           'mejora_ops': round(better / len(te) * 100, 1), 'desde_prueba': int(cut), 'eleccion': eleccion}
     # CURVA DE APRENDIZAJE: la misma prueba, aprendiendo con menos historia (siempre la más reciente).
     # Muestra cuánto mejora la IA con cada mes extra de datos: con eso se estima cuánto le falta para alcanzar a los bots.
     curva, t_min = [], min(o['t'] for o in tr)
@@ -454,13 +469,16 @@ def estimar():
     C = [OUT[f]['exit']['test']['curva'] for f in FAM if OUT[f].get('exit') and OUT[f]['exit']['test'].get('curva')]
     if not C:
         return None
+    auc = max(OUT[f]['exit']['test']['auc'] for f in FAM if OUT[f].get('exit'))
     n = min(len(c['meses_ia']) for c in C); bot = sum(c['bot_suma'] for c in C)
     if n < 3 or bot <= 0:
         return {'ok': False, 'motivo': 'pocos datos'}
     pts = [[float(np.mean([c['meses_ia'][i][0] for c in C])), 100 * sum(c['meses_ia'][i][1] for c in C) / bot] for i in range(n)]
     x, y = np.log([p[0] for p in pts]), np.array([p[1] for p in pts])
     b, a = np.polyfit(x, y, 1); now = pts[-1][0]
-    out = {'ok': True, 'puntos': [[round(m, 1), round(v, 1)] for m, v in pts], 'por_doble': round(float(b * np.log(2)), 1), 'meses_datos': round(now, 1)}
+    out = {'ok': True, 'puntos': [[round(m, 1), round(v, 1)] for m, v in pts], 'por_doble': round(float(b * np.log(2)), 1), 'meses_datos': round(now, 1), 'auc': auc}
+    if auc < .53:  # todavía no predice: la curva es ruido y no sirve para dar un plazo
+        out['dias'] = None; out['motivo'] = 'no_predice'; return out
     if pts[-1][1] >= 100:
         out['dias'] = 0
     elif b <= .5:
