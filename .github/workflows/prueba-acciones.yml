@@ -6,6 +6,9 @@ on:
       anios:
         description: 'Años hacia atrás'
         default: '6'
+      dump:
+        description: 'Acciones para ver la respuesta cruda (ej.: BAC,KO)'
+        default: ''
       lento:
         description: 'Pausa entre pedidos en ms (0 = normal)'
         default: '0'
@@ -25,6 +28,7 @@ jobs:
         env:
           BT_YEARS: ${{ inputs.anios }}
           GAP: ${{ inputs.lento }}
+          DUMP: ${{ inputs.dump }}
           CONC: ${{ inputs.lento != '0' && '1' || '4' }}
       - name: Guardar el resultado
         run: |

@@ -37,7 +37,10 @@ function test(b) { const n = b.length, tr = b.map((x, i) => i ? Math.max(x.high 
     out.push({ t: x.t, hit, pct: 100 * L * (Math.max(-sl, pnl) - 2 * FEE) }); free = b[Math.min(j, n - 1)].t + 15 * 864e5; }
   return out; }
 const sum = L => { const n = L.length; return n ? { n, obj1: +(L.filter(x => x.hit >= 1).length / n * 100).toFixed(1), obj3: +(L.filter(x => x.hit >= 3).length / n * 100).toFixed(1), pct: +(L.reduce((a, x) => a + x.pct, 0) / n).toFixed(2), usd500: +(L.reduce((a, x) => a + x.pct, 0) / n * 5).toFixed(1) } : { n: 0 }; };
-(async () => { const html = fs.readFileSync('index.html', 'utf8'), lists = { NYSE: setOf(html, 'NYSE'), NASDAQ: setOf(html, 'NASDAQ') };
+(async () => { if (process.env.DUMP) { for (const sym of process.env.DUMP.split(',')) { for (const u of [`${D912}/historical/cedears/${sym}`, `${D912}/historical/usa_stocks/${sym}`]) { const r = await fetch(u); const t = await r.text(); console.log('DUMP', u, r.status, t.length, t.slice(0, 300).replace(/\s+/g, ' '), '…', t.slice(-200).replace(/\s+/g, ' ')); } }
+    const c = await (await fetch(`${D912}/live/arg_cedears`)).json(); console.log('DUMP live cedears', JSON.stringify(c.filter(x => process.env.DUMP.split(',').some(s => x.symbol.startsWith(s))).slice(0, 12)));
+    fs.writeFileSync('prueba-acciones.json', '{}'); return; }
+  const html = fs.readFileSync('index.html', 'utf8'), lists = { NYSE: setOf(html, 'NYSE'), NASDAQ: setOf(html, 'NASDAQ') };
   const live = await getJs(`${D912}/live/usa_stocks`), ced = await getJs(`${D912}/live/arg_cedears`);
   const liveSet = new Set((live || []).map(x => x.symbol)), cedSet = new Set((ced || []).filter(x => x.v > 0).map(x => x.symbol));
   const R = { fecha: new Date().toISOString(), anios: YEARS, en_vivo: liveSet.size, cedears: cedSet.size, por_bolsa: {}, faltan: {}, extra_con_cedear: [...cedSet].filter(s => liveSet.has(s) && !lists.NYSE.includes(s) && !lists.NASDAQ.includes(s)).sort() };
