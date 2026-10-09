@@ -42,12 +42,16 @@ jobs:
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/noticias.json" -o noticias.json || true
           # memoria acumulada: lo que la IA estudió los días anteriores (así no olvida lo de hace más de un año)
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/ia-datos/ia-datos.json.gz" -o prev-datos.json.gz || true
-          python herramientas/ia-entrenar.py ia-datos.json.gz
+          set -o pipefail
+          python herramientas/ia-entrenar.py ia-datos.json.gz 2>&1 | tee ia-log.txt
           node herramientas/publicar.js ia.json "IA: estudio diario"
         env:
           GH_TOKEN: ${{ github.token }}
       - name: Guardar los datos de estudio (rama ia-datos)
+        if: always()
         continue-on-error: true
         run: |
-          mkdir out && cp ia-datos.json.gz ia.json out/ 2>/dev/null; cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Datos de estudio de la IA"
+          ls -la ia-datos.json.gz ia.json ia-log.txt 2>&1 | tee -a ia-log.txt || true
+          mkdir -p out && cp ia-datos.json.gz out/ && (cp ia.json out/ 2>/dev/null || true) && (cp ia-log.txt out/ 2>/dev/null || true)
+          cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Datos de estudio de la IA"
           git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:ia-datos
