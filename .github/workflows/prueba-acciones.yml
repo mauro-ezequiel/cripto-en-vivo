@@ -6,6 +6,9 @@ on:
       anios:
         description: 'Años hacia atrás'
         default: '6'
+      lento:
+        description: 'Pausa entre pedidos en ms (0 = normal)'
+        default: '0'
 permissions:
   contents: write
 jobs:
@@ -21,6 +24,8 @@ jobs:
         run: node herramientas/prueba-acciones.js
         env:
           BT_YEARS: ${{ inputs.anios }}
+          GAP: ${{ inputs.lento }}
+          CONC: ${{ inputs.lento != '0' && '1' || '4' }}
       - name: Guardar el resultado
         run: |
           mkdir out && cp prueba-acciones.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Prueba de acciones"

@@ -6,7 +6,8 @@
 const fs = require('fs');
 const D912 = 'https://data912.com', FEE = .001, L = 8, YEARS = +(process.env.BT_YEARS || 6);
 const sleep = ms => new Promise(r => setTimeout(r, ms));
-async function getJs(url) { for (let k = 0; k < 5; k++) { try { const r = await fetch(url); if (r.ok) return await r.json(); if (r.status === 404) return null; } catch (e) {} await sleep(1500 * (k + 1)); } return null; }
+const ST = {}; const GAP = +(process.env.GAP || 0);
+async function getJs(url) { for (let k = 0; k < 5; k++) { try { if (GAP) await sleep(GAP); const r = await fetch(url); ST[r.status] = (ST[r.status] || 0) + 1; if (r.ok) return await r.json(); if (r.status === 404) return null; } catch (e) { ST.err = (ST.err || 0) + 1; } await sleep(1500 * (k + 1)); } return null; }
 const setOf = (html, name) => { const m = html.match(new RegExp('const ' + name + '=new Set\\(\\[([^\\]]+)\\]\\)')); return m ? m[1].match(/'([^']+)'/g).map(x => x.slice(1, -1)) : []; };
 function wilder(v, p) { const o = Array(v.length).fill(null); let s = 0; for (let i = 0; i < v.length; i++) { if (i < p) { s += v[i]; if (i === p - 1) { s /= p; o[i] = s; } } else { s = (s * (p - 1) + v[i]) / p; o[i] = s; } } return o; }
 async function bars(sym) {
@@ -41,11 +42,12 @@ const sum = L => { const n = L.length; return n ? { n, obj1: +(L.filter(x => x.h
   const liveSet = new Set((live || []).map(x => x.symbol)), cedSet = new Set((ced || []).filter(x => x.v > 0).map(x => x.symbol));
   const R = { fecha: new Date().toISOString(), anios: YEARS, en_vivo: liveSet.size, cedears: cedSet.size, por_bolsa: {}, faltan: {}, extra_con_cedear: [...cedSet].filter(s => liveSet.has(s) && !lists.NYSE.includes(s) && !lists.NASDAQ.includes(s)).sort() };
   for (const [ex, list] of Object.entries(lists)) { const all = [], miss = [], per = {}; let q = 0;
-    await Promise.all(Array.from({ length: 4 }, async () => { while (q < list.length) { const s = list[q++]; if (!liveSet.has(s)) { miss.push(s + ' (no está en vivo)'); continue; }
+    await Promise.all(Array.from({ length: +(process.env.CONC || 4) }, async () => { while (q < list.length) { const s = list[q++]; if (!liveSet.has(s)) { miss.push(s + ' (no está en vivo)'); continue; }
       const r = await bars(s); if (r.err) { miss.push(s + ' (' + r.err + ')'); continue; } const ops = test(r.b); per[s] = sum(ops); all.push(...ops); } }));
     const yr = {}; for (const o of all) { const y = new Date(o.t).getUTCFullYear(); (yr[y] = yr[y] || []).push(o); }
     const last = all.filter(o => o.t >= Date.now() - 365 * 864e5);
     R.por_bolsa[ex] = { acciones: list.length, con_datos: Object.keys(per).length, total: sum(all), ultimo_anio: sum(last), por_anio: Object.fromEntries(Object.entries(yr).map(([y, L]) => [y, sum(L)])), por_accion: per };
     R.faltan[ex] = miss.sort(); console.log(ex, JSON.stringify(R.por_bolsa[ex].total), 'último año', JSON.stringify(R.por_bolsa[ex].ultimo_anio), 'faltan', miss.length); }
   console.log('con CEDEAR y en vivo pero fuera de las listas:', R.extra_con_cedear.join(' '));
+  R.http = ST; console.log('respuestas', JSON.stringify(ST));
   fs.writeFileSync('prueba-acciones.json', JSON.stringify(R, null, 1)); })();
