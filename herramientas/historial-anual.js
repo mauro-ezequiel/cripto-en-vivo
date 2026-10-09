@@ -227,6 +227,48 @@ function stats(L) { const done = L.filter(x => !x.open), n = done.length; if (!n
   const h1 = done.filter(x => x.hit >= 1).length, h3 = done.filter(x => x.hit >= 3).length, usd = done.reduce((a, x) => a + x.pct / 100 * x.margin, 0);
   return { p: Math.round(100 * h1 / n), p3: Math.round(100 * h3 / n), n, usd: +(usd / n).toFixed(1), ll: done.filter(x => x.ll).length }; }
 
+/* ---------- SUPLEMENTOS EN PRUEBA (no cambian las señales): ¿qué pasaría si se agregaran? ----------
+   Se mide sobre las mismas operaciones del año. Las reglas fijas (calendario y límite) se miden en todo el año; las que se eligen
+   mirando los datos (horas y volatilidad) se eligen con los primeros 2/3 y se miden solo en el último tercio, para no hacer trampa. */
+/* datos económicos de EE. UU. (hora de Nueva York): inflación (CPI) y empleo a las 8:30, decisión de la Fed a las 14:00.
+   Fuentes: calendarios oficiales de la oficina de estadísticas de EE. UU. (BLS) y de la Reserva Federal. Octubre 2025 se canceló por el cierre del gobierno. */
+const MACRO = { cpi: ['2025-10-24', '2025-12-18', '2026-01-13', '2026-02-13', '2026-03-11', '2026-04-10', '2026-05-12', '2026-06-10', '2026-07-14', '2026-08-12', '2026-09-11', '2026-10-14', '2026-11-10', '2026-12-10'],
+  nfp: ['2025-11-20', '2025-12-16', '2026-01-09', '2026-02-11', '2026-03-06', '2026-04-03', '2026-05-08', '2026-06-05', '2026-07-02', '2026-08-07', '2026-09-04', '2026-10-02', '2026-11-06', '2026-12-04'],
+  fomc: ['2025-10-29', '2025-12-10', '2026-01-28', '2026-03-18', '2026-04-29', '2026-06-17', '2026-07-29', '2026-09-16', '2026-10-28', '2026-12-09'] };
+const etUtc = (d, hh, mm) => { const t = Date.parse(d + 'T00:00:00Z'), y = +d.slice(0, 4), sec = (m, k) => { const x = new Date(Date.UTC(y, m, 1)); return Date.UTC(y, m, 1 + (7 - x.getUTCDay()) % 7 + 7 * (k - 1)); };
+  const edt = t >= sec(2, 2) && t < sec(10, 1); return t + ((hh + (edt ? 4 : 5)) * 60 + mm) * 6e4; };
+const MACRO_T = [...MACRO.cpi.map(d => etUtc(d, 8, 30)), ...MACRO.nfp.map(d => etUtc(d, 8, 30)), ...MACRO.fomc.map(d => etUtc(d, 14, 0))].sort((a, b) => a - b);
+const nearMacro = t => MACRO_T.some(e => t >= e - 36e5 && t < e + 2 * 36e5); // de 1 h antes a 2 h después
+function suplementos(ops) {
+  const modo = o => o.m === 'x' ? 'SHOOTER' : o.setup === 'tp-x' ? 'TRADING+' : 'TRADING', usd = o => o.pct / 100 * o.margin;
+  const done = ops.filter(o => !o.open).sort((a, b) => a.t - b.t), cut = done.length ? done[Math.floor(done.length * 2 / 3)].t : NOW;
+  /* volatilidad de BTC al entrar: rango promedio de 1 h de las últimas 24 h, comparado con los 30 días anteriores (percentil) */
+  const B = BTC1 && BTC1.b || [], rg = B.map(b => (b.high - b.low) / b.close), vol = t => { const i = lastClosed(B, 36e5, t); if (i < 744) return null;
+    let a = 0; for (let k = i - 23; k <= i; k++) a += rg[k]; a /= 24; let below = 0, n = 0; for (let k = i - 743; k <= i - 24; k += 6) { let b = 0; for (let j = k - 23; j <= k; j++) b += rg[j]; below += b / 24 < a; n++; } return below / n; };
+  for (const o of done) { o._v = vol(o.t); o._h = new Date(o.t).getUTCHours(); o._mac = nearMacro(o.t); o._fut = FUTSET.has(o.s); }
+  const st = (L, days) => { const n = L.length; if (!n) return { n: 0 }; const u = L.reduce((a, o) => a + usd(o), 0);
+    return { n, dia: +(n / (days || SPAN / DAY)).toFixed(2), obj1: +(L.filter(o => o.hit >= 1).length / n * 100).toFixed(1), usd: +(u / n).toFixed(2), total: Math.round(u), peor: +Math.min(...L.map(usd)).toFixed(1) }; };
+  const by = (L, f, days) => { const o = {}; for (const m of ['TRADING', 'TRADING+', 'SHOOTER']) o[m] = st(L.filter(x => modo(x) === m && f(x)), days); return o; };
+  const spot = done.filter(o => !o._fut), test = spot.filter(o => o.t >= cut), train = spot.filter(o => o.t < cut);
+  /* límite: como mucho 3 operaciones abiertas a la vez en la misma dirección (las cripto se mueven juntas) */
+  const expo = L => { const keep = [], live = []; for (const o of L) { for (let i = live.length - 1; i >= 0; i--) if (live[i].tEnd <= o.t) live.splice(i, 1);
+      if (live.filter(x => x.dir === o.dir).length >= 3) continue; keep.push(o); live.push(o); } return keep; };
+  /* horas (bloques de 4 h, hora UTC) y volatilidad: se eligen con el aprendizaje */
+  const badH = {}, volCut = {};
+  for (const m of ['TRADING', 'TRADING+', 'SHOOTER']) { const T = train.filter(o => modo(o) === m); badH[m] = [];
+    for (let h = 0; h < 24; h += 4) { const L = T.filter(o => o._h >= h && o._h < h + 4); if (L.length >= 15 && L.reduce((a, o) => a + usd(o), 0) < 0) badH[m].push(h); }
+    let best = [null, T.reduce((a, o) => a + usd(o), 0)]; for (const c of [.5, .6, .7, .8, .9]) { const L = T.filter(o => o._v == null || o._v <= c), u = L.reduce((a, o) => a + usd(o), 0); if (L.length >= T.length * .5 && u > best[1]) best = [c, u]; }
+    volCut[m] = best[0]; }
+  const okH = o => !badH[modo(o)].includes(Math.floor(o._h / 4) * 4), okV = o => volCut[modo(o)] == null || o._v == null || o._v <= volCut[modo(o)];
+  const ex = expo(spot), exSet = new Set(ex), exT = new Set(expo(test));
+  const TD = Math.max(1, (NOW - cut) / DAY);
+  const res = { desde_prueba: cut, horas_malas_utc: badH, vol_max_percentil: volCut, eventos: MACRO_T.length,
+    anio: { bots: by(spot, () => true), calendario: by(spot, o => !o._mac), limite3: by(spot, o => exSet.has(o)), calendario_y_limite: by(expo(spot.filter(o => !o._mac)), () => true) },
+    prueba: { bots: by(test, () => true, TD), horas: by(test, okH, TD), volatilidad: by(test, okV, TD), calendario: by(test, o => !o._mac, TD), limite3: by(test, o => exT.has(o), TD),
+      todo: by(expo(test.filter(o => !o._mac && okH(o) && okV(o))), () => true, TD) } };
+  if (FUTSET.size) { res.futuros = { solo_spot: by(spot, () => true), solo_futuros: by(done.filter(o => o._fut), () => true), juntas: by(done, () => true) }; }
+  return res; }
+
 async function publish(body) { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
   const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'cripto-live-historial' }, api = 'https://api.github.com/repos/' + repo;
   let r = await fetch(api + '/git/ref/heads/datos', { headers: H });
@@ -267,7 +309,7 @@ async function main() { const t0 = Date.now();
   for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
   const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
-    cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
+    cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin] */
     ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd]) };
   const body = JSON.stringify(out);
@@ -278,6 +320,7 @@ async function main() { const t0 = Date.now();
     fs.writeFileSync('ia-datos.json.gz', zlib.gzipSync(JSON.stringify({ upd: NOW, fee: FEE, exitF: IA.EXIT_F, entryF: IA.ENTRY_F, syms: base.slice(0, Math.max(n4, nS)).map(x => x.replace('USDT', '')), ...IAD })));
     console.log('IA: operaciones', IAD.tr.ops.length, IAD.sh.ops.length, 'entradas', IAD.tr.ent.length, IAD.sh.ent.length); }
   console.log(JSON.stringify({ cal, azar, ops: ops.length, errores: err.length, secs: out.secs }, null, 1));
+  console.log('suplementos', JSON.stringify(out.suplementos));
   if (MOCK || process.env.NO_PUBLISH) return;
   if (await publish(body)) console.log('Publicado historial.json en la rama datos'); else if (process.env.GH_TOKEN) { console.log('No se pudo publicar'); process.exitCode = 1; } }
 main().catch(e => { console.error(e); process.exitCode = 1; });
