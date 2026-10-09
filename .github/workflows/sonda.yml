@@ -1,0 +1,19 @@
+name: Sonda de fuentes
+# Se corre a mano: revisa qué datos de Binance se alcanzan desde GitHub y guarda el resultado en la rama sonda-<número>.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  sonda:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node herramientas/sonda.js
+      - run: |
+          mkdir out && cp sonda.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Sonda"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:sonda-${{ github.run_id }}
