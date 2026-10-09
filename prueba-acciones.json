@@ -1,0 +1,1134 @@
+{
+ "fecha": "2026-10-09T19:54:46.548Z",
+ "anios": 6,
+ "en_vivo": 3151,
+ "cedears": 802,
+ "por_bolsa": {
+  "NYSE": {
+   "acciones": 224,
+   "con_datos": 49,
+   "total": {
+    "n": 569,
+    "obj1": 70.7,
+    "obj3": 31.5,
+    "pct": 7.14,
+    "usd500": 35.7
+   },
+   "ultimo_anio": {
+    "n": 62,
+    "obj1": 72.6,
+    "obj3": 30.6,
+    "pct": 9.26,
+    "usd500": 46.3
+   },
+   "por_anio": {
+    "2020": {
+     "n": 3,
+     "obj1": 100,
+     "obj3": 66.7,
+     "pct": 41.04,
+     "usd500": 205.2
+    },
+    "2021": {
+     "n": 58,
+     "obj1": 72.4,
+     "obj3": 39.7,
+     "pct": 11.95,
+     "usd500": 59.8
+    },
+    "2022": {
+     "n": 161,
+     "obj1": 70.8,
+     "obj3": 29.2,
+     "pct": 6.48,
+     "usd500": 32.4
+    },
+    "2023": {
+     "n": 106,
+     "obj1": 67.9,
+     "obj3": 29.2,
+     "pct": 4.99,
+     "usd500": 24.9
+    },
+    "2024": {
+     "n": 84,
+     "obj1": 70.2,
+     "obj3": 28.6,
+     "pct": 3.12,
+     "usd500": 15.6
+    },
+    "2025": {
+     "n": 105,
+     "obj1": 73.3,
+     "obj3": 33.3,
+     "pct": 10.38,
+     "usd500": 51.9
+    },
+    "2026": {
+     "n": 52,
+     "obj1": 67.3,
+     "obj3": 32.7,
+     "pct": 6.25,
+     "usd500": 31.2
+    }
+   },
+   "por_accion": {
+    "JPM": {
+     "n": 8,
+     "obj1": 50,
+     "obj3": 25,
+     "pct": -7.08,
+     "usd500": -35.4
+    },
+    "WFC": {
+     "n": 10,
+     "obj1": 80,
+     "obj3": 30,
+     "pct": 19.73,
+     "usd500": 98.7
+    },
+    "C": {
+     "n": 13,
+     "obj1": 61.5,
+     "obj3": 15.4,
+     "pct": -3.01,
+     "usd500": -15.1
+    },
+    "GS": {
+     "n": 8,
+     "obj1": 100,
+     "obj3": 37.5,
+     "pct": 34.84,
+     "usd500": 174.2
+    },
+    "AXP": {
+     "n": 9,
+     "obj1": 77.8,
+     "obj3": 11.1,
+     "pct": 11.78,
+     "usd500": 58.9
+    },
+    "AIG": {
+     "n": 7,
+     "obj1": 100,
+     "obj3": 42.9,
+     "pct": 38.42,
+     "usd500": 192.1
+    },
+    "V": {
+     "n": 7,
+     "obj1": 71.4,
+     "obj3": 28.6,
+     "pct": 21.92,
+     "usd500": 109.6
+    },
+    "MA": {
+     "n": 6,
+     "obj1": 83.3,
+     "obj3": 50,
+     "pct": 21.09,
+     "usd500": 105.4
+    },
+    "CRM": {
+     "n": 20,
+     "obj1": 75,
+     "obj3": 35,
+     "pct": 6.62,
+     "usd500": 33.1
+    },
+    "IBM": {
+     "n": 7,
+     "obj1": 71.4,
+     "obj3": 57.1,
+     "pct": 20.68,
+     "usd500": 103.4
+    },
+    "HPQ": {
+     "n": 18,
+     "obj1": 77.8,
+     "obj3": 27.8,
+     "pct": 16.5,
+     "usd500": 82.5
+    },
+    "INFY": {
+     "n": 15,
+     "obj1": 66.7,
+     "obj3": 33.3,
+     "pct": 5.2,
+     "usd500": 26
+    },
+    "GLOB": {
+     "n": 9,
+     "obj1": 33.3,
+     "obj3": 22.2,
+     "pct": -23.08,
+     "usd500": -115.4
+    },
+    "JNJ": {
+     "n": 2,
+     "obj1": 100,
+     "obj3": 100,
+     "pct": 15.04,
+     "usd500": 75.2
+    },
+    "LLY": {
+     "n": 8,
+     "obj1": 87.5,
+     "obj3": 62.5,
+     "pct": 23.59,
+     "usd500": 117.9
+    },
+    "MRK": {
+     "n": 11,
+     "obj1": 45.5,
+     "obj3": 18.2,
+     "pct": -8.3,
+     "usd500": -41.5
+    },
+    "ABBV": {
+     "n": 5,
+     "obj1": 60,
+     "obj3": 20,
+     "pct": -2.87,
+     "usd500": -14.3
+    },
+    "PFE": {
+     "n": 14,
+     "obj1": 78.6,
+     "obj3": 0,
+     "pct": 0.76,
+     "usd500": 3.8
+    },
+    "ABT": {
+     "n": 12,
+     "obj1": 66.7,
+     "obj3": 25,
+     "pct": 6.58,
+     "usd500": 32.9
+    },
+    "BMY": {
+     "n": 20,
+     "obj1": 45,
+     "obj3": 20,
+     "pct": -5.78,
+     "usd500": -28.9
+    },
+    "MDT": {
+     "n": 20,
+     "obj1": 65,
+     "obj3": 15,
+     "pct": 0.21,
+     "usd500": 1
+    },
+    "KO": {
+     "n": 3,
+     "obj1": 66.7,
+     "obj3": 0,
+     "pct": -0.45,
+     "usd500": -2.3
+    },
+    "MO": {
+     "n": 4,
+     "obj1": 75,
+     "obj3": 25,
+     "pct": 15.11,
+     "usd500": 75.6
+    },
+    "MCD": {
+     "n": 5,
+     "obj1": 80,
+     "obj3": 0,
+     "pct": 3.39,
+     "usd500": 16.9
+    },
+    "NKE": {
+     "n": 23,
+     "obj1": 56.5,
+     "obj3": 17.4,
+     "pct": -6.53,
+     "usd500": -32.7
+    },
+    "HD": {
+     "n": 14,
+     "obj1": 92.9,
+     "obj3": 35.7,
+     "pct": 18.46,
+     "usd500": 92.3
+    },
+    "CL": {
+     "n": 11,
+     "obj1": 72.7,
+     "obj3": 36.4,
+     "pct": 8.94,
+     "usd500": 44.7
+    },
+    "KMB": {
+     "n": 14,
+     "obj1": 78.6,
+     "obj3": 35.7,
+     "pct": 6,
+     "usd500": 30
+    },
+    "HSY": {
+     "n": 14,
+     "obj1": 71.4,
+     "obj3": 35.7,
+     "pct": -1.31,
+     "usd500": -6.6
+    },
+    "F": {
+     "n": 12,
+     "obj1": 83.3,
+     "obj3": 41.7,
+     "pct": 20.39,
+     "usd500": 101.9
+    },
+    "GM": {
+     "n": 11,
+     "obj1": 63.6,
+     "obj3": 36.4,
+     "pct": 4.68,
+     "usd500": 23.4
+    },
+    "NIO": {
+     "n": 3,
+     "obj1": 33.3,
+     "obj3": 0,
+     "pct": -48.53,
+     "usd500": -242.7
+    },
+    "BABA": {
+     "n": 15,
+     "obj1": 86.7,
+     "obj3": 20,
+     "pct": 13.15,
+     "usd500": 65.7
+    },
+    "LVS": {
+     "n": 18,
+     "obj1": 66.7,
+     "obj3": 38.9,
+     "pct": 7.07,
+     "usd500": 35.3
+    },
+    "GE": {
+     "n": 6,
+     "obj1": 33.3,
+     "obj3": 0,
+     "pct": -39.21,
+     "usd500": -196.1
+    },
+    "CAT": {
+     "n": 9,
+     "obj1": 88.9,
+     "obj3": 44.4,
+     "pct": 31.58,
+     "usd500": 157.9
+    },
+    "DE": {
+     "n": 9,
+     "obj1": 77.8,
+     "obj3": 55.6,
+     "pct": 17.45,
+     "usd500": 87.3
+    },
+    "BA": {
+     "n": 19,
+     "obj1": 68.4,
+     "obj3": 31.6,
+     "pct": 2.66,
+     "usd500": 13.3
+    },
+    "LMT": {
+     "n": 11,
+     "obj1": 81.8,
+     "obj3": 36.4,
+     "pct": 27.45,
+     "usd500": 137.2
+    },
+    "FDX": {
+     "n": 18,
+     "obj1": 88.9,
+     "obj3": 33.3,
+     "pct": 13.83,
+     "usd500": 69.2
+    },
+    "MMM": {
+     "n": 20,
+     "obj1": 45,
+     "obj3": 35,
+     "pct": -6.81,
+     "usd500": -34
+    },
+    "XOM": {
+     "n": 3,
+     "obj1": 100,
+     "obj3": 0,
+     "pct": 31.92,
+     "usd500": 159.6
+    },
+    "CVX": {
+     "n": 7,
+     "obj1": 85.7,
+     "obj3": 42.9,
+     "pct": 13.76,
+     "usd500": 68.8
+    },
+    "HAL": {
+     "n": 21,
+     "obj1": 57.1,
+     "obj3": 42.9,
+     "pct": 0.44,
+     "usd500": 2.2
+    },
+    "FCX": {
+     "n": 14,
+     "obj1": 78.6,
+     "obj3": 42.9,
+     "pct": 17.94,
+     "usd500": 89.7
+    },
+    "NEM": {
+     "n": 19,
+     "obj1": 68.4,
+     "obj3": 57.9,
+     "pct": 11.51,
+     "usd500": 57.6
+    },
+    "NUE": {
+     "n": 12,
+     "obj1": 83.3,
+     "obj3": 33.3,
+     "pct": 6.33,
+     "usd500": 31.6
+    },
+    "DOW": {
+     "n": 14,
+     "obj1": 78.6,
+     "obj3": 28.6,
+     "pct": 3.55,
+     "usd500": 17.7
+    },
+    "T": {
+     "n": 11,
+     "obj1": 72.7,
+     "obj3": 45.5,
+     "pct": 18.45,
+     "usd500": 92.3
+    }
+   }
+  },
+  "NASDAQ": {
+   "acciones": 133,
+   "con_datos": 37,
+   "total": {
+    "n": 395,
+    "obj1": 65.1,
+    "obj3": 27.3,
+    "pct": 0.44,
+    "usd500": 2.2
+   },
+   "ultimo_anio": {
+    "n": 61,
+    "obj1": 65.6,
+    "obj3": 18,
+    "pct": -0.02,
+    "usd500": -0.1
+   },
+   "por_anio": {
+    "2020": {
+     "n": 12,
+     "obj1": 83.3,
+     "obj3": 50,
+     "pct": 19.8,
+     "usd500": 99
+    },
+    "2021": {
+     "n": 36,
+     "obj1": 83.3,
+     "obj3": 44.4,
+     "pct": 22.05,
+     "usd500": 110.2
+    },
+    "2022": {
+     "n": 113,
+     "obj1": 54.9,
+     "obj3": 17.7,
+     "pct": -14.8,
+     "usd500": -74
+    },
+    "2023": {
+     "n": 55,
+     "obj1": 63.6,
+     "obj3": 29.1,
+     "pct": -1.03,
+     "usd500": -5.1
+    },
+    "2024": {
+     "n": 60,
+     "obj1": 66.7,
+     "obj3": 30,
+     "pct": 4.39,
+     "usd500": 21.9
+    },
+    "2025": {
+     "n": 75,
+     "obj1": 65.3,
+     "obj3": 29.3,
+     "pct": 4.39,
+     "usd500": 22
+    },
+    "2026": {
+     "n": 44,
+     "obj1": 70.5,
+     "obj3": 22.7,
+     "pct": 6.3,
+     "usd500": 31.5
+    }
+   },
+   "por_accion": {
+    "AAPL": {
+     "n": 8,
+     "obj1": 100,
+     "obj3": 37.5,
+     "pct": 39.98,
+     "usd500": 199.9
+    },
+    "MSFT": {
+     "n": 13,
+     "obj1": 61.5,
+     "obj3": 30.8,
+     "pct": -2.13,
+     "usd500": -10.6
+    },
+    "NVDA": {
+     "n": 3,
+     "obj1": 33.3,
+     "obj3": 33.3,
+     "pct": -24.2,
+     "usd500": -121
+    },
+    "AMZN": {
+     "n": 8,
+     "obj1": 62.5,
+     "obj3": 12.5,
+     "pct": -11.2,
+     "usd500": -56
+    },
+    "GOOGL": {
+     "n": 9,
+     "obj1": 55.6,
+     "obj3": 0,
+     "pct": -28.73,
+     "usd500": -143.7
+    },
+    "META": {
+     "n": 9,
+     "obj1": 88.9,
+     "obj3": 33.3,
+     "pct": 35.66,
+     "usd500": 178.3
+    },
+    "TSLA": {
+     "n": 10,
+     "obj1": 80,
+     "obj3": 20,
+     "pct": 8.64,
+     "usd500": 43.2
+    },
+    "MELI": {
+     "n": 10,
+     "obj1": 40,
+     "obj3": 10,
+     "pct": -27.13,
+     "usd500": -135.6
+    },
+    "NFLX": {
+     "n": 4,
+     "obj1": 25,
+     "obj3": 0,
+     "pct": -42.09,
+     "usd500": -210.5
+    },
+    "AMD": {
+     "n": 6,
+     "obj1": 83.3,
+     "obj3": 33.3,
+     "pct": 20.93,
+     "usd500": 104.6
+    },
+    "INTC": {
+     "n": 13,
+     "obj1": 69.2,
+     "obj3": 7.7,
+     "pct": -9.73,
+     "usd500": -48.6
+    },
+    "AVGO": {
+     "n": 6,
+     "obj1": 83.3,
+     "obj3": 33.3,
+     "pct": 11.11,
+     "usd500": 55.6
+    },
+    "QCOM": {
+     "n": 15,
+     "obj1": 60,
+     "obj3": 13.3,
+     "pct": -8.15,
+     "usd500": -40.7
+    },
+    "ADBE": {
+     "n": 20,
+     "obj1": 45,
+     "obj3": 35,
+     "pct": -12.6,
+     "usd500": -63
+    },
+    "CSCO": {
+     "n": 8,
+     "obj1": 62.5,
+     "obj3": 12.5,
+     "pct": -14.13,
+     "usd500": -70.7
+    },
+    "PYPL": {
+     "n": 12,
+     "obj1": 66.7,
+     "obj3": 8.3,
+     "pct": -11.06,
+     "usd500": -55.3
+    },
+    "COST": {
+     "n": 9,
+     "obj1": 88.9,
+     "obj3": 66.7,
+     "pct": 25.3,
+     "usd500": 126.5
+    },
+    "AMAT": {
+     "n": 9,
+     "obj1": 66.7,
+     "obj3": 22.2,
+     "pct": 0.56,
+     "usd500": 2.8
+    },
+    "MU": {
+     "n": 9,
+     "obj1": 66.7,
+     "obj3": 22.2,
+     "pct": -4.03,
+     "usd500": -20.2
+    },
+    "ABNB": {
+     "n": 9,
+     "obj1": 66.7,
+     "obj3": 33.3,
+     "pct": 6.06,
+     "usd500": 30.3
+    },
+    "GILD": {
+     "n": 12,
+     "obj1": 58.3,
+     "obj3": 41.7,
+     "pct": -0.03,
+     "usd500": -0.1
+    },
+    "AMGN": {
+     "n": 12,
+     "obj1": 58.3,
+     "obj3": 33.3,
+     "pct": -1.59,
+     "usd500": -8
+    },
+    "BIDU": {
+     "n": 18,
+     "obj1": 61.1,
+     "obj3": 33.3,
+     "pct": -3.64,
+     "usd500": -18.2
+    },
+    "JD": {
+     "n": 26,
+     "obj1": 50,
+     "obj3": 15.4,
+     "pct": -13.26,
+     "usd500": -66.3
+    },
+    "NTES": {
+     "n": 18,
+     "obj1": 83.3,
+     "obj3": 55.6,
+     "pct": 27.66,
+     "usd500": 138.3
+    },
+    "DOCU": {
+     "n": 11,
+     "obj1": 72.7,
+     "obj3": 36.4,
+     "pct": 8.56,
+     "usd500": 42.8
+    },
+    "COIN": {
+     "n": 2,
+     "obj1": 100,
+     "obj3": 50,
+     "pct": 38.38,
+     "usd500": 191.9
+    },
+    "MSTR": {
+     "n": 0
+    },
+    "LRCX": {
+     "n": 14,
+     "obj1": 78.6,
+     "obj3": 21.4,
+     "pct": 8.24,
+     "usd500": 41.2
+    },
+    "ADI": {
+     "n": 11,
+     "obj1": 72.7,
+     "obj3": 45.5,
+     "pct": 13.74,
+     "usd500": 68.7
+    },
+    "EBAY": {
+     "n": 10,
+     "obj1": 40,
+     "obj3": 30,
+     "pct": -5.27,
+     "usd500": -26.3
+    },
+    "ADP": {
+     "n": 12,
+     "obj1": 58.3,
+     "obj3": 16.7,
+     "pct": -0.55,
+     "usd500": -2.7
+    },
+    "ETSY": {
+     "n": 16,
+     "obj1": 68.8,
+     "obj3": 31.3,
+     "pct": 8.19,
+     "usd500": 41
+    },
+    "BIIB": {
+     "n": 12,
+     "obj1": 50,
+     "obj3": 33.3,
+     "pct": 1.55,
+     "usd500": 7.7
+    },
+    "TRIP": {
+     "n": 7,
+     "obj1": 71.4,
+     "obj3": 28.6,
+     "pct": 3.98,
+     "usd500": 19.9
+    },
+    "HON": {
+     "n": 11,
+     "obj1": 72.7,
+     "obj3": 36.4,
+     "pct": 0.1,
+     "usd500": 0.5
+    },
+    "FSLR": {
+     "n": 13,
+     "obj1": 76.9,
+     "obj3": 15.4,
+     "pct": 0.89,
+     "usd500": 4.5
+    }
+   }
+  }
+ },
+ "faltan": {
+  "NYSE": [
+   "AA (sin historial del CEDEAR)",
+   "ACN (sin historial del CEDEAR)",
+   "AMT (sin historial del CEDEAR)",
+   "AMX (no está en vivo)",
+   "ANET (sin historial del CEDEAR)",
+   "AON (sin historial del CEDEAR)",
+   "APD (sin historial del CEDEAR)",
+   "APO (sin historial del CEDEAR)",
+   "ASR (no está en vivo)",
+   "B (sin historial del CEDEAR)",
+   "BAC (sin historial del CEDEAR)",
+   "BBAR (no está en vivo)",
+   "BBD (no está en vivo)",
+   "BBVA (sin historial del CEDEAR)",
+   "BBY (sin historial del CEDEAR)",
+   "BCH (no está en vivo)",
+   "BDX (sin historial del CEDEAR)",
+   "BHP (no está en vivo)",
+   "BLK (sin historial del CEDEAR)",
+   "BMA (no está en vivo)",
+   "BP (no está en vivo)",
+   "BRK.B (sin historial en dólares)",
+   "BSX (sin historial del CEDEAR)",
+   "BTI (no está en vivo)",
+   "BUD (no está en vivo)",
+   "BX (sin historial del CEDEAR)",
+   "CARR (sin historial del CEDEAR)",
+   "CB (sin historial del CEDEAR)",
+   "CCI (sin historial del CEDEAR)",
+   "CCL (sin historial del CEDEAR)",
+   "CEPU (no está en vivo)",
+   "CI (sin historial del CEDEAR)",
+   "CIB (no está en vivo)",
+   "CLF (sin historial del CEDEAR)",
+   "CMG (sin historial del CEDEAR)",
+   "COF (sin historial del CEDEAR)",
+   "COP (sin historial del CEDEAR)",
+   "CVS (sin historial del CEDEAR)",
+   "CX (no está en vivo)",
+   "D (sin historial del CEDEAR)",
+   "DAL (sin historial del CEDEAR)",
+   "DELL (sin historial del CEDEAR)",
+   "DEO (no está en vivo)",
+   "DG (sin historial del CEDEAR)",
+   "DHR (sin historial del CEDEAR)",
+   "DIS (sin historial del CEDEAR)",
+   "DUK (sin historial del CEDEAR)",
+   "E (no está en vivo)",
+   "EC (no está en vivo)",
+   "ECL (sin historial del CEDEAR)",
+   "EDN (no está en vivo)",
+   "EL (sin historial del CEDEAR)",
+   "ELV (sin historial del CEDEAR)",
+   "EMR (sin historial del CEDEAR)",
+   "EOG (sin historial del CEDEAR)",
+   "EQNR (sin historial del CEDEAR)",
+   "ETN (sin historial del CEDEAR)",
+   "FMX (no está en vivo)",
+   "GD (sin historial del CEDEAR)",
+   "GEV (sin historial del CEDEAR)",
+   "GIS (sin historial del CEDEAR)",
+   "GSK (no está en vivo)",
+   "HCA (sin historial del CEDEAR)",
+   "HLT (sin historial del CEDEAR)",
+   "HMC (no está en vivo)",
+   "HPE (sin historial del CEDEAR)",
+   "HSBC (no está en vivo)",
+   "HUM (sin historial del CEDEAR)",
+   "ICE (sin historial del CEDEAR)",
+   "IRS (no está en vivo)",
+   "ITUB (no está en vivo)",
+   "ITW (sin historial del CEDEAR)",
+   "JCI (sin historial del CEDEAR)",
+   "KKR (sin historial del CEDEAR)",
+   "KMI (sin historial del CEDEAR)",
+   "KOF (no está en vivo)",
+   "KR (sin historial del CEDEAR)",
+   "LOMA (no está en vivo)",
+   "LOW (sin historial del CEDEAR)",
+   "LUV (sin historial del CEDEAR)",
+   "LYB (sin historial del CEDEAR)",
+   "MCK (sin historial del CEDEAR)",
+   "MCO (sin historial del CEDEAR)",
+   "MET (sin historial del CEDEAR)",
+   "MGM (sin historial del CEDEAR)",
+   "MMC (no está en vivo)",
+   "MPC (sin historial del CEDEAR)",
+   "MS (sin historial del CEDEAR)",
+   "MT (no está en vivo)",
+   "NCLH (sin historial del CEDEAR)",
+   "NEE (sin historial del CEDEAR)",
+   "NET (sin historial del CEDEAR)",
+   "NOC (sin historial del CEDEAR)",
+   "NOW (sin historial del CEDEAR)",
+   "NSC (sin historial del CEDEAR)",
+   "NU (sin historial del CEDEAR)",
+   "NVO (no está en vivo)",
+   "NVS (no está en vivo)",
+   "O (sin historial del CEDEAR)",
+   "OKE (sin historial del CEDEAR)",
+   "ORCL (sin historial del CEDEAR)",
+   "OTIS (sin historial del CEDEAR)",
+   "OXY (sin historial del CEDEAR)",
+   "PAC (no está en vivo)",
+   "PAM (no está en vivo)",
+   "PATH (sin historial del CEDEAR)",
+   "PBR (no está en vivo)",
+   "PG (sin historial del CEDEAR)",
+   "PGR (sin historial del CEDEAR)",
+   "PH (sin historial del CEDEAR)",
+   "PINS (sin historial del CEDEAR)",
+   "PLD (sin historial del CEDEAR)",
+   "PM (sin historial del CEDEAR)",
+   "PNC (sin historial del CEDEAR)",
+   "PRU (sin historial del CEDEAR)",
+   "PSA (sin historial del CEDEAR)",
+   "PSX (sin historial del CEDEAR)",
+   "RACE (sin historial del CEDEAR)",
+   "RBLX (sin historial del CEDEAR)",
+   "RCL (sin historial del CEDEAR)",
+   "RIO (no está en vivo)",
+   "RSG (sin historial del CEDEAR)",
+   "RTX (sin historial del CEDEAR)",
+   "SAN (no está en vivo)",
+   "SAP (no está en vivo)",
+   "SCCO (sin historial del CEDEAR)",
+   "SCHW (sin historial del CEDEAR)",
+   "SE (sin historial del CEDEAR)",
+   "SHEL (sin historial del CEDEAR)",
+   "SHW (sin historial del CEDEAR)",
+   "SLB (sin historial del CEDEAR)",
+   "SNAP (sin historial del CEDEAR)",
+   "SNOW (sin historial del CEDEAR)",
+   "SO (sin historial del CEDEAR)",
+   "SONY (no está en vivo)",
+   "SPG (sin historial del CEDEAR)",
+   "SPGI (sin historial del CEDEAR)",
+   "SPOT (sin historial del CEDEAR)",
+   "SQM (no está en vivo)",
+   "STLA (sin historial del CEDEAR)",
+   "STZ (sin historial del CEDEAR)",
+   "SUPV (no está en vivo)",
+   "SYK (sin historial del CEDEAR)",
+   "TEO (no está en vivo)",
+   "TFC (sin historial del CEDEAR)",
+   "TGS (no está en vivo)",
+   "TGT (sin historial del CEDEAR)",
+   "TJX (sin historial del CEDEAR)",
+   "TM (no está en vivo)",
+   "TMO (sin historial del CEDEAR)",
+   "TRV (sin historial del CEDEAR)",
+   "TS (no está en vivo)",
+   "TSM (no está en vivo)",
+   "TTE (no está en vivo)",
+   "TWLO (sin historial del CEDEAR)",
+   "TX (no está en vivo)",
+   "U (sin historial del CEDEAR)",
+   "UBER (sin historial del CEDEAR)",
+   "UL (no está en vivo)",
+   "UNH (sin historial del CEDEAR)",
+   "UNP (sin historial del CEDEAR)",
+   "UPS (sin historial del CEDEAR)",
+   "URI (sin historial del CEDEAR)",
+   "USB (sin historial del CEDEAR)",
+   "VALE (no está en vivo)",
+   "VIST (sin historial del CEDEAR)",
+   "VLO (sin historial del CEDEAR)",
+   "VZ (sin historial del CEDEAR)",
+   "WM (sin historial del CEDEAR)",
+   "WMB (sin historial del CEDEAR)",
+   "XPEV (sin historial del CEDEAR)",
+   "XYZ (sin historial del CEDEAR)",
+   "YPF (no está en vivo)",
+   "YUM (sin historial del CEDEAR)",
+   "ZTS (sin historial del CEDEAR)"
+  ],
+  "NASDAQ": [
+   "AAL (sin historial del CEDEAR)",
+   "ACHR (sin historial del CEDEAR)",
+   "ADSK (sin historial del CEDEAR)",
+   "AFRM (sin historial del CEDEAR)",
+   "ALGN (sin historial del CEDEAR)",
+   "APP (sin historial del CEDEAR)",
+   "ARM (sin historial del CEDEAR)",
+   "ASML (sin historial del CEDEAR)",
+   "AXON (sin historial del CEDEAR)",
+   "AZN (no está en vivo)",
+   "BKNG (sin historial del CEDEAR)",
+   "CDNS (sin historial del CEDEAR)",
+   "CELH (sin historial del CEDEAR)",
+   "CHTR (sin historial del CEDEAR)",
+   "CMCSA (sin historial del CEDEAR)",
+   "CPRT (sin historial del CEDEAR)",
+   "CRWD (sin historial del CEDEAR)",
+   "CRWV (sin historial del CEDEAR)",
+   "CSX (sin historial del CEDEAR)",
+   "CTAS (sin historial del CEDEAR)",
+   "CTSH (sin historial del CEDEAR)",
+   "DDOG (sin historial del CEDEAR)",
+   "DKNG (sin historial del CEDEAR)",
+   "DLTR (sin historial del CEDEAR)",
+   "DXCM (sin historial del CEDEAR)",
+   "EA (no está en vivo)",
+   "ENPH (sin historial del CEDEAR)",
+   "EXC (sin historial del CEDEAR)",
+   "EXPE (sin historial del CEDEAR)",
+   "FAST (sin historial del CEDEAR)",
+   "FTNT (sin historial del CEDEAR)",
+   "GLBE (sin historial del CEDEAR)",
+   "GOOG (sin historial del CEDEAR)",
+   "GRAB (sin historial del CEDEAR)",
+   "HOOD (sin historial del CEDEAR)",
+   "IDXX (sin historial del CEDEAR)",
+   "ILMN (sin historial del CEDEAR)",
+   "INTU (sin historial del CEDEAR)",
+   "IONQ (sin historial del CEDEAR)",
+   "ISRG (sin historial del CEDEAR)",
+   "JOBY (sin historial del CEDEAR)",
+   "KDP (sin historial del CEDEAR)",
+   "KHC (sin historial del CEDEAR)",
+   "KLAC (sin historial del CEDEAR)",
+   "LCID (sin historial del CEDEAR)",
+   "LIN (sin historial del CEDEAR)",
+   "LULU (sin historial del CEDEAR)",
+   "MAR (sin historial del CEDEAR)",
+   "MCHP (sin historial del CEDEAR)",
+   "MDB (sin historial del CEDEAR)",
+   "MDLZ (sin historial del CEDEAR)",
+   "MNST (sin historial del CEDEAR)",
+   "MRNA (sin historial del CEDEAR)",
+   "MRVL (sin historial del CEDEAR)",
+   "NBIS (sin historial del CEDEAR)",
+   "NTNX (sin historial del CEDEAR)",
+   "NXPI (sin historial del CEDEAR)",
+   "ODFL (sin historial del CEDEAR)",
+   "OKTA (sin historial del CEDEAR)",
+   "ON (sin historial del CEDEAR)",
+   "ORLY (sin historial del CEDEAR)",
+   "PANW (sin historial del CEDEAR)",
+   "PAYX (sin historial del CEDEAR)",
+   "PCAR (sin historial del CEDEAR)",
+   "PDD (sin historial del CEDEAR)",
+   "PEP (sin historial del CEDEAR)",
+   "PLTR (sin historial del CEDEAR)",
+   "PLUG (sin historial del CEDEAR)",
+   "QBTS (sin historial del CEDEAR)",
+   "REGN (sin historial del CEDEAR)",
+   "RGTI (sin historial del CEDEAR)",
+   "RIVN (sin historial del CEDEAR)",
+   "ROKU (sin historial del CEDEAR)",
+   "ROST (sin historial del CEDEAR)",
+   "RUN (sin historial del CEDEAR)",
+   "SBUX (sin historial del CEDEAR)",
+   "SEDG (sin historial del CEDEAR)",
+   "SHOP (sin historial del CEDEAR)",
+   "SMCI (sin historial del CEDEAR)",
+   "SNPS (sin historial del CEDEAR)",
+   "SNY (no está en vivo)",
+   "SOFI (sin historial del CEDEAR)",
+   "TEAM (sin historial del CEDEAR)",
+   "TMUS (sin historial del CEDEAR)",
+   "TTD (sin historial del CEDEAR)",
+   "TTWO (sin historial del CEDEAR)",
+   "TXN (sin historial del CEDEAR)",
+   "UAL (sin historial del CEDEAR)",
+   "UPST (sin historial del CEDEAR)",
+   "VRSK (sin historial del CEDEAR)",
+   "VRTX (sin historial del CEDEAR)",
+   "WBD (no está en vivo)",
+   "WDAY (sin historial del CEDEAR)",
+   "XEL (sin historial del CEDEAR)",
+   "ZM (sin historial del CEDEAR)",
+   "ZS (sin historial del CEDEAR)"
+  ]
+ },
+ "extra_con_cedear": [
+  "AAP",
+  "ABEV",
+  "AEG",
+  "AI",
+  "ALAB",
+  "ANF",
+  "ARCO",
+  "ASTS",
+  "AVY",
+  "BAK",
+  "BBCA",
+  "BBDC",
+  "BIOX",
+  "BKR",
+  "BMNR",
+  "BNY",
+  "BSBR",
+  "CAAP",
+  "CAH",
+  "CAR",
+  "CCLD",
+  "CDE",
+  "CEG",
+  "CIBR",
+  "COPX",
+  "CORN",
+  "CRMD",
+  "DD",
+  "DECK",
+  "EFX",
+  "ERIC",
+  "ESGU",
+  "FISV",
+  "GLNG",
+  "GLW",
+  "GPRK",
+  "GRMN",
+  "GT",
+  "HDB",
+  "HIMS",
+  "HL",
+  "HOG",
+  "HUT",
+  "HWM",
+  "IBKR",
+  "IEUR",
+  "IFF",
+  "IP",
+  "IREN",
+  "KEEL",
+  "LAC",
+  "LAR",
+  "LIND",
+  "LND",
+  "MAC",
+  "MOD",
+  "MOS",
+  "MP",
+  "MRSH",
+  "MSI",
+  "MUC",
+  "MUFG",
+  "MUX",
+  "NTRA",
+  "NXE",
+  "OKLO",
+  "ONDS",
+  "PAAS",
+  "PAGS",
+  "PBI",
+  "PGC",
+  "RIOT",
+  "RKLB",
+  "RSP",
+  "SATL",
+  "SKHY",
+  "SNA",
+  "SNDK",
+  "SOYB",
+  "SPCE",
+  "SPCX",
+  "SPXL",
+  "STNE",
+  "SWKS",
+  "SYY",
+  "TCOM",
+  "TEM",
+  "TEN",
+  "TIMB",
+  "TLN",
+  "TQQQ",
+  "UGP",
+  "URBN",
+  "VC",
+  "VIV",
+  "VOD",
+  "VRSN",
+  "VST",
+  "WDC",
+  "WELL",
+  "WMT",
+  "XP",
+  "YELP"
+ ],
+ "http": {
+  "200": 611,
+  "404": 1
+ }
+}
