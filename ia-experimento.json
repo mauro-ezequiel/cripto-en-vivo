@@ -1,0 +1,70 @@
+{
+ "upd": 1791577647095,
+ "tr": {
+  "filas": 0,
+  "nota": "pocas filas con datos de futuros"
+ },
+ "sh": {
+  "filas": 33581,
+  "prueba": 11199,
+  "base_obj1": 74.0,
+  "base_pct": 0.25,
+  "precio": {
+   "auc": 0.51,
+   "top10_obj1": 76.9,
+   "top10_pct": 1.85
+  },
+  "precio_y_futuros": {
+   "auc": 0.537,
+   "top10_obj1": 79.5,
+   "top10_pct": 3.12,
+   "importa": [
+    [
+     "d200",
+     0.0161
+    ],
+    [
+     "atrP",
+     0.0105
+    ],
+    [
+     "interés abierto 1 h",
+     0.0073
+    ],
+    [
+     "traders grandes",
+     0.0048
+    ],
+    [
+     "z",
+     0.0017
+    ],
+    [
+     "minoristas",
+     0.0017
+    ],
+    [
+     "flujo comprador/vendedor 1 h",
+     0.0016
+    ],
+    [
+     "r6",
+     0.0014
+    ],
+    [
+     "d21",
+     0.0013
+    ],
+    [
+     "di",
+     0.0009
+    ]
+   ]
+  },
+  "solo_futuros": {
+   "auc": 0.525,
+   "top10_obj1": 75.9,
+   "top10_pct": 1.15
+  }
+ }
+}
