@@ -1,0 +1,27 @@
+name: Prueba de ACCIONES (NYSE y NASDAQ)
+# Se corre a mano: prueba la señal de ACCIONES en las dos bolsas y guarda el resultado en la rama prueba-acciones-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      anios:
+        description: 'Años hacia atrás'
+        default: '6'
+permissions:
+  contents: write
+jobs:
+  probar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Probar
+        run: node herramientas/prueba-acciones.js
+        env:
+          BT_YEARS: ${{ inputs.anios }}
+      - name: Guardar el resultado
+        run: |
+          mkdir out && cp prueba-acciones.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Prueba de acciones"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:prueba-acciones-${{ github.run_id }}
