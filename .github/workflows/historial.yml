@@ -29,6 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           IA: '1'
+          IAX: '1'
+          IAX_N: '30'
           BT_DAYS: ${{ inputs.dias || '365' }}
           NO_PUBLISH: ${{ (inputs.dias && inputs.dias != '365') && '1' || '' }}
       - uses: actions/setup-python@v5

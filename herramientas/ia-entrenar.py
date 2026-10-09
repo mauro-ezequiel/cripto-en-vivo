@@ -359,7 +359,39 @@ def fam_entry(ent, fam):
                       'pct': round(float(P[pick].mean()), 2) if len(pick) else None, 'gana': round(float((P[pick] > 0).mean() * 100), 1) if len(pick) else None,
                       'peor': round(float(PP.min()), 2), 'base_obj1': round(float(Y[te].mean() * 100), 1), 'base_pct': round(float(P[te].mean()), 2)}
     mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
-    return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
+    OUTE = {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
+    # CON DATOS DE FUTUROS (interés abierto, flujo, traders grandes, minoristas, funding): segundo modelo con las mismas entradas que los tienen.
+    # Se usa en vivo solo si en la validación (sin mirar la prueba) eligió entradas que ganaron más que el modelo de siempre.
+    nb = 1 + len(ENF) + (6 if fam == 'sh' else 5)
+    ix = np.array([i for i, r in enumerate(ent) if len(r) >= nb + 6 and all(v is not None for v in r[nb:nb + 6])], int)
+    if len(ix) >= 3000:
+        XE = np.hstack([X[ix], np.array([[float(v) for v in ent[i][nb:nb + 6]] for i in ix])]); tE, YE, PE = t[ix], Y[ix], P[ix]
+        trE, teE = tE < cut, tE >= cut
+        def val_score(XX):
+            I = np.where(trE)[0]; c1 = np.quantile(tE[I], .7); a, v = I[tE[I] < c1], I[tE[I] >= c1]
+            mv = gbc(120).fit(XX[a], YE[a]); pv = mv.predict_proba(XX[v])[:, 1]; pa = mv.predict_proba(XX[a])[:, 1]
+            bq, bs = .9, -1e18
+            for q in (.6, .7, .8, .85, .9, .93, .95, .97):
+                sel = v[pv >= np.quantile(pa, q)]
+                if len(sel) < 15:
+                    continue
+                PP = PE[sel]; sc = PP.sum() + .5 * PP[PP < 0].sum()
+                if PP.mean() > 0 and sc > bs:
+                    bq, bs = q, sc
+            return bq, bs
+        qb, sb = val_score(X[ix]); qx, sx = val_score(XE)
+        mX = gbc(120).fit(XE[trE], YE[trE]); pX = mX.predict_proba(XE[teE])[:, 1]; thrX = float(np.quantile(mX.predict_proba(XE[trE])[:, 1], qx))
+        pk = picks(ix[np.where(teE)[0]], pX, thrX)  # una por moneda cada 1 h / 24 h, como las propias de siempre
+        dias = (tE[teE].max() - tE[teE].min()) / DAY if teE.sum() else 1
+        px = {'n': int(len(pk)), 'q': qx, 'por_dia': round(len(pk) / max(dias, 1) / samp, 2), 'obj1': round(float(Y[pk].mean() * 100), 1) if len(pk) else None,
+              'pct': round(float(P[pk].mean()), 2) if len(pk) else None, 'peor': round(float(P[pk].min()), 2) if len(pk) else None, 'auc': round(float(roc_auc_score(YE[teE], pX)), 3), 'base_pct': round(float(PE[teE].mean()), 2),
+              'val_futuros': round(float(sx), 1), 'val_precio': round(float(sb), 1), 'filas': int(len(ix))}
+        usar = bool(sx > sb and px['pct'] is not None and px['pct'] > 0)
+        mXF = gbc(120).fit(XE, YE); pallX = mXF.predict_proba(XE)[:, 1]
+        OUTE['futuros'] = {'model': export(mXF, XE), 'thr': round(float(np.quantile(pallX, qx)), 4), 'test': px, 'usar': usar,
+                           'imp': importance(mX, XE[teE], YE[teE], list(ENF) + ['oi24', 'oi1', 'taker', 'top', 'retail', 'funding'])}
+        print(fam, 'entrada con futuros', px, 'usar' if usar else 'no se usa')
+    return OUTE
 
 
 def memoria(D):

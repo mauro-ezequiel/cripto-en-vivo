@@ -4301,16 +4301,28 @@ async function iaOpsTrack(){if(IATRK)return;IATRK=true;let ch=false;
         x.chk=from;ch=true;if(b.length<1000||!n)break;}
       if(x.st==='open'&&Date.now()>=x.t+x.age){const p=tickers[x.sym]&&tickers[x.sym].c||x.entry;iaOpClose(x,p,x.hit||x.dir*(p-x.entry)>0?'win':'exp','Se cumplió el tiempo máximo');ch=true;}}}
   finally{IATRK=false;if(ch){saveIAOPS();if(IAOPEN)iaRender();}}}
+/* datos de futuros en vivo (los mismos 6 que estudia la IA): interés abierto 24 h y 1 h, flujo comprador/vendedor de la última hora,
+   posición de los traders grandes, de los minoristas y el último funding. Los de dirección se multiplican por ella. */
+var IAFX={};
+async function iaFutRaw(s){const c=IAFX[s];if(c&&Date.now()-c.t<5*6e4)return c.v;const F='https://fapi.binance.com';
+  try{const [oi,tk,tp,gl,pi]=await Promise.all([getJ(`${F}/futures/data/openInterestHist?symbol=${s}&period=5m&limit=289`),getJ(`${F}/futures/data/takerlongshortRatio?symbol=${s}&period=5m&limit=12`),
+      getJ(`${F}/futures/data/topLongShortPositionRatio?symbol=${s}&period=5m&limit=1`),getJ(`${F}/futures/data/globalLongShortAccountRatio?symbol=${s}&period=5m&limit=1`),getJ(`${F}/fapi/v1/premiumIndex?symbol=${s}`)]);
+    const L=v=>v>0?Math.log(v):0,o=oi.map(x=>+x.sumOpenInterestValue);if(o.length<200)throw 0;
+    const v={oi24:o.at(-1)/o[0]-1,oi1:o.at(-1)/o[o.length-13]-1,tk:tk.reduce((a,x)=>a+L(+x.buySellRatio),0)/(tk.length||1),top:L(+tp[0].longShortRatio),ret:L(+gl[0].longShortRatio),f:+pi.lastFundingRate*1e4};
+    IAFX[s]={t:Date.now(),v};return v;}catch(e){IAFX[s]={t:Date.now(),v:null};return null;}}
+async function iaFutX(s,d){const v=await iaFutRaw(s);if(!v)return null;const x=[v.oi24,v.oi1,d*v.tk,d*v.top,d*v.ret,d*v.f];return x.every(isFinite)?x:null;}
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
     for(const [f,tfs,U,cap,r] of [['tr',['4h'],universe('medio'),.036,.5],['sh',['15m','30m'],universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
-      if(!E||E.thr==null||!PR||!(PR.pct>0&&PR.pct>PR.base_pct))continue; // solo busca donde sus entradas propias ganaron en la prueba
+      const EF=E&&E.futuros&&E.futuros.usar?E.futuros:null;
+      if(!E||E.thr==null||!PR||!((PR.pct>0&&PR.pct>PR.base_pct)||EF))continue; // solo busca donde sus entradas propias ganaron en la prueba
       for(const tf of tfs){const bs=await btcSide(tf);
         for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
             if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
             else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
-            if(!d)continue;const xv=IA.entryX(P,j,d,bs),p=IA.predict(E.model,xv);if(p<E.thr)continue;
-            const sl=Math.min(cap,Math.max(.004,3*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],why:IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
+            if(!d)continue;const xv=IA.entryX(P,j,d,bs);let p,fx=null;
+            if(EF){fx=await iaFutX(s,d);}if(fx){p=IA.predict(EF.model,xv.concat(fx));if(p<EF.thr)continue;}else{if(!(PR.pct>0&&PR.pct>PR.base_pct))continue;p=IA.predict(E.model,xv);if(p<E.thr)continue;}
+            const sl=Math.min(cap,Math.max(.004,3*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
           await new Promise(z=>setTimeout(z,80));}}}
     IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
     for(const x of IAIDEAS){const C=IAOP_CFG[x.f];if(Date.now()-x.t>TF_MS[x.tf])continue; // solo velas recién cerradas: precio de entrada real
@@ -4342,7 +4354,8 @@ function iaOpsHTML(){const L=IAOPS.filter(x=>IAOF==='all'||x.f===IAOF),S=iaOpsSt
       <div>Factor de ganancia<b>${S.pf!=null?S.pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div>
       <div>Mejor / peor<b class="up">${S.best!=null?intMoney(S.best):'—'}</b><small class="dn">${S.worst!=null?intMoney(S.worst):'—'}</small></div></div>
     <div class="ia-mut">${iaMas(`Simulación ${IAOP_CFG.tr.mg} × ${IAOP_CFG.tr.lev} y ${IAOP_CFG.sh.mg} × ${IAOP_CFG.sh.lev}.`,`Simulación: ${IAOP_CFG.tr.mg} USD × ${IAOP_CFG.tr.lev} en TRADING y ${IAOP_CFG.sh.mg} USD × ${IAOP_CFG.sh.lev} en SHOOTER, con comisiones. Cierra 1/3 en cada objetivo y, tocado el objetivo 1, el stop pasa a la entrada. Se sigue con velas de 1 minuto${d0?` · desde el ${new Date(d0).toLocaleDateString('es-AR')}`:''}.`)}</div>
-    ${ideas}${pr}
+    ${ideas}${pr}${(()=>{const F=IAM&&IAM.sh&&IAM.sh.entry&&IAM.sh.entry.futuros;if(!F||!F.test)return '';const x=F.test;
+      return `<div class="ia-mut">${iaMas(`SHOOTER con datos de futuros: ${iaD(x.obj1)} % al objetivo 1, ${iaPct2(x.pct)} por op. ${F.usar?'<b class="up">Lo usa.</b>':'<b>No lo usa todavía.</b>'}`,`Modelo que además mira interés abierto, flujo comprador/vendedor, traders grandes, minoristas y funding. En los meses que no vio: objetivo 1 el ${iaD(x.obj1)} %, ${iaPct2(x.pct)} por operación (todas las posibles: ${iaPct2(x.base_pct)}), unas ${iaD(x.por_dia)} por día, precisión ${iaD(x.auc)}. ${F.usar?'Le ganó al modelo de siempre en la validación: lo usa en vivo.':'Todavía no le gana al de siempre en la validación.'}`)}</div>`;})()}
     <div class="ia-list ia-olist">${rows||`<div class="ia-mut" style="padding:8px">${iaMas('Todavía no abrió ninguna.','Todavía no abrió ninguna operación. Abre sola cuando una entrada supera su umbral, solo en los modos donde sus entradas ganaron en la prueba. La búsqueda corre mientras la página está abierta.')}</div>`}</div>
     <div class="ia-mut">${iaMas('Entradas propias, en práctica.','No son señales de los bots: la IA las encontró sola mirando todas las monedas. Es una simulación en práctica, no un consejo.')}</div>`;}
 function iaOpsTxt(){const S=iaOpsStats(IAOPS);if(!S.all)return 'Todavía no abrí ninguna operación propia. Abro solas cuando una entrada supera mi umbral y solo en los modos donde mis entradas ganaron en la prueba (hoy: '+(['tr','sh'].filter(f=>{const p=IAM&&IAM[f]&&IAM[f].entry&&IAM[f].entry.test.propias;return p&&p.pct>0&&p.pct>p.base_pct;}).map(f=>IAOP_CFG[f].nm).join(' y ')||'ninguno')+').';

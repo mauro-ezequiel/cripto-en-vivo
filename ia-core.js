@@ -68,7 +68,7 @@
   IA.explain = function (M, x, names) { const p0 = IA.predict(M, x), out = [];
     for (let k = 0; k < x.length; k++) { const y = x.slice(); y[k] = M.med[k]; out.push([names[k], p0 - IA.predict(M, y)]); }
     return out.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])); };
-  IA.NAMES = { gR: 'ganancia actual', peakR: 'máximo alcanzado', ddR: 'retroceso desde el máximo', hits: 'objetivos tocados', age: 'tiempo en la operación',
+  IA.NAMES = { oi24: 'interés abierto 24 h', oi1: 'interés abierto 1 h', taker: 'flujo comprador/vendedor', top: 'traders grandes', retail: 'minoristas', funding: 'funding', gR: 'ganancia actual', peakR: 'máximo alcanzado', ddR: 'retroceso desde el máximo', hits: 'objetivos tocados', age: 'tiempo en la operación',
     r14: 'RSI 14', r7: 'RSI 7', adx: 'ADX (fuerza)', di: 'DMI (quién empuja)', d21: 'distancia a la EMA 21', d50: 'distancia a la EMA 50', d200: 'distancia a la EMA 200',
     st: 'Supertrend', fl6: 'CVD (flujo de órdenes)', r6: 'impulso reciente', vr: 'volumen', z: 'Bollinger', body: 'última vela', atrP: 'volatilidad', btc: 'BTC' };
   /* la IA "en práctica" sobre una operación: recorre las velas cerradas desde la entrada y decide igual que en el estudio diario
