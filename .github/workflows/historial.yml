@@ -42,6 +42,7 @@ jobs:
           pip install --quiet numpy scikit-learn
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/ia.json" -o prev-ia.json || true
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/noticias.json" -o noticias.json || true
+          curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/libro.json" -o libro.json || true
           # memoria acumulada: lo que la IA estudió los días anteriores (así no olvida lo de hace más de un año)
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/ia-datos/ia-datos.json.gz" -o prev-datos.json.gz || true
           set -o pipefail

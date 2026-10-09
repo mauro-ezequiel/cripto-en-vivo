@@ -459,6 +459,11 @@ body.trn-on{overflow:hidden}
 .lqx-ctl{margin-left:auto;display:inline-flex;gap:6px;align-items:center}
 .lqx-ctl select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:4px 6px}
 .lqx-ctl button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:4px 10px;cursor:pointer;font-weight:600}
+.ob-g{display:grid;grid-template-columns:minmax(260px,360px) minmax(0,1fr);gap:14px}.ob-l{font-size:12px;font-variant-numeric:tabular-nums}.ob-r{position:relative;display:grid;grid-template-columns:1fr 1fr 1fr;padding:1px 6px;line-height:1.55}.ob-r span{position:relative;text-align:right}.ob-r span:first-child{text-align:left}
+.ob-r i{position:absolute;right:0;top:1px;bottom:1px;border-radius:2px}.ob-r.b i{background:rgba(38,166,154,.22)}.ob-r.a i{background:rgba(239,83,80,.2)}.ob-r.b span:first-child{color:#26a69a}.ob-r.a span:first-child{color:#ef5350}.ob-r.h{color:var(--mut);font-size:11px}
+.ob-mid{text-align:center;font-weight:800;padding:3px 0;border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:2px 0}.ob-mid small{color:var(--mut);font-weight:400}
+.ob-svg{width:100%;height:150px;background:var(--bg);border:1px solid var(--line);border-radius:8px}.ob-ax{display:flex;justify-content:space-between;font-size:10.5px;color:var(--mut);margin-top:2px}.ob-w{margin-top:8px;font-size:12px;line-height:1.6}.ob-n{margin-top:8px;font-size:12px;color:var(--mut);line-height:1.45}.lqx-sum small{display:block;font-size:10.5px}
+@media (max-width:800px){.ob-g{grid-template-columns:1fr}}
 .lqx-sum{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin:8px 0}
 .lqx-sum div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--mut)}
 .lqx-sum b{display:block;font-size:15px;color:var(--txt);font-variant-numeric:tabular-nums}
@@ -590,6 +595,9 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       <div id="bnBox"></div><div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
       <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Además te marca un stop según la volatilidad de la moneda y te avisa si una vela de 1 h cierra a mitad de camino a ese stop. Probado con unas 4.500 operaciones al azar: con × 10 bajó a la mitad las pérdidas de más del 50 % del margen (de 7 % a 3 % de las operaciones) y con × 20 las liquidaciones pasaron de 7,7 % a 2,4 %. Ninguna indicación es segura.</div></section>
     <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
+    <section class="lqx" id="obBox"><div class="dt"><span>📚 Libro de órdenes</span> <span class="mut" id="obSub"></span>
+      <span class="lqx-ctl"><select id="obStep" aria-label="Agrupar precios"><option value="auto">Agrupar: automático</option><option value="2">× 2</option><option value="5">× 5</option><option value="10">× 10</option></select></span></div>
+      <div id="obBody"><div class="mut">Cargando el libro…</div></div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
       <span class="lqx-ctl"><select id="lqScope" aria-label="Alcance"><option value="all">Todo el mercado</option><option value="sym">Esta moneda</option></select><select id="lqWin" aria-label="Ventana"><option value="15">15 min</option><option value="60" selected>1 h</option><option value="240">4 h</option></select><button id="lqBig" type="button">⤢ Agrandar</button><button id="lqX" class="lqx-x" type="button">✕ Cerrar</button></span><button class="i-btn" data-i="lq" type="button" aria-label="Cómo leer el mapa" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="lq" hidden><b>Cómo leer el mapa de liquidaciones</b><br>Las barras de la derecha muestran cuánto dinero se liquidaría si el precio llega a ese nivel (rojo = shorts, arriba del precio; verde = longs, abajo). Las bandas sobre las velas marcan los niveles más fuertes: suelen atraer al precio y, una vez barridos, funcionar como techo o piso. Las tarjetas de arriba resumen hacia dónde hay más liquidez dentro de ±8 %. Estimado con el interés abierto y el volumen de Binance, Bybit y OKX; los paneles de la derecha muestran liquidaciones reales en vivo. Tocá o pasá el mouse para ver montos; arrastrá y usá la rueda o pellizcá para moverte. "Todo el mercado / Esta moneda" y la ventana (15 min a 4 h) cambian qué liquidaciones reales se cuentan.</div>
       <div class="lqx-sum" id="lqSum"></div>
@@ -3011,6 +3019,7 @@ function lqHover(cv){const tip=$('lqTip'),wrap=$('lqChart'),pts=new Map();let dr
   cv.addEventListener('pointerup',up);cv.addEventListener('pointercancel',up);cv.addEventListener('mouseleave',()=>{tip.hidden=true;});}
 const fusdS=v=>'$'+(v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':v.toFixed(0));
 async function renderLqx(force){
+  {const ob=$('obBox');if(ob)ob.hidden=mode==='a';}
   const box=$('lqBox');if(!box)return;box.hidden=mode==='a';if(mode==='a')return;
   if(!force&&Date.now()-LQX.lastR<1800)return;LQX.lastR=Date.now();
   if(FUT&&!FUT.none&&candles.length&&(!LIQ||liqDirty)&&performance.now()-liqLast>1500)computeLiq();
@@ -3033,6 +3042,43 @@ async function renderLqx(force){
   $('lqFeed').innerHTML=feed.map(e=>`<div class="lqx-feed"><span class="mut">${new Date(e.t).toLocaleTimeString('es-ES')}</span><b>${esc(e.sym)}</b><span class="${e.side==='L'?'up':'dn'}">${e.side==='L'?'Long liquidado':'Short liquidado'} <span class="mut">${e.ex}</span></span><b class="${e.side==='L'?'up':'dn'}">${fusdS(e.usd)}</b></div>`).join('')||'<div class="mut">Esperando liquidaciones…</div>';
 }
 $('lqWin').onchange=$('lqScope').onchange=()=>renderLqx(true);
+/* ---------- 📚 LIBRO DE ÓRDENES en vivo (Binance spot; futuros para las monedas que solo están ahí) ----------
+   Escalera agrupada por precio, profundidad acumulada a ±2 %, desequilibrio a ±0,5 / 1 / 2 %, paredes grandes y diferencia compra/venta.
+   Es información para mirar: no entra en las señales. El bot de Telegram guarda una foto por hora de las 30 con más volumen para medir si sirve. */
+var OB={sym:null,d:null,t:0,busy:false,step:0,timer:null};
+function obStepAuto(px){const raw=px*.0005,p=Math.pow(10,Math.floor(Math.log10(raw))),m=raw/p;return (m<2?1:m<5?2:5)*p;}
+function obGroup(levels,step,side){const m=new Map();for(const [p,q] of levels){const k=side>0?Math.floor(+p/step)*step:Math.ceil(+p/step)*step;m.set(k,(m.get(k)||0)+ +q);}
+  return [...m.entries()].sort((a,b)=>side>0?b[0]-a[0]:a[0]-b[0]);}
+function obStats(d){const bb=+d.bids[0][0],ba=+d.asks[0][0],mid=(bb+ba)/2,within=(L,pc,s)=>L.reduce((a,[p,q])=>a+(s>0?(+p>=mid*(1-pc)):(+p<=mid*(1+pc)))*p*q,0);
+  const imb=pc=>{const B=within(d.bids,pc,1),A=within(d.asks,pc,-1);return {B,A,i:(B-A)/((B+A)||1)};};
+  return {bb,ba,mid,spr:(ba-bb)/mid*1e4,i05:imb(.005),i1:imb(.01),i2:imb(.02)};}
+async function obLoad(){if(OB.busy||mode==='a'||document.hidden)return;const box=$('obBox');if(!box||box.hidden)return;const r=box.getBoundingClientRect();if(r.bottom<-200||r.top>innerHeight+400)return;
+  OB.busy=true;const s=symbol,t=tickers[s];
+  try{const d=await getJ(t&&t.fut?`${FAPI}/fapi/v1/depth?symbol=${s}&limit=1000`:`${API}/depth?symbol=${s}&limit=1000`);if(s!==symbol)return;if(!d||!d.bids||!d.bids.length)throw 0;
+    if(OB.sym!==s){OB.sym=s;OB.step=0;}OB.d=d;OB.t=Date.now();obRender();}
+  catch(e){const el=$('obBody');if(el&&!OB.d)el.innerHTML='<div class="mut">No se pudo leer el libro de órdenes de esta moneda.</div>';}finally{OB.busy=false;}}
+function obRender(){const d=OB.d;if(!d)return;const S=obStats(d),step=OB.step||obStepAuto(S.mid),B=obGroup(d.bids,step,1).slice(0,14),A=obGroup(d.asks,step,-1).slice(0,14);
+  const mx=Math.max(...B.map(x=>x[1]*x[0]),...A.map(x=>x[1]*x[0]),1);let cb=0,ca=0;
+  const row=(p,q,side,cum)=>`<div class="ob-r ${side>0?'b':'a'}"><i style="width:${(q*p/mx*100).toFixed(1)}%"></i><span>${fp(p)}</span><span>${fmtUsd(q*p)}</span><span class="mut">${fmtUsd(cum)}</span></div>`;
+  const asks=A.map(([p,q])=>{ca+=p*q;return [p,q,ca];}).reverse().map(([p,q,c])=>row(p,q,-1,c)).join(''),bids=B.map(([p,q])=>{cb+=p*q;return row(p,q,1,cb);}).join('');
+  /* profundidad acumulada a ±2 % */
+  const W=520,H=150,lo=S.mid*.98,hi=S.mid*1.02,X=p=>((p-lo)/(hi-lo)*W).toFixed(1);let sB=0,sA=0;const pb=[],pa=[];
+  for(const [p,q] of d.bids){if(+p<lo)break;sB+=p*q;pb.push([+p,sB]);}for(const [p,q] of d.asks){if(+p>hi)break;sA+=p*q;pa.push([+p,sA]);}
+  const top=Math.max(sB,sA,1),Y=v=>(H-v/top*(H-8)).toFixed(1),path=(L,start)=>L.length?`M${X(start)},${H} `+L.map(([p,v])=>`L${X(p)},${Y(v)}`).join(' ')+` L${X(L.at(-1)[0])},${H} Z`:'';
+  /* paredes: los niveles más grandes a ±2 % */
+  const walls=[...d.bids.filter(([p])=>+p>=lo).map(([p,q])=>[+p,p*q,1]),...d.asks.filter(([p])=>+p<=hi).map(([p,q])=>[+p,p*q,-1])].sort((a,b)=>b[1]-a[1]).slice(0,4);
+  const ib=x=>`<b class="${x.i>.2?'up':x.i<-.2?'dn':''}">${x.i>=0?'+':''}${Math.round(x.i*100)} %</b>`,M=typeof IAM!=='undefined'&&IAM&&IAM.libro;
+  $('obSub').textContent=`· ${symbol.replace('USDT','')} · agrupado cada ${fp(step)} · ${new Date(OB.t).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`;
+  $('obBody').innerHTML=`<div class="lqx-sum"><div>Desequilibrio ±0,5 %${ib(S.i05)}<small>compras ${fmtUsd(S.i05.B)} · ventas ${fmtUsd(S.i05.A)}</small></div><div>Desequilibrio ±1 %${ib(S.i1)}<small>compras ${fmtUsd(S.i1.B)} · ventas ${fmtUsd(S.i1.A)}</small></div>
+      <div>Desequilibrio ±2 %${ib(S.i2)}<small>compras ${fmtUsd(S.i2.B)} · ventas ${fmtUsd(S.i2.A)}</small></div><div>Diferencia compra/venta<b>${iaD(S.spr)} pb</b><small>${S.spr<2?'muy líquida':S.spr<10?'normal':'poca liquidez: cuidado con el deslizamiento'}</small></div></div>
+    <div class="ob-g"><div class="ob-l"><div class="ob-r h"><span>Precio</span><span>Tamaño</span><span>Acumulado</span></div>${asks}<div class="ob-mid">${fp(S.mid)} <small>precio medio</small></div>${bids}</div>
+      <div><svg class="ob-svg" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><path d="${path(pb,S.mid)}" fill="rgba(38,166,154,.28)" stroke="#26a69a" stroke-width="1.2"/><path d="${path(pa,S.mid)}" fill="rgba(239,83,80,.25)" stroke="#ef5350" stroke-width="1.2"/><line x1="${X(S.mid)}" x2="${X(S.mid)}" y1="0" y2="${H}" stroke="#888" stroke-dasharray="3 3"/></svg>
+        <div class="ob-ax"><span>${fp(lo)} (−2 %)</span><span>${fp(S.mid)}</span><span>${fp(hi)} (+2 %)</span></div>
+        <div class="ob-w"><b>Paredes más grandes (±2 %)</b>${walls.map(([p,v,s])=>`<div><span class="${s>0?'up':'dn'}">${s>0?'compra':'venta'}</span> en ${fp(p)} <span class="mut">(${fpct((p/S.mid-1)*100)})</span> · ${fmtUsd(v)}</div>`).join('')}</div>
+        <div class="ob-n">${S.i1.i>.2?'Hay más compradores esperando cerca del precio: suele frenar las caídas, pero las paredes se pueden retirar en segundos.':S.i1.i<-.2?'Hay más vendedores esperando cerca del precio: suele frenar las subidas, pero las paredes se pueden retirar en segundos.':'Compras y ventas bastante parejas cerca del precio.'}
+          ${M&&M.n?` · Lo medido hasta ahora (${iaD(M.dias)} días, ${M.n} fotos): relación con el precio de la hora siguiente ${M.corr1!=null?iaD(M.corr1):'—'} (0 = no sirve).`:' · El bot guarda una foto por hora para medir si este dato anticipa el precio; todavía no se usa en las señales.'}</div></div></div>`;}
+$('obStep').onchange=e=>{const v=e.target.value;OB.step=v==='auto'?0:(OB.d?obStepAuto(obStats(OB.d).mid)*+v:0);obRender();};
+setInterval(obLoad,4000);
 const lqBigSet=on=>{$('lqBox').classList.toggle('big',on);$('lqBig').hidden=on;document.body.style.overflow=on?'hidden':'';setTimeout(()=>renderLqx(true),60);};
 $('lqBig').onclick=()=>lqBigSet(true);$('lqX').onclick=()=>lqBigSet(false);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('lqBox').classList.contains('big'))lqBigSet(false);});

@@ -143,6 +143,7 @@ async function main() {
   if (!S.newsT || now - S.newsT >= 36e5) { S.newsT = now; try { await require('./herramientas/noticias-lib.js').record(px.BTCUSDT); } catch (e) { console.log('noticias', e.message); } } // la IA aprende de las noticias
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume);
+  if (!S.bookT || now - S.bookT >= 36e5) { S.bookT = now; try { await require('./herramientas/libro-lib.js').record(base.slice(0, 30).map(t => t.symbol)); } catch (e) { console.log('libro', e.message); } } // foto del libro de órdenes
 
   /* 1) seguimiento de las señales ya enviadas */
   for (const o of S.open) { const p = px[o.sym]; if (!p) continue; const d = o.dir, c = o.sym.replace('USDT', ''), cfg = SIGCFG[o.m];

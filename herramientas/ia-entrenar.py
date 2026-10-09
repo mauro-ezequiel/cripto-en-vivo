@@ -524,7 +524,46 @@ OUT['estimado'] = estimar()
 OUT['memoria'] = MEM
 print('estimado', OUT['estimado'])
 OUT['noticias'] = noticias()
-print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'])
+
+
+def libro():
+    """Libro de órdenes: el bot guarda una foto por hora (desequilibrio a ±0,5 / 1 / 2 %) de las 30 con más volumen.
+    Mide si el desequilibrio a ±1 % anticipa el precio de la hora siguiente y de las 4 h siguientes (correlación y promedio por grupos)."""
+    try:
+        H = json.load(open('libro.json'))['h']
+    except Exception:
+        return {'dias': 0, 'n': 0}
+    if len(H) < 2:
+        return {'dias': 0, 'n': len(H)}
+    by = {}
+    for snap in H:
+        for r in snap['rows']:
+            by.setdefault(r[0], []).append((snap['t'], r[2], r[6]))
+    x, y1, y4 = [], [], []
+    for L in by.values():
+        L.sort()
+        ts = [a[0] for a in L]
+        for k, (t, i1, px) in enumerate(L):
+            def fut(h):
+                j = next((j for j in range(k + 1, min(len(L), k + 8)) if abs(ts[j] - t - h * 3600e3) <= 15 * 6e4), None)
+                return None if j is None else L[j][2] / px - 1
+            a, b = fut(1), fut(4)
+            if a is not None:
+                x.append(i1); y1.append(a * 100); y4.append(b * 100 if b is not None else np.nan)
+    dias = (H[-1]['t'] - H[0]['t']) / DAY
+    out = {'dias': round(dias, 1), 'n': len(x), 'monedas': len(by)}
+    if len(x) >= 300:
+        X, Y1, Y4 = np.array(x), np.array(y1), np.array(y4); m4 = ~np.isnan(Y4)
+        out['corr1'] = round(float(np.corrcoef(X, Y1)[0, 1]), 3)
+        out['corr4'] = round(float(np.corrcoef(X[m4], Y4[m4])[0, 1]), 3) if m4.sum() > 100 else None
+        out['compras'] = {'n': int((X > .3).sum()), 'ret1': round(float(Y1[X > .3].mean()), 3) if (X > .3).any() else None}
+        out['ventas'] = {'n': int((X < -.3).sum()), 'ret1': round(float(Y1[X < -.3].mean()), 3) if (X < -.3).any() else None}
+        out['todas_ret1'] = round(float(Y1.mean()), 3)
+    return out
+
+
+OUT['libro'] = libro()
+print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'], 'libro', OUT['libro'])
 OUT['secs'] = round(time.time() - t0)
 json.dump(OUT, open('ia.json', 'w'), separators=(',', ':'))
 print('ia.json listo', round(time.time() - t0), 's')
