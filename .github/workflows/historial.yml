@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: '7 6 * * *' # 03:07 de Argentina
   workflow_dispatch:
+    inputs:
+      dias:
+        description: 'Días de historia para la IA (365 = normal; 730 = carga inicial de 2 años, sin tocar el historial de la página)'
+        default: '365'
 permissions:
   contents: write
 concurrency:
@@ -25,6 +29,8 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           IA: '1'
+          BT_DAYS: ${{ inputs.dias || '365' }}
+          NO_PUBLISH: ${{ (inputs.dias && inputs.dias != '365') && '1' || '' }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
@@ -34,6 +40,8 @@ jobs:
           pip install --quiet numpy scikit-learn
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/ia.json" -o prev-ia.json || true
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/noticias.json" -o noticias.json || true
+          # memoria acumulada: lo que la IA estudió los días anteriores (así no olvida lo de hace más de un año)
+          curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/ia-datos/ia-datos.json.gz" -o prev-datos.json.gz || true
           python herramientas/ia-entrenar.py ia-datos.json.gz
           node herramientas/publicar.js ia.json "IA: estudio diario"
         env:

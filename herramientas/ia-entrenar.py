@@ -6,6 +6,7 @@ Lee ia-datos.json.gz (lo genera historial-anual.js con IA=1: cada señal del úl
 Antes de publicar se prueba en los últimos 4 meses (que no usó para aprender) contra la gestión fija del bot.
 Escribe ia.json (modelos como árboles, umbral de salida, resultados de la prueba e indicadores que sirven)."""
 import json, gzip, sys, time
+DAY = 864e5
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
 from sklearn.metrics import roc_auc_score
@@ -67,56 +68,69 @@ def labels(op, K, H):
     return y
 
 
-def policy(op, p, theta, minhold, variant):
-    """Gestión de la IA: stop inicial del bot; al tocar el objetivo 1 el stop pasa a la entrada y luego sube al objetivo anterior;
-    sale cuando la probabilidad de seguir a favor cae bajo theta (o en el stop, o al 1,5 × plazo). Variante B: asegura 1/3 en el objetivo 1."""
+def manage(op, p, theta, minhold, variant, hold=.55):
+    """Gestión de la IA (igual que IA.shadow de la página). Devuelve cómo y cuándo salió.
+    A: posición entera, stop del bot; al tocar el objetivo 1 el stop pasa a la entrada y luego al objetivo anterior; sale cuando la
+       probabilidad de seguir a favor cae bajo theta.
+    B: como A, pero asegura 1/3 en el objetivo 1.
+    C: como B, pero nunca corta antes del objetivo 1: aguanta los retrocesos normales (solo el stop la saca).
+    D: parte del plan del bot (1/3 en cada objetivo, cierra en el objetivo 3 o al plazo) y solo lo corrige: después del objetivo 1 sale
+       antes si la probabilidad cae bajo theta, y en el objetivo 3 se queda con el último tercio si la probabilidad sigue alta (>= hold)."""
     d, e, sl, r, B = op['dir'], op['entry'], op['sl'], op['r'], op['B']
     tps = [e * (1 + d * k * r * sl) for k in (1, 2, 3)]
-    stop, size, real, hits, out = e * (1 - d * sl), 1.0, 0.0, 0, None
+    stop, size, real, hits, kept = e * (1 - d * sl), 1.0, 0.0, 0, False
+    lim = int(round(len(B) / 1.5))
+    res = lambda px, k, kind, **kw: {'pct': 100 * op['L'] * (real + size * d * (px / e - 1) - 2 * FEE), 'hits': hits, 'k': k, 'kind': kind, 'px': px, **kw}
     for k, (h, l, c, a) in enumerate(B):
         adv, fav = (l, h) if d > 0 else (h, l)
         if d * (stop - adv) >= 0:
-            out = real + size * d * (stop / e - 1); break
+            return res(stop, k, 'stop' if hits == 0 else 'seguro')
         while hits < 3 and d * (fav - tps[hits]) >= 0:
-            if variant == 'B' and hits == 0:
+            if variant == 'D':
+                if hits < 2:
+                    real += d * (tps[hits] / e - 1) / 3; size -= 1 / 3
+                else:
+                    pp = p[k - 1] if k else 0
+                    if pp >= hold:
+                        kept = True
+                    else:
+                        real += size * d * (tps[2] / e - 1); size = 0; hits = 3
+                        return res(tps[2], k, 'obj3')
+            elif variant in ('B', 'C') and hits == 0:
                 real += d * (tps[0] / e - 1) / 3; size -= 1 / 3
             hits += 1
             stop = e if hits == 1 else tps[hits - 2]
-        if k + 1 >= minhold and p[k] < theta:
-            out = real + size * d * (c / e - 1); break
-    if out is None:
-        out = real + size * d * (B[-1][2] / e - 1)
-    return 100 * op['L'] * (out - 2 * FEE), hits
+        early = hits >= 1 if variant in ('C', 'D') else True
+        if early and k + 1 >= minhold and p[k] < theta:
+            return res(c, k, 'ia', p=float(p[k]))
+        if variant == 'D' and not kept and k + 1 >= lim:
+            return res(c, k, 'plazo')
+    return res(B[-1][2], len(B) - 1, 'plazo')
 
 
-def policy2(op, p, theta, minhold, variant):
-    """Igual que policy (y que IA.shadow de la página), pero devuelve cómo y cuándo salió la IA."""
-    d, e, sl, r, B = op['dir'], op['entry'], op['sl'], op['r'], op['B']
-    tps = [e * (1 + d * k * r * sl) for k in (1, 2, 3)]
-    stop, size, real, hits = e * (1 - d * sl), 1.0, 0.0, 0
-    for k, (h, l, c, a) in enumerate(B):
-        adv, fav = (l, h) if d > 0 else (h, l)
-        if d * (stop - adv) >= 0:
-            return {'pct': 100 * op['L'] * (real + size * d * (stop / e - 1) - 2 * FEE), 'hits': hits, 'k': k, 'kind': 'stop' if hits == 0 else 'seguro', 'px': stop}
-        while hits < 3 and d * (fav - tps[hits]) >= 0:
-            if variant == 'B' and hits == 0:
-                real += d * (tps[0] / e - 1) / 3; size -= 1 / 3
-            hits += 1
-            stop = e if hits == 1 else tps[hits - 2]
-        if k + 1 >= minhold and p[k] < theta:
-            return {'pct': 100 * op['L'] * (real + size * d * (c / e - 1) - 2 * FEE), 'hits': hits, 'k': k, 'kind': 'ia', 'px': c, 'p': float(p[k])}
-    c = B[-1][2]
-    return {'pct': 100 * op['L'] * (real + size * d * (c / e - 1) - 2 * FEE), 'hits': hits, 'k': len(B) - 1, 'kind': 'plazo', 'px': c}
+def policy(op, p, theta, minhold, variant, hold=.55):
+    r = manage(op, p, theta, minhold, variant, hold)
+    return r['pct'], r['hits']
+
+
+def policy2(op, p, theta, minhold, variant, hold=.55):
+    return manage(op, p, theta, minhold, variant, hold)
 
 
 DAY = 864e5
 
 
+def cut_of(ts):
+    """Inicio de la prueba: el último tercio, pero como mucho los últimos 120 días (con años de memoria la prueba sigue siendo reciente)."""
+    ts = np.asarray(ts, float)
+    return float(max(np.quantile(ts, 2 / 3), ts.max() - 120 * DAY))
+
+
 def walk_forward(ops, E, rows, days=100):
-    """Resultado de la IA operación por operación en los últimos `days` días, sin trampa: para cada mes la IA
-    solo aprendió con operaciones que ya habían terminado antes de que empezara ese mes."""
+    """Resultado de la IA operación por operación en los últimos `days` días, sin trampa: cada 15 días la IA
+    vuelve a aprender, solo con operaciones que ya habían terminado antes de empezar esos 15 días."""
     end = max(o['t'] for o in ops); start = end - days * DAY; out = []
-    edges = [start + i * 30 * DAY for i in range(int(days / 30) + 2)]
+    edges = [start + i * 15 * DAY for i in range(int(days / 15) + 2)]
     for a, b in zip(edges[:-1], edges[1:]):
         win = [o for o in ops if a <= o['t'] < b]
         if not win:
@@ -126,7 +140,7 @@ def walk_forward(ops, E, rows, days=100):
             continue
         m = gbc().fit(*rows(past))
         for o in win:
-            r = policy2(o, m.predict_proba(np.array(o['X'], float))[:, 1], E['theta'], E['minhold'], E['variant'])
+            r = policy2(o, m.predict_proba(np.array(o['X'], float))[:, 1], E['theta'], E['minhold'], E['variant'], E['hold'])
             out.append([o['m'], o['setup'], o['s'].replace('USDT', ''), o['t'], round(o['botPct'], 2), o['botHit'], round(r['pct'], 2), r['hits'], r['k'], r['kind'], float('%.6g' % r['px']), o['L'], o.get('tf', '4h')])
     return out
 
@@ -149,7 +163,7 @@ def resumen(recs, now):
 def fam_exit(ops, K, H):
     ops = [o for o in ops if len(o['B']) > 2]
     ts = np.array([o['t'] for o in ops])
-    cut = np.quantile(ts, 2 / 3)
+    cut = cut_of(ts)
     for o in ops:
         o['y'] = labels(o, K, H)
     def rows(sel):
@@ -164,20 +178,21 @@ def fam_exit(ops, K, H):
     mA = gbc().fit(*rows(trA))
     pB = [mA.predict_proba(np.array(o['X'], float))[:, 1] for o in trB]
     best = None
-    for variant in ('A', 'B'):
-        for minhold in (1, 2, 4):
-            for theta in np.arange(.30, .66, .05):
-                v = np.mean([policy(o, pp, theta, minhold, variant)[0] for o, pp in zip(trB, pB)])
-                if best is None or v > best[0]:
-                    best = (v, round(float(theta), 2), minhold, variant)
-    _, theta, minhold, variant = best
+    for variant in ('A', 'B', 'C', 'D'):
+        for hold in ((.5, .6, .7) if variant == 'D' else (.55,)):
+            for minhold in (1, 2, 4):
+                for theta in np.arange(.20, .66, .05):
+                    v = np.mean([policy(o, pp, theta, minhold, variant, hold)[0] for o, pp in zip(trB, pB)])
+                    if best is None or v > best[0]:
+                        best = (v, round(float(theta), 2), minhold, variant, hold)
+    _, theta, minhold, variant, hold = best
     # 2) prueba honesta: modelo con todo el entrenamiento, evaluado en los últimos meses
     Xtr, Ytr = rows(tr); Xte, Yte = rows(te)
     mT = gbc().fit(Xtr, Ytr)
     auc = roc_auc_score(Yte, mT.predict_proba(Xte)[:, 1])
     ia, bot, better = [], [], 0
     for o in te:
-        v, _ = policy(o, mT.predict_proba(np.array(o['X'], float))[:, 1], theta, minhold, variant)
+        v, _ = policy(o, mT.predict_proba(np.array(o['X'], float))[:, 1], theta, minhold, variant, hold)
         ia.append(v); bot.append(o['botPct']); better += v > o['botPct'] + 1e-9
     ia, bot = np.array(ia), np.array(bot)
     imp = importance(mT, Xte, Yte, EXF)
@@ -188,6 +203,18 @@ def fam_exit(ops, K, H):
            'bot': {'pct': round(float(bot.mean()), 2), 'gana': round(float((bot > 0).mean() * 100), 1), 'peor': round(float(bot.min()), 1)},
            'ia': {'pct': round(float(ia.mean()), 2), 'gana': round(float((ia > 0).mean() * 100), 1), 'peor': round(float(ia.min()), 1)},
            'mejora_ops': round(better / len(te) * 100, 1), 'desde_prueba': int(cut)}
+    # CURVA DE APRENDIZAJE: la misma prueba, aprendiendo con menos historia (siempre la más reciente).
+    # Muestra cuánto mejora la IA con cada mes extra de datos: con eso se estima cuánto le falta para alcanzar a los bots.
+    curva, t_min = [], min(o['t'] for o in tr)
+    span = (cut - t_min) / DAY
+    for fr in (.25, .5, .75, 1.0):
+        sub = [o for o in tr if o['t'] >= cut - fr * span * DAY]
+        if len(sub) < 60:
+            continue
+        m = mT if fr == 1.0 else gbc().fit(*rows(sub))
+        v = [policy(o, m.predict_proba(np.array(o['X'], float))[:, 1], theta, minhold, variant, hold)[0] for o in te]
+        curva.append([round(fr * span / 30, 2), round(float(np.sum(v)), 2)])
+    res['curva'] = {'meses_ia': curva, 'bot_suma': round(float(bot.sum()), 2), 'n': len(te)}
     by = {}
     for o, v in zip(te, ia):
         k = 'TRADING+' if o['setup'] == 'tp-x' else 'SHOOTER' if o['m'] == 'x' else 'TRADING'
@@ -196,7 +223,7 @@ def fam_exit(ops, K, H):
     res['por_modo'] = {k: {'n': b['n'], 'bot': round(b['bot'] / b['n'], 2), 'ia': round(b['ia'] / b['n'], 2)} for k, b in by.items()}
     # solo se usa en vivo si le ganó al bot en los meses que no vio (y de verdad predice algo)
     res['activa'] = bool(res['ia']['pct'] > res['bot']['pct'] + .3 and auc >= .53)
-    E = {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
+    E = {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'hold': hold, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
     E['ops'] = walk_forward(ops, E, rows)
     return E
 
@@ -240,7 +267,7 @@ def rules_search(ops, fam):
     import itertools
     groups = {'tr': {'TRADING': ('t-pb', 'tp-r55', 'tp-u80'), 'TRADING+': ('tp-x',)}, 'sh': {'SHOOTER': ('sh-c',)}}[fam]
     NP = [None, 6, 12, 24, 48] if fam == 'tr' else [None, 5, 10, 20, 40]
-    cut = np.quantile([o['t'] for o in ops], 2 / 3); out = {}
+    cut = cut_of([o['t'] for o in ops]); out = {}
     for g, setups in groups.items():
         G = [o for o in ops if o['setup'] in setups]
         tr = [o for o in G if o['t'] < cut]; te = [o for o in G if o['t'] >= cut]
@@ -274,12 +301,13 @@ def importance(m, X, Y, names, reps=2):
 
 
 def fam_entry(ent, fam):
-    A = np.array([r[:1 + len(ENF) + 5] for r in ent], float)
+    w = min(len(r) for r in ent); A = np.array([r[:min(w, 1 + len(ENF) + 5)] for r in ent], float)
     if len(A) < 500:
         return None
     k0 = 1 + len(ENF)
-    t, X, Y, P, RK, SD = A[:, 0], A[:, 1:k0], A[:, k0], A[:, k0 + 2], A[:, k0 + 3], A[:, k0 + 4]
-    cut = np.quantile(t, 2 / 3); tr, te = t < cut, t >= cut
+    t, X, Y, P = A[:, 0], A[:, 1:k0], A[:, k0], A[:, k0 + 2]
+    RK = A[:, k0 + 3] if A.shape[1] > k0 + 3 else np.arange(len(A))  # datos viejos sin la moneda: no se agrupa
+    cut = cut_of(t); tr, te = t < cut, t >= cut
     m = gbc(120).fit(X[tr], Y[tr]); p = m.predict_proba(X[te])[:, 1]
     auc = roc_auc_score(Y[te], p); top = p >= np.quantile(p, .8)
     res = {'n': int(len(A)), 'auc': round(auc, 3), 'base': round(float(Y[te].mean() * 100), 1), 'top20': round(float(Y[te][top].mean() * 100), 1),
@@ -318,6 +346,34 @@ def fam_entry(ent, fam):
     mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
     return {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
 
+
+def memoria(D):
+    """MEMORIA ACUMULADA: suma lo que la IA ya estudió antes y salió de la ventana del último año. Así cada día tiene un día más
+    de datos para aprender (hasta 3 años) en vez de olvidar el día más viejo."""
+    try:
+        P = json.load(gzip.open('prev-datos.json.gz'))
+    except Exception:
+        return {'dias': 0, 'ops': 0}
+    if P.get('exitF') != D['exitF'] or P.get('entryF') != D['entryF']:
+        return {'dias': 0, 'ops': 0, 'nota': 'cambiaron los indicadores: empieza de nuevo'}
+    lim, add = D['upd'] - 3 * 365 * DAY, 0
+    for f in FAM:
+        cur, old = D[f], P.get(f) or {}
+        t0 = min([o['t'] for o in cur['ops']] or [D['upd']])
+        keep = [o for o in old.get('ops', []) if lim <= o['t'] < t0]
+        cur['ops'] = keep + cur['ops']; add += len(keep)
+        if cur['ent']:
+            e0, w = min(r[0] for r in cur['ent']), len(cur['ent'][0])
+            cur['ent'] = [r for r in old.get('ent', []) if lim <= r[0] < e0 and len(r) == w] + cur['ent']
+    return {'ops': add}
+
+
+MEM = memoria(D)
+ALL_T = [o['t'] for f in FAM for o in D[f]['ops']]
+MEM['dias'] = round((max(ALL_T) - min(ALL_T)) / DAY) if ALL_T else 0
+with gzip.open('ia-datos.json.gz', 'wt') as fh:  # se guarda la memoria para mañana
+    json.dump(D, fh, separators=(',', ':'))
+print('memoria', MEM)
 
 t0 = time.time()
 OUT = {'upd': D['upd'], 'ver': 1, 'exitF': EXF, 'entryF': ENF}
@@ -389,6 +445,34 @@ try:
 except Exception:
     prev = {}
 OUT['progreso'] = progreso(OUT['resumen'], prev)
+
+
+def estimar():
+    """¿Cuánto le falta para alcanzar a los bots? Junta la curva de aprendizaje de las dos familias (ganancia de la IA con 25, 50, 75
+    y 100 % de la historia) y ajusta progreso = a + b × ln(meses de datos). Como la memoria crece un día por día, los meses
+    de datos que faltan son el tiempo que falta. Si más datos no la mejoran (b <= 0), lo dice: necesita otro método, no tiempo."""
+    C = [OUT[f]['exit']['test']['curva'] for f in FAM if OUT[f].get('exit') and OUT[f]['exit']['test'].get('curva')]
+    if not C:
+        return None
+    n = min(len(c['meses_ia']) for c in C); bot = sum(c['bot_suma'] for c in C)
+    if n < 3 or bot <= 0:
+        return {'ok': False, 'motivo': 'pocos datos'}
+    pts = [[float(np.mean([c['meses_ia'][i][0] for c in C])), 100 * sum(c['meses_ia'][i][1] for c in C) / bot] for i in range(n)]
+    x, y = np.log([p[0] for p in pts]), np.array([p[1] for p in pts])
+    b, a = np.polyfit(x, y, 1); now = pts[-1][0]
+    out = {'ok': True, 'puntos': [[round(m, 1), round(v, 1)] for m, v in pts], 'por_doble': round(float(b * np.log(2)), 1), 'meses_datos': round(now, 1)}
+    if pts[-1][1] >= 100:
+        out['dias'] = 0
+    elif b <= .5:
+        out['dias'] = None
+    else:
+        need = float(np.exp((100 - a) / b)); out['dias'] = int(min(3650, max(1, (need - now) * 30)))
+    return out
+
+
+OUT['estimado'] = estimar()
+OUT['memoria'] = MEM
+print('estimado', OUT['estimado'])
 OUT['noticias'] = noticias()
 print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'])
 OUT['secs'] = round(time.time() - t0)
