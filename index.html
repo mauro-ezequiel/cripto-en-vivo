@@ -88,6 +88,7 @@ main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .chip .bdg{font-size:11px;font-weight:700;margin-left:2px}.chip .bdg.neu{color:var(--mut)}
 .dash{display:grid;grid-template-columns:250px minmax(0,1fr) 340px;border-top:1px solid var(--line);height:250px;background:var(--panel);flex-shrink:0}
 .dash.hide{display:none}
+.ni-r{display:grid;grid-template-columns:1fr auto;gap:0 8px;padding:5px 0;border-bottom:1px solid var(--line)}.ni-r b{font-variant-numeric:tabular-nums}.ni-r small{grid-column:1/-1;color:var(--mut);font-size:11px;line-height:1.35}
 .dcard{padding:10px 14px;overflow-y:auto;border-right:1px solid var(--line);font-size:12px;min-width:0}
 .dcard:last-child{border-right:0}
 .dt{font-size:11px;text-transform:uppercase;letter-spacing:.05em;color:var(--mut);margin-bottom:8px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -312,6 +313,10 @@ body.fs-on .fsbar{display:flex}
 .int{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.int .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .int-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.int-tabs button,.int-p button,.int-a button,.int-go{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}
 .int-tabs button.on,.int-p button.on{background:#26c6da;color:#0f1115;border-color:#26c6da;font-weight:700}.int-p,.int-a{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:8px 0}.int-p .mut{margin-left:6px;font-size:11px}
+.sup{margin:8px 0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}.sup summary{cursor:pointer;font-weight:700;font-size:12.5px}.sup .mut{font-size:11.5px;margin:8px 0 4px}
+.sup-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.sup-t th{font-weight:600;color:var(--mut);text-align:right;padding:3px 6px;font-size:11px}.sup-t td{padding:4px 6px;text-align:right;border-top:1px solid var(--line)}.sup-t td:first-child,.sup-t th:first-child{text-align:left}.sup-t tr.base td{font-weight:700}.sup-t small{display:block;font-size:10.5px}
+.bn{margin:6px 0 10px;border:1px solid var(--line);border-radius:8px;padding:6px 10px;background:var(--bg)}.bn summary{cursor:pointer;font-weight:700}.bn-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin-top:8px;font-size:12.5px}.bn-g ol{margin:4px 0 6px;padding-left:18px;color:var(--mut)}.bn-g input[type=password]{display:block;width:100%;margin:4px 0;padding:6px;background:var(--panel);color:var(--txt);border:1px solid var(--line);border-radius:6px}.bn-tag{background:#f0b90b;color:#111;font-weight:800;font-size:10px;padding:1px 5px;border-radius:4px}
+.pil-cmp{margin:6px 0;font-size:12px}.pil-cmp summary{cursor:pointer;color:var(--mut)}.pil-cmp table{width:100%;border-collapse:collapse;margin-top:4px}.pil-cmp td,.pil-cmp th{padding:3px 5px;border-top:1px solid var(--line);text-align:left;vertical-align:top}.pil-cmp th{color:var(--mut);font-weight:600}.pil-cmp small{display:block;color:var(--mut);font-size:10.5px}
 .int-g{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin:8px 0}.int-g>div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:7px 10px;font-size:11px;color:var(--mut)}
 .int-g b{display:block;font-size:16px;color:var(--txt);font-variant-numeric:tabular-nums}.int-g small{display:block;color:var(--mut)}.int-v{background:var(--bg);border-left:4px solid #26c6da;border-radius:6px;padding:8px 10px;font-size:13px;margin:6px 0;line-height:1.4}
 .int-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.int-t td,.int-t th{padding:5px 6px;border-bottom:1px solid var(--line);text-align:left}.int-t th{color:var(--mut);font-weight:600}
@@ -558,6 +563,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div class="g-sub" id="g-sub"></div>
       </div>
       <div class="dcard"><div class="dt">Qué dice cada factor <span class="mut" id="facTf"></span><button class="i-btn" data-i="fac" type="button" aria-label="Qué son los factores" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="fac" hidden><b>Qué dice cada factor</b><br>Cada indicador (RSI, MACD, EMAs, Supertrend, volumen, liquidaciones, noticias, miedo y codicia…) se lee por separado y dice si empuja para arriba (▲), para abajo (▼) o está neutral (●). Los que tienen más peso mueven más el termómetro. Tocá "Ver todos los factores" para la lista completa. Si la mayoría coincide, la lectura es más fuerte; si están divididos, conviene esperar. RSI, Stoch RSI y Konkorde miden casi lo mismo (el impulso): si tenés varios activos, entre todos pesan 1,5 en vez de sumar uno cada uno, para no exagerar la lectura.</div><div id="factors"></div><button class="fac-more" id="facMore" type="button">Ver todos los factores ▼</button></div>
+      <div class="dcard" id="niCard"><div class="dt">🆕 Indicadores nuevos <span class="mut">· en prueba: no se usan en las señales</span></div><div id="niBox"><div class="mut">Calculando…</div></div></div>
       <div class="dcard" id="posCard">
         <div class="dt">Posiciones apalancadas
           <span class="lopts"><select id="liqView"><option value="zones">Zonas (cajas)</option><option value="heat">Mapa de calor</option><option value="both">Ambas</option></select><select id="liqSide"><option value="both">Longs y shorts</option><option value="L">Solo longs</option><option value="S">Solo shorts</option></select>
@@ -581,7 +587,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <label>Apalancamiento (X)<input id="pilX" type="number" inputmode="numeric" min="1" max="125" value="10"></label>
         <label>Margen (USD)<input id="pilM" type="number" inputmode="decimal" min="1" value="100"></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
-      <div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
+      <div id="bnBox"></div><div id="pilCards"></div><div class="jrn" id="jrnBox"></div>
       <div class="pil-note">Cómo decide: tendencia en 15m, 1h y 4h, fuerza (ADX), RSI, soportes y resistencias de 1h, zonas de liquidez del mapa y la distancia a tu liquidación. Además te marca un stop según la volatilidad de la moneda y te avisa si una vela de 1 h cierra a mitad de camino a ese stop. Probado con unas 4.500 operaciones al azar: con × 10 bajó a la mitad las pérdidas de más del 50 % del margen (de 7 % a 3 % de las operaciones) y con × 20 las liquidaciones pasaron de 7,7 % a 2,4 %. Ninguna indicación es segura.</div></section>
     <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
     <section class="lqx" id="lqBox"><div class="dt"><span>Mapa de liquidaciones en tiempo real</span> <span class="mut" id="lqSub"></span>
@@ -1428,6 +1434,43 @@ function showStart(){
 $('cards').onclick=e=>{const c=e.target.closest('[data-m]');if(!c)return;$('start').classList.add('hide');applyMode(c.dataset.m);};
 $('modeSeg').onclick=e=>{const b=e.target.closest('[data-mode]');if(b&&b.dataset.mode!==mode)applyMode(b.dataset.mode);};
 
+/* ---------- INDICADORES NUEVOS · en prueba: se muestran pero NO se usan en las señales ni en el termómetro ----------
+   Libro de órdenes cerca del precio, régimen de volatilidad, sesión del mercado, parecido con BTC y calendario económico de EE. UU. */
+const MACRO_EV=[['Inflación de EE. UU. (CPI)',8,30,['2025-10-24','2025-12-18','2026-01-13','2026-02-13','2026-03-11','2026-04-10','2026-05-12','2026-06-10','2026-07-14','2026-08-12','2026-09-11','2026-10-14','2026-11-10','2026-12-10']],
+  ['Empleo de EE. UU. (NFP)',8,30,['2025-11-20','2025-12-16','2026-01-09','2026-02-11','2026-03-06','2026-04-03','2026-05-08','2026-06-05','2026-07-02','2026-08-07','2026-09-04','2026-10-02','2026-11-06','2026-12-04']],
+  ['Decisión de tasas de la Fed',14,0,['2025-10-29','2025-12-10','2026-01-28','2026-03-18','2026-04-29','2026-06-17','2026-07-29','2026-09-16','2026-10-28','2026-12-09']]];
+function etUtcJ(d,hh,mm){const t=Date.parse(d+'T00:00:00Z'),y=+d.slice(0,4),sec=(m,k)=>{const x=new Date(Date.UTC(y,m,1));return Date.UTC(y,m,1+(7-x.getUTCDay())%7+7*(k-1));};const edt=t>=sec(2,2)&&t<sec(10,1);return t+((hh+(edt?4:5))*60+mm)*6e4;}
+const MACRO_LIST=MACRO_EV.flatMap(([n,h,m,ds])=>ds.map(d=>({n,t:etUtcJ(d,h,m)}))).sort((a,b)=>a.t-b.t);
+function macroNow(){const now=Date.now(),cur=MACRO_LIST.find(e=>now>=e.t-36e5&&now<e.t+2*36e5),next=MACRO_LIST.find(e=>e.t>now);return {cur,next};}
+const corrBeta=(a,b)=>{const n=Math.min(a.length,b.length);if(n<50)return null;a=a.slice(-n);b=b.slice(-n);const ma=a.reduce((x,y)=>x+y)/n,mb=b.reduce((x,y)=>x+y)/n;let c=0,va=0,vb=0;for(let i=0;i<n;i++){c+=(a[i]-ma)*(b[i]-mb);va+=(a[i]-ma)**2;vb+=(b[i]-mb)**2;}return {r:c/Math.sqrt(va*vb||1),beta:vb?c/vb:0};};
+const rets=b=>b.slice(1).map((x,i)=>Math.log(x.close/b[i].close));
+var NI={sym:null,t:0,busy:false};
+async function niRender(force){const el=$('niBox');if(!el||NI.busy)return;const s=symbol;if(!force&&NI.sym===s&&Date.now()-NI.t<6e4)return;NI.busy=true;NI.sym=s;NI.t=Date.now();
+  const rows=[],row=(nm,val,cls,txt)=>rows.push(`<div class="ni-r"><span>${nm}</span><b class="${cls||''}">${val}</b><small>${txt}</small></div>`);
+  try{const isStk=mode==='a',t=tickers[s];
+    /* 1. calendario económico */
+    const M=macroNow(),fmt=x=>new Date(x).toLocaleString('es-AR',{weekday:'short',day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'});
+    if(M.cur)row('Calendario económico','⚠ ahora','dn',`${M.cur.n} (${fmt(M.cur.t)}): suele haber barridas de stop en las dos direcciones. Mejor esperar 2 h.`);
+    else if(M.next){const h=(M.next.t-Date.now())/36e5;row('Calendario económico',h<24?`en ${h<1?Math.round(h*60)+' min':Math.round(h)+' h'}`:`en ${Math.round(h/24)} días`,h<3?'dn':'',`${M.next.n} · ${fmt(M.next.t)}`);}
+    /* 2. sesión del mercado (hora UTC) y bloques flojos para SHOOTER según el historial */
+    {const d=new Date(),h=d.getUTCHours()+d.getUTCMinutes()/60,S=[];if(h<8)S.push('Asia');if(h>=7&&h<16.5)S.push('Europa');if(h>=13.5&&h<20)S.push('EE. UU.');
+      const bad=(window.HISTYR&&HISTYR.suplementos&&HISTYR.suplementos.horas_malas_utc&&HISTYR.suplementos.horas_malas_utc.SHOOTER)||[],blk=Math.floor(d.getUTCHours()/4)*4,isBad=bad.includes(blk);
+      row('Sesión del mercado',S.join(' + ')||'entre sesiones',isBad?'dn':'',`${S.length>1?'dos mercados abiertos: más volumen':S.length?'un mercado abierto':'poco volumen'}${bad.length?` · en el historial de SHOOTER este horario ${isBad?'perdió plata':'no estuvo entre los flojos'}`:''}`);}
+    /* 3. régimen de volatilidad: lo que se mueve ahora contra las últimas 200 velas */
+    if(candles&&candles.length>60){const tr=candles.map((b,i)=>i?Math.max(b.high-b.low,Math.abs(b.high-candles[i-1].close),Math.abs(b.low-candles[i-1].close))/b.close:(b.high-b.low)/b.close);
+      const a=wilder(tr,14),L=a.slice(-200).filter(x=>x!=null),cur=a.at(-1),pc=L.filter(x=>x<=cur).length/L.length*100;
+      row('Régimen de volatilidad',pc>=85?'muy alta':pc>=60?'alta':pc<=15?'muy baja':pc<=40?'baja':'normal',pc>=85||pc<=15?'dn':'',`se mueve ${iaN(cur*100,2)} % por vela; más que el ${Math.round(pc)} % de las últimas 200 velas`);}
+    if(!isStk&&t){/* 4. libro de órdenes a ±1 % del precio */
+      const dep=await safe(getJ(t.fut?`${FAPI}/fapi/v1/depth?symbol=${s}&limit=500`:`${API}/depth?symbol=${s}&limit=1000`));
+      if(dep&&dep.bids&&dep.bids.length&&dep.asks.length){const mid=(+dep.bids[0][0]+ +dep.asks[0][0])/2;let B=0,A=0;for(const [p,q] of dep.bids)if(+p>=mid*.99)B+=p*q;for(const [p,q] of dep.asks)if(+p<=mid*1.01)A+=p*q;
+        const imb=(B-A)/((B+A)||1)*100;row('Libro de órdenes ±1 %',`${imb>=0?'+':''}${Math.round(imb)} %`,imb>20?'up':imb<-20?'dn':'',`compras ${fmtUsd(B)} contra ventas ${fmtUsd(A)} cerca del precio${Math.abs(imb)>20?(imb>0?': más compradores esperando':': más vendedores esperando'):''}`);}
+      /* 5. parecido con BTC (últimos 30 días, velas de 1 h) */
+      if(s!=='BTCUSDT'){const [x,y]=await Promise.all([safe(kl(s,'1h',721)),safe(kl('BTCUSDT','1h',721))]);const c=x&&y?corrBeta(rets(x),rets(y)):null;
+        if(c)row('Parecido con BTC',`${iaN(c.r,2)}`,c.r>.8?'dn':'',`se mueve ${c.r>.8?'casi igual que':c.r>.5?'bastante parecido a':'distinto de'} BTC; cuando BTC se mueve 1 %, esta se mueve ${iaN(c.beta,2)} %${c.r>.8?'. Varias operaciones en la misma dirección con monedas así son casi una sola apuesta':''}`);}}
+    el.innerHTML=rows.join('')||'<div class="mut">Sin datos todavía.</div>';
+  }catch(e){el.innerHTML='<div class="mut">No se pudieron calcular ahora.</div>';}finally{NI.busy=false;}}
+const fmtUsd=v=>v>=1e9?(v/1e9).toFixed(1).replace('.',',')+' mil M':v>=1e6?(v/1e6).toFixed(1).replace('.',',')+' M':v>=1e3?Math.round(v/1e3)+' mil':Math.round(v)+'';
+setInterval(()=>niRender(),6e4);
 async function loadChart(){
   if(mode==='a')return loadChartStk();
   $('loading').textContent='Cargando…';$('loading').style.display='flex';
@@ -1444,7 +1487,7 @@ async function loadChart(){
     if(candles.length) setPrecision(candles.at(-1).close);
     series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
     fitView();
-    restoreLines();
+    restoreLines();setTimeout(()=>niRender(true),400);
   }catch(e){$('loading').textContent='No se pudo cargar el gráfico';return;}
   $('loading').style.display='none';
   klineWs=new WebSocket(tickers[sym]&&tickers[sym].fut?`wss://fstream.binance.com/market/ws/${sym.toLowerCase()}@kline_${t}`:`${WS}/ws/${sym.toLowerCase()}@kline_${t}`);
@@ -2582,7 +2625,7 @@ async function loadChartStk(){
   const sym=symbol,t=tf;
   try{const b=await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
     candles=aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
-    series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();restoreLines();
+    series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();restoreLines();setTimeout(()=>niRender(true),400);
     const q=STK[sym],lb=b.at(-1);if(q&&lb&&(lb.date===artDay()||!mktOpen())&&Math.abs(lb.close/q.c-1)<.02){q.h=Math.max(lb.date===artDay()?q.h||0:0,lb.high);q.l=Math.min(lb.date===artDay()?q.l||Infinity:Infinity,lb.low);}updateTop();
   }catch(e){if(id===stkLoadId)$('loading').textContent='No se pudo cargar el historial de '+sym;return;}
   $('loading').style.display='none';
@@ -3089,15 +3132,84 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cn
   const el=$('pilCards');if(!el)return;if(el.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
   if(!PIL.length){el.innerHTML='<div class="mut">Todavía no estás piloteando ninguna operación.</div>';return;}
   el.innerHTML=PIL.map(p=>{const a=p.a,L=p.dir>0,pc=v=>fpct((v/p.entry-1)*100);
-    return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}"><div class="pil-h"><b class="${L?'up':'dn'}">${L?'▲ LONG':'▼ SHORT'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev} · margen ${p.margin} USD${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · desde ${fdate(p.t)}</span></div>
+    return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}"><div class="pil-h"><b class="${L?'up':'dn'}">${L?'▲ LONG':'▼ SHORT'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">${p.bn?'<span class="bn-tag">Binance</span> ':''}× ${p.lev} · margen ${p.margin} USD${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · desde ${fdate(p.t)}</span></div>
       ${a?`<div class="pil-s${a.act?'':' ok'}"><b>${a.title}</b>${a.txt}</div>
       <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>Precio ahora</span><b>${fp(a.c)}</b>
         <span>Resultado</span><b class="${a.usd>=0?'up':'dn'}">${pilMoney(a.usd)} (${fpct(a.usd/a.mg*100)} del margen)</b>
         <span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
-      <div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
+      ${pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
       ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
+/* ---------- PILOTEAR v3: costos reales y datos de Binance ----------
+   Antes: liquidación con un margen de mantenimiento fijo de 0,5 % y resultado sin comisiones ni funding.
+   Ahora: margen de mantenimiento según la moneda (o el precio exacto de Binance si conectás tu clave de solo lectura),
+   resultado con comisiones de entrada y salida (0,05 % cada una) y el funding acumulado, y el punto de equilibrio real. */
+var PILFR={};const PIL_FEE=.0005;
+const pilMMR=s=>s==='BTCUSDT'||s==='ETHUSDT'?.004:(Object.values(tickers).filter(t=>/USDT$/.test(t.s)).sort((a,b)=>b.q-a.q).slice(0,30).some(t=>t.s===s)?.0065:.01);
+function pilFr(s){const f=PILFR[s];if(f&&Date.now()-f.t<10*6e4)return f.v;if(!f||!f.busy){PILFR[s]={t:f?f.t:0,v:f?f.v:null,busy:true};
+    getJ(`${FAPI}/fapi/v1/premiumIndex?symbol=${s}`).then(j=>{const v=+(j&&j.lastFundingRate);PILFR[s]={t:Date.now(),v:isFinite(v)?v:null};pilRender();}).catch(()=>{PILFR[s]={t:Date.now(),v:null};});}return f?f.v:null;}
+function pilCmpHTML(p,a){const mmr=pilMMR(p.sym),avg=pilAvg(p),liqN=p.bnLiq||avg*(1-p.dir*(1/p.lev-mmr)),notl=a.mg*p.lev,fees=notl*PIL_FEE*2,fr=pilFr(p.sym),n8=Math.floor((Date.now()-p.t)/(8*36e5)),fund=fr==null?0:-p.dir*fr*notl*n8;
+  const net=a.usd-fees+fund,be=avg*(1+p.dir*(2*PIL_FEE+(fund<0?-fund/notl:0)));
+  return `<details class="pil-cmp"><summary>Antes / ahora: costos reales${p.bn?' · datos de Binance':''}</summary><table><tr><th></th><th>Antes</th><th>Ahora</th></tr>
+    <tr><td>Liquidación</td><td>${fp(a.liq)}</td><td class="dn">${fp(liqN)}<small>${p.bnLiq?'la que calcula Binance':`margen de mantenimiento ${iaD(mmr*100)} % para esta moneda (margen aislado)`}</small></td></tr>
+    <tr><td>Resultado</td><td>${pilMoney(a.usd)}<small>sin costos</small></td><td class="${net>=0?'up':'dn'}">${pilMoney(net)}<small>con ${pilMoney(-fees).replace('−','−')} de comisiones${fr!=null?` y ${pilMoney(fund)} de funding`:''}</small></td></tr>
+    <tr><td>Punto de equilibrio</td><td>${fp(avg)}</td><td>${fp(be)}<small>a partir de acá ganás de verdad</small></td></tr>
+    <tr><td>Funding</td><td>—</td><td>${fr==null?'…':`${iaD(fr*100)} % cada 8 h<small>${fr*p.dir>0?'pagás vos':'cobrás vos'} · ${n8} cobros desde que entraste</small>`}</td></tr></table></details>`;}
+/* ---------- tus datos de Binance: importar el historial (sin claves) o conectar una clave de SOLO LECTURA ----------
+   La clave la creás y la pegás vos. Se usa solo para LEER desde fapi.binance.com, firmada en tu navegador; nunca se manda a otro lado.
+   No pidas ni uses claves con permiso de operar o de retirar. */
+var BN={k:'',s:'',rem:false,on:false,err:'',pos:[],inc:null,csv:null,off:0,busy:false};
+try{const x=JSON.parse(localStorage.getItem('cv_bn')||'null');if(x&&x.k){BN.k=x.k;BN.s=x.s;BN.rem=true;}const c=JSON.parse(localStorage.getItem('cv_bn_csv')||'null');if(c)BN.csv=c;}catch(e){}
+async function bnSign(q){const enc=new TextEncoder(),key=await crypto.subtle.importKey('raw',enc.encode(BN.s),{name:'HMAC',hash:'SHA-256'},false,['sign']);
+  return [...new Uint8Array(await crypto.subtle.sign('HMAC',key,enc.encode(q)))].map(b=>b.toString(16).padStart(2,'0')).join('');}
+async function bnGet(path,params){if(!BN.off){try{const t=await getJ(FAPI+'/fapi/v1/time');BN.off=t.serverTime-Date.now();}catch(e){}}
+  const q=new URLSearchParams(Object.assign({},params||{},{timestamp:String(Date.now()+BN.off),recvWindow:'10000'})).toString();
+  const r=await fetch(`${FAPI}${path}?${q}&signature=${await bnSign(q)}`,{headers:{'X-MBX-APIKEY':BN.k}});let j=null;try{j=await r.json();}catch(e){}
+  if(!r.ok)throw new Error((j&&j.msg)||('error '+r.status));return j;}
+async function bnSync(){if(!BN.k||!BN.s||BN.busy)return;BN.busy=true;
+  try{const P=await bnGet('/fapi/v2/positionRisk');BN.pos=P.filter(x=>+x.positionAmt!==0);
+    for(const x of BN.pos){const s=x.symbol,dir=+x.positionAmt>0?1:-1,lev=+x.leverage||1,entry=+x.entryPrice,qty=Math.abs(+x.positionAmt),mg=x.marginType==='isolated'&&+x.isolatedMargin>0?+x.isolatedMargin:qty*entry/lev;
+      let p=PIL.find(y=>y.bn&&y.sym===s&&y.dir===dir&&!y.closed);
+      if(!p){p={id:'bn-'+s+'-'+dir,sym:s,dir,entry,lev,margin:+mg.toFixed(2),t:Date.now(),state:null,ll:null,closed:false,bn:true};PIL.push(p);}else Object.assign(p,{entry,lev,margin:+mg.toFixed(2)});
+      p.bnLiq=+x.liquidationPrice||null;p.bnPnl=+x.unRealizedProfit;p.bnMT=x.marginType;}
+    PIL=PIL.filter(p=>!(p.bn&&!p.closed&&!BN.pos.some(x=>x.symbol===p.sym&&(+x.positionAmt>0?1:-1)===p.dir)));
+    if(!BN.inc||Date.now()-BN.inc.t>30*6e4){const I=await bnGet('/fapi/v1/income',{startTime:String(Date.now()-30*864e5),limit:'1000'});BN.inc={t:Date.now(),rows:I};}
+    BN.err='';BN.on=true;savePil();pilTick();}
+  catch(e){BN.on=false;BN.err=/Failed to fetch|NetworkError|Load failed/i.test(String(e.message))?'Tu navegador no dejó conectarse directo con Binance. Usá la importación del archivo (funciona igual).':'Binance respondió: '+e.message;}
+  finally{BN.busy=false;bnRender();pilRender();}}
+/* resumen de resultados: del historial de ingresos de Binance (30 días) o del archivo importado */
+function bnSummary(){let R=null;
+  if(BN.inc&&BN.inc.rows){const by={},s={pnl:0,fee:0,fund:0,n:0,w:0};for(const x of BN.inc.rows){const v=+x.income;if(x.incomeType==='REALIZED_PNL'){s.pnl+=v;s.n++;if(v>0)s.w++;by[x.symbol]=(by[x.symbol]||0)+v;}else if(x.incomeType==='COMMISSION')s.fee+=v;else if(x.incomeType==='FUNDING_FEE')s.fund+=v;}
+    R={src:'Binance · últimos 30 días',...s,by};}
+  else if(BN.csv)R={src:`archivo importado (${BN.csv.name})`,...BN.csv.s};
+  if(!R)return '';const net=R.pnl+R.fee+R.fund,top=Object.entries(R.by||{}).sort((a,b)=>b[1]-a[1]);
+  return `<div class="int-g"><div>Resultado realizado<b class="${R.pnl>=0?'up':'dn'}">${pilMoney(R.pnl)}</b><small>${R.n} cierres · ${R.n?Math.round(R.w/R.n*100):0} % ganadores</small></div>
+    <div>Comisiones<b class="dn">${pilMoney(R.fee)}</b><small>lo que cobró Binance</small></div><div>Funding<b class="${R.fund>=0?'up':'dn'}">${pilMoney(R.fund)}</b><small>cobrado o pagado</small></div>
+    <div>Neto<b class="${net>=0?'up':'dn'}">${pilMoney(net)}</b><small>${esc(R.src)}</small></div>
+    ${top.length?`<div>Tu mejor moneda<b class="up">${top[0][0].replace('USDT','')}</b><small>${pilMoney(top[0][1])}</small></div><div>Tu peor moneda<b class="dn">${top.at(-1)[0].replace('USDT','')}</b><small>${pilMoney(top.at(-1)[1])}</small></div>`:''}</div>`;}
+/* archivo CSV del historial de operaciones de futuros de Binance (en inglés o en español) */
+function bnParseCsv(txt,name){const L=txt.replace(/\r/g,'').split('\n').filter(x=>x.trim());if(L.length<2)throw new Error('el archivo está vacío');
+  const sp=l=>{const o=[];let c='',q=false;for(const ch of l){if(ch==='"')q=!q;else if((ch===','||ch===';')&&!q){o.push(c);c='';}else c+=ch;}o.push(c);return o.map(x=>x.trim());};
+  const H=sp(L[0]).map(x=>x.toLowerCase()),col=re=>H.findIndex(h=>re.test(h));const iS=col(/symbol|par|s[ií]mbolo|contrato/),iR=col(/realiz/),iF=col(/fee|comisi/);
+  if(iR<0)throw new Error('no encuentro la columna de beneficio realizado: exportá "Historial de operaciones" de Futuros');
+  const s={pnl:0,fee:0,fund:0,n:0,w:0,by:{}},num=x=>parseFloat(String(x||'').replace(/[^0-9.\-eE]/g,''))||0;
+  for(const l of L.slice(1)){const r=sp(l),v=num(r[iR]),sym=(r[iS]||'').toUpperCase().replace(/[^A-Z0-9]/g,'');if(v!==0){s.pnl+=v;s.n++;if(v>0)s.w++;s.by[sym]=(s.by[sym]||0)+v;}if(iF>=0)s.fee-=Math.abs(num(r[iF]));}
+  return {name,t:Date.now(),s};}
+function bnRender(){const el=$('bnBox');if(!el)return;if(el.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
+  el.innerHTML=`<details class="bn"${BN.on||BN.csv?' open':''}><summary>🔗 Mis datos de Binance ${BN.on?`<span class="up">· conectado · ${BN.pos.length} posiciones</span>`:BN.csv?'<span class="mut">· historial importado</span>':''}</summary>
+    <div class="bn-g"><div><b>1. Importar tu historial (sin claves, lo más seguro)</b><ol><li>En Binance: Órdenes → Futuros → Historial de operaciones.</li><li>Exportar → elegí el período → descargá el archivo.</li><li>Subilo acá:</li></ol><input type="file" id="bnCsv" accept=".csv,text/csv"></div>
+      <div><b>2. Conectar con una clave de SOLO LECTURA</b><ol><li>En Binance: Perfil → Gestión de API → Crear API.</li><li>Dejá tildado <b>solo "Habilitar lectura"</b>. No tildes futuros, spot ni retiros.</li><li>Pegá la clave y el secreto acá.</li></ol>
+        ${BN.k?`<div class="mut">Clave cargada (${esc(BN.k.slice(0,4))}…${esc(BN.k.slice(-4))}).</div><button type="button" id="bnSync">Actualizar ahora</button> <button type="button" id="bnOff">Desconectar y borrar la clave</button>`
+          :`<input id="bnK" type="password" placeholder="API key" autocomplete="off"><input id="bnS" type="password" placeholder="Secret key" autocomplete="off"><label class="mut"><input type="checkbox" id="bnRem"> recordar en este navegador</label> <button type="button" id="bnGo">Conectar</button>`}
+        <div class="mut">La clave queda solo en este navegador y se usa solo para leer desde fapi.binance.com. Trae tus posiciones (con la liquidación exacta), el resultado realizado, las comisiones y el funding. No puede operar ni retirar.</div></div></div>
+    ${BN.err?`<div class="err">${esc(BN.err)}</div>`:''}${bnSummary()}</details>`;
+  const go=$('bnGo');if(go)go.onclick=()=>{const k=$('bnK').value.trim(),s=$('bnS').value.trim();if(!k||!s){BN.err='Pegá la clave y el secreto.';bnRender();return;}BN.k=k;BN.s=s;BN.rem=$('bnRem').checked;
+    try{if(BN.rem)localStorage.setItem('cv_bn',JSON.stringify({k,s}));}catch(e){}bnSync();};
+  const off=$('bnOff');if(off)off.onclick=()=>{BN.k=BN.s='';BN.on=false;BN.inc=null;BN.pos=[];try{localStorage.removeItem('cv_bn');}catch(e){}PIL=PIL.filter(p=>!p.bn);savePil();bnRender();pilRender();};
+  const sy=$('bnSync');if(sy)sy.onclick=()=>{BN.inc=null;bnSync();};
+  const f=$('bnCsv');if(f)f.onchange=async()=>{const file=f.files[0];if(!file)return;try{BN.csv=bnParseCsv(await file.text(),file.name);try{localStorage.setItem('cv_bn_csv',JSON.stringify(BN.csv));}catch(e){}BN.err='';}catch(e){BN.err='No pude leer el archivo: '+e.message;}bnRender();};}
+setInterval(()=>{if(BN.k&&BN.s)bnSync();},6e4);setTimeout(()=>{bnRender();if(BN.k&&BN.s)bnSync();},3000);
 let pilSel=0;
 function pilFill(){const q=$('pilSym').value.trim().toUpperCase().replace(/[\/\s]|USDT$/g,'');let arr=Object.values(tickers).filter(t=>t.s.endsWith('USDT'));
   if(q)arr=arr.filter(t=>t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||b.q-a.q);else arr.sort((a,b)=>b.q-a.q);arr=arr.slice(0,60);if(pilSel>=arr.length)pilSel=0;
@@ -3118,7 +3230,7 @@ $('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pil
   if(!t){err.textContent='Elegí una moneda de la lista (pares con USDT).';return;}
   const raw=$('pilPx').value.trim(),px=raw?parsePx(raw,t.c):t.c;if(!(px>0)){err.textContent='Escribí el precio en el que entraste.';return;}
   const X=Math.round(+$('pilX').value);if(!(X>=1&&X<=125)){err.textContent='El apalancamiento tiene que estar entre 1 y 125.';return;}
-  if(PIL.length>=5){err.textContent='Máximo 5 operaciones a la vez: dejá de pilotear alguna.';return;}
+  if(PIL.filter(p=>!p.bn).length>=5){err.textContent='Máximo 5 operaciones a la vez: dejá de pilotear alguna.';return;}
   const p={id:s+'-'+Date.now(),sym:s,dir:+$('pilDir').value,entry:px,lev:X,margin:Math.max(1,+$('pilM').value||100),t:Date.now(),state:null,ll:null,closed:false};
   PIL.push(p);savePil();$('pilSym').value='';$('pilPx').value='';if(symbol!==s)select(s);pilRender();pilTick();};
 $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.pil-c').dataset.id,p=PIL.find(x=>x.id===id);if(!p)return;
@@ -3221,7 +3333,18 @@ function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&
       <div>Factor de ganancia<b>${S.pf!=null?S.pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div>
       <div>Ventaja sobre el azar<b class="${S.avg!=null&&az&&az.usd!=null?(S.avg-az.usd>=0?'up':'dn'):''}">${S.avg!=null&&az&&az.usd!=null?intMoney(S.avg-az.usd):'—'}</b><small>por operación · azar ${az&&az.usd!=null?intMoney(az.usd):'—'}${BT_USD[m]!=null?` · backtest ${intMoney(BT_USD[m])}`:''}</small></div></div>
     <div class="int-v">${verdict}</div>
-    <div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>`;}
+    ${HSRC==='sim'&&(m==='medio'||m==='x')?supHTML(m):''}<div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>`;}
+/* ---------- 🧪 suplementos en prueba: bots como están hoy contra bots con cada suplemento (no están activos) ---------- */
+function supHTML(m){const S=window.HISTYR&&HISTYR.suplementos;if(!S||!S.anio)return '';const MS=m==='x'?['SHOOTER']:['TRADING','TRADING+'];
+  const usdT=(G)=>MS.reduce((a,k)=>a+((G[k]&&G[k].total)||0),0),nT=G=>MS.reduce((a,k)=>a+((G[k]&&G[k].n)||0),0),agg=G=>{const n=nT(G);if(!n)return null;const w=MS.reduce((a,k)=>a+((G[k]&&G[k].n)?G[k].obj1*G[k].n:0),0)/n,u=usdT(G);return {n,dia:MS.reduce((a,k)=>a+((G[k]&&G[k].dia)||0),0),obj1:w,usd:u/n,total:u,peor:Math.min(...MS.map(k=>G[k]&&G[k].n?G[k].peor:0))};};
+  const tbl=(rows,base)=>{const B=agg(base);return `<table class="sup-t"><tr><th></th><th>señales/día</th><th>objetivo 1</th><th>por op.</th><th>total</th><th>peor</th></tr>${rows.map(([nm,G,b])=>{const x=agg(G);if(!x)return '';const d=B?x.total-B.total:0;
+    return `<tr class="${b?'base':''}"><td>${nm}</td><td>${iaD(x.dia)}</td><td>${iaD(x.obj1)} %</td><td>${fusd2(x.usd)}</td><td class="${b?'':d>0?'up':d<0?'dn':''}">${fusd2(x.total)}${b?'':`<small>${d>=0?'+':'−'}${Math.abs(Math.round(d))}</small>`}</td><td class="dn">${fusd2(x.peor)}</td></tr>`;}).join('')}</table>`;};
+  const A=S.anio,P=S.prueba,cut=new Date(S.desde_prueba).toLocaleDateString('es-AR'),F=S.futuros;
+  return `<details class="sup"><summary>🧪 Suplementos en prueba · bots de hoy contra bots con suplementos (no están activos)</summary>
+    <div class="mut">Reglas fijas, medidas en todo el año:</div>${tbl([['Bots como están hoy',A.bots,1],['+ pausa por datos económicos (1 h antes a 2 h después)',A.calendario],['+ como mucho 3 abiertas en la misma dirección',A.limite3],['+ las dos',A.calendario_y_limite]],A.bots)}
+    <div class="mut">Reglas que se eligen mirando los datos: elegidas antes del ${cut} y medidas solo después (lo que no vieron):</div>${tbl([['Bots como están hoy',P.bots,1],[`+ sin las horas flojas (UTC: ${MS.map(k=>(S.horas_malas_utc[k]||[]).map(h=>h+'–'+(h+4)).join(', ')||'ninguna').join(' / ')})`,P.horas],[`+ sin entrar con BTC muy agitado (${MS.map(k=>S.vol_max_percentil[k]==null?'sin corte':'hasta percentil '+Math.round(S.vol_max_percentil[k]*100)).join(' / ')})`,P.volatilidad],['+ pausa por datos económicos',P.calendario],['+ como mucho 3 en la misma dirección',P.limite3],['+ todo junto',P.todo]],P.bots)}
+    ${F?`<div class="mut">Monedas de solo futuros perpetuos (prueba aparte):</div>${tbl([['Solo spot (como hoy)',F.solo_spot,1],['Solo las de futuros',F.solo_futuros],['Juntas',F.juntas]],F.solo_spot)}`:''}
+    <div class="mut">Los números chicos en "total" son la diferencia contra los bots de hoy, en USD. Ninguno se activa sin que lo decidas.</div></details>`;}
 function ledExport(kind){const S=ledStats(mode,LEDP),rows=S.cl.map(o=>({modo:o.m,moneda:o.sym,dir:o.dir>0?'LONG':'SHORT',abierta:new Date(o.t).toISOString(),cerrada:o.closeAt?new Date(o.closeAt).toISOString():'',entrada:o.entry,objetivos_tocados:o.hit,salvavidas:o.ll?'si':'no',estado:o.state,resultado:+(o.pnl||0).toFixed(2),motivo:o.why||''}));
   const txt=kind==='json'?JSON.stringify(rows,null,1):[Object.keys(rows[0]||{modo:1}).join(';'),...rows.map(r=>Object.values(r).map(v=>String(v).replace(/;/g,',')).join(';'))].join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:kind==='json'?'application/json':'text/csv'}));a.download=`registro-${mode}-${new Date().toISOString().slice(0,10)}.${kind}`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove();},500);}
