@@ -415,7 +415,7 @@ def progreso(R, prev):
     """La IA se autoevalúa: cuánto de la ganancia de los bots consigue (100 % = iguala, más = los supera), en los últimos 3 meses."""
     b = sum((x.get('bot_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
     i = sum((x.get('ia_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
-    val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 1)
+    val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 2)
     hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
     notas = []
     pc = lambda v: (f'{v:+.1f}').replace('.', ',')
