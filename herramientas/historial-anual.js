@@ -176,7 +176,7 @@ async function run4h(s, rank) {
   const P1 = IAON ? IA.prep(rb) : null, P4 = IAON ? IA.prep(tb) : null;
   const llConf = (t, dir) => { const i = lastClosed(tb, T4.tfMs, t); return i >= 0 && e200[i] != null && (dir > 0 ? tb[i].close > e200[i] : tb[i].close < e200[i]); };
   for (let i = 299; i < tb.length; i++) { const t = tb[i].t + T4.tfMs; if (t < FROM) continue;
-    if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf, rank);
+    if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf, rank, MX);
     const c = classify4h(tb.slice(i - 298, i + 1), rank); if (!c) continue;
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) continue; // solo a favor de BTC (4h vs EMA 50), como la página
     if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
@@ -220,7 +220,7 @@ function iaPath(P, j0, entry, dir, sl, r, maxAge, t0, resMs) {
     B.push([b.high, b.low, b.close, +(P.atr[j] || 0).toPrecision(5)]); }
   return { X, B }; }
 /* entradas posibles de 4h (tendencia alineada) y si llegaron al objetivo 1 con las medidas de TRADING */
-function iaEntry4h(P4, P1, rb, i, t, llConf, rank) { const b = P4.bars[i], st = P4.st[i];
+function iaEntry4h(P4, P1, rb, i, t, llConf, rank, MX) { const b = P4.bars[i], st = P4.st[i];
   if (!st || P4.e200[i] == null || P4.e21[i] == null || P4.e50[i] == null) return;
   if (Math.sign(P4.e21[i] - P4.e50[i]) !== st || Math.sign(b.close - P4.e200[i]) !== st || rnd() > .5) return;
   const g = GEO.core, atrP = (P4.atr[i] || 0) / b.close, o = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), b.close, st, slOf(g, atrP), g.r, g.L, g.ex, g.ll ? llConf : null, t);
