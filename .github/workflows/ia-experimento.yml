@@ -1,0 +1,39 @@
+name: Experimento de la IA (datos de futuros)
+# Se corre a mano: recalcula el año con los datos de futuros al momento de cada entrada y compara la IA con y sin ellos.
+# Guarda el resultado en la rama exp-<número>. No publica nada en la página.
+on:
+  workflow_dispatch:
+    inputs:
+      monedas:
+        description: 'Cuántas monedas (las de más volumen) bajan los datos de futuros'
+        default: '30'
+permissions:
+  contents: write
+jobs:
+  experimento:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Recalcular el año con datos de futuros
+        run: node --max-old-space-size=6500 herramientas/historial-anual.js | tail -5
+        env:
+          IA: '1'
+          IAX: '1'
+          IAX_N: ${{ inputs.monedas }}
+          NO_PUBLISH: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Comparar la IA con y sin los datos nuevos
+        run: |
+          pip install --quiet numpy scikit-learn
+          python herramientas/ia-experimento.py ia-datos.json.gz
+      - name: Guardar el resultado
+        if: always()
+        run: |
+          mkdir out && (cp ia-experimento.json out/ || echo '{}' > out/ia-experimento.json) && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Experimento de la IA"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:exp-${{ github.run_id }}

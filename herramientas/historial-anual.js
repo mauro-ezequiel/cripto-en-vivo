@@ -122,6 +122,20 @@ async function futOnlyList(spot) { const syms = []; let marker = '';
     if (!rows || rows.length < 20) continue; const qv = rows.reduce((a, k) => a + +k[7], 0) / rows.length; if (qv > MINVOL) out.push([s, qv]); } }));
   console.log('solo futuros: en el archivo', syms.length, 'candidatas', cand.length, 'con más de', MINVOL / 1e6, 'M por día:', out.length);
   return out.sort((a, b) => b[1] - a[1]).map(x => x[0]); }
+/* EXPERIMENTO IAX=1: datos de futuros al momento de cada entrada (del archivo público de Binance, cada 5 min):
+   interés abierto (cambio en 1 h y 24 h), flujo comprador/vendedor de la última hora, posición de los traders grandes, posición de los minoristas
+   y el último funding. Los que van a favor de la dirección se multiplican por ella. Se agregan al final de cada fila de entradas. */
+const IAX = !!process.env.IAX, IAXN = +(process.env.IAX_N || 30), MET = {};
+async function loadMetrics(s) { if (MET[s]) return MET[s]; const R = []; const days = []; for (let t = Math.floor(FROM / DAY) * DAY - DAY; t + DAY <= NOW; t += DAY) days.push(new Date(t).toISOString().slice(0, 10));
+  let q = 0; await Promise.all(Array.from({ length: 6 }, async () => { while (q < days.length) { const d = days[q++]; const rows = await getZipCsv(`${VIS}/daily/metrics/${s}/${s}-metrics-${d}.zip`);
+    if (rows) for (const r of rows) { const t = Date.parse(r[0].replace(' ', 'T') + 'Z'); if (t > 0) R.push([t, +r[3], +r[5], +r[6], +r[7]]); } } }));
+  R.sort((a, b) => a[0] - b[0]); const F = [];
+  for (let d = new Date(ym(FROM - 31 * DAY) + '-01T00:00:00Z'); ym(+d) < ym(NOW); d.setUTCMonth(d.getUTCMonth() + 1)) { const rows = await getZipCsv(`${VIS}/monthly/fundingRate/${s}/${s}-fundingRate-${ym(+d)}.zip`); if (rows) for (const r of rows) F.push([+r[0], +r[2]]); }
+  F.sort((a, b) => a[0] - b[0]); return (MET[s] = { R, F }); }
+function metX(M, t, d) { const N = Array(6).fill(null); if (!M || !M.R.length) return N; const R = M.R; let lo = 0, hi = R.length; while (lo < hi) { const m = (lo + hi) >> 1; if (R[m][0] <= t) lo = m + 1; else hi = m; } const i = lo - 1;
+  if (i < 288 || t - R[i][0] > 15 * 6e4) return N; const L = v => v > 0 ? Math.log(v) : 0; let tk = 0; for (let k = i - 11; k <= i; k++) tk += L(R[k][4]); tk /= 12;
+  let f = null; { const F = M.F; let a = 0, b = F.length; while (a < b) { const m = (a + b) >> 1; if (F[m][0] <= t) a = m + 1; else b = m; } if (a > 0) f = F[a - 1][1]; }
+  return [R[i - 288][1] ? R[i][1] / R[i - 288][1] - 1 : 0, R[i - 12][1] ? R[i][1] / R[i - 12][1] - 1 : 0, d * tk, d * L(R[i][2]), d * L(R[i][3]), f == null ? null : d * f * 1e4].map(v => v == null || !isFinite(v) ? null : +v.toFixed(5)); }
 async function klRange(s, tf, tfMs, from, to) { if (FUTSET.has(s)) return klZip(s, tf, tfMs, from, to); const out = []; let st = from;
   while (st < to) { const d = await getJ(`${API}/klines?symbol=${s}&interval=${tf}&startTime=${st}&endTime=${to}&limit=1000`); if (!d || !d.length) break;
     for (const k of d) out.push(toBar(k)); st = d[d.length - 1][0] + tfMs; if (d.length < 1000) break; if (!MOCK) await sleep(60); }
@@ -155,6 +169,7 @@ let BTC4 = null, BTC1 = null;
 const btcDirAt = (B, ms, t) => { const i = lastClosed(B.b, ms, t); return i >= 0 && B.e[i] != null ? Math.sign(B.b[i].close - B.e[i]) : 0; };
 
 async function run4h(s, rank) {
+  const MX = IAX && IAON && rank < IAXN ? await loadMetrics(s) : null;
   const tb = await klRange(s, T4.tf, T4.tfMs, FROM - 300 * T4.tfMs, NOW); if (tb.length < 350) return;
   const rb = await klRange(s, T4.res, T4.resMs, FROM - 300 * T4.resMs, NOW); if (rb.length < 50) return; const W1 = wildArr(rb);
   candles = tb; const e200 = emaArr(closes(), 200);
@@ -172,6 +187,7 @@ async function run4h(s, rank) {
   return { rb, tb, llConf }; }
 
 async function runShooter(s, rank = 0) {
+  const MX = IAX && IAON && rank < IAXN ? await loadMetrics(s) : null;
   const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 300 * SH.htfMs, NOW); if (hb.length < 200) return;
   const he = emaArr(hb.map(b => b.close), 50), W1 = wildArr(hb); let first = null;
   for (const tf of SH.tfs) { const tfMs = TFMIN[tf] * 6e4, back = Math.round(60 / TFMIN[tf]);
@@ -182,7 +198,7 @@ async function runShooter(s, rank = 0) {
       const z = (cb - bm[i]) / bs[i];
       if (IAON && z <= -1.8 && r7[i] <= 35 && rnd() < .3) { // candidatas para aprender a entrar
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
-        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf]]); }
+        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       if (tooWild(hb, W1, t)) continue;
@@ -208,7 +224,7 @@ function iaEntry4h(P4, P1, rb, i, t, llConf, rank) { const b = P4.bars[i], st = 
   if (!st || P4.e200[i] == null || P4.e21[i] == null || P4.e50[i] == null) return;
   if (Math.sign(P4.e21[i] - P4.e50[i]) !== st || Math.sign(b.close - P4.e200[i]) !== st || rnd() > .5) return;
   const g = GEO.core, atrP = (P4.atr[i] || 0) / b.close, o = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), b.close, st, slOf(g, atrP), g.r, g.L, g.ex, g.ll ? llConf : null, t);
-  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, st]); }
+  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, st, ...(IAX ? metX(MX, t, st) : [])]); }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
 function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
