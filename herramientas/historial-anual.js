@@ -100,8 +100,29 @@ async function getJ(url, tries = 6) {
   for (let k = 0; k < tries; k++) { try { const r = await fetch(url); if (r.ok) return await r.json();
       if (r.status === 429 || r.status === 418 || r.status >= 500) { await sleep(5000 * (k + 1)); continue; } throw new Error(r.status + ' ' + url); }
     catch (e) { if (k === tries - 1) throw e; await sleep(3000); } } }
-const toBar = k => ({ t: k[0], open: +k[1], high: +k[2], low: +k[3], close: +k[4], v: +k[5], tb: +k[9] });
-async function klRange(s, tf, tfMs, from, to) { const out = []; let st = from;
+const toBar = k => ({ t: +k[0], open: +k[1], high: +k[2], low: +k[3], close: +k[4], v: +k[5], tb: +k[9] });
+/* PRUEBA FUT=1: monedas que solo están en futuros perpetuos. Desde GitHub la API de futuros está bloqueada (EE. UU.), así que las velas
+   salen del archivo público de Binance (data.binance.vision): un zip por mes y, para el mes en curso, uno por día. */
+const FUTON = !!process.env.FUT, FUTSET = new Set(), VIS = 'https://data.binance.vision/data/futures/um';
+async function getZipCsv(url) { for (let k = 0; k < 4; k++) { try { const r = await fetch(url); if (r.status === 404) return null; if (!r.ok) { await sleep(2000 * (k + 1)); continue; }
+      const buf = Buffer.from(await r.arrayBuffer()), tmp = require('os').tmpdir() + '/k' + Math.random().toString(36).slice(2) + '.zip'; fs.writeFileSync(tmp, buf);
+      const txt = require('child_process').execFileSync('unzip', ['-p', tmp], { maxBuffer: 1 << 28 }).toString(); fs.unlinkSync(tmp);
+      return txt.split('\n').filter(l => /^\d/.test(l)).map(l => l.split(',')); } catch (e) { await sleep(2000); } } return null; }
+const ym = t => new Date(t).toISOString().slice(0, 7);
+async function klZip(s, tf, tfMs, from, to) { const out = [], cur = ym(NOW);
+  for (let d = new Date(ym(from) + '-01T00:00:00Z'); ym(+d) < cur; d.setUTCMonth(d.getUTCMonth() + 1)) { const m = ym(+d), rows = await getZipCsv(`${VIS}/monthly/klines/${s}/${tf}/${s}-${tf}-${m}.zip`); if (rows) for (const k of rows) out.push(toBar(k)); }
+  for (let t = Date.parse(cur + '-01T00:00:00Z'); t + DAY <= NOW; t += DAY) { const dd = new Date(t).toISOString().slice(0, 10), rows = await getZipCsv(`${VIS}/daily/klines/${s}/${tf}/${s}-${tf}-${dd}.zip`); if (rows) for (const k of rows) out.push(toBar(k)); }
+  return out.filter(b => b.t >= from && b.t + tfMs <= to).sort((a, b) => a.t - b.t); }
+async function futOnlyList(spot) { const syms = []; let marker = '';
+  for (let k = 0; k < 20; k++) { const r = await fetch(`https://s3-ap-northeast-1.amazonaws.com/data.binance.vision?delimiter=/&prefix=data/futures/um/monthly/klines/${marker ? '&marker=' + encodeURIComponent(marker) : ''}`), x = await r.text();
+    const P = [...x.matchAll(/<Prefix>data\/futures\/um\/monthly\/klines\/([A-Z0-9]+)\/<\/Prefix>/g)].map(m => m[1]); syms.push(...P);
+    if (!/<IsTruncated>true/.test(x) || !P.length) break; marker = 'data/futures/um/monthly/klines/' + P[P.length - 1] + '/'; }
+  const cand = syms.filter(s => /^[A-Z0-9]+USDT$/.test(s) && !spot.has(s) && !STABLE.test(s)), last = new Date(Date.parse(ym(NOW) + '-01T00:00:00Z') - DAY), lm = ym(+last), out = [];
+  let q = 0; await Promise.all(Array.from({ length: 6 }, async () => { while (q < cand.length) { const s = cand[q++]; const rows = await getZipCsv(`${VIS}/monthly/klines/${s}/1d/${s}-1d-${lm}.zip`);
+    if (!rows || rows.length < 20) continue; const qv = rows.reduce((a, k) => a + +k[7], 0) / rows.length; if (qv > MINVOL) out.push([s, qv]); } }));
+  console.log('solo futuros: en el archivo', syms.length, 'candidatas', cand.length, 'con más de', MINVOL / 1e6, 'M por día:', out.length);
+  return out.sort((a, b) => b[1] - a[1]).map(x => x[0]); }
+async function klRange(s, tf, tfMs, from, to) { if (FUTSET.has(s)) return klZip(s, tf, tfMs, from, to); const out = []; let st = from;
   while (st < to) { const d = await getJ(`${API}/klines?symbol=${s}&interval=${tf}&startTime=${st}&endTime=${to}&limit=1000`); if (!d || !d.length) break;
     for (const k of d) out.push(toBar(k)); st = d[d.length - 1][0] + tfMs; if (d.length < 1000) break; if (!MOCK) await sleep(60); }
   return out.filter(b => b.t + tfMs <= to); }
@@ -220,21 +241,24 @@ async function main() { const t0 = Date.now();
   const T = await getJ(`${API}/ticker/24hr`);
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume).map(t => t.symbol);
-  const n4 = UNI === 'all' ? base.length : T4.n, nS = Math.min(SH.n, base.length); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
+  let n4 = UNI === 'all' ? base.length : T4.n, nS = Math.min(SH.n, base.length); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
+  /* con FUT=1 las de solo futuros se SUMAN al final: las de spot quedan igual que siempre y se comparan por separado */
+  let shList = base.slice(0, nS), trList = base.slice(0, n4);
+  if (FUTON) { let F = []; try { F = await futOnlyList(new Set(T.map(t => t.symbol))); } catch (e) { console.log('no se pudo listar las de futuros:', e.message); } F.forEach(s => FUTSET.add(s)); trList = trList.concat(F); shList = shList.concat(F); console.log('se suman', F.length, F.join(' ')); }
   { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50) }; }
   { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; BTC1 = { b, e: emaArr(closes(), 50) }; }
   const err = [], par = +(process.env.BT_PAR || 3);
   const pool = async (list, fn) => { let q = 0; await Promise.all(Array.from({ length: par }, async () => { while (q < list.length) { const r = q++; try { await fn(list[r], r); } catch (e) { err.push(list[r] + ': ' + e.message); } } })); };
   /* TRADING / TRADING+ */
   const keep4 = {};
-  await pool(base.slice(0, n4), async (s, r) => { const x = await run4h(s, r); if (x) keep4[s] = x; });
+  await pool(trList, async (s, r) => { const x = await run4h(s, r); if (x) keep4[s] = x; });
   console.log('TRADING listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
   const slCore = CANDS.filter(c => c.m === 'medio' && c.setup !== 'tp-x').map(c => c.sl);
   for (const s in keep4) randomEntries('medio', s, keep4[s].rb, T4.resMs, T4.maxAge, 60, slCore, GEO.core, keep4[s].llConf);
   for (const k in keep4) delete keep4[k];
   /* SHOOTER (velas de 5 min: más pesado, una moneda a la vez por memoria) */
   const shSl = [];
-  await pool(base.slice(0, nS), async (s, r) => { const x = await runShooter(s, r); if (!x) return;
+  await pool(shList, async (s, r) => { const x = await runShooter(s, r); if (!x) return;
     const mine = CANDS.filter(c => c.s === s && c.m === 'x').map(c => c.sl); shSl.push(...mine);
     randomEntries('x', s, x.rb, x.tfMs, SH.maxAge, 30, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar con el mismo stop
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
@@ -243,7 +267,7 @@ async function main() { const t0 = Date.now();
   for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
   const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
-    cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20),
+    cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin] */
     ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd]) };
   const body = JSON.stringify(out);
