@@ -1,0 +1,15 @@
+memoria {'ops': 1238, 'dias': 731}
+Traceback (most recent call last):
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 431, in <module>
+    OUT[f]['exit'] = fam_exit(part['ops'], cfg['K'], cfg['H'])
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 241, in fam_exit
+    E = {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'hold': hold, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
+                  ^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 35, in export
+    assert err < 1e-3, f'exportación distinta: {err}'
+           ^^^^^^^^^^
+AssertionError: exportación distinta: 0.0023148719395745254
+ls: cannot access 'ia.json': No such file or directory
+-rw-r--r-- 1 runner runner 20474576 Oct 10 12:28 ia-datos.json.gz
+-rw-r--r-- 1 runner runner      862 Oct 10 12:32 ia-log.txt
