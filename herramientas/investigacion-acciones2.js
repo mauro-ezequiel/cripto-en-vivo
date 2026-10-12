@@ -125,7 +125,7 @@ function run3(DATA, SPY, G) { G = G || { k: [2, 2.5, 3, 4], r: [.35, .5, .75, 1]
       by[set] = { seis_anios: f(L), ultimo_anio: f(Y) }; }
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda4: by }, null, 1)); console.log(JSON.stringify(by)); return; }
   if (process.env.RONDA === '6') { /* RONDA 6 · prioridad: ganancia por operación y poca pérdida por operación (objetivos más lejos, stop y tamaño) */
-    const R6 = run3(D1, SPY, { k: [2, 2.5, 3, 4], r: [.75, 1, 1.25, 1.5, 2], sz: [['×8', { L: 8 }], ['riesgo 30 %', { risk: .3 }], ['riesgo 40 %', { risk: .4 }], ['riesgo 50 %', { risk: .5 }]] });
+    const R6 = run3(D1, SPY, { k: [2, 2.5, 3, 4], r: (process.env.R6 || '.75,1,1.25,1.5,2').split(',').map(Number), sz: [['×8', { L: 8 }], ['riesgo 30 %', { risk: .3 }], ['riesgo 40 %', { risk: .4 }], ['riesgo 50 %', { risk: .5 }]] });
     R6.sort((a, b) => (b.aprendizaje.pct || 0) - (a.aprendizaje.pct || 0));
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda6: R6 }, null, 1)); console.log(JSON.stringify(R6.slice(0, 5))); return; }
   if (process.env.RONDA === '3') { const R3 = run3(D1, SPY); R3.sort((a, b) => (b.aprendizaje.usd_dia || 0) - (a.aprendizaje.usd_dia || 0));

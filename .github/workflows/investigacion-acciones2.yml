@@ -6,6 +6,9 @@ on:
       ronda:
         description: '1 = todas las estrategias en diario y 1 h · 2 = filtro de mercado y combinaciones · 3 = optimizar stop, objetivos y apalancamiento'
         default: '1'
+      r6:
+        description: 'ronda 6: objetivos (× stop) separados por coma'
+        default: ''
 permissions:
   contents: write
 jobs:
@@ -20,6 +23,7 @@ jobs:
       - run: node --max-old-space-size=6000 herramientas/investigacion-acciones2.js
         env:
           RONDA: ${{ inputs.ronda }}
+          R6: ${{ inputs.r6 }}
       - name: Guardar el resultado
         if: always()
         run: |
