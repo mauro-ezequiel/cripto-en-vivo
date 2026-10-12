@@ -1,6 +1,6 @@
 /* ACCIONES · velas intradiarias y planilla de RSI (corre en GitHub Actions cada 30 min con el mercado abierto).
    data912 solo tiene velas diarias, y el navegador no puede leer Yahoo directo (no permite CORS), así que esto baja de Yahoo las velas de
-   15 min de los últimos 60 días de cada acción de la planilla (de ahí se arman las de 1 h, 2 h y 4 h). Publica en la rama "intradia", comprimido (la página las lee de ahí y
+   15 min de los últimos 60 días de cada acción de la planilla (de ahí se arman las de 1 h, 2 h y 4 h). Además guarda las velas diarias completas de 2 años (para las señales de ACCIONES). Publica en la rama "intradia", comprimido (la página las lee de ahí y
    les suma el precio en vivo). También calcula el RSI 14 diario (con lo necesario para seguirlo en vivo) y el RSI 14 de 1 hora.
    Uso: node herramientas/intradia.js [carpeta-anterior] → escribe out/c/<ACCION>.json.gz y out/rsi.json */
 const fs = require('fs'), path = require('path');
@@ -24,15 +24,19 @@ const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
   const today = new Date().toISOString().slice(0, 10), needDaily = !prev.dia || prev.dia !== today || process.env.DIARIO;
   const D = {}, ok = [], fail = []; let q = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
-    const m = await yahoo(s, '15m', '60d'); let row = (prev.d || {})[s] || null;
-    if (m && m.c.length > 20) { const F = { s, upd: Date.now(), m15: m };
-      fs.writeFileSync(path.join(OUT, 'c', s + '.json.gz'), zlib.gzipSync(JSON.stringify(F), { level: 9 })); ok.push(s);
-      /* RSI de 1 h con las velas de 15 min agrupadas por hora */
+    const m = await yahoo(s, '15m', '60d'); let row = (prev.d || {})[s] || null, old = null;
+    try { const p = path.join(PREV, 'c', s + '.json.gz'); if (fs.existsSync(p)) old = JSON.parse(zlib.gunzipSync(fs.readFileSync(p))); } catch (e) {}
+    /* velas diarias completas de 2 años (para las señales de ACCIONES): una vez por día; el resto de las corridas usa las de antes */
+    let d1 = old && old.d1 && !needDaily ? old.d1 : null;
+    if (!d1) { const d = await yahoo(s, '1d', '2y'); if (d && d.c.length > 30) d1 = d; else if (old && old.d1) d1 = old.d1; }
+    if (needDaily && d1) { const tz = new Date(d1.t[d1.t.length - 1] * 1000).toISOString().slice(0, 10), cl = tz === today ? d1.c.slice(0, -1) : d1.c; // sin la vela de hoy (la completa el precio en vivo)
+      const st = rsiState(cl); if (st) { row = row || []; row[0] = r2(st.rsi); row[1] = +st.g.toPrecision(6); row[2] = +st.l.toPrecision(6); row[3] = cl[cl.length - 1]; row[5] = cl.length > 1 ? r2((cl[cl.length - 1] / cl[cl.length - 2] - 1) * 100) : null; } }
+    const m15 = m && m.c.length > 20 ? m : old && old.m15;
+    if (m15 || d1) { fs.writeFileSync(path.join(OUT, 'c', s + '.json.gz'), zlib.gzipSync(JSON.stringify({ s, upd: Date.now(), m15, d1 }), { level: 9 })); (m && m.c.length > 20 ? ok : fail).push(s); }
+    else fail.push(s);
+    if (m && m.c.length > 20) { /* RSI de 1 h con las velas de 15 min agrupadas por hora */
       const hc = []; let hk = null; m.t.forEach((t, i) => { const k = Math.floor(t / 3600); if (k !== hk) { hc.push(m.c[i]); hk = k; } else hc[hc.length - 1] = m.c[i]; });
       const h1 = rsiState(hc); row = row || []; row[4] = h1 ? r2(h1.rsi) : null; row[6] = m.c[m.c.length - 1]; }
-    else { fail.push(s); const p = path.join(PREV, 'c', s + '.json.gz'); if (fs.existsSync(p)) fs.copyFileSync(p, path.join(OUT, 'c', s + '.json.gz')); }
-    if (needDaily) { const d = await yahoo(s, '1d', '1y'); if (d && d.c.length > 30) { const tz = new Date(d.t[d.t.length - 1] * 1000).toISOString().slice(0, 10), cl = tz === today ? d.c.slice(0, -1) : d.c; // sin la vela de hoy (la completa el precio en vivo)
-        const st = rsiState(cl); if (st) { row = row || []; row[0] = r2(st.rsi); row[1] = +st.g.toPrecision(6); row[2] = +st.l.toPrecision(6); row[3] = cl[cl.length - 1]; row[5] = cl.length > 1 ? r2((cl[cl.length - 1] / cl[cl.length - 2] - 1) * 100) : null; } } }
     if (row) D[s] = row; await sleep(150); } }));
   /* d[ACCION] = [RSI diario al cierre anterior, promedio de subas, promedio de bajas, cierre anterior, RSI 1 h, cambio del día anterior %, último precio de 30 min] */
   const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D };
