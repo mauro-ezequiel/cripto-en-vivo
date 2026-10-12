@@ -71,7 +71,7 @@ const FILT = {
 async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOString(), dias_trading: DAYS_T, dias_shooter: DAYS_S };
   const T = await getJ(`${API}/ticker/24hr`);
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > 1e7 && Math.abs(+t.priceChangePercent) < 25).sort((a, b) => b.quoteVolume - a.quoteVolume).map(t => t.symbol);
-  const LT = base.slice(0, NT), LS = base.slice(0, NS); if (!LT.includes('BTCUSDT')) LT.push('BTCUSDT');
+  const OFF = +(process.env.OFF || 0), OFFS = +(process.env.OFFS || 0), LT = base.slice(OFF, OFF + NT), LS = base.slice(OFFS, OFFS + NS); R.monedas = { trading: [OFF, OFF + NT], shooter: [OFFS, OFFS + NS] }; if (!LT.includes('BTCUSDT')) LT.push('BTCUSDT');
   /* ---------- TRADING ---------- */
   const B1 = {}; let q = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (q < LT.length) { const s = LT[q++]; const b = await klines(s, '1h', H, NOW - (DAYS_T + 60) * DAY); if (b.length > 2000) B1[s] = b; } }));
   console.log('TRADING monedas', Object.keys(B1).length, ((Date.now() - t0) / 1e3).toFixed(0), 's');
@@ -79,7 +79,7 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
   const GRID = []; for (const L of [3, 5, 10, 15, 20]) for (const a of [2, 3, 4]) for (const r of [.5, .75, 1]) GRID.push({ L, a, r });
   R.trading = []; R.trading_base = null;
   for (const h of TFS) { const ms = h * H, sc = Math.sqrt(h / 4), BT = agg(B1.BTCUSDT, h), PB = prep(BT); const C = [];
-    for (const [rank, s] of LT.entries()) { const b1 = B1[s]; if (!b1) continue; const b = agg(b1, h), P = prep(b);
+    for (const [ri, s] of LT.entries()) { const rank = ri + OFF; const b1 = B1[s]; if (!b1) continue; const b = agg(b1, h), P = prep(b);
       for (let i = 210; i < b.length; i++) { const t = b[i].t + ms; if (t < FROM_T) continue; const cb = b[i].c, atrP = P.atr[i] / cb;
         if (P.e200[i] == null || P.r14[i] == null) continue;
         const dir = P.st[i] === 1 && P.e21[i] > P.e50[i] && cb > P.e200[i] ? 1 : P.st[i] === -1 && P.e21[i] < P.e50[i] && cb < P.e200[i] ? -1 : 0; if (!dir) continue;
