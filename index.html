@@ -199,6 +199,15 @@ body.fs-on .fsbar{display:flex}
 .ia-sem.g i{background:#2ecc71;box-shadow:0 0 10px #2ecc71}.ia-sem.y i{background:#f1c40f;box-shadow:0 0 10px #f1c40f}.ia-sem.r i{background:#e74c3c;box-shadow:0 0 10px #e74c3c}
 .ia-sem-t{font-size:12px;font-weight:700}.ia-sem-t.g{color:#2ecc71}.ia-sem-t.y{color:#e5b74a}.ia-sem-t.r{color:#ef5350}.ia-sm-w{font-size:11.5px;margin:4px 0 2px}
 .sig.ia-own{border-left-color:#5fb4ff}.ia-srl{margin-top:6px;font-size:12px}.ia-sr{display:grid;grid-template-columns:auto auto auto 1fr auto;gap:8px;padding:3px 0;border-top:1px solid var(--line);align-items:center}
+.rsix{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel);flex-shrink:0}.rsix .dt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.rsi-tf{display:inline-flex;gap:4px}.rsi-tf button,.rsi-nav button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 10px;cursor:pointer}.rsi-tf button.on{background:#f0b90b;color:#111;border-color:#f0b90b;font-weight:800}
+.rsi-nav{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.rsi-nav button{font-size:14px;padding:2px 12px}.rsi-nav button:disabled{opacity:.35;cursor:default}
+.rsi-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px;margin-top:8px}.rsi-b{background:#0b0d12;border:1px solid #2a2f3a;border-radius:6px;overflow:hidden}
+.rsi-bh{display:flex;justify-content:space-between;align-items:center;padding:5px 8px;background:linear-gradient(90deg,#f0a020,#c97a10);color:#111;font-size:12.5px}.rsi-bh b{text-transform:uppercase;letter-spacing:.03em}.rsi-bh span{background:#111;padding:1px 6px;border-radius:4px;font-weight:800;font-size:11.5px}
+.rsi-b table{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.rsi-b th{font-size:10.5px;color:#8a93a6;font-weight:600;padding:2px 6px;text-align:right}.rsi-b td{padding:2px 6px;border-top:1px solid #1b1f28;text-align:right;color:#e8eaee}
+.rsi-b td:first-child{text-align:left;font-weight:700;color:#f0c050}.rsi-b td:nth-child(2){font-weight:700;text-align:center;color:#fff}.rsi-b tr[data-rsis]{cursor:pointer}.rsi-b tr[data-rsis]:hover td:first-child{text-decoration:underline}
+.rsi-leg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:8px;font-size:11.5px;color:var(--mut)}.rsi-leg i{width:160px;height:10px;border-radius:5px;background:linear-gradient(90deg,#00c853,#0c0c0e 50%,#e53935)}.rsi-leg small{flex-basis:100%;font-size:10.5px}
+#updBtn{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:9999;background:#f0b90b;color:#111;border:0;border-radius:22px;padding:10px 18px;font-size:13px;box-shadow:0 8px 24px rgba(0,0,0,.5);cursor:pointer;animation:updIn .4s ease-out}@keyframes updIn{from{opacity:0;transform:translate(-50%,20px)}}
 .sigs{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel);flex-shrink:0}
 .sig-warn{font-size:11px;color:var(--mut);margin:-4px 0 10px}
 .siglist{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
@@ -586,6 +595,10 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <div id="market"></div>
       </div>
     </section>
+    <section class="rsix" id="rsiBox" hidden><div class="dt"><span>📊 Planilla de RSI</span>
+      <span class="rsi-tf"><button type="button" data-rsitf="d">Diario</button><button type="button" data-rsitf="h">1 h</button></span>
+      <span class="rsi-nav"><button type="button" id="rsiPrev" aria-label="Anterior">◀</button><span id="rsiPg"></span><button type="button" id="rsiNext" aria-label="Siguiente">▶</button></span></div>
+      <div id="rsiBody"></div></section>
     <section class="sigs" id="sigBox"><div class="dt"><span id="sigHead">Señales</span> <span class="mut" id="sigScan"></span><a class="tg-ch" href="https://t.me/criptolive_senales" target="_blank" rel="noopener" title="Recibí las señales en Telegram aunque la página esté cerrada">📲 Canal</a><button class="bell-btn" id="sigBell" type="button" aria-label="Configurar avisos" title="Configurar avisos">🔔</button><button class="i-btn" data-i="sig" type="button" aria-label="Cómo usar las señales" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="sig" hidden><b>Cómo usar las señales</b><ul><li>Cada tarjeta trae dirección (LONG/SHORT), entrada, stop/liquidación, 3 objetivos y el % de veces que una señal igual llegó al objetivo 1 en el último año (se recalcula todos los días con las velas de Binance: entra el día nuevo y sale el de hace un año).</li><li>Al lado ves el % que se lograría <b>entrando al azar</b> con el mismo stop y objetivos: la diferencia es lo que aporta la señal de verdad.</li><li>Al tocar el objetivo 1 se cierra un tercio y el stop pasa a la entrada; lo mismo en los objetivos 2 y 3.</li><li><b>🛟 Salvavidas</b> (fondo amarillo): si el precio llega al 65 % del camino al stop pero los datos siguen confirmando, se agrega la mitad del margen, se recalcula la entrada promedio y el nuevo stop. La tarjeta te dice en qué precio entraría.</li><li><b>📊 Resultados de las señales</b>: elegí el período (7, 30, 90 días o todo) y ves el % que llegó al objetivo 1 y a los 3, liquidadas, salvavidas, dinero ganado y perdido, y la comparación contra entrar al azar. Debajo está cada operación: tocala para ver el detalle. Con menos de 20 cerradas el número todavía no es confiable.</li><li><b>🔔</b>: abre la configuración de avisos (celu o Telegram).</li><li>En PERSONALIZADO las señales no están calibradas: <b>no recomendable</b>.</li><li><b>📲 Canal</b>: abre el canal de Telegram donde se publican las señales las 24 h, aunque la página esté cerrada.</li><li>Las señales son informativas y <b>no son consejo financiero</b>: el acierto histórico no garantiza resultados y operar con apalancamiento puede hacerte perder todo el margen.</li></ul></div><div class="sig-tabs" id="sigTabs"></div><div class="sig-warn">Señales calibradas con datos históricos: el % es cuántas veces acertaron en el pasado señales iguales. TRADING entra en retrocesos dentro de la tendencia; SHOOTER opera rebotes desde extremos con la tendencia de 15m. El % es cuántas veces llegó al objetivo 1 en el backtest (con salvavidas y comisiones). Si el precio se acerca al stop pero los datos siguen confirmando, se activa un salvavidas (fondo amarillo). Ninguna es segura: usa siempre el stop.</div><div class="ntf" id="ntfRow" hidden></div><div class="siglist" id="sigList"></div><details class="ia-sig" id="iaSig" open><summary>🧠 IA · sus operaciones propias <span class="mut ia-sig-sum"></span></summary><div class="ia-sb"><div class="mut">Cargando la IA…</div></div></details><details class="hist" id="histBox" open><summary>📊 Resultados de las señales <span class="mut" id="histSum"></span></summary><div><div id="resStats"></div><div id="histList"></div></div></details></section>
     <section class="pil" id="pilBox"><div class="dt"><span>🧭 Pilotear mi operación</span><button class="pil-i" id="pilInfo" type="button" aria-label="Qué significa cada aviso" aria-expanded="false">ⓘ</button></div>
       <div class="pil-leg" id="pilLeg" hidden><p style="margin:0 0 6px">Cargá moneda, dirección, precio de entrada, X y margen: cada 15 s reviso tu operación y te aviso con notificación naranja 🟠 qué conviene hacer.</p><b>Qué significa cada aviso</b><ul>
@@ -679,7 +692,7 @@ const MODES = {
   a: {
     name: 'ACCIONES', tag: 'NYSE + NASDAQ · USD',
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
-    info: ['Velas diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
+    info: ['Velas desde 1 min (principales) y 15 min (todas, 60 días) hasta diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
     def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
@@ -1427,7 +1440,7 @@ $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const 
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
-function applyMode(m){
+function applyMode(m){setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   const wasA=mode==='a';mode=m;const M=MODES[m];if(typeof pilRender==='function')setTimeout(pilRender,0);
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
   setNames();
@@ -1542,7 +1555,7 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
 });
 
 /* ---------- temporalidades ---------- */
-const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1d','1w','1M']};
+const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1m','5m','15m','30m','1h','2h','4h','1d','1w','1M']};
 function renderTfs(){$('tfs').innerHTML=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');}
 renderTfs();
 $('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dataset.tf;
@@ -2607,7 +2620,7 @@ async function loadStocks(){
     o.c=+x.c;o.p=+x.pct_change||0;o.sv=+x.v||0;o.v=cv[s]||1;o.q=o.sv*o.c;o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;
     o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}
   if(Object.keys(STK).length)stkReady=true;
-  if(mode==='a'){renderList();updateTop();stkLiveBar();}
+  if(mode==='a'){renderList();updateTop();stkLiveBar();try{rsiRender();}catch(e){}}
 }
 (function poll(){setTimeout(async()=>{try{await loadStocks();}catch(e){}poll();},mode==='a'&&mktOpen()?20000:120000);})();
 loadStocks();
@@ -2634,6 +2647,63 @@ function aggBars(b,t){if(t==='1d')return b;const out=[];let cur=null,key=null;
   for(const x of b){const k=t==='1w'?Math.floor((x.t/864e5+3)/7):x.date.slice(0,7);
     if(k!==key){key=k;cur={...x};out.push(cur);}else{cur.high=Math.max(cur.high,x.high);cur.low=Math.min(cur.low,x.low);cur.close=x.close;cur.v+=x.v;cur.tb+=x.tb;}}
   return out;}
+/* velas intradiarias de acciones: la base más chica que haya (1 min y 5 min en las principales, 15 min en todas) y de ahí se agrupa.
+   Las publica cada 30 min herramientas/intradia.js en la rama intradia (comprimidas); acá se les suma el precio en vivo. */
+const INTRA_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/intradia/';
+const STK_INTRA=new Set(['1m','5m','15m','30m','1h','2h','4h']),INTRA_MS={'1m':6e4,'5m':3e5,'15m':9e5,'30m':18e5,'1h':36e5,'2h':72e5,'4h':144e5};var STKI={};
+async function gunzipJson(r){const buf=await r.arrayBuffer();if(typeof DecompressionStream==='undefined')throw new Error('este navegador no puede abrir las velas comprimidas');
+  return JSON.parse(await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).text());}
+async function stkIntraFile(sym){const c=STKI[sym];if(c&&Date.now()-c.t<5*6e4)return c.f;
+  const r=await fetch(INTRA_URL+'c/'+encodeURIComponent(sym)+'.json.gz?t='+Math.floor(Date.now()/3e5));if(!r.ok)throw new Error('sin velas intradiarias');
+  const f=await gunzipJson(r);STKI[sym]={t:Date.now(),f};return f;}
+const intraBars=j=>j.t.map((t,i)=>({time:t+TZ,t:t*1000,open:j.o[i],high:j.h[i],low:j.l[i],close:j.c[i],v:j.v[i],tb:j.h[i]>j.l[i]?j.v[i]*(j.c[i]-j.l[i])/(j.h[i]-j.l[i]):j.v[i]/2}));
+/* elige la base: 1 min → m1, 5 min → m5, el resto → 15 min agrupadas. Si una acción no tiene la base pedida, usa la más chica que tenga. */
+async function stkIntra(sym,t){const f=await stkIntraFile(sym),want=t==='1m'?'m1':t==='5m'?'m5':'m15',k=f[want]?want:(f.m15?'m15':null);if(!k)throw new Error('sin velas intradiarias');
+  return {b:intraBars(f[k]),bms:{m1:6e4,m5:3e5,m15:9e5}[k],k};}
+/* suma el precio en vivo a la vela en curso de la base (mercado abierto) */
+function stkIntraLive(sym,b,bms){const q=STK[sym];bms=bms||9e5;if(!q||!q.c||!b.length||!mktOpen())return b;const slot=Math.floor(Date.now()/bms)*bms,last=b.at(-1);
+  if(last.t>=slot){const x={...last,close:q.c,high:Math.max(last.high,q.c),low:Math.min(last.low,q.c)};return b.slice(0,-1).concat(x);}
+  if(Date.now()-last.t>6*36e5)return b; // datos viejos: no inventa velas
+  return b.concat({time:slot/1000+TZ,t:slot,open:last.close,high:Math.max(last.close,q.c),low:Math.min(last.close,q.c),close:q.c,v:0,tb:0});}
+function aggIntra(b,t,bms){const ms=INTRA_MS[t];if(!ms||ms<=(bms||9e5))return b;const out=[];let cur=null,key=null;
+  for(const x of b){const k=Math.floor(x.t/ms);if(k!==key){key=k;cur={...x,time:Math.floor(k*ms/1000)+TZ,t:k*ms};out.push(cur);}else{cur.high=Math.max(cur.high,x.high);cur.low=Math.min(cur.low,x.low);cur.close=x.close;cur.v+=x.v;cur.tb+=x.tb;}}
+  return out;}
+/* ---------- 📊 PLANILLA DE RSI (ACCIONES) ----------
+   RSI 14 de cada acción por sector, con el precio en vivo: el RSI diario se recalcula con el precio actual (sobre el estado de Wilder
+   del cierre anterior que publica herramientas/intradia.js); el de 1 h sale de las velas de 30 min (se actualiza cada 30 min).
+   Colores: verde = sobreventa (RSI bajo), negro = neutral, rojo = sobrecompra (RSI alto). Página 1: las principales de cada sector. */
+var RSIX={j:null,t:0,pg:0,tf:'d'};try{RSIX.tf=localStorage.getItem('cv_rsi_tf')||'d';}catch(e){}
+async function rsiLoad(){if(RSIX.j&&Date.now()-RSIX.t<5*6e4)return;try{const j=await getJ(INTRA_URL+'rsi.json?t='+Math.floor(Date.now()/3e5),20000);if(j&&j.d){RSIX.j=j;RSIX.t=Date.now();}}catch(e){}}
+function rsiLive(s){const r=RSIX.j&&RSIX.j.d[s];if(!r)return {};const q=STK[s],c=q&&q.c>0?q.c:r[6];let d=r[0];
+  if(c&&r[1]!=null&&r[2]!=null&&r[3]){const x=c-r[3],g=(r[1]*13+Math.max(x,0))/14,l=(r[2]*13+Math.max(-x,0))/14;d=l===0?100:100-100/(1+g/l);}
+  const chg=q&&q.c>0&&isFinite(q.p)?q.p:(c&&r[3]?(c/r[3]-1)*100:r[5]);return {d,h:r[4],chg,c};}
+function rsiColor(v){if(v==null||!isFinite(v))return '#1a1d24';const t=Math.max(0,Math.min(1,Math.abs(v-50)/22)),k=Math.pow(t,1.1);
+  const [r,g,b]=v<50?[0,200,83]:[229,57,53];return `rgb(${Math.round(12+(r-12)*k)},${Math.round(12+(g-12)*k)},${Math.round(14+(b-14)*k)})`;}
+const RSI_K=8;
+function rsiRender(){const box=$('rsiBox');if(!box)return;box.hidden=mode!=='a';if(mode!=='a')return;const el=$('rsiBody');
+  if(!RSIX.j){el.innerHTML='<div class="mut">Cargando la planilla… (se arma en GitHub cada 30 min con el mercado abierto)</div>';rsiLoad().then(()=>{if(RSIX.j)rsiRender();});return;}
+  const S=Object.entries(RSIX.j.sectores).map(([n,L])=>[n,L.filter(s=>RSIX.j.d[s])]).filter(([,L])=>L.length);
+  const pages=Math.max(1,...S.map(([,L])=>1+Math.ceil(Math.max(0,L.length-RSI_K)/RSI_K)));RSIX.pg=Math.min(RSIX.pg,pages-1);const p=RSIX.pg;
+  const blocks=S.map(([n,L])=>{const sl=L.slice(p*RSI_K,(p+1)*RSI_K);if(!sl.length)return '';const rows=sl.map(s=>{const x=rsiLive(s),v=RSIX.tf==='d'?x.d:x.h;
+      return `<tr data-rsis="${s}" title="Abrir ${s} en el gráfico"><td>${s}</td><td style="background:${rsiColor(v)}">${v==null?'—':iaD(Math.round(v*10)/10)}</td><td class="${x.chg>=0?'up':'dn'}">${x.chg==null?'—':(x.chg>=0?'▲ ':'▼ ')+iaD(Math.abs(Math.round(x.chg*100)/100))+' %'}</td></tr>`;}).join('');
+    const all=L.map(s=>rsiLive(s).chg).filter(v=>v!=null&&isFinite(v)),avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
+    return `<div class="rsi-b"><div class="rsi-bh"><b>${esc(n)}</b>${avg!=null?`<span class="${avg>=0?'up':'dn'}">${avg>=0?'▲':'▼'} ${iaD(Math.abs(Math.round(avg*100)/100))} %</span>`:''}</div><table><tr><th></th><th>RSI</th><th>%</th></tr>${rows}</table></div>`;}).join('');
+  const up=new Date(RSIX.j.upd);
+  $('rsiPg').textContent=`${p===0?'Principales':'Página '+(p+1)} · ${p+1} de ${pages}`;$('rsiPrev').disabled=p===0;$('rsiNext').disabled=p>=pages-1;
+  el.innerHTML=`<div class="rsi-g">${blocks}</div><div class="rsi-leg"><span>Sobreventa</span><i></i><span>Sobrecompra</span><small>RSI ${RSIX.tf==='d'?'diario, con el precio en vivo':'de 1 h (velas de 15 min agrupadas)'} · actualizado ${up.toLocaleString('es-AR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})} · tocá una acción para verla en el gráfico</small></div>`;
+  box.querySelectorAll('[data-rsitf]').forEach(b=>b.classList.toggle('on',b.dataset.rsitf===RSIX.tf));}
+document.addEventListener('click',e=>{const r=e.target.closest('[data-rsis]');if(r){select(r.dataset.rsis);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const t=e.target.closest('[data-rsitf]');if(t){RSIX.tf=t.dataset.rsitf;try{localStorage.setItem('cv_rsi_tf',RSIX.tf);}catch(_){}rsiRender();return;}
+  if(e.target.closest('#rsiPrev')){RSIX.pg=Math.max(0,RSIX.pg-1);rsiRender();}else if(e.target.closest('#rsiNext')){RSIX.pg++;rsiRender();}});
+setInterval(()=>{if(mode==='a'){rsiLoad().then(rsiRender);}},6e4);
+/* ---------- botón "hay una actualización": aparece cuando se publica una versión nueva de la página ----------
+   Compara el tamaño de la página que tenés abierta con la que está publicada ahora (o, si no se puede saber, con la del primer chequeo). */
+var APPV={n:0,base:null};try{const nv=performance.getEntriesByType('navigation')[0];APPV.n=nv&&nv.decodedBodySize||0;}catch(e){}
+async function appVerCheck(){try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const n=new TextEncoder().encode(await r.text()).length;
+    if(APPV.n){if(n!==APPV.n)appVerShow();return;}if(APPV.base==null){APPV.base=n;return;}if(n!==APPV.base)appVerShow();}catch(e){}}
+function appVerShow(){if($('updBtn'))return;const b=document.createElement('button');b.id='updBtn';b.type='button';b.innerHTML='🔄 <b>Hay una actualización</b> · tocá para verla';
+  b.onclick=async()=>{b.textContent='Actualizando…';try{if(swReg)await swReg.update();const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.reload();};document.body.appendChild(b);}
+setTimeout(appVerCheck,5000);setInterval(appVerCheck,3*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appVerCheck();});
 let stkLoadId=0;
 async function loadChartStk(){
   const id=++stkLoadId;$('loading').textContent='Cargando…';$('loading').style.display='flex';
@@ -2641,15 +2711,17 @@ async function loadChartStk(){
   if(klineWs){klineWs.onclose=null;klineWs.close();klineWs=null;}
   clearInterval(futTimer);closeLiqWs();FUT={none:true};LIQ=null;ruler=null;noMore=true;
   const sym=symbol,t=tf;
-  try{const b=await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
-    candles=aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
+  try{const intra=STK_INTRA.has(t),I=intra?await stkIntra(sym,t):null,b=intra?I.b:await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
+    if(intra){STKI[sym].cur=I;if((t==='1m'&&I.k!=='m1')||(t==='5m'&&I.k!=='m5'))setTimeout(()=>{const n=$('loading');if(n){n.textContent=`${sym}: velas de ${t} solo en las principales; se muestran las de 15 min`;n.style.display='flex';setTimeout(()=>n.style.display='none',3500);}},50);}
+    candles=intra?aggIntra(stkIntraLive(sym,b,I.bms),t,I.bms):aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
     series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();restoreLines();setTimeout(()=>niRender(true),400);
     const q=STK[sym],lb=b.at(-1);if(q&&lb&&(lb.date===artDay()||!mktOpen())&&Math.abs(lb.close/q.c-1)<.02){q.h=Math.max(lb.date===artDay()?q.h||0:0,lb.high);q.l=Math.min(lb.date===artDay()?q.l||Infinity:Infinity,lb.low);}updateTop();
   }catch(e){if(id===stkLoadId)$('loading').textContent='No se pudo cargar el historial de '+sym;return;}
   $('loading').style.display='none';
   loadStkOptions(sym);loadCoNews(sym);if(!STKH.SPY)safe(stkHist('SPY'));
 }
-function stkLiveBar(){if(mode!=='a'||!STKH[symbol]||!candles.length)return;const b=aggBars(withLive(symbol,STKH[symbol].b),tf),last=b.at(-1),cl=candles.at(-1);
+function stkLiveBar(){if(mode!=='a'||!candles.length)return;const intra=STK_INTRA.has(tf);if(intra?!(STKI[symbol]&&STKI[symbol].cur):!STKH[symbol])return;
+  const I=intra?STKI[symbol].cur:null,b=intra?aggIntra(stkIntraLive(symbol,I.b,I.bms),tf,I.bms):aggBars(withLive(symbol,STKH[symbol].b),tf),last=b.at(-1),cl=candles.at(-1);
   if(b.length===candles.length&&last.time===cl.time){candles[candles.length-1]=last;series.update(last);volume.update(volBar(last));calcInd(false);}
   else if(b.length===candles.length+1&&last.time>cl.time){candles.push(last);series.update(last);volume.update(volBar(last));stkLiqCompute();calcInd(false);}}
 /* zonas de liquidez para acciones (mismo modelo que el mapa de cripto, adaptado):
