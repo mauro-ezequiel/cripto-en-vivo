@@ -58,16 +58,16 @@ function run(DATA, daily) { const g = daily ? { cap: .096, max: 30 } : { cap: .0
 function stats(L, days) { const n = L.length; if (!n) return { n: 0 }; const tot = L.reduce((a, o) => a + o.pct, 0), w = L.filter(o => o.pct > 0).length, lo = L.filter(o => o.pct < 0);
   const gw = L.filter(o => o.pct > 0).reduce((a, o) => a + o.pct, 0), gl = -lo.reduce((a, o) => a + o.pct, 0);
   return { n, dia: +(n / days).toFixed(2), obj1: +(L.filter(o => o.hit >= 1).length / n * 100).toFixed(1), gana: +(w / n * 100).toFixed(1), pct: +(tot / n).toFixed(2), usd500: +(tot / n * 5).toFixed(1),
-    perdida_media: lo.length ? +(gl / lo.length).toFixed(2) : 0, peor: +Math.min(...L.map(o => o.pct)).toFixed(1), pf: gl ? +(gw / gl).toFixed(2) : null, total_usd500: Math.round(tot * 5) }; }
-(async () => { const t0 = Date.now(), D1 = {}, H1 = {}; let q = 0, ok1 = 0, okh = 0;
+    perdida_media: lo.length ? +(gl / lo.length).toFixed(2) : 0, peor: +L.reduce((a, o) => Math.min(a, o.pct), 1e9).toFixed(1), pf: gl ? +(gw / gl).toFixed(2) : null, total_usd500: Math.round(tot * 5) }; }
+(async () => { try { const t0 = Date.now(), D1 = {}, H1 = {}; let q = 0, ok1 = 0, okh = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const d = await yahoo(s, '1d', '6y'); if (d && d.length > 300) { D1[s] = d; ok1++; }
     const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } await sleep(120); } }));
   console.log('acciones', LIST.length, 'diario', ok1, '1 h', okh, ((Date.now() - t0) / 1000).toFixed(0), 's');
   const OUT = { fecha: new Date().toISOString(), acciones: LIST.length, con_diario: ok1, con_1h: okh, res: {} };
   for (const [tf, DATA, daily] of [['diario', D1, true], ['1h', H1, false]]) { const R = run(DATA, daily), all = Object.values(R).flat(); if (!all.length) continue;
-    const t1 = Math.min(...all.map(o => o.t)), t2 = Math.max(...all.map(o => o.t)), cut = t1 + (t2 - t1) * 2 / 3, D = x => Math.max(1, x / 864e5);
+    const t1 = all.reduce((a, o) => Math.min(a, o.t), 1e18), t2 = all.reduce((a, o) => Math.max(a, o.t), 0), cut = t1 + (t2 - t1) * 2 / 3, D = x => Math.max(1, x / 864e5);
     for (const [k, ops] of Object.entries(R)) { const tr = ops.filter(o => o.t < cut), te = ops.filter(o => o.t >= cut);
       OUT.res[tf + ' · ' + k] = { todo: stats(ops, D(t2 - t1)), aprendizaje: stats(tr, D(cut - t1)), prueba: stats(te, D(t2 - cut)) }; } }
   fs.writeFileSync('acciones2.json', JSON.stringify(OUT, null, 1));
-  for (const [k, v] of Object.entries(OUT.res)) console.log(k.padEnd(22), 'prueba', JSON.stringify(v.prueba)); })();
+  for (const [k, v] of Object.entries(OUT.res)) console.log(k.padEnd(22), 'prueba', JSON.stringify(v.prueba)); } catch (e) { fs.writeFileSync('acciones2.json', JSON.stringify({ error: String(e && e.stack || e) })); console.error(e); process.exitCode = 1; } })();
