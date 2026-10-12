@@ -158,6 +158,16 @@ async function main() {
     if (now - o.t > cfg.maxAge) { o.done = true; await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
   }
   S.open = S.open.filter(o => !o.done);
+  /* ACUMULACIÓN (largo plazo): BTC, ETH y los índices. Aviso por Telegram cuando entran en zona de acumulación (cada 6 h se revisa) */
+  if (!S.acuT || now - S.acuT >= 6 * 36e5) { S.acuT = now; S.acu = S.acu || {};
+    for (const [s, nm, cr] of [['BTCUSDT', 'Bitcoin', 1], ['ETHUSDT', 'Ethereum', 1], ['SPY', 'S&P 500 (SPY)', 0], ['QQQ', 'Nasdaq 100 (QQQ)', 0], ['DIA', 'Dow Jones (DIA)', 0], ['IWM', 'Russell 2000 (IWM)', 0]]) {
+      try { let c, h; if (cr) { const w = await kl(s, '1w', 1000); c = w.map(b => b.close); h = w.map(b => b.high); }
+        else { const j = await (await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1wk&range=max`, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json(); const x = j.chart.result[0], q = x.indicators.quote[0]; c = q.close.filter(v => v != null); h = q.high.filter(v => v != null); }
+        if (c.length < 210) continue; const p = c[c.length - 1], done = c.slice(0, -1), sma = done.slice(-200).reduce((a, v) => a + v, 0) / 200, ath = Math.max(...h);
+        let g = 0, l = 0; for (let i = 1; i < done.length; i++) { const d = done[i] - done[i - 1], u = Math.max(d, 0), w2 = Math.max(-d, 0); if (i <= 14) { g += u / 14; l += w2 / 14; } else { g = (g * 13 + u) / 14; l = (l * 13 + w2) / 14; } }
+        const rsi = l ? 100 - 100 / (1 + g / l) : 100, dd = p / ath - 1, dist = p / sma - 1, z = dist < 0 || rsi < 30 || (cr && dd <= -.5) ? 'g' : dist < .1 || rsi < 40 || (cr && dd <= -.35) ? 'y' : 'w';
+        if (z === 'g' && S.acu[s] && S.acu[s] !== 'g') await tg(`🟢 ACUMULACIÓN · ${nm}\nEntró en zona de acumulación a largo plazo: ${dist < 0 ? 'bajo la media de 200 semanas' : ''}${rsi < 30 ? ' · RSI semanal ' + rsi.toFixed(0) : ''}${cr && dd <= -.5 ? ' · ' + (dd * 100).toFixed(0) + ' % desde el máximo' : ''}.\nComprá de a partes (por ejemplo una vez por semana) y sin apalancamiento: puede seguir bajando antes de volver.`);
+        S.acu[s] = z; } catch (e) { console.log('acumulación', s, e.message); } } }
 
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {

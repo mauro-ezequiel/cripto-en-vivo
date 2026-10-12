@@ -41,4 +41,9 @@ const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
   /* d[ACCION] = [RSI diario al cierre anterior, promedio de subas, promedio de bajas, cierre anterior, RSI 1 h, cambio del día anterior %, último precio de 30 min] */
   const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D };
   fs.writeFileSync(path.join(OUT, 'rsi.json'), JSON.stringify(out));
+  /* ACUMULACIÓN: velas semanales de toda la historia de los índices (una vez por día; el resto de las corridas usa las de antes) */
+  { let acu = null; try { acu = JSON.parse(fs.readFileSync(path.join(PREV, 'acum.json'), 'utf8')); } catch (e) {}
+    if (!acu || needDaily || acu.dia !== today) { const d = {}; for (const s of ['SPY', 'QQQ', 'DIA', 'IWM']) { const w = await yahoo(s, '1wk', 'max'); if (w && w.c.length > 220) d[s] = { t: w.t, c: w.c, h: w.h }; else if (acu && acu.d && acu.d[s]) d[s] = acu.d[s]; await sleep(300); }
+      acu = { upd: Date.now(), dia: today, d }; }
+    fs.writeFileSync(path.join(OUT, 'acum.json'), JSON.stringify(acu)); }
   console.log('velas', ok.length, 'sin datos', fail.length, fail.slice(0, 30).join(' '), 'diario', needDaily); })();
