@@ -1,0 +1,29 @@
+name: Acciones · velas de 30 min y RSI
+# Cada 30 min con el mercado de EE. UU. abierto: baja las velas de 30 min (60 días) de las acciones de la planilla y calcula el RSI.
+# Publica todo en la rama "intradia" (se reemplaza entera cada vez, así no crece el historial del repositorio).
+on:
+  schedule:
+    - cron: '7,37 13-21 * * 1-5'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: intradia
+  cancel-in-progress: true
+jobs:
+  velas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 40
+    steps:
+      - uses: actions/checkout@v4
+      - name: Traer la versión anterior (para no perder las que fallen)
+        run: git fetch -q --depth 1 origin intradia && mkdir -p prev && git --work-tree=prev checkout origin/intradia -- . || echo "primera vez"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Bajar velas y calcular RSI
+        run: node herramientas/intradia.js prev
+      - name: Publicar en la rama intradia
+        run: |
+          cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Velas de 30 min y RSI"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:intradia
