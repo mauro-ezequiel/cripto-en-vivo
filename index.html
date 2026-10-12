@@ -172,7 +172,12 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 .ltabs button.on{color:var(--txt);border-color:#3a4256;background:#1b2130}
 .star{font-style:normal;color:#3a4256;margin-right:6px;cursor:pointer;padding:2px}
 .star.on{color:#f7c548}
-.fsbar{position:absolute;top:8px;left:8px;z-index:8;display:none;gap:4px;align-items:center;flex-wrap:wrap;max-width:calc(100% - 150px)}
+.fsbar{position:absolute;top:8px;left:8px;z-index:8;display:none;flex-direction:column;gap:5px;align-items:flex-start;max-width:calc(100% - 130px)}
+.fsrow{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.fstf{display:flex;gap:3px;overflow-x:auto;max-width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:rgba(15,17,21,.85);border:1px solid var(--line);border-radius:9px;padding:3px}.fstf::-webkit-scrollbar{display:none}
+.fstf .btn{flex:0 0 auto;padding:5px 9px;font-size:12px;border:0;background:transparent}.fstf .btn.on{background:#1e2a4a;color:#fff}
+.fsohlc{font-size:11px;font-variant-numeric:tabular-nums;color:var(--mut);text-shadow:0 0 3px #0f1115;pointer-events:none;white-space:nowrap}.fsohlc b{color:var(--txt);font-weight:600}
+.fs-live{position:absolute;right:70px;bottom:40px;z-index:8;width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:rgba(22,26,34,.92);color:var(--txt);font-size:18px;cursor:pointer}body:not(.fs-on) .fs-live{bottom:34px}
 body.fs-on .fsbar{display:flex}
 .fsbar .btn{background:rgba(22,26,34,.9);border:1px solid var(--line);padding:6px 10px}
 .fsbar .btn.on{background:#1e2a4a;border-color:var(--acc);color:#fff}
@@ -577,7 +582,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
       </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
       <div class="inds hide" id="inds"></div>
-      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
+      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><div class="fstf" id="fsTfs"></div><div class="fsrow"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button><button class="btn" id="fsLog">LOG</button><button class="btn" id="fsFit">Ajustar</button></div><div class="fsohlc" id="fsOhlc"></div></div><button id="fsLive" class="fs-live" hidden title="Ir a la última vela">»</button><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
     </div>
     <section class="dash hide" id="dash">
       <div class="dcard gauge">
@@ -718,8 +723,10 @@ const chart = LightweightCharts.createChart($('chart'), {
   crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
   rightPriceScale:{borderColor:'#262b36'},
   timeScale:{borderColor:'#262b36',timeVisible:true,secondsVisible:false,rightOffset:8},
-  handleScale:{axisPressedMouseMove:true,mouseWheel:true,pinch:true},
-  handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:true}
+  handleScale:{axisPressedMouseMove:{time:true,price:true},axisDoubleClickReset:{time:true,price:true},mouseWheel:true,pinch:true},
+  handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:true},
+  kineticScroll:{touch:true,mouse:false},
+  trackingMode:{exitMode:LightweightCharts.TrackingModeExitMode?LightweightCharts.TrackingModeExitMode.OnNextTap:1}
 });
 const series = chart.addCandlestickSeries({upColor:'#26a69a',downColor:'#ef5350',borderVisible:false,wickUpColor:'#26a69a',wickDownColor:'#ef5350'});
 const volume = chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleId:'vol',lastValueVisible:false,priceLineVisible:false});
@@ -1560,10 +1567,10 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
 });
 
 /* ---------- temporalidades ---------- */
-function renderTfs(){$('tfs').innerHTML=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');}
+function renderTfs(){const h=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');$('tfs').innerHTML=h;const f=$('fsTfs');if(f)f.innerHTML=h;}
 renderTfs();
-$('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dataset.tf;
-  [...$('tfs').children].forEach(x=>x.classList.toggle('on',x===b));loadChart();};
+function tfMark(){['tfs','fsTfs'].forEach(id=>{const el=$(id);if(el)[...el.children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));});}
+$('tfs').onclick=$('fsTfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;e.stopPropagation();if(b.dataset.tf===tf)return;tf=b.dataset.tf;tfMark();loadChart();};
 
 /* ---------- herramientas ---------- */
 const hints={cursor:'Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla',
@@ -1661,8 +1668,19 @@ $('ersAll').onclick=e=>{e.stopPropagation();(hlines[symbol]||[]).forEach(h=>h.li
 $('fit').onclick=fitView;
 
 /* pantalla completa */
-function setFs(on){document.body.classList.toggle('fs-on',on);$('fsExit').hidden=!on;if(!on)$('fsInd').hidden=true;}
+function setFs(on){document.body.classList.toggle('fs-on',on);$('fsExit').hidden=!on;if(!on)$('fsInd').hidden=true;if(on){tfMark();$('fsLog').classList.toggle('on',$('logBtn').classList.contains('on'));fsOhlcLast();const t=$('fsTfs').querySelector('.on');if(t)t.scrollIntoView({inline:'center',block:'nearest'});}}
 $('fsClear').onclick=()=>$('clear').click();
+$('fsLog').onclick=e=>{e.stopPropagation();$('logBtn').click();$('fsLog').classList.toggle('on',$('logBtn').classList.contains('on'));};
+$('fsFit').onclick=e=>{e.stopPropagation();$('fit').click();};
+/* como en TradingView: botón » para volver a la última vela cuando te moviste hacia atrás, y precios O/H/L/C de la vela bajo el cursor */
+$('fsLive').onclick=e=>{e.stopPropagation();chart.timeScale().scrollToRealTime();};
+chart.timeScale().subscribeVisibleLogicalRangeChange(r=>{const b=$('fsLive');if(!b||!r)return;let n=0;try{n=series.data().length}catch(_){}b.hidden=!(n&&r.to<n-3);});
+function fsOhlcSet(b,prev){const el=$('fsOhlc');if(!el)return;if(!b||b.open==null){el.innerHTML='';return;}const d=x=>(+x).toFixed(dec(b.close)),ch=prev&&prev.close?(b.close/prev.close-1)*100:(b.close/b.open-1)*100,col=ch>=0?'#26a69a':'#ef5350';
+  el.innerHTML=`${symbol||''} · A <b>${d(b.open)}</b> M <b>${d(b.high)}</b> m <b>${d(b.low)}</b> C <b style="color:${col}">${d(b.close)}</b> <span style="color:${col}">${ch>=0?'+':''}${ch.toFixed(2)}%</span>`;}
+function fsOhlcLast(){let a=[];try{a=series.data()}catch(_){}fsOhlcSet(a[a.length-1],a[a.length-2]);}
+let fsHov=false;setInterval(()=>{if(!fsHov&&document.body.classList.contains('fs-on'))fsOhlcLast();},1000);
+chart.subscribeCrosshairMove(p=>{if(!document.body.classList.contains('fs-on'))return;const b=p&&p.seriesData&&p.seriesData.get(series);fsHov=!!b;if(!b){fsOhlcLast();return;}
+  let a=[];try{a=series.data()}catch(_){}const i=p.logical!=null?Math.round(p.logical):-1;fsOhlcSet(b,i>0?a[i-1]:null);});
 $('fsIndBtn').onclick=e=>{e.stopPropagation();$('fsInd').hidden=!$('fsInd').hidden;};
 $('fs').onclick=async()=>{
   if(document.body.classList.contains('fs-on')){$('fsExit').click();return;}
@@ -2211,7 +2229,7 @@ function renderSignals(){try{iaSigRender();}catch(e){}
 $('sigList').onclick=e=>{const sx=e.target.closest('[data-sgx]');if(sx){e.stopPropagation();SIGHIDE.add(sx.dataset.sgx);try{localStorage.setItem('cv_sighide',JSON.stringify([...SIGHIDE].slice(-300)))}catch(_){}renderSignals();return;}const lx=e.target.closest('[data-llx]');if(lx){e.stopPropagation();LLHIDE.add(lx.dataset.llx);try{localStorage.setItem('cv_llhide',JSON.stringify([...LLHIDE].slice(-200)))}catch(_){}renderSignals();return;}const pk=e.target.closest('.sg-pin');if(pk){e.stopPropagation();const i=pk.querySelector('input');if(e.target!==i)return;
     if(i.checked)PINS.add(i.dataset.pin);else PINS.delete(i.dataset.pin);savePins();renderSignals();try{renderHist();}catch(_){}return;}
   const c=e.target.closest('.sig');if(!c)return;
-  if(tf!==c.dataset.tf){tf=c.dataset.tf;[...$('tfs').children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));}
+  if(tf!==c.dataset.tf){tf=c.dataset.tf;tfMark();}
   select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});};
 /* escanea el modo abierto; si los avisos están activos, también los otros modos */
 setInterval(()=>{const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode))return scanSignals(mode);
@@ -3461,7 +3479,7 @@ const pc0=v=>v==null?'—':Math.round(v)+' %';
    365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
    ACCIONES se calcula acá con las velas diarias que ya usa la página. */
 var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
-try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB=localStorage.getItem('cv_hsub')||'all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===5)HIST_A=c.ops;}catch(e){}
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===5)HIST_A=c.ops;}catch(e){}
 const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
   HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
@@ -3500,7 +3518,7 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
     ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:5,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
 function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
-  if(m==='medio'&&HSUB!=='all')L=L.filter(o=>HSUB==='plus'?o.setup==='tp-x':o.setup!=='tp-x');return L;}
+  if(m==='medio')L=L.filter(o=>o.setup!=='tp-x');return L;} // TRADING+ eliminado (octubre 2026): su historial ya no se cuenta
 const ledLoading=m=>HSRC==='sim'&&(m==='a'?!HIST_A:!histOps());
 /* detalle corto de una operación del historial simulado (no guarda precios) */
 function histDet(o){const cfg=SIGCFG[o.m],c=(CAL[o.m]||{})[o.setup];
@@ -3514,7 +3532,7 @@ function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=ledOps(m).filt
     liq:cl.filter(o=>o.state==='fail').length,ll:a.filter(o=>o.ll).length,llOk:cl.filter(o=>o.ll&&o.state!=='fail').length,g,l,net:g+l,pf:l<0?g/-l:null,avg:n?(g+l)/n:null,cl};}
 function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-reb']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
   const per=(HSRC==='sim'?[[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año']]:[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']]).map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
-  const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button>${m==='medio'?`<span class="mut" style="margin-left:6px">Ver:</span><button data-sub="all" class="${HSUB==='all'?'on':''}">Todas</button><button data-sub="core" class="${HSUB==='core'?'on':''}">TRADING</button><button data-sub="plus" class="${HSUB==='plus'?'on':''}">TRADING+</button>`:''}</div>`;
+  const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button></div>`;
   if(ledLoading(m))return srcRow+`<div class="int-v">⏳ ${m==='a'?'Calculando el último año de ACCIONES con las reglas actuales (unos segundos)…':'Cargando el último año simulado…'}</div>`;
   const simNote=HSRC==='sim'?`<div class="int-v mut" style="font-size:12px">📅 Simulación de los últimos 365 días con las reglas que usa hoy la página, sobre ${m==='a'?'velas diarias reales de NYSE (comisión 0,1 % por lado)':'velas reales de Binance (comisión 0,05 % por lado)'}. Se recalcula todos los días: entra el día nuevo y sale el más viejo.${m!=='a'&&window.HISTYR?` Actualizado ${fdate(window.HISTYR.upd)}.`:''}${m==='a'?' No incluye el termómetro de noticias de las acciones.':''}</div>`:'';
   let verdict;if(!S.n)verdict='Todavía no hay operaciones cerradas en este período. Las señales se registran solas apenas aparecen.';
@@ -3537,7 +3555,7 @@ function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&
     <div class="int-v">${verdict}</div>
     ${HSRC==='sim'&&(m==='medio'||m==='x')?supHTML(m):''}<div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>`;}
 /* ---------- 🧪 suplementos en prueba: bots como están hoy contra bots con cada suplemento (no están activos) ---------- */
-function supHTML(m){const S=window.HISTYR&&HISTYR.suplementos;if(!S||!S.anio)return '';const MS=m==='x'?['SHOOTER']:['TRADING','TRADING+'];
+function supHTML(m){const S=window.HISTYR&&HISTYR.suplementos;if(!S||!S.anio)return '';const MS=m==='x'?['SHOOTER']:['TRADING'];
   const usdT=(G)=>MS.reduce((a,k)=>a+((G[k]&&G[k].total)||0),0),nT=G=>MS.reduce((a,k)=>a+((G[k]&&G[k].n)||0),0),agg=G=>{const n=nT(G);if(!n)return null;const w=MS.reduce((a,k)=>a+((G[k]&&G[k].n)?G[k].obj1*G[k].n:0),0)/n,u=usdT(G);return {n,dia:MS.reduce((a,k)=>a+((G[k]&&G[k].dia)||0),0),obj1:w,usd:u/n,total:u,peor:Math.min(...MS.map(k=>G[k]&&G[k].n?G[k].peor:0))};};
   const tbl=(rows,base)=>{const B=agg(base);return `<table class="sup-t"><tr><th></th><th>señales/día</th><th>objetivo 1</th><th>por op.</th><th>total</th><th>peor</th></tr>${rows.map(([nm,G,b])=>{const x=agg(G);if(!x)return '';const d=B?x.total-B.total:0;
     return `<tr class="${b?'base':''}"><td>${nm}</td><td>${iaD(x.dia)}</td><td>${iaD(x.obj1)} %</td><td>${fusd2(x.usd)}</td><td class="${b?'':d>0?'up':d<0?'dn':''}">${fusd2(x.total)}${b?'':`<small>${d>=0?'+':'−'}${Math.abs(Math.round(d))}</small>`}</td><td class="dn">${fusd2(x.peor)}</td></tr>`;}).join('')}</table>`;};
@@ -3980,7 +3998,7 @@ setInterval(()=>{if(!scanBusy&&Date.now()-plusLast>SIGCFG.medio.every&&(mode==='
   const L=f.dir>0,c=f.sym.replace('USDT','');window.__skipRmt=false;
   notify(`🟨 TRADING+: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivos ${fp(f.tp0)} · ${fp(f.tp1)} · ${fp(f.tp2)} · Stop ${fp(f.sl)} · × ${PLUSG.lev} · aviso de salida si una vela de 1 h cierra en ${fp(f.entry+(f.sl-f.entry)*PLUSG.cut)} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m:'medio'});return;}
   return _ns(m,f);};}
-{const _st=sigTabsRender;sigTabsRender=function(){_st.apply(this,arguments);const el=$('sigTabs');if(!el||mode!=='medio')return;
+{const _st=sigTabsRender;sigTabsRender=function(){_st.apply(this,arguments);return; const el=$('sigTabs');if(!el||mode!=='medio')return;
   const n=SIG.medio.filter(s=>s.state==='live'&&s.plus).length,b=document.createElement('button');b.type='button';b.className='tp-ntf'+(NTF.tplus?' on':'');b.dataset.tp='1';
   b.title='Avisos de las señales extra TRADING+';b.innerHTML=`🟨 TRADING+ ${NTF.tplus?'🔔':'🔕'}${n?`<b>${n}</b>`:''}`;el.appendChild(b);};}
 $('sigTabs').addEventListener('click',e=>{const b=e.target.closest('[data-tp]');if(!b)return;e.stopPropagation();NTF.tplus=!NTF.tplus;saveNtf();
@@ -4018,7 +4036,7 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     else if(!(core&&rank<40&&rr<50)&&rr<70&&adx!=null&&adx>=35&&L.vr<1&&atrP>.008&&atrP<=.03){
       /* octubre 2026: además ya tiene que venir moviéndose a favor (≥ 1 % en 24 h) con el flujo de órdenes (CVD de 6 velas) a favor.
          1 año, 55 monedas: objetivo 1 del 68 al 75 %, ganancia por operación de +1,9 a +4,9 % del margen; últimos 4 meses de −0,3 a +2,8 %. */
-      if(!(r24>=1&&fl6>=.01))return out;
+      return out; // octubre 2026: TRADING+ eliminado a pedido (ya no da señales). Quedan las reglas de TRADING (t-pb, tp-r55, tp-u80).
       out.setup='tp-x';out.plus=true;out.reasons.push('tendencia alineada y muy fuerte (ADX '+adx.toFixed(0)+')','ya se movió '+r24.toFixed(1)+' % a favor en 24 h','flujo de órdenes (CVD) a favor','RSI 14 en '+r14.toFixed(0)+' (sin extremo)','volumen bajo','volatilidad '+(atrP*100).toFixed(1)+' % por vela');}
     else return out;
     out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
@@ -4071,7 +4089,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  cvd:{g:'Indicadores',t:'🌊 CVD (flujo de órdenes)',ind:'cvd',b:'Suma compras agresivas menos ventas agresivas del día. Muestra quién empuja de verdad.',h:['Precio sube y CVD sube = suba sana.','Precio sube y CVD baja = suba débil (divergencia): cuidado con los longs.'],x:['q_cvd']},
  gauge:{g:'Paneles',t:'🌡 Termómetro de tendencia',b:'Resume todos los factores en un número de 0 a 100: ≥ 70 alcista, ≤ 30 bajista, en el medio neutral.',h:['Operá a favor del termómetro: long con 70 o más, short con 30 o menos.','En la zona neutral (40–60) mejor esperar.'],x:['q_gauge']},
  fac:{g:'Paneles',t:'📋 Qué dice cada factor',b:'La tabla al lado del termómetro muestra cada indicador, si está a favor o en contra y su peso.',h:['Buscá que la mayoría coincida. Si los de más peso están en contra, no entres.','Mirá también noticias y "manos fuertes" en la tabla: pueden cambiar el panorama.'],x:['q_fac']},
- sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico. Las amarillas son <b>TRADING+</b> (más señales, × 7, sin salvavidas y con aviso de salida si se dan vuelta).',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
+ sig:{g:'Paneles',t:'🎯 Señales',b:'Cada tarjeta trae dirección, zona de entrada, 3 objetivos, stop, salvavidas y el % de acierto histórico.',h:['Entrá solo dentro de la zona de entrada; si el precio ya se fue, no la persigas.','Cerrá 1/3 en cada objetivo y pasá el stop a la entrada al tocar el primero.','El aviso de color de la tarjeta te dice qué hacer en cada momento.'],x:['e9','q_sig']},
  ll:{g:'Paneles',t:'🛟 Salvavidas',b:'Si el precio va en contra hasta la zona del salvavidas y los datos siguen a favor, se agrega medio margen: mejora la entrada promedio y aleja la liquidación.',h:['Solo usalo si los indicadores siguen confirmando la dirección.','Nunca agregues margen "por las dudas" sin un plan: es la forma más rápida de perder más.'],x:['q_ll']},
  pil:{g:'Paneles',t:'🧭 Pilotear',b:'Cargás una operación real tuya y cada 15 s la página te dice si mantener, asegurar, salir o poner un salvavidas.',h:['Cargá la operación apenas la abrís en el exchange.','Hacé caso a los avisos 🚨 y ⛔: son los que te evitan liquidaciones.'],x:['q_pil']},
  int:{g:'Paneles',t:'🧠 Inteligencia',b:'Registro en vivo de las señales, régimen de mercado (BTC o altcoins), monedas que suben y órdenes grandes (ballenas).',h:['Si el régimen dice "altseason", las alts suelen moverse más que BTC.','Órdenes grandes en una dirección confirman el movimiento.'],x:['q_int']},
@@ -4377,7 +4395,7 @@ function iaKpi(){const R=IAM&&IAM.resumen;if(!R)return '<div class="ia-mut">Toda
   const cell=(x)=>!x||!x.n?'<td class="ia-mut">sin operaciones</td><td></td>':`<td><b>${iaN(x.bot_gana,0)} %</b><small>${iaPct(x.bot_pct)} por op.</small></td><td class="ia-c"><b>${iaN(x.ia_gana,0)} %</b><small>${iaPct(x.ia_pct)} por op.</small></td>`;
   return `<table class="ia-kpi"><thead><tr><th rowspan="2">Efectividad<br><small>operaciones ganadas</small></th><th colspan="2">Última semana</th><th colspan="2">Últimos 3 meses</th></tr>
     <tr><th>Bot</th><th class="ia-c">IA</th><th>Bot</th><th class="ia-c">IA</th></tr></thead><tbody>
-    ${['TRADING','TRADING+','SHOOTER'].map(m=>`<tr><th>${m}<small>${(R['3meses'][m]||{}).n||0} op. en 3 meses</small></th>${cell(R.semana[m])}${cell(R['3meses'][m])}</tr>`).join('')}</tbody></table>
+    ${['TRADING','SHOOTER'].map(m=>`<tr><th>${m}<small>${(R['3meses'][m]||{}).n||0} op. en 3 meses</small></th>${cell(R.semana[m])}${cell(R['3meses'][m])}</tr>`).join('')}</tbody></table>
     <div class="ia-mut">${iaMas('Mismas señales para los dos.','Mismas señales para los dos: el bot sale en sus objetivos fijos; la IA decide sola cuándo salir. Cada 15 días la IA solo aprendió con operaciones que ya habían terminado antes. % del margen, con comisiones.')}</div>`;}
 function iaBtn(o){if(!IAM||!(o.m==='medio'||o.m==='x'))return '';const open=o.state==='open';if(o.lite&&!iaRecFor(o))return '';
   return open?`<button type="button" class="iab" data-iacmp="${o.id}" title="Cómo va la IA contra el bot">${iaIco('ia',15)} IA</button>`
@@ -4524,7 +4542,7 @@ function iaSemaforo(f){const E=iaFamEff(f),en=IAM&&IAM[f]&&IAM[f].entry,P=en&&en
   let c=sc>=3?'g':sc>=1?'y':'r';if(E.n<20&&c==='g'){c='y';why.push('pocas comparaciones todavía');}
   return {c,sc,why,E,lab:{g:'Conviene seguir sus consejos',y:'Ni bien ni mal: usalo con cuidado',r:'Todavía no conviene'}[c]};}
 function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
-  return [['sh','SHOOTER','15 y 30 min'],['tr','TRADING','4 h · incluye TRADING+']].map(([f,nm,tf])=>{const S=iaSemaforo(f),L=IAOPS.filter(x=>x.f===f),st=iaOpsStats(L),open=L.filter(x=>x.st==='open').sort((a,b)=>b.t-a.t),done=L.filter(x=>x.st!=='open').sort((a,b)=>(b.closeT||b.t)-(a.closeT||a.t)).slice(0,5);
+  return [['sh','SHOOTER','15 y 30 min'],['tr','TRADING','4 h']].map(([f,nm,tf])=>{const S=iaSemaforo(f),L=IAOPS.filter(x=>x.f===f),st=iaOpsStats(L),open=L.filter(x=>x.st==='open').sort((a,b)=>b.t-a.t),done=L.filter(x=>x.st!=='open').sort((a,b)=>(b.closeT||b.t)-(a.closeT||a.t)).slice(0,5);
     const card=x=>{const p=tickers[x.sym]&&tickers[x.sym].c,v=p?iaOpLive(x,p):0,pc=t=>fpct((t/x.entry-1)*100);
       return `<div class="sig ${x.dir>0?'long':'short'} ia-own" data-sym="${x.sym}" data-tf="${x.tf}"><div class="sg-h"><span class="sg-dir">${x.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${x.sym.replace('USDT','')}</b><small>/USDT · ${x.tf} · ${iaIco('ia',14)} propia de la IA</small><span class="sg-conf">${Math.round(x.p*100)} %<small>puntaje IA</small></span></div>
         <div class="sg-g"><span>Entrada</span><b>${fp(x.entry)}</b><span>Objetivo 1</span><b class="tgt">${fp(x.tps[0])} (${pc(x.tps[0])})</b><span>Objetivo 2</span><b class="tgt">${fp(x.tps[1])} (${pc(x.tps[1])})</b><span>Objetivo 3</span><b class="tgt">${fp(x.tps[2])} (${pc(x.tps[2])})</b>
@@ -4652,7 +4670,7 @@ function iaContext(q){const R=IAM||{},syms=iaSymsIn(q),recs=iaRecs(),fmtRec=r=>`
   const px=syms.map(s=>tickers[s+'USDT']?`${s}: ${tickers[s+'USDT'].c} (${(tickers[s+'USDT'].p||0).toFixed(2)} % en 24 h)`:'').filter(Boolean);
   return `Sos la IA de CRIPTO-LIVE, una página argentina de señales de cripto y acciones. Respondé en español rioplatense (voseo), claro y corto, sin jerga innecesaria.
 Reglas: usá solo los datos de abajo para hablar de resultados, no inventes números; si no tenés el dato, decilo. Explicá el porqué de cada salida con los datos (objetivos tocados, stop, probabilidad, indicadores). No des asesoramiento financiero personalizado ni prometas ganancias: aclará que es información para que la persona decida. Sé honesto: hoy la IA todavía no le gana a los bots en los meses de prueba.
-CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; TRADING+: tendencia muy fuerte ya moviéndose a favor con flujo a favor, 350 USD × 10; SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída moderada, 500 USD × 8). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
+CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; (TRADING+ fue eliminado en octubre 2026); SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída moderada, 500 USD × 8). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
 EFECTIVIDAD (operaciones ganadas y ganancia por operación en % del margen): ${JSON.stringify(R.resumen||{})}
 ESTIMACIÓN PARA ALCANZAR A LOS BOTS: ${iaEtaTxt()}
 AUTOEVALUACIÓN: saca el ${R.progreso&&R.progreso.valor} % de la ganancia de los bots (objetivos sucesivos: ${IA_META.join(', ')} %; cuando llega a uno sigue con el próximo). Objetivos de calidad: ${iaGoals().map(g=>(g[1]?'✓ ':'✗ ')+g[0]+' ('+g[2]+')').join('; ')}.
@@ -4675,7 +4693,7 @@ function iaLocalAnswer(q){const syms=iaSymsIn(q),recs=iaRecs().filter(r=>syms.in
 const IA_NOMBRES={bitcoin:'BTC',ethereum:'ETH',ether:'ETH',solana:'SOL',cardano:'ADA',ripple:'XRP',dogecoin:'DOGE',doge:'DOGE',litecoin:'LTC',polkadot:'DOT',chainlink:'LINK',avalanche:'AVAX',binance:'BNB',tron:'TRX',polygon:'POL',near:'NEAR',sui:'SUI',pepe:'PEPE',shiba:'SHIB',ton:'TON',aptos:'APT',arbitrum:'ARB',optimism:'OP',worldcoin:'WLD',ondo:'ONDO'};
 const iaStrip=h=>String(h||'').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
 const iaModoTxt={trading:'TRADING (4 h): busca un retroceso dentro de una tendencia alineada (Supertrend, EMA 21/50/200) con BTC a favor y volumen bajo; el retroceso tiene que frenar antes de la EMA 50. 350 USD × 10, stop 3 × ATR (máx. 3,6 %), objetivos 0,5 / 1 / 1,5 × stop.',
-  'trading+':'TRADING+ (4 h): tendencia muy fuerte (ADX ≥ 35) que ya se movió 1 % a favor en 24 h con el flujo de órdenes a favor. 350 USD × 10, stop 3 × ATR (máx. 7,6 %), objetivos 0,35 / 0,7 / 1,05 × stop y aviso de salida si se da vuelta.',
+  'trading+':'TRADING+ fue eliminado en octubre 2026 (ya no da señales). Era (4 h): tendencia muy fuerte (ADX ≥ 35) que ya se movió 1 % a favor en 24 h con el flujo de órdenes a favor. 350 USD × 10, stop 3 × ATR (máx. 7,6 %), objetivos 0,35 / 0,7 / 1,05 × stop y aviso de salida si se da vuelta.',
   shooter:'SHOOTER (15 y 30 min): compra el rebote cuando una moneda cae 3 % en una hora, cierra bajo la banda inferior de Bollinger con RSI 7 en sobreventa y la tendencia de 1 h sigue a favor. 50 USD × 15, stop 3 × ATR (máx. 5 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h.',
   acciones:'ACCIONES (diario): rebote tras una caída moderada (bajó 10 % en 6 meses, sin desplome mayor al 35 % ni subida histórica) con una vela alcista fuerte. 500 USD × 8, stop 3 × ATR (máx. 9,6 %).',
   pilotear:'PILOTEAR: cargás tu operación real y la página te sigue: stop sugerido de 3 × ATR, aviso si una vela de 1 h cierra a mitad de camino al stop, y un semáforo con 5 factores de la entrada.',
@@ -4698,7 +4716,7 @@ async function iaAnalyze(sym){const s=sym+'USDT',t=tickers[s];if(!t)return `No e
   const id=IAIDEAS.find(x=>x.sym===s);if(id)out.push(`💡 Además está entre las entradas que encontró la IA sola: ${id.dir>0?'LONG':'SHORT'} en ${id.tf}, entrada ${fp(id.entry)}, objetivo 1 ${fp(id.tps[0])}, stop ${fp(id.stop)}.`);
   out.push('Es información para que decidas vos, no un consejo de inversión.');return out.join('\n');}
 function iaResumenTxt(){const R=IAM&&IAM.resumen,P=IAM&&IAM.progreso;if(!R)return 'Todavía no tengo el resumen de la comparación.';
-  const l=['TRADING','TRADING+','SHOOTER'].map(m=>{const x=R['3meses'][m];return x&&x.n?`${m}: bot ${iaN(x.bot_gana,0)} % ganadas y ${iaPct(x.bot_pct)} por operación · IA ${iaN(x.ia_gana,0)} % y ${iaPct(x.ia_pct)}`:'';}).filter(Boolean);
+  const l=['TRADING','SHOOTER'].map(m=>{const x=R['3meses'][m];return x&&x.n?`${m}: bot ${iaN(x.bot_gana,0)} % ganadas y ${iaPct(x.bot_pct)} por operación · IA ${iaN(x.ia_gana,0)} % y ${iaPct(x.ia_pct)}`:'';}).filter(Boolean);
   return `${P&&P.valor!=null?`Hoy saco el ${iaN(P.valor,0)} % de la ganancia de los bots en los últimos 3 meses (100 % = igualarlos).\n`:''}${l.join('\n')}\n${(P&&P.notas||[]).join('\n')}`;}
 function iaMisResultados(){const now=Date.now(),L=OPS.filter(o=>now-o.t<7*864e5&&o.state!=='open'&&(o.m==='medio'||o.m==='x'||o.m==='a'));if(!L.length)return 'En los últimos 7 días no se cerró ninguna operación en esta página.';
   const by={};for(const o of L){const k=o.m==='x'?'SHOOTER':o.m==='a'?'ACCIONES':o.setup==='tp-x'?'TRADING+':'TRADING';const b=by[k]=by[k]||{n:0,w:0,u:0};b.n++;if((o.pnl||0)>0)b.w++;b.u+=o.pnl||0;}
@@ -4747,7 +4765,7 @@ async function iaGeo(sym){const s=sym+'USDT';if(!tickers[s])return null;
     al:st===Math.sign(P.e21[j]-P.e50[j])&&(P.e200[j]==null||st===Math.sign(px-P.e200[j]))};}
 const iaLiqLev=sl=>Math.max(1,Math.floor(.8/sl)); // apalancamiento máximo para que la liquidación quede bien lejos del stop
 async function iaLevTxt(sym,q){const cap=(q.match(/(?:^|[^x\w$])(\d[\d.,]*)(?!\s*x)(?!\s*%)/i)||[])[1],C0=cap?+cap.replace(/\.(?=\d{3}\b)/g,'').replace(',','.'):null,C=C0&&C0>=20?C0:null;
-  const lines=['Cómo dimensionar la operación (lo que usa la página):','• TRADING y TRADING+: 350 USD × 10. SHOOTER: 50 USD × 15. ACCIONES: 500 USD × 8.','• Regla de oro: que el stop esté antes que la liquidación. Con × 10 te liquidan con un movimiento de ~10 % en contra; con × 15, de ~6,5 %; con × 20, de ~5 %.','• Arriesgá 1 a 2 % de tu capital por operación: margen = capital × riesgo ÷ (distancia al stop × apalancamiento).'];
+  const lines=['Cómo dimensionar la operación (lo que usa la página):','• TRADING: 350 USD × 10. SHOOTER: 50 USD × 15. ACCIONES: 500 USD × 8.','• Regla de oro: que el stop esté antes que la liquidación. Con × 10 te liquidan con un movimiento de ~10 % en contra; con × 15, de ~6,5 %; con × 20, de ~5 %.','• Arriesgá 1 a 2 % de tu capital por operación: margen = capital × riesgo ÷ (distancia al stop × apalancamiento).'];
   if(sym){try{const g=await iaGeo(sym);if(g){lines.push(`\n${sym} ahora (${fp(g.px)}): se mueve ${iaN(g.atr4*100,1)} % por vela de 4 h y ${iaN(g.atr15*100,2)} % por vela de 15 min.`);
       lines.push(`• En 4 h el stop queda a ${iaN(g.tr.sl*100,1)} % → apalancamiento máximo sensato × ${Math.min(20,iaLiqLev(g.tr.sl))} (la página usa × 10).`);
       lines.push(`• En 15 min el stop queda a ${iaN(g.sh.sl*100,1)} % → máximo × ${Math.min(25,iaLiqLev(g.sh.sl))} (la página usa × 15).`);
@@ -4795,7 +4813,7 @@ async function iaLocalAnswer2(q){const n=iaNorm(q),syms=iaSymsIn2(q),sym=syms[0]
   if(iaHas(n,['idea*','que ves','encontraste','buscaste']))return (IAIDEAS.length?'Entradas que encontré sola ahora (en práctica):\n'+IAIDEAS.map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} en ${x.tf} · puntaje ${Math.round(x.p*100)} % · entrada ${fp(x.entry)} · objetivo 1 ${fp(x.tps[0])} · stop ${fp(x.stop)}`).join('\n'):'Ahora no encuentro ninguna entrada con puntaje alto. Busco de nuevo cada 15 minutos.')+'\n\n'+iaOpsTxt();
   if(iaHas(n,['cuanto gane','cuanto perdi','mis resultados','resultado*','balance','esta semana','ganancias']))return iaMisResultados();
   if(iaHas(n,['senal*','alerta*'])){const L=['medio','x','a'].flatMap(m=>(SIG[m]||[]).filter(x=>x.state==='live').map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'LONG':'SHORT'} (${m==='x'?'SHOOTER':m==='a'?'ACCIONES':x.plus?'TRADING+':'TRADING'}, ${x.conf} %)`));return L.length?'Señales vivas ahora: '+L.join(' · '):'Ahora no hay señales vivas de los bots.';}
-  if(iaHas(n,['temporalidad*','que modo','cual modo','mejor modo','velas']))return iaEficiencia()+'\n\nTemporalidad: TRADING y TRADING+ usan velas de 4 h (operaciones de horas a días), SHOOTER de 15 y 30 min (horas), ACCIONES diarias (días a semanas).';
+  if(iaHas(n,['temporalidad*','que modo','cual modo','mejor modo','velas']))return iaEficiencia()+'\n\nTemporalidad: TRADING usa velas de 4 h (operaciones de horas a días), SHOOTER de 15 y 30 min (horas), ACCIONES diarias (días a semanas).';
   if(iaHas(n,['indicador*','que sirve','que importa','que mira*'])){const f=L=>(L||[]).filter(x=>x[1]>0).slice(0,5).map(x=>IA.NAMES[x[0]]||x[0]).join(', ');return `Para salir a tiempo lo que más me sirve: ${f(IAM&&IAM.tr&&IAM.tr.exit&&IAM.tr.exit.imp)}.\nPara elegir entradas: ${f(IAM&&IAM.tr&&IAM.tr.entry&&IAM.tr.entry.imp)}.\nEn el análisis de un año, el que más ayudó a acertar fue la EMA 200 (que el precio esté lejos a favor), seguido por la pendiente de la EMA 50 y la tendencia alineada.`;}
   {const e=iaExplain(n);if(e)return e;}
   return 'No te entendí del todo. Probá, por ejemplo: "conviene entrar en XRP", "qué cripto está buena para entrar", "porcentaje de acierto de cada modo", "qué hago con ONDO", "por qué saliste en BTC", "cómo venís contra los bots", "qué noticias pesan", "cuánto gané esta semana" o "explicame el RSI", "cuánto apalancamiento uso en SOL", "dónde pongo el stop en ETH", "BTC o ETH cuál conviene", "qué operaciones abriste". No hace falta poner signos ni escribir perfecto.';}
@@ -4841,7 +4859,7 @@ function iaRender(){const box=$('iaBody');if(!box)return;
   const open=OPS.filter(o=>o.state==='open'&&(o.m==='medio'||o.m==='x')).sort((a,b)=>b.t-a.t);
   const live=IALIVE.length?IALIVE.map(([q,a])=>{const L=IALAB[a.st],oid=q.key.startsWith('op:')?q.key.slice(3):null;return `<div class="ia-op ${a.st}"><div class="ia-h">${L[0]} <b>${L[1]}</b> · ${q.sym.replace('USDT','')} ${q.dir>0?'▲ LONG':'▼ SHORT'} <small>${esc(q.src)}${q.botHit!=null?` · bot: ${q.botHit}/3 objetivos`:''}</small>${oid?`<button type="button" class="iab" data-iacmp="${oid}">${iaIco('ia',15)} IA vs bot</button>`:''}</div><div>${iaCut(iaAdvTxt(a,q),80)}</div><div class="ia-mut">${iaCut('Lo que más pesa: '+iaWhy(a.why),50)}</div></div>`;}).join('')
     :`<div class="ia-mut">${open.length||PIL.some(p=>!p.closed)?'Analizando…':iaMas('No hay operaciones abiertas.','No hay operaciones abiertas. Cuando un bot dé una señal o cargues una en PILOTEAR, la IA la sigue acá.')}</div>`;
-  const fam=[['tr','TRADING y TRADING+'],['sh','SHOOTER']].map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test;return `<div class="ia-card"><b>${nm}</b> · ${E.activa?'<span class="up">activa</span>':'<span class="ia-mut">en práctica</span>'}<div class="ia-mut">${iaMas(`IA ${iaPct2(T.ia.pct)} · bot ${iaPct2(T.bot.pct)} por op.`,`Prueba de ${T.n_test} operaciones que no usó para aprender: bot ${iaPct2(T.bot.pct)} · IA ${iaPct2(T.ia.pct)} por operación. Gana el ${iaD(T.ia.gana)} % de las veces (bot ${iaD(T.bot.gana)} %). Precisión para predecir ${iaD(T.auc)} (0,5 = azar). Manera de manejar: ${IAVAR[E.variant]||E.variant}. ${E.activa?'Le ganó al bot: decide en vivo.':'Todavía no le gana al bot por suficiente: en vivo manda el plan del bot.'}`)}</div></div>`;}).join('');
+  const fam=[['tr','TRADING'],['sh','SHOOTER']].map(([f,nm])=>{const E=IAM[f]&&IAM[f].exit;if(!E)return '';const T=E.test;return `<div class="ia-card"><b>${nm}</b> · ${E.activa?'<span class="up">activa</span>':'<span class="ia-mut">en práctica</span>'}<div class="ia-mut">${iaMas(`IA ${iaPct2(T.ia.pct)} · bot ${iaPct2(T.bot.pct)} por op.`,`Prueba de ${T.n_test} operaciones que no usó para aprender: bot ${iaPct2(T.bot.pct)} · IA ${iaPct2(T.ia.pct)} por operación. Gana el ${iaD(T.ia.gana)} % de las veces (bot ${iaD(T.bot.gana)} %). Precisión para predecir ${iaD(T.auc)} (0,5 = azar). Manera de manejar: ${IAVAR[E.variant]||E.variant}. ${E.activa?'Le ganó al bot: decide en vivo.':'Todavía no le gana al bot por suficiente: en vivo manda el plan del bot.'}`)}</div></div>`;}).join('');
   IAPL.shown=null;box.innerHTML=`${iaKpi()}${iaProg()}${iaAcelHTML()}
     <div class="ia-mut">${iaMas(`Último estudio: ${d.toLocaleDateString('es-AR')} ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})}.`,`Estudió por última vez el ${d.toLocaleDateString('es-AR')} a las ${d.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit',hour12:false})}. Cada día suma el día nuevo y vuelve a aprender.`)}</div>
     <h4>${iaIco('ia',15)} Operaciones propias de la IA</h4>${iaOpsHTML()}
