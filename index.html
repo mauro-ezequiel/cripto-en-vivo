@@ -313,6 +313,14 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
+.hrow.h2{grid-template-columns:24px 40px 38px 58px minmax(36px,1fr) 66px 28px 56px 64px 20px;gap:5px}
+.hrow.h2 .hpin{padding:2px 0;font-size:11px}.hrow.h2 .hh{color:var(--mut)}.hrow.h2 .hk{color:var(--mut);text-align:center}.hrow.h2 .hp,.hrow.h2 .hu{text-align:right;font-weight:700}.hrow.h2 .hs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow.h2>*{white-space:nowrap;min-width:0}.hrow.h2 .live{padding:1px 5px;font-size:10px}
+@media (max-width:800px){.hrow.h2{grid-template-columns:20px 30px 30px 45px minmax(24px,1fr) 50px 18px 42px 46px 16px;gap:3px;font-size:10.5px}.hrow.h2 .hd{font-size:9.5px}.hrow.h2 .hs{font-size:9.5px}.hrow.h2 .live{padding:1px 3px;font-size:8px;letter-spacing:-.2px}}
+.hx{margin:4px 0 10px;display:flex;flex-direction:column;gap:8px}.hx-box{border:1px solid #2a3140;border-radius:9px;padding:9px 11px;font-size:12px}
+.hx-live{background:#1b2130}.hx-ent{background:#141822}.hx-t{font-weight:800;font-size:13px;margin-bottom:3px}.hx-t.bad{color:#ef5350}.hx-t.warn{color:#ffb74d}.hx-t.good{color:#26a69a}
+.hx-w{margin:5px 0 0;padding-left:16px;color:var(--mut);font-size:11.5px}.hx-w li{margin:1px 0}.hx-sem{font-weight:700;margin-bottom:4px}.hx-f{color:var(--mut);font-size:11.5px;margin-bottom:6px}
+.hx-g{display:grid;grid-template-columns:auto 1fr;gap:3px 12px}.hx-g span{color:var(--mut)}.hx-go{display:block;width:100%;margin-top:10px;background:#2962ff;color:#fff;border:0;border-radius:8px;padding:9px 12px;font-weight:800;font-size:13px;cursor:pointer}
 .hrow{cursor:pointer;border-radius:6px}.hrow:hover{background:#1a1f29}.hpin{background:none;border:1px solid #3a4150;border-radius:7px;padding:3px 0;cursor:pointer;font-size:13px;line-height:1;filter:grayscale(1);opacity:.55}.hpin.on{border-color:#ffd600;filter:none;opacity:1}.hrow.pin{box-shadow:0 0 0 2px #ffd600 inset}
 .hdet{background:#141922;border:1px solid var(--line);border-radius:8px;margin:4px 0 10px;padding:10px 12px;font-size:12px}
 .hdet .st{font-weight:800;margin-bottom:8px;font-size:13px}
@@ -3742,10 +3750,53 @@ function renderRes(force){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=l
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Stop · ${fusd2(o.pnl)}</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
-  const row=o=>{const pn=PINS.has(String(o.id));return `<div class="hrow${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hr">${resTxt(o)} <span class="mut">${HOPEN.has(o.id)?'▴':'▾'}</span></span>${typeof iaBtn==='function'?iaBtn(o):''}<button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></div>${HOPEN.has(o.id)?(o.lite?histDet(o):opDetail(o)):''}`;};
+  const row=o=>{const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+    const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'EN VIVO'}</span>`:o.state==='win'?'<span class="up">✓ cerrada</span>':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
+    return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button><span class="ht">${dd}</span><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hs">${stt}</span><span class="hk">${o.hit||0}/3</span><span class="hp ${v.usd>=0?'up':'dn'}">${v.ok?hxPct(v.pct):'—'}</span><span class="hu ${v.usd>=0?'up':'dn'}">${v.ok?hxUsd(v.usd):'—'}</span><span>${typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;};
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
   const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,HSRC==='sim'?100:40));
-  $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';}
+  $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';
+  for(const o of L)if(HOPEN.has(o.id))hxFill(o);}
+/* fila y detalle de cada señal en Resultados (octubre 2026) */
+const hxMg=o=>(SIM[o.m]?SIM[o.m].margin:100)+(o.ll?o.ll.margin:0);
+function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=pnlAt(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
+  const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
+const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
+const HXC={};
+function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:'');
+  return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
+    <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>
+      <div class="hx-g"><span>Modo</span><b>${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}</b>
+        <span>Inicio de la señal</span><b>${fdate(o.t)}</b><span>Objetivos</span><b>${o.hit||0}/3</b>
+        <span>Resultado</span><b class="${v.usd>=0?'up':'dn'}">${v.ok?fusd2(v.usd)+' ('+hxPct(v.pct)+' del margen)':o.state==='open'?'en curso':'—'}</b>
+        <span>Simulación</span><b>${sim}</b></div>
+      <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
+/* 4h hasta un momento dado → mismos 5 factores del semáforo de PILOTEAR */
+function hxQ4(c4){return withCandles(c4,()=>{const i=c4.length-1,cl=closes(),atr=wilder(trArr(),14)[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i];
+  let f6=0,v6=0;for(let j=Math.max(0,i-5);j<=i;j++){f6+=barDelta(c4[j]);v6+=c4[j].v;}
+  return {st:calcST(10,3).dir[i]||0,al:Math.sign(e21-e50),ab:e200==null?0:Math.sign(cl[i]-e200),d50:atr?(cl[i]-e50)/atr:0,fl6:v6?f6/v6:0,r24:i>=6?(cl[i]/cl[i-6]-1)*100:0};});}
+const HXK={};const hxKl=(s,t)=>{const k=s+t,c=HXK[k];if(c&&Date.now()-c.t<10*6e4)return c.p;const p=kl(s,t,1000);HXK[k]={t:Date.now(),p};p.catch(()=>{delete HXK[k];});return p;};
+async function hxFill(o){const c=HXC[o.id]=HXC[o.id]||{};if(c.busy)return;const now=Date.now();if(c.live&&c.ent&&now-(c.t||0)<30e3)return;c.busy=true;
+  const put=(k,h)=>{c[k]=h;const el=$((k==='live'?'hxl-':'hxe-')+o.id);if(el)el.innerHTML=h;};
+  try{if(o.m==='a'){put('live','<div class="hx-t">📡 Ahora en el mercado</div><div class="mut">Para acciones el análisis en vivo todavía no está disponible: mirá el gráfico y el termómetro.</div>');put('ent','<div class="mut">El semáforo de entrada es de cripto (velas de 4 h de Binance).</div>');return;}
+    /* 1) datos en tiempo real (los de PILOTEAR) */
+    try{const D=await pilData(o.sym),px=tickers[o.sym]?.c||D.c1,trend=a=>a.why.filter(x=>!/^Semáforo/.test(x)).map(x=>`<li>${esc(x)}</li>`).join('');
+      if(o.state==='open'&&!o.lite&&px){const P=HXC[o.id].pos=HXC[o.id].pos||{sym:o.sym,dir:o.dir,entry:o.ae||o.entry,lev:o.lev||SIM[o.m].lev,margin:hxMg(o),t:o.t};const a=pilAnalyze(P,D,px);
+        const cls=['liq','peligro','stopplan','aviso','salir','vuelta'].includes(a.st)?'bad':a.st==='asegurar'?'warn':'good';
+        const vb=pnlAt(o,px),tx=a.txt.split(pilMoney(a.usd)).join(fusd2(vb)).split(pilMoney(a.usd).replace('−','')).join(fusd2(vb).replace('−',''));
+        put('live',`<div class="hx-t ${cls}">${esc(a.title)}</div><div>${esc(tx)}</div><ul class="hx-w">${trend(a)}</ul>`);}
+      else{const a=pilAnalyze({sym:o.sym,dir:o.dir,entry:px,lev:10,margin:100,t:now},D,px);
+        put('live',`<div class="hx-t">📡 Ahora en el mercado${o.state==='open'?'':' · la señal ya terminó'}</div><div class="mut">${o.sym.replace('USDT','')} a ${fp(px)}. Así está para un ${o.dir>0?'LONG':'SHORT'}:</div><ul class="hx-w">${trend(a)}</ul>`);}}
+    catch(e){put('live','<div class="mut">No se pudieron leer los datos en vivo de este activo.</div>');}
+    /* 2) ¿fue una buena entrada? con las velas de 4 h que había al momento de la señal */
+    try{const [h4,b4]=await Promise.all([hxKl(o.sym,'4h'),hxKl('BTCUSDT','4h')]),c4=h4.filter(b=>b.t+144e5<=o.t),cb=b4.filter(b=>b.t+144e5<=o.t);
+      if(c4.length<60){put('ent','<div class="hx-sem">⚪ Sin datos de esa fecha</div><div class="hx-f">La señal es más vieja que las velas de 4 h que se pueden revisar (unos 5 meses).</div>');}
+      else{const q=hxQ4(c4.slice(-260));q.btc=cb.length>60?(()=>{const bc=cb.slice(-120).map(b=>b.close),be=emaArr(bc,50);return bc.at(-1)>be.at(-1)?1:-1;})():0;const S=pilSemaforo({q4:q},o.dir);
+        const lab=S.k>=5?'🟢 Buena entrada':S.k>=3?'🟡 Entrada media':'🔴 Entrada floja';
+        put('ent',`<div class="hx-sem">${lab} · ${S.k}/5</div><div class="hx-f">${S.lab.replace(/^\S+\s/,'')}<br>${S.txt.split(' · ').slice(2).join(' · ')}</div>`);}}
+    catch(e){put('ent','<div class="mut">No se pudo revisar la entrada.</div>');}
+    c.t=Date.now();}finally{c.busy=false;}}
+setInterval(()=>{try{if(!$('histList')||!HOPEN.size)return;for(const id of HOPEN){const el=$('hxl-'+id);if(!el)continue;const o=ledOps(mode).find(x=>String(x.id)===String(id));if(o&&o.state==='open'){HXC[id]&&(HXC[id].t=0);hxFill(o);}}}catch(e){}},30e3);
 $('resStats').onclick=e=>{const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
   const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes(true);return;}
   const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes(true);return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
