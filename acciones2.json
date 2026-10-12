@@ -1,0 +1,5382 @@
+{
+ "fecha": "2026-10-12T05:15:41.633Z",
+ "con_diario": 356,
+ "ronda3": [
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 6776,
+    "dia": 5.39,
+    "gana": 53.6,
+    "pct": 5.53,
+    "usd_dia": 149.2,
+    "perd_media": 56.4,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 3289,
+    "dia": 5.24,
+    "gana": 52.2,
+    "pct": 4.55,
+    "usd_dia": 119.2,
+    "perd_media": 58.5,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7373,
+    "dia": 5.87,
+    "gana": 53.4,
+    "pct": 4.88,
+    "usd_dia": 143.3,
+    "perd_media": 56,
+    "peor": -81.6,
+    "pf": 1.19,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 3584,
+    "dia": 5.71,
+    "gana": 51.8,
+    "pct": 4.25,
+    "usd_dia": 121.4,
+    "perd_media": 58.2,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7083,
+    "dia": 5.64,
+    "gana": 57.6,
+    "pct": 4.47,
+    "usd_dia": 126.1,
+    "perd_media": 57.8,
+    "peor": -81.6,
+    "pf": 1.18,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 3457,
+    "dia": 5.5,
+    "gana": 56.3,
+    "pct": 3.4,
+    "usd_dia": 93.5,
+    "perd_media": 60.2,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 5364,
+    "dia": 4.27,
+    "gana": 53.5,
+    "pct": 5.71,
+    "usd_dia": 121.8,
+    "perd_media": 55.3,
+    "peor": -81.6,
+    "pf": 1.22,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 3005,
+    "dia": 4.79,
+    "gana": 52.4,
+    "pct": 3.98,
+    "usd_dia": 95.2,
+    "perd_media": 58.7,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 5811,
+    "dia": 4.63,
+    "gana": 53.6,
+    "pct": 4.9,
+    "usd_dia": 113.3,
+    "perd_media": 54.6,
+    "peor": -81.6,
+    "pf": 1.19,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 3280,
+    "dia": 5.22,
+    "gana": 51.7,
+    "pct": 3.46,
+    "usd_dia": 90.4,
+    "perd_media": 58.4,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 8070,
+    "dia": 6.43,
+    "gana": 52.4,
+    "pct": 3.42,
+    "usd_dia": 109.9,
+    "perd_media": 52.4,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 3936,
+    "dia": 6.27,
+    "gana": 52.9,
+    "pct": 4.48,
+    "usd_dia": 140.3,
+    "perd_media": 55.9,
+    "peor": -81.6,
+    "pf": 1.17,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7940,
+    "dia": 6.32,
+    "gana": 58.9,
+    "pct": 3.43,
+    "usd_dia": 108.4,
+    "perd_media": 57.5,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 3919,
+    "dia": 6.24,
+    "gana": 58.3,
+    "pct": 3.44,
+    "usd_dia": 107.3,
+    "perd_media": 60.6,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7373,
+    "dia": 5.87,
+    "gana": 53.4,
+    "pct": 3.66,
+    "usd_dia": 107.3,
+    "perd_media": 46.1,
+    "peor": -53.4,
+    "pf": 1.17,
+    "lev": 6.7
+   },
+   "prueba": {
+    "n": 3584,
+    "dia": 5.71,
+    "gana": 51.8,
+    "pct": 2.69,
+    "usd_dia": 76.9,
+    "perd_media": 44.5,
+    "peor": -52.9,
+    "pf": 1.13,
+    "lev": 6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 5606,
+    "dia": 4.46,
+    "gana": 57.9,
+    "pct": 4.77,
+    "usd_dia": 106.5,
+    "perd_media": 56.7,
+    "peor": -81.6,
+    "pf": 1.2,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 3148,
+    "dia": 5.01,
+    "gana": 56.5,
+    "pct": 3.12,
+    "usd_dia": 78.2,
+    "perd_media": 59.9,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 9266,
+    "dia": 7.38,
+    "gana": 53.1,
+    "pct": 2.85,
+    "usd_dia": 105.2,
+    "perd_media": 46.1,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 4543,
+    "dia": 7.23,
+    "gana": 52.6,
+    "pct": 2.94,
+    "usd_dia": 106.4,
+    "perd_media": 50.1,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 6322,
+    "dia": 5.03,
+    "gana": 53.1,
+    "pct": 4.1,
+    "usd_dia": 103.2,
+    "perd_media": 50.7,
+    "peor": -81.6,
+    "pf": 1.17,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 3595,
+    "dia": 5.72,
+    "gana": 52.8,
+    "pct": 3.93,
+    "usd_dia": 112.5,
+    "perd_media": 55.8,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 9266,
+    "dia": 7.38,
+    "gana": 53.1,
+    "pct": 2.72,
+    "usd_dia": 100.5,
+    "perd_media": 51.1,
+    "peor": -54,
+    "pf": 1.11,
+    "lev": 10
+   },
+   "prueba": {
+    "n": 4543,
+    "dia": 7.23,
+    "gana": 52.6,
+    "pct": 2.28,
+    "usd_dia": 82.6,
+    "perd_media": 50.2,
+    "peor": -54,
+    "pf": 1.1,
+    "lev": 8.8
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 8881,
+    "dia": 7.07,
+    "gana": 59.6,
+    "pct": 2.81,
+    "usd_dia": 99.5,
+    "perd_media": 53.7,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 4372,
+    "dia": 6.96,
+    "gana": 59.3,
+    "pct": 2.9,
+    "usd_dia": 100.9,
+    "perd_media": 57.7,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 9395,
+    "dia": 7.48,
+    "gana": 68.5,
+    "pct": 2.65,
+    "usd_dia": 99,
+    "perd_media": 59.3,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 4659,
+    "dia": 7.42,
+    "gana": 67.9,
+    "pct": 2.4,
+    "usd_dia": 89.1,
+    "perd_media": 62.8,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3182,
+    "dia": 2.53,
+    "gana": 56.3,
+    "pct": 7.81,
+    "usd_dia": 98.9,
+    "perd_media": 55.7,
+    "peor": -81.6,
+    "pf": 1.32,
+    "lev": 7.6
+   },
+   "prueba": {
+    "n": 1904,
+    "dia": 3.03,
+    "gana": 52.3,
+    "pct": 4.47,
+    "usd_dia": 67.8,
+    "perd_media": 58,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 6776,
+    "dia": 5.39,
+    "gana": 53.6,
+    "pct": 3.62,
+    "usd_dia": 97.7,
+    "perd_media": 39.9,
+    "peor": -52.6,
+    "pf": 1.2,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 3289,
+    "dia": 5.24,
+    "gana": 52.2,
+    "pct": 2.89,
+    "usd_dia": 75.6,
+    "perd_media": 39.4,
+    "peor": -52,
+    "pf": 1.15,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7981,
+    "dia": 6.35,
+    "gana": 66.2,
+    "pct": 2.96,
+    "usd_dia": 94,
+    "perd_media": 61.2,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 4000,
+    "dia": 6.37,
+    "gana": 66,
+    "pct": 2.84,
+    "usd_dia": 90.3,
+    "perd_media": 63.8,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 6260,
+    "dia": 4.98,
+    "gana": 59.3,
+    "pct": 3.76,
+    "usd_dia": 93.6,
+    "perd_media": 56,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 3577,
+    "dia": 5.7,
+    "gana": 58.3,
+    "pct": 3.09,
+    "usd_dia": 87.9,
+    "perd_media": 60.5,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3333,
+    "dia": 2.65,
+    "gana": 55.4,
+    "pct": 6.98,
+    "usd_dia": 92.7,
+    "perd_media": 51.8,
+    "peor": -81.6,
+    "pf": 1.3,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 2033,
+    "dia": 3.24,
+    "gana": 53.5,
+    "pct": 4.8,
+    "usd_dia": 77.7,
+    "perd_media": 55.6,
+    "peor": -81.6,
+    "pf": 1.19,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3054,
+    "dia": 2.43,
+    "gana": 54.6,
+    "pct": 7.54,
+    "usd_dia": 91.7,
+    "perd_media": 54.8,
+    "peor": -81.6,
+    "pf": 1.3,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 1795,
+    "dia": 2.86,
+    "gana": 52.5,
+    "pct": 4.68,
+    "usd_dia": 66.9,
+    "perd_media": 59,
+    "peor": -81.6,
+    "pf": 1.17,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 6923,
+    "dia": 5.51,
+    "gana": 60,
+    "pct": 3.33,
+    "usd_dia": 91.7,
+    "perd_media": 51.7,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 3986,
+    "dia": 6.35,
+    "gana": 59.3,
+    "pct": 2.45,
+    "usd_dia": 77.7,
+    "perd_media": 57.4,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 8070,
+    "dia": 6.43,
+    "gana": 52.4,
+    "pct": 2.84,
+    "usd_dia": 91.3,
+    "perd_media": 48.9,
+    "peor": -54,
+    "pf": 1.12,
+    "lev": 8
+   },
+   "prueba": {
+    "n": 3936,
+    "dia": 6.27,
+    "gana": 52.9,
+    "pct": 3.29,
+    "usd_dia": 103.1,
+    "perd_media": 47.6,
+    "peor": -53.5,
+    "pf": 1.15,
+    "lev": 7.1
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 10444,
+    "dia": 8.32,
+    "gana": 60,
+    "pct": 2.17,
+    "usd_dia": 90.3,
+    "perd_media": 46.3,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 5129,
+    "dia": 8.17,
+    "gana": 59.5,
+    "pct": 2.04,
+    "usd_dia": 83.4,
+    "perd_media": 50.9,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3107,
+    "dia": 2.47,
+    "gana": 60,
+    "pct": 7.28,
+    "usd_dia": 90.1,
+    "perd_media": 56.6,
+    "peor": -81.6,
+    "pf": 1.32,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 1843,
+    "dia": 2.93,
+    "gana": 56.4,
+    "pct": 3.66,
+    "usd_dia": 53.7,
+    "perd_media": 59.6,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 6322,
+    "dia": 5.03,
+    "gana": 53.1,
+    "pct": 3.56,
+    "usd_dia": 89.7,
+    "perd_media": 49,
+    "peor": -54,
+    "pf": 1.16,
+    "lev": 8.4
+   },
+   "prueba": {
+    "n": 3595,
+    "dia": 5.72,
+    "gana": 52.8,
+    "pct": 3.05,
+    "usd_dia": 87.2,
+    "perd_media": 47.9,
+    "peor": -53.5,
+    "pf": 1.13,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 5811,
+    "dia": 4.63,
+    "gana": 53.6,
+    "pct": 3.86,
+    "usd_dia": 89.4,
+    "perd_media": 46.2,
+    "peor": -53.4,
+    "pf": 1.18,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 3280,
+    "dia": 5.22,
+    "gana": 51.7,
+    "pct": 2.29,
+    "usd_dia": 59.8,
+    "perd_media": 44.8,
+    "peor": -52.9,
+    "pf": 1.11,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7218,
+    "dia": 5.75,
+    "gana": 53.3,
+    "pct": 3.03,
+    "usd_dia": 87,
+    "perd_media": 51.2,
+    "peor": -54,
+    "pf": 1.13,
+    "lev": 10.5
+   },
+   "prueba": {
+    "n": 4150,
+    "dia": 6.61,
+    "gana": 52.4,
+    "pct": 1.89,
+    "usd_dia": 62.3,
+    "perd_media": 50.5,
+    "peor": -54,
+    "pf": 1.08,
+    "lev": 9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7218,
+    "dia": 5.75,
+    "gana": 53.3,
+    "pct": 3.01,
+    "usd_dia": 86.6,
+    "perd_media": 44.4,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 4150,
+    "dia": 6.61,
+    "gana": 52.4,
+    "pct": 2.15,
+    "usd_dia": 70.9,
+    "perd_media": 49.7,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 5364,
+    "dia": 4.27,
+    "gana": 53.5,
+    "pct": 3.89,
+    "usd_dia": 83.1,
+    "perd_media": 39.8,
+    "peor": -52.6,
+    "pf": 1.21,
+    "lev": 5.4
+   },
+   "prueba": {
+    "n": 3005,
+    "dia": 4.79,
+    "gana": 52.4,
+    "pct": 2.62,
+    "usd_dia": 62.6,
+    "perd_media": 39.5,
+    "peor": -52,
+    "pf": 1.14,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 10444,
+    "dia": 8.32,
+    "gana": 60,
+    "pct": 2,
+    "usd_dia": 83,
+    "perd_media": 51.5,
+    "peor": -54,
+    "pf": 1.1,
+    "lev": 10
+   },
+   "prueba": {
+    "n": 5129,
+    "dia": 8.17,
+    "gana": 59.5,
+    "pct": 1.63,
+    "usd_dia": 66.7,
+    "perd_media": 50.9,
+    "peor": -54,
+    "pf": 1.08,
+    "lev": 8.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 6297,
+    "dia": 5.01,
+    "gana": 66.4,
+    "pct": 3.28,
+    "usd_dia": 82.3,
+    "perd_media": 59.7,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 3623,
+    "dia": 5.77,
+    "gana": 66,
+    "pct": 2.5,
+    "usd_dia": 72.2,
+    "perd_media": 63.2,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7083,
+    "dia": 5.64,
+    "gana": 57.6,
+    "pct": 2.91,
+    "usd_dia": 82,
+    "perd_media": 40.8,
+    "peor": -52.6,
+    "pf": 1.17,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 3457,
+    "dia": 5.5,
+    "gana": 56.3,
+    "pct": 2.16,
+    "usd_dia": 59.5,
+    "perd_media": 40.3,
+    "peor": -52,
+    "pf": 1.12,
+    "lev": 4.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 8881,
+    "dia": 7.07,
+    "gana": 59.6,
+    "pct": 2.31,
+    "usd_dia": 81.8,
+    "perd_media": 49.8,
+    "peor": -53.9,
+    "pf": 1.11,
+    "lev": 8
+   },
+   "prueba": {
+    "n": 4372,
+    "dia": 6.96,
+    "gana": 59.3,
+    "pct": 2.06,
+    "usd_dia": 71.7,
+    "perd_media": 48.9,
+    "peor": -53.5,
+    "pf": 1.1,
+    "lev": 7.1
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3333,
+    "dia": 2.65,
+    "gana": 55.4,
+    "pct": 6.15,
+    "usd_dia": 81.6,
+    "perd_media": 48.4,
+    "peor": -53.9,
+    "pf": 1.28,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 2033,
+    "dia": 3.24,
+    "gana": 53.5,
+    "pct": 3.67,
+    "usd_dia": 59.4,
+    "perd_media": 48,
+    "peor": -53.2,
+    "pf": 1.16,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7337,
+    "dia": 5.84,
+    "gana": 68.7,
+    "pct": 2.79,
+    "usd_dia": 81.4,
+    "perd_media": 57.5,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 4233,
+    "dia": 6.74,
+    "gana": 67.8,
+    "pct": 1.9,
+    "usd_dia": 63.9,
+    "perd_media": 62.7,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3319,
+    "dia": 2.64,
+    "gana": 61.3,
+    "pct": 6.13,
+    "usd_dia": 81,
+    "perd_media": 56.8,
+    "peor": -81.6,
+    "pf": 1.28,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 2018,
+    "dia": 3.21,
+    "gana": 58.2,
+    "pct": 3.36,
+    "usd_dia": 54,
+    "perd_media": 59.8,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3182,
+    "dia": 2.53,
+    "gana": 56.3,
+    "pct": 6.28,
+    "usd_dia": 79.6,
+    "perd_media": 45.7,
+    "peor": -53.2,
+    "pf": 1.31,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 1904,
+    "dia": 3.03,
+    "gana": 52.3,
+    "pct": 3.03,
+    "usd_dia": 45.9,
+    "perd_media": 44.6,
+    "peor": -52.7,
+    "pf": 1.14,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 10736,
+    "dia": 8.55,
+    "gana": 68.8,
+    "pct": 1.85,
+    "usd_dia": 79.1,
+    "perd_media": 54.4,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 5283,
+    "dia": 8.41,
+    "gana": 68.7,
+    "pct": 2.16,
+    "usd_dia": 90.9,
+    "perd_media": 58.8,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 6923,
+    "dia": 5.51,
+    "gana": 60,
+    "pct": 2.85,
+    "usd_dia": 78.5,
+    "perd_media": 49.8,
+    "peor": -53.9,
+    "pf": 1.14,
+    "lev": 8.4
+   },
+   "prueba": {
+    "n": 3986,
+    "dia": 6.35,
+    "gana": 59.3,
+    "pct": 1.87,
+    "usd_dia": 59.2,
+    "perd_media": 49.2,
+    "peor": -53.5,
+    "pf": 1.09,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3523,
+    "dia": 2.8,
+    "gana": 61.9,
+    "pct": 5.52,
+    "usd_dia": 77.4,
+    "perd_media": 52.9,
+    "peor": -81.6,
+    "pf": 1.27,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 2163,
+    "dia": 3.44,
+    "gana": 59.4,
+    "pct": 2.8,
+    "usd_dia": 48.1,
+    "perd_media": 57.4,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 9394,
+    "dia": 7.48,
+    "gana": 73.7,
+    "pct": 2.06,
+    "usd_dia": 77.2,
+    "perd_media": 63.3,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 4712,
+    "dia": 7.5,
+    "gana": 73.9,
+    "pct": 2.27,
+    "usd_dia": 85.1,
+    "perd_media": 65.9,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 11196,
+    "dia": 8.91,
+    "gana": 75.6,
+    "pct": 1.73,
+    "usd_dia": 77,
+    "perd_media": 60,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 5542,
+    "dia": 8.82,
+    "gana": 74.7,
+    "pct": 1.45,
+    "usd_dia": 64.1,
+    "perd_media": 64.1,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7940,
+    "dia": 6.32,
+    "gana": 58.9,
+    "pct": 2.43,
+    "usd_dia": 76.7,
+    "perd_media": 47.3,
+    "peor": -53.4,
+    "pf": 1.12,
+    "lev": 6.7
+   },
+   "prueba": {
+    "n": 3919,
+    "dia": 6.24,
+    "gana": 58.3,
+    "pct": 2.17,
+    "usd_dia": 67.7,
+    "perd_media": 46.1,
+    "peor": -52.9,
+    "pf": 1.11,
+    "lev": 5.9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 8090,
+    "dia": 6.44,
+    "gana": 60.3,
+    "pct": 2.27,
+    "usd_dia": 73.1,
+    "perd_media": 44.6,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 4664,
+    "dia": 7.43,
+    "gana": 59.4,
+    "pct": 1.38,
+    "usd_dia": 51.1,
+    "perd_media": 50.6,
+    "peor": -81.6,
+    "pf": 1.07,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 8090,
+    "dia": 6.44,
+    "gana": 60.3,
+    "pct": 2.26,
+    "usd_dia": 72.8,
+    "perd_media": 51.6,
+    "peor": -54,
+    "pf": 1.11,
+    "lev": 10.5
+   },
+   "prueba": {
+    "n": 4664,
+    "dia": 7.43,
+    "gana": 59.4,
+    "pct": 1.33,
+    "usd_dia": 49.2,
+    "perd_media": 51.1,
+    "peor": -54,
+    "pf": 1.06,
+    "lev": 9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 8296,
+    "dia": 6.61,
+    "gana": 69.2,
+    "pct": 2.2,
+    "usd_dia": 72.7,
+    "perd_media": 52.6,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 4786,
+    "dia": 7.62,
+    "gana": 68.8,
+    "pct": 1.71,
+    "usd_dia": 65.3,
+    "perd_media": 58.6,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 5606,
+    "dia": 4.46,
+    "gana": 57.9,
+    "pct": 3.24,
+    "usd_dia": 72.2,
+    "perd_media": 40.7,
+    "peor": -52.6,
+    "pf": 1.19,
+    "lev": 5.4
+   },
+   "prueba": {
+    "n": 3148,
+    "dia": 5.01,
+    "gana": 56.5,
+    "pct": 2.05,
+    "usd_dia": 51.3,
+    "perd_media": 40.2,
+    "peor": -52,
+    "pf": 1.12,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 7332,
+    "dia": 5.84,
+    "gana": 73.9,
+    "pct": 2.45,
+    "usd_dia": 71.6,
+    "perd_media": 61.5,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.1
+   },
+   "prueba": {
+    "n": 4267,
+    "dia": 6.79,
+    "gana": 74,
+    "pct": 2.18,
+    "usd_dia": 74.2,
+    "perd_media": 65.6,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 6.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 6260,
+    "dia": 4.98,
+    "gana": 59.3,
+    "pct": 2.84,
+    "usd_dia": 70.7,
+    "perd_media": 47.4,
+    "peor": -53.4,
+    "pf": 1.15,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 3577,
+    "dia": 5.7,
+    "gana": 58.3,
+    "pct": 2.03,
+    "usd_dia": 57.8,
+    "perd_media": 46.3,
+    "peor": -52.9,
+    "pf": 1.1,
+    "lev": 6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 12550,
+    "dia": 9.99,
+    "gana": 68.9,
+    "pct": 1.39,
+    "usd_dia": 69.3,
+    "perd_media": 46,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 6189,
+    "dia": 9.86,
+    "gana": 67.8,
+    "pct": 0.88,
+    "usd_dia": 43.6,
+    "perd_media": 51.1,
+    "peor": -81.6,
+    "pf": 1.05,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3631,
+    "dia": 2.89,
+    "gana": 54.9,
+    "pct": 4.7,
+    "usd_dia": 68,
+    "perd_media": 45.2,
+    "peor": -81.6,
+    "pf": 1.23,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 2244,
+    "dia": 3.57,
+    "gana": 53.3,
+    "pct": 3.39,
+    "usd_dia": 60.6,
+    "perd_media": 49.4,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3523,
+    "dia": 2.8,
+    "gana": 61.9,
+    "pct": 4.79,
+    "usd_dia": 67.1,
+    "perd_media": 49.5,
+    "peor": -53.9,
+    "pf": 1.25,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 2163,
+    "dia": 3.44,
+    "gana": 59.4,
+    "pct": 2.19,
+    "usd_dia": 37.7,
+    "perd_media": 49.1,
+    "peor": -53.2,
+    "pf": 1.11,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 9395,
+    "dia": 7.48,
+    "gana": 68.5,
+    "pct": 1.78,
+    "usd_dia": 66.5,
+    "perd_media": 49,
+    "peor": -53.4,
+    "pf": 1.12,
+    "lev": 6.7
+   },
+   "prueba": {
+    "n": 4659,
+    "dia": 7.42,
+    "gana": 67.9,
+    "pct": 1.5,
+    "usd_dia": 55.6,
+    "perd_media": 47.7,
+    "peor": -52.9,
+    "pf": 1.1,
+    "lev": 5.9
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3631,
+    "dia": 2.89,
+    "gana": 54.9,
+    "pct": 4.58,
+    "usd_dia": 66.2,
+    "perd_media": 51,
+    "peor": -54,
+    "pf": 1.2,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 2244,
+    "dia": 3.57,
+    "gana": 53.3,
+    "pct": 3.07,
+    "usd_dia": 54.9,
+    "perd_media": 50.5,
+    "peor": -54,
+    "pf": 1.13,
+    "lev": 9
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3334,
+    "dia": 2.65,
+    "gana": 67.5,
+    "pct": 4.85,
+    "usd_dia": 64.4,
+    "perd_media": 59.4,
+    "peor": -81.6,
+    "pf": 1.25,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 2010,
+    "dia": 3.2,
+    "gana": 65.6,
+    "pct": 2.53,
+    "usd_dia": 40.5,
+    "perd_media": 62.6,
+    "peor": -81.6,
+    "pf": 1.12,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7373,
+    "dia": 5.87,
+    "gana": 53.4,
+    "pct": 2.19,
+    "usd_dia": 64.4,
+    "perd_media": 27.7,
+    "peor": -32,
+    "pf": 1.17,
+    "lev": 4
+   },
+   "prueba": {
+    "n": 3584,
+    "dia": 5.71,
+    "gana": 51.8,
+    "pct": 1.62,
+    "usd_dia": 46.1,
+    "perd_media": 26.7,
+    "peor": -31.7,
+    "pf": 1.13,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 8657,
+    "dia": 6.89,
+    "gana": 75.6,
+    "pct": 1.87,
+    "usd_dia": 64.3,
+    "perd_media": 58.2,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.6
+   },
+   "prueba": {
+    "n": 4993,
+    "dia": 7.95,
+    "gana": 74.9,
+    "pct": 1.39,
+    "usd_dia": 55.4,
+    "perd_media": 63.9,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3319,
+    "dia": 2.64,
+    "gana": 61.3,
+    "pct": 4.74,
+    "usd_dia": 62.6,
+    "perd_media": 46.8,
+    "peor": -53.3,
+    "pf": 1.26,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 2018,
+    "dia": 3.21,
+    "gana": 58.2,
+    "pct": 2.24,
+    "usd_dia": 36,
+    "perd_media": 45.9,
+    "peor": -52.7,
+    "pf": 1.12,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3054,
+    "dia": 2.43,
+    "gana": 54.6,
+    "pct": 5.09,
+    "usd_dia": 61.9,
+    "perd_media": 38.6,
+    "peor": -52.4,
+    "pf": 1.29,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 1795,
+    "dia": 2.86,
+    "gana": 52.5,
+    "pct": 3.16,
+    "usd_dia": 45.2,
+    "perd_media": 39.5,
+    "peor": -52,
+    "pf": 1.17,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3107,
+    "dia": 2.47,
+    "gana": 60,
+    "pct": 4.96,
+    "usd_dia": 61.3,
+    "perd_media": 39.7,
+    "peor": -52.4,
+    "pf": 1.31,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 1843,
+    "dia": 2.93,
+    "gana": 56.4,
+    "pct": 2.43,
+    "usd_dia": 35.7,
+    "perd_media": 39.8,
+    "peor": -52,
+    "pf": 1.14,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 9266,
+    "dia": 7.38,
+    "gana": 53.1,
+    "pct": 1.62,
+    "usd_dia": 59.9,
+    "perd_media": 30.7,
+    "peor": -33.4,
+    "pf": 1.11,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 4543,
+    "dia": 7.23,
+    "gana": 52.6,
+    "pct": 1.37,
+    "usd_dia": 49.6,
+    "perd_media": 30.1,
+    "peor": -32.6,
+    "pf": 1.1,
+    "lev": 5.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7981,
+    "dia": 6.35,
+    "gana": 66.2,
+    "pct": 1.88,
+    "usd_dia": 59.9,
+    "perd_media": 43,
+    "peor": -52.6,
+    "pf": 1.13,
+    "lev": 5.1
+   },
+   "prueba": {
+    "n": 4000,
+    "dia": 6.37,
+    "gana": 66,
+    "pct": 1.78,
+    "usd_dia": 56.6,
+    "perd_media": 42.6,
+    "peor": -52,
+    "pf": 1.12,
+    "lev": 4.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7337,
+    "dia": 5.84,
+    "gana": 68.7,
+    "pct": 2.03,
+    "usd_dia": 59.2,
+    "perd_media": 48.9,
+    "peor": -53.4,
+    "pf": 1.13,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 4233,
+    "dia": 6.74,
+    "gana": 67.8,
+    "pct": 1.24,
+    "usd_dia": 41.7,
+    "perd_media": 47.9,
+    "peor": -52.9,
+    "pf": 1.08,
+    "lev": 6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 6776,
+    "dia": 5.39,
+    "gana": 53.6,
+    "pct": 2.17,
+    "usd_dia": 58.6,
+    "perd_media": 24,
+    "peor": -31.5,
+    "pf": 1.2,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 3289,
+    "dia": 5.24,
+    "gana": 52.2,
+    "pct": 1.73,
+    "usd_dia": 45.3,
+    "perd_media": 23.6,
+    "peor": -31.2,
+    "pf": 1.15,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 10736,
+    "dia": 8.55,
+    "gana": 68.8,
+    "pct": 1.37,
+    "usd_dia": 58.5,
+    "perd_media": 50.9,
+    "peor": -53.9,
+    "pf": 1.09,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 5283,
+    "dia": 8.41,
+    "gana": 68.7,
+    "pct": 1.51,
+    "usd_dia": 63.5,
+    "perd_media": 50,
+    "peor": -53.5,
+    "pf": 1.1,
+    "lev": 7.1
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 8296,
+    "dia": 6.61,
+    "gana": 69.2,
+    "pct": 1.73,
+    "usd_dia": 57.2,
+    "perd_media": 51,
+    "peor": -53.9,
+    "pf": 1.11,
+    "lev": 8.4
+   },
+   "prueba": {
+    "n": 4786,
+    "dia": 7.62,
+    "gana": 68.8,
+    "pct": 1.32,
+    "usd_dia": 50.1,
+    "perd_media": 50.2,
+    "peor": -53.5,
+    "pf": 1.08,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 12589,
+    "dia": 10.02,
+    "gana": 75.6,
+    "pct": 1.11,
+    "usd_dia": 55.4,
+    "perd_media": 54.3,
+    "peor": -81.6,
+    "pf": 1.08,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 6233,
+    "dia": 9.93,
+    "gana": 75.3,
+    "pct": 0.92,
+    "usd_dia": 45.8,
+    "perd_media": 59.2,
+    "peor": -81.6,
+    "pf": 1.06,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 8070,
+    "dia": 6.43,
+    "gana": 52.4,
+    "pct": 1.7,
+    "usd_dia": 54.7,
+    "perd_media": 29.3,
+    "peor": -32.7,
+    "pf": 1.12,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 3936,
+    "dia": 6.27,
+    "gana": 52.9,
+    "pct": 1.97,
+    "usd_dia": 61.9,
+    "perd_media": 28.6,
+    "peor": -32.1,
+    "pf": 1.15,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 6297,
+    "dia": 5.01,
+    "gana": 66.4,
+    "pct": 2.18,
+    "usd_dia": 54.7,
+    "perd_media": 42.8,
+    "peor": -52.6,
+    "pf": 1.15,
+    "lev": 5.3
+   },
+   "prueba": {
+    "n": 3623,
+    "dia": 5.77,
+    "gana": 66,
+    "pct": 1.65,
+    "usd_dia": 47.7,
+    "perd_media": 42.2,
+    "peor": -52,
+    "pf": 1.12,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3677,
+    "dia": 2.93,
+    "gana": 69.5,
+    "pct": 3.69,
+    "usd_dia": 54,
+    "perd_media": 59.3,
+    "peor": -81.6,
+    "pf": 1.2,
+    "lev": 7.6
+   },
+   "prueba": {
+    "n": 2248,
+    "dia": 3.58,
+    "gana": 67.9,
+    "pct": 2.01,
+    "usd_dia": 36,
+    "perd_media": 62.7,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 6322,
+    "dia": 5.03,
+    "gana": 53.1,
+    "pct": 2.14,
+    "usd_dia": 53.8,
+    "perd_media": 29.4,
+    "peor": -32.7,
+    "pf": 1.15,
+    "lev": 5
+   },
+   "prueba": {
+    "n": 3595,
+    "dia": 5.72,
+    "gana": 52.8,
+    "pct": 1.83,
+    "usd_dia": 52.3,
+    "perd_media": 28.8,
+    "peor": -32.1,
+    "pf": 1.13,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 5811,
+    "dia": 4.63,
+    "gana": 53.6,
+    "pct": 2.32,
+    "usd_dia": 53.6,
+    "perd_media": 27.7,
+    "peor": -32,
+    "pf": 1.18,
+    "lev": 4.2
+   },
+   "prueba": {
+    "n": 3280,
+    "dia": 5.22,
+    "gana": 51.7,
+    "pct": 1.37,
+    "usd_dia": 35.9,
+    "perd_media": 26.9,
+    "peor": -31.7,
+    "pf": 1.11,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3908,
+    "dia": 3.11,
+    "gana": 61.2,
+    "pct": 3.42,
+    "usd_dia": 53.2,
+    "perd_media": 51.4,
+    "peor": -54,
+    "pf": 1.17,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 2429,
+    "dia": 3.87,
+    "gana": 60.1,
+    "pct": 1.92,
+    "usd_dia": 37.2,
+    "perd_media": 51.3,
+    "peor": -54,
+    "pf": 1.09,
+    "lev": 9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 9619,
+    "dia": 7.66,
+    "gana": 68.9,
+    "pct": 1.38,
+    "usd_dia": 53,
+    "perd_media": 44.4,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 5581,
+    "dia": 8.89,
+    "gana": 68,
+    "pct": 0.49,
+    "usd_dia": 21.7,
+    "perd_media": 50.8,
+    "peor": -81.6,
+    "pf": 1.03,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3908,
+    "dia": 3.11,
+    "gana": 61.2,
+    "pct": 3.4,
+    "usd_dia": 52.9,
+    "perd_media": 45.7,
+    "peor": -81.6,
+    "pf": 1.19,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 2429,
+    "dia": 3.87,
+    "gana": 60.1,
+    "pct": 2.05,
+    "usd_dia": 39.6,
+    "perd_media": 50.3,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7218,
+    "dia": 5.75,
+    "gana": 53.3,
+    "pct": 1.8,
+    "usd_dia": 51.8,
+    "perd_media": 30.8,
+    "peor": -33.4,
+    "pf": 1.13,
+    "lev": 6.3
+   },
+   "prueba": {
+    "n": 4150,
+    "dia": 6.61,
+    "gana": 52.4,
+    "pct": 1.13,
+    "usd_dia": 37.4,
+    "perd_media": 30.3,
+    "peor": -32.6,
+    "pf": 1.08,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2067,
+    "dia": 1.65,
+    "gana": 54.6,
+    "pct": 6.18,
+    "usd_dia": 50.8,
+    "perd_media": 59.4,
+    "peor": -81.6,
+    "pf": 1.23,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 1009,
+    "dia": 1.61,
+    "gana": 52.4,
+    "pct": 6.12,
+    "usd_dia": 49.2,
+    "perd_media": 55.5,
+    "peor": -81.6,
+    "pf": 1.23,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 5364,
+    "dia": 4.27,
+    "gana": 53.5,
+    "pct": 2.34,
+    "usd_dia": 49.9,
+    "perd_media": 23.9,
+    "peor": -31.5,
+    "pf": 1.21,
+    "lev": 3.2
+   },
+   "prueba": {
+    "n": 3005,
+    "dia": 4.79,
+    "gana": 52.4,
+    "pct": 1.57,
+    "usd_dia": 37.6,
+    "perd_media": 23.7,
+    "peor": -31.2,
+    "pf": 1.14,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 12550,
+    "dia": 9.99,
+    "gana": 68.9,
+    "pct": 1,
+    "usd_dia": 49.8,
+    "perd_media": 51.8,
+    "peor": -54,
+    "pf": 1.06,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 6189,
+    "dia": 9.86,
+    "gana": 67.8,
+    "pct": 0.53,
+    "usd_dia": 26,
+    "perd_media": 51.4,
+    "peor": -54,
+    "pf": 1.03,
+    "lev": 8.9
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 10444,
+    "dia": 8.32,
+    "gana": 60,
+    "pct": 1.19,
+    "usd_dia": 49.6,
+    "perd_media": 31,
+    "peor": -33.4,
+    "pf": 1.1,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 5129,
+    "dia": 8.17,
+    "gana": 59.5,
+    "pct": 0.98,
+    "usd_dia": 40,
+    "perd_media": 30.5,
+    "peor": -32.6,
+    "pf": 1.08,
+    "lev": 5.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7083,
+    "dia": 5.64,
+    "gana": 57.6,
+    "pct": 1.74,
+    "usd_dia": 49.2,
+    "perd_media": 24.5,
+    "peor": -31.5,
+    "pf": 1.17,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 3457,
+    "dia": 5.5,
+    "gana": 56.3,
+    "pct": 1.3,
+    "usd_dia": 35.7,
+    "perd_media": 24.2,
+    "peor": -31.2,
+    "pf": 1.12,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 8881,
+    "dia": 7.07,
+    "gana": 59.6,
+    "pct": 1.39,
+    "usd_dia": 49.1,
+    "perd_media": 29.9,
+    "peor": -32.5,
+    "pf": 1.11,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 4372,
+    "dia": 6.96,
+    "gana": 59.3,
+    "pct": 1.24,
+    "usd_dia": 43,
+    "perd_media": 29.3,
+    "peor": -32.1,
+    "pf": 1.1,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3672,
+    "dia": 2.92,
+    "gana": 74.6,
+    "pct": 3.35,
+    "usd_dia": 49,
+    "perd_media": 61.6,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 2236,
+    "dia": 3.56,
+    "gana": 73.6,
+    "pct": 1.88,
+    "usd_dia": 33.5,
+    "perd_media": 66.1,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3333,
+    "dia": 2.65,
+    "gana": 55.4,
+    "pct": 3.69,
+    "usd_dia": 48.9,
+    "perd_media": 29,
+    "peor": -32.3,
+    "pf": 1.28,
+    "lev": 4.9
+   },
+   "prueba": {
+    "n": 2033,
+    "dia": 3.24,
+    "gana": 53.5,
+    "pct": 2.2,
+    "usd_dia": 35.7,
+    "perd_media": 28.8,
+    "peor": -31.9,
+    "pf": 1.16,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3182,
+    "dia": 2.53,
+    "gana": 56.3,
+    "pct": 3.77,
+    "usd_dia": 47.7,
+    "perd_media": 27.4,
+    "peor": -31.9,
+    "pf": 1.31,
+    "lev": 4.1
+   },
+   "prueba": {
+    "n": 1904,
+    "dia": 3.03,
+    "gana": 52.3,
+    "pct": 1.82,
+    "usd_dia": 27.5,
+    "perd_media": 26.8,
+    "peor": -31.6,
+    "pf": 1.14,
+    "lev": 3.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 11196,
+    "dia": 8.91,
+    "gana": 75.6,
+    "pct": 1.06,
+    "usd_dia": 47.1,
+    "perd_media": 49.8,
+    "peor": -53.4,
+    "pf": 1.09,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 5542,
+    "dia": 8.82,
+    "gana": 74.7,
+    "pct": 0.84,
+    "usd_dia": 37,
+    "perd_media": 48.9,
+    "peor": -52.7,
+    "pf": 1.07,
+    "lev": 6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 6923,
+    "dia": 5.51,
+    "gana": 60,
+    "pct": 1.71,
+    "usd_dia": 47.1,
+    "perd_media": 29.9,
+    "peor": -32.5,
+    "pf": 1.14,
+    "lev": 5
+   },
+   "prueba": {
+    "n": 3986,
+    "dia": 6.35,
+    "gana": 59.3,
+    "pct": 1.12,
+    "usd_dia": 35.5,
+    "perd_media": 29.5,
+    "peor": -32.1,
+    "pf": 1.09,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3963,
+    "dia": 3.16,
+    "gana": 70,
+    "pct": 2.97,
+    "usd_dia": 46.8,
+    "perd_media": 54.2,
+    "peor": -81.6,
+    "pf": 1.18,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 2451,
+    "dia": 3.9,
+    "gana": 68.2,
+    "pct": 1.31,
+    "usd_dia": 25.6,
+    "perd_media": 58.7,
+    "peor": -81.6,
+    "pf": 1.07,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7940,
+    "dia": 6.32,
+    "gana": 58.9,
+    "pct": 1.46,
+    "usd_dia": 46,
+    "perd_media": 28.4,
+    "peor": -32,
+    "pf": 1.12,
+    "lev": 4
+   },
+   "prueba": {
+    "n": 3919,
+    "dia": 6.24,
+    "gana": 58.3,
+    "pct": 1.3,
+    "usd_dia": 40.6,
+    "perd_media": 27.7,
+    "peor": -31.7,
+    "pf": 1.11,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 9394,
+    "dia": 7.48,
+    "gana": 73.7,
+    "pct": 1.21,
+    "usd_dia": 45.3,
+    "perd_media": 44.8,
+    "peor": -52.6,
+    "pf": 1.1,
+    "lev": 5.1
+   },
+   "prueba": {
+    "n": 4712,
+    "dia": 7.5,
+    "gana": 73.9,
+    "pct": 1.44,
+    "usd_dia": 54,
+    "perd_media": 44,
+    "peor": -52,
+    "pf": 1.13,
+    "lev": 4.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 9622,
+    "dia": 7.66,
+    "gana": 75.5,
+    "pct": 1.18,
+    "usd_dia": 45.2,
+    "perd_media": 52.4,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.7
+   },
+   "prueba": {
+    "n": 5620,
+    "dia": 8.95,
+    "gana": 75.4,
+    "pct": 0.76,
+    "usd_dia": 34.2,
+    "perd_media": 58.8,
+    "peor": -81.6,
+    "pf": 1.05,
+    "lev": 7.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 7332,
+    "dia": 5.84,
+    "gana": 73.9,
+    "pct": 1.54,
+    "usd_dia": 44.9,
+    "perd_media": 44.3,
+    "peor": -52.6,
+    "pf": 1.13,
+    "lev": 5.3
+   },
+   "prueba": {
+    "n": 4267,
+    "dia": 6.79,
+    "gana": 74,
+    "pct": 1.43,
+    "usd_dia": 48.7,
+    "perd_media": 43.8,
+    "peor": -52,
+    "pf": 1.13,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 8090,
+    "dia": 6.44,
+    "gana": 60.3,
+    "pct": 1.35,
+    "usd_dia": 43.5,
+    "perd_media": 31,
+    "peor": -33.4,
+    "pf": 1.11,
+    "lev": 6.3
+   },
+   "prueba": {
+    "n": 4664,
+    "dia": 7.43,
+    "gana": 59.4,
+    "pct": 0.8,
+    "usd_dia": 29.5,
+    "perd_media": 30.7,
+    "peor": -32.6,
+    "pf": 1.06,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 5606,
+    "dia": 4.46,
+    "gana": 57.9,
+    "pct": 1.94,
+    "usd_dia": 43.3,
+    "perd_media": 24.4,
+    "peor": -31.5,
+    "pf": 1.19,
+    "lev": 3.2
+   },
+   "prueba": {
+    "n": 3148,
+    "dia": 5.01,
+    "gana": 56.5,
+    "pct": 1.23,
+    "usd_dia": 30.8,
+    "perd_media": 24.1,
+    "peor": -31.2,
+    "pf": 1.12,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3334,
+    "dia": 2.65,
+    "gana": 67.5,
+    "pct": 3.25,
+    "usd_dia": 43.2,
+    "perd_media": 41.7,
+    "peor": -52.4,
+    "pf": 1.24,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 2010,
+    "dia": 3.2,
+    "gana": 65.6,
+    "pct": 1.66,
+    "usd_dia": 26.6,
+    "perd_media": 41.8,
+    "peor": -52,
+    "pf": 1.12,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 6260,
+    "dia": 4.98,
+    "gana": 59.3,
+    "pct": 1.7,
+    "usd_dia": 42.4,
+    "perd_media": 28.4,
+    "peor": -32,
+    "pf": 1.15,
+    "lev": 4.2
+   },
+   "prueba": {
+    "n": 3577,
+    "dia": 5.7,
+    "gana": 58.3,
+    "pct": 1.22,
+    "usd_dia": 34.7,
+    "perd_media": 27.8,
+    "peor": -31.7,
+    "pf": 1.1,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2067,
+    "dia": 1.65,
+    "gana": 54.6,
+    "pct": 5.12,
+    "usd_dia": 42.2,
+    "perd_media": 44.6,
+    "peor": -53.2,
+    "pf": 1.25,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 1009,
+    "dia": 1.61,
+    "gana": 52.4,
+    "pct": 3.69,
+    "usd_dia": 29.6,
+    "perd_media": 41.6,
+    "peor": -52.5,
+    "pf": 1.19,
+    "lev": 5.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 8657,
+    "dia": 6.89,
+    "gana": 75.6,
+    "pct": 1.21,
+    "usd_dia": 41.6,
+    "perd_media": 49.9,
+    "peor": -53.4,
+    "pf": 1.1,
+    "lev": 7
+   },
+   "prueba": {
+    "n": 4993,
+    "dia": 7.95,
+    "gana": 74.9,
+    "pct": 0.91,
+    "usd_dia": 36.3,
+    "perd_media": 49,
+    "peor": -52.7,
+    "pf": 1.07,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3677,
+    "dia": 2.93,
+    "gana": 69.5,
+    "pct": 2.83,
+    "usd_dia": 41.5,
+    "perd_media": 48.6,
+    "peor": -53.4,
+    "pf": 1.19,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 2248,
+    "dia": 3.58,
+    "gana": 67.9,
+    "pct": 1.35,
+    "usd_dia": 24.2,
+    "perd_media": 47.7,
+    "peor": -52.7,
+    "pf": 1.09,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 1914,
+    "dia": 1.52,
+    "gana": 53.7,
+    "pct": 5.44,
+    "usd_dia": 41.5,
+    "perd_media": 57.3,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 929,
+    "dia": 1.48,
+    "gana": 52.1,
+    "pct": 5.64,
+    "usd_dia": 41.7,
+    "perd_media": 55.2,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 6.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 9619,
+    "dia": 7.66,
+    "gana": 68.9,
+    "pct": 1.07,
+    "usd_dia": 40.8,
+    "perd_media": 52,
+    "peor": -54,
+    "pf": 1.07,
+    "lev": 10.5
+   },
+   "prueba": {
+    "n": 5581,
+    "dia": 8.89,
+    "gana": 68,
+    "pct": 0.44,
+    "usd_dia": 19.4,
+    "perd_media": 51.5,
+    "peor": -54,
+    "pf": 1.03,
+    "lev": 9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 1960,
+    "dia": 1.56,
+    "gana": 57.9,
+    "pct": 5.2,
+    "usd_dia": 40.6,
+    "perd_media": 58.9,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 960,
+    "dia": 1.53,
+    "gana": 56,
+    "pct": 4.58,
+    "usd_dia": 35,
+    "perd_media": 56.6,
+    "peor": -81.6,
+    "pf": 1.18,
+    "lev": 6.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2561,
+    "dia": 2.04,
+    "gana": 54.6,
+    "pct": 3.97,
+    "usd_dia": 40.5,
+    "perd_media": 50.5,
+    "peor": -53.9,
+    "pf": 1.17,
+    "lev": 8.9
+   },
+   "prueba": {
+    "n": 1242,
+    "dia": 1.98,
+    "gana": 53.6,
+    "pct": 3.51,
+    "usd_dia": 34.7,
+    "perd_media": 49.1,
+    "peor": -53.6,
+    "pf": 1.15,
+    "lev": 8.5
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3523,
+    "dia": 2.8,
+    "gana": 61.9,
+    "pct": 2.87,
+    "usd_dia": 40.3,
+    "perd_media": 29.7,
+    "peor": -32.3,
+    "pf": 1.25,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 2163,
+    "dia": 3.44,
+    "gana": 59.4,
+    "pct": 1.31,
+    "usd_dia": 22.6,
+    "perd_media": 29.5,
+    "peor": -31.9,
+    "pf": 1.11,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 9395,
+    "dia": 7.48,
+    "gana": 68.5,
+    "pct": 1.07,
+    "usd_dia": 39.9,
+    "perd_media": 29.4,
+    "peor": -32.1,
+    "pf": 1.12,
+    "lev": 4
+   },
+   "prueba": {
+    "n": 4659,
+    "dia": 7.42,
+    "gana": 67.9,
+    "pct": 0.9,
+    "usd_dia": 33.4,
+    "perd_media": 28.6,
+    "peor": -31.7,
+    "pf": 1.1,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3631,
+    "dia": 2.89,
+    "gana": 54.9,
+    "pct": 2.75,
+    "usd_dia": 39.7,
+    "perd_media": 30.6,
+    "peor": -32.9,
+    "pf": 1.2,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 2244,
+    "dia": 3.57,
+    "gana": 53.3,
+    "pct": 1.84,
+    "usd_dia": 32.9,
+    "perd_media": 30.3,
+    "peor": -32.4,
+    "pf": 1.13,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3963,
+    "dia": 3.16,
+    "gana": 70,
+    "pct": 2.52,
+    "usd_dia": 39.7,
+    "perd_media": 50.7,
+    "peor": -53.9,
+    "pf": 1.17,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 2451,
+    "dia": 3.9,
+    "gana": 68.2,
+    "pct": 1.01,
+    "usd_dia": 19.7,
+    "perd_media": 50.3,
+    "peor": -53.2,
+    "pf": 1.06,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3319,
+    "dia": 2.64,
+    "gana": 61.3,
+    "pct": 2.84,
+    "usd_dia": 37.6,
+    "perd_media": 28.1,
+    "peor": -32,
+    "pf": 1.26,
+    "lev": 4.1
+   },
+   "prueba": {
+    "n": 2018,
+    "dia": 3.21,
+    "gana": 58.2,
+    "pct": 1.34,
+    "usd_dia": 21.6,
+    "perd_media": 27.5,
+    "peor": -31.6,
+    "pf": 1.12,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2164,
+    "dia": 1.72,
+    "gana": 60.2,
+    "pct": 4.36,
+    "usd_dia": 37.6,
+    "perd_media": 61.9,
+    "peor": -81.6,
+    "pf": 1.18,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 1074,
+    "dia": 1.71,
+    "gana": 58.6,
+    "pct": 4.94,
+    "usd_dia": 42.3,
+    "perd_media": 57.8,
+    "peor": -81.6,
+    "pf": 1.21,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2247,
+    "dia": 1.79,
+    "gana": 53.4,
+    "pct": 4.19,
+    "usd_dia": 37.5,
+    "perd_media": 47.7,
+    "peor": -53.9,
+    "pf": 1.19,
+    "lev": 7.2
+   },
+   "prueba": {
+    "n": 1094,
+    "dia": 1.74,
+    "gana": 53.6,
+    "pct": 4.16,
+    "usd_dia": 36.3,
+    "perd_media": 45.5,
+    "peor": -52.9,
+    "pf": 1.2,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3054,
+    "dia": 2.43,
+    "gana": 54.6,
+    "pct": 3.06,
+    "usd_dia": 37.2,
+    "perd_media": 23.2,
+    "peor": -31.4,
+    "pf": 1.29,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 1795,
+    "dia": 2.86,
+    "gana": 52.5,
+    "pct": 1.9,
+    "usd_dia": 27.1,
+    "perd_media": 23.7,
+    "peor": -31.2,
+    "pf": 1.17,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3107,
+    "dia": 2.47,
+    "gana": 60,
+    "pct": 2.98,
+    "usd_dia": 36.8,
+    "perd_media": 23.8,
+    "peor": -31.4,
+    "pf": 1.31,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 1843,
+    "dia": 2.93,
+    "gana": 56.4,
+    "pct": 1.46,
+    "usd_dia": 21.4,
+    "perd_media": 23.9,
+    "peor": -31.2,
+    "pf": 1.14,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2247,
+    "dia": 1.79,
+    "gana": 53.4,
+    "pct": 4.09,
+    "usd_dia": 36.6,
+    "perd_media": 56.4,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 1094,
+    "dia": 1.74,
+    "gana": 53.6,
+    "pct": 6.46,
+    "usd_dia": 56.3,
+    "perd_media": 54.2,
+    "peor": -81.6,
+    "pf": 1.26,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7981,
+    "dia": 6.35,
+    "gana": 66.2,
+    "pct": 1.13,
+    "usd_dia": 35.9,
+    "perd_media": 25.8,
+    "peor": -31.5,
+    "pf": 1.13,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 4000,
+    "dia": 6.37,
+    "gana": 66,
+    "pct": 1.07,
+    "usd_dia": 34,
+    "perd_media": 25.6,
+    "peor": -31.2,
+    "pf": 1.12,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7337,
+    "dia": 5.84,
+    "gana": 68.7,
+    "pct": 1.22,
+    "usd_dia": 35.5,
+    "perd_media": 29.3,
+    "peor": -32.1,
+    "pf": 1.13,
+    "lev": 4.2
+   },
+   "prueba": {
+    "n": 4233,
+    "dia": 6.74,
+    "gana": 67.8,
+    "pct": 0.74,
+    "usd_dia": 25,
+    "perd_media": 28.7,
+    "peor": -31.7,
+    "pf": 1.08,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 10736,
+    "dia": 8.55,
+    "gana": 68.8,
+    "pct": 0.82,
+    "usd_dia": 35.1,
+    "perd_media": 30.5,
+    "peor": -32.7,
+    "pf": 1.09,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 5283,
+    "dia": 8.41,
+    "gana": 68.7,
+    "pct": 0.91,
+    "usd_dia": 38.1,
+    "perd_media": 30,
+    "peor": -32.1,
+    "pf": 1.1,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 4094,
+    "dia": 3.26,
+    "gana": 75.9,
+    "pct": 2.13,
+    "usd_dia": 34.7,
+    "perd_media": 60.7,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 7.6
+   },
+   "prueba": {
+    "n": 2497,
+    "dia": 3.98,
+    "gana": 74.8,
+    "pct": 1.48,
+    "usd_dia": 29.3,
+    "perd_media": 63.7,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 14224,
+    "dia": 11.32,
+    "gana": 75.3,
+    "pct": 0.61,
+    "usd_dia": 34.5,
+    "perd_media": 45.7,
+    "peor": -81.6,
+    "pf": 1.05,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 7142,
+    "dia": 11.37,
+    "gana": 75.2,
+    "pct": 0.54,
+    "usd_dia": 30.6,
+    "perd_media": 50.9,
+    "peor": -81.6,
+    "pf": 1.04,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 8296,
+    "dia": 6.61,
+    "gana": 69.2,
+    "pct": 1.04,
+    "usd_dia": 34.3,
+    "perd_media": 30.6,
+    "peor": -32.7,
+    "pf": 1.11,
+    "lev": 5.1
+   },
+   "prueba": {
+    "n": 4786,
+    "dia": 7.62,
+    "gana": 68.8,
+    "pct": 0.79,
+    "usd_dia": 30.1,
+    "perd_media": 30.1,
+    "peor": -32.1,
+    "pf": 1.08,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 6297,
+    "dia": 5.01,
+    "gana": 66.4,
+    "pct": 1.31,
+    "usd_dia": 32.8,
+    "perd_media": 25.7,
+    "peor": -31.5,
+    "pf": 1.15,
+    "lev": 3.2
+   },
+   "prueba": {
+    "n": 3623,
+    "dia": 5.77,
+    "gana": 66,
+    "pct": 0.99,
+    "usd_dia": 28.6,
+    "perd_media": 25.3,
+    "peor": -31.2,
+    "pf": 1.12,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 4372,
+    "dia": 3.48,
+    "gana": 69.3,
+    "pct": 1.87,
+    "usd_dia": 32.5,
+    "perd_media": 45.9,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 2758,
+    "dia": 4.39,
+    "gana": 67.5,
+    "pct": 0.53,
+    "usd_dia": 11.6,
+    "perd_media": 50.1,
+    "peor": -81.6,
+    "pf": 1.03,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3672,
+    "dia": 2.92,
+    "gana": 74.6,
+    "pct": 2.21,
+    "usd_dia": 32.3,
+    "perd_media": 43.3,
+    "peor": -52.6,
+    "pf": 1.2,
+    "lev": 5.2
+   },
+   "prueba": {
+    "n": 2236,
+    "dia": 3.56,
+    "gana": 73.6,
+    "pct": 1.26,
+    "usd_dia": 22.5,
+    "perd_media": 44,
+    "peor": -52,
+    "pf": 1.11,
+    "lev": 4.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3908,
+    "dia": 3.11,
+    "gana": 61.2,
+    "pct": 2.05,
+    "usd_dia": 31.9,
+    "perd_media": 30.9,
+    "peor": -33.1,
+    "pf": 1.17,
+    "lev": 6.1
+   },
+   "prueba": {
+    "n": 2429,
+    "dia": 3.87,
+    "gana": 60.1,
+    "pct": 1.15,
+    "usd_dia": 22.3,
+    "perd_media": 30.8,
+    "peor": -32.4,
+    "pf": 1.09,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2561,
+    "dia": 2.04,
+    "gana": 54.6,
+    "pct": 3.12,
+    "usd_dia": 31.8,
+    "perd_media": 49.7,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 1242,
+    "dia": 1.98,
+    "gana": 53.6,
+    "pct": 5.03,
+    "usd_dia": 49.8,
+    "perd_media": 48.7,
+    "peor": -81.6,
+    "pf": 1.22,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2787,
+    "dia": 2.22,
+    "gana": 61.1,
+    "pct": 2.84,
+    "usd_dia": 31.5,
+    "perd_media": 51,
+    "peor": -54,
+    "pf": 1.14,
+    "lev": 9
+   },
+   "prueba": {
+    "n": 1360,
+    "dia": 2.17,
+    "gana": 60.4,
+    "pct": 2.63,
+    "usd_dia": 28.4,
+    "perd_media": 50.4,
+    "peor": -53.3,
+    "pf": 1.13,
+    "lev": 8.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2164,
+    "dia": 1.72,
+    "gana": 60.2,
+    "pct": 3.65,
+    "usd_dia": 31.4,
+    "perd_media": 46.4,
+    "peor": -53.2,
+    "pf": 1.2,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 1074,
+    "dia": 1.71,
+    "gana": 58.6,
+    "pct": 2.92,
+    "usd_dia": 25,
+    "perd_media": 43.2,
+    "peor": -52.4,
+    "pf": 1.16,
+    "lev": 5.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 12589,
+    "dia": 10.02,
+    "gana": 75.6,
+    "pct": 0.62,
+    "usd_dia": 31.3,
+    "perd_media": 51.3,
+    "peor": -54,
+    "pf": 1.05,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 6233,
+    "dia": 9.93,
+    "gana": 75.3,
+    "pct": 0.56,
+    "usd_dia": 27.7,
+    "perd_media": 50.5,
+    "peor": -53.2,
+    "pf": 1.04,
+    "lev": 7.2
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2421,
+    "dia": 1.93,
+    "gana": 61,
+    "pct": 3.19,
+    "usd_dia": 30.7,
+    "perd_media": 49.2,
+    "peor": -53.9,
+    "pf": 1.17,
+    "lev": 7.2
+   },
+   "prueba": {
+    "n": 1167,
+    "dia": 1.86,
+    "gana": 59.2,
+    "pct": 2.43,
+    "usd_dia": 22.5,
+    "perd_media": 46.9,
+    "peor": -52.9,
+    "pf": 1.13,
+    "lev": 6.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 4372,
+    "dia": 3.48,
+    "gana": 69.3,
+    "pct": 1.76,
+    "usd_dia": 30.6,
+    "perd_media": 51.9,
+    "peor": -54,
+    "pf": 1.11,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 2758,
+    "dia": 4.39,
+    "gana": 67.5,
+    "pct": 0.37,
+    "usd_dia": 8,
+    "perd_media": 51.5,
+    "peor": -54,
+    "pf": 1.02,
+    "lev": 9.1
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 12550,
+    "dia": 9.99,
+    "gana": 68.9,
+    "pct": 0.59,
+    "usd_dia": 29.5,
+    "perd_media": 31.1,
+    "peor": -33.4,
+    "pf": 1.06,
+    "lev": 6.1
+   },
+   "prueba": {
+    "n": 6189,
+    "dia": 9.86,
+    "gana": 67.8,
+    "pct": 0.32,
+    "usd_dia": 15.6,
+    "perd_media": 30.9,
+    "peor": -32.4,
+    "pf": 1.03,
+    "lev": 5.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2421,
+    "dia": 1.93,
+    "gana": 61,
+    "pct": 2.96,
+    "usd_dia": 28.6,
+    "perd_media": 58.6,
+    "peor": -81.6,
+    "pf": 1.13,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 1167,
+    "dia": 1.86,
+    "gana": 59.2,
+    "pct": 4.05,
+    "usd_dia": 37.7,
+    "perd_media": 55.9,
+    "peor": -81.6,
+    "pf": 1.18,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 11196,
+    "dia": 8.91,
+    "gana": 75.6,
+    "pct": 0.63,
+    "usd_dia": 28.2,
+    "perd_media": 29.9,
+    "peor": -32,
+    "pf": 1.09,
+    "lev": 4.1
+   },
+   "prueba": {
+    "n": 5542,
+    "dia": 8.82,
+    "gana": 74.7,
+    "pct": 0.5,
+    "usd_dia": 22.2,
+    "perd_media": 29.4,
+    "peor": -31.6,
+    "pf": 1.07,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 9622,
+    "dia": 7.66,
+    "gana": 75.5,
+    "pct": 0.74,
+    "usd_dia": 28.2,
+    "perd_media": 51.3,
+    "peor": -54,
+    "pf": 1.06,
+    "lev": 8.4
+   },
+   "prueba": {
+    "n": 5620,
+    "dia": 8.95,
+    "gana": 75.4,
+    "pct": 0.57,
+    "usd_dia": 25.4,
+    "perd_media": 50.6,
+    "peor": -53.2,
+    "pf": 1.05,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 1914,
+    "dia": 1.52,
+    "gana": 53.7,
+    "pct": 3.67,
+    "usd_dia": 28,
+    "perd_media": 38,
+    "peor": -52.4,
+    "pf": 1.21,
+    "lev": 4.6
+   },
+   "prueba": {
+    "n": 929,
+    "dia": 1.48,
+    "gana": 52.1,
+    "pct": 3.6,
+    "usd_dia": 26.6,
+    "perd_media": 36.1,
+    "peor": -51.7,
+    "pf": 1.21,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2126,
+    "dia": 1.69,
+    "gana": 66.9,
+    "pct": 3.29,
+    "usd_dia": 27.8,
+    "perd_media": 63.4,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 1051,
+    "dia": 1.67,
+    "gana": 65.3,
+    "pct": 3.14,
+    "usd_dia": 26.3,
+    "perd_media": 60.7,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 6.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 1960,
+    "dia": 1.56,
+    "gana": 57.9,
+    "pct": 3.5,
+    "usd_dia": 27.3,
+    "perd_media": 39,
+    "peor": -52.4,
+    "pf": 1.21,
+    "lev": 4.6
+   },
+   "prueba": {
+    "n": 960,
+    "dia": 1.53,
+    "gana": 56,
+    "pct": 2.92,
+    "usd_dia": 22.3,
+    "perd_media": 36.9,
+    "peor": -51.7,
+    "pf": 1.18,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 9394,
+    "dia": 7.48,
+    "gana": 73.7,
+    "pct": 0.73,
+    "usd_dia": 27.2,
+    "perd_media": 26.9,
+    "peor": -31.5,
+    "pf": 1.1,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 4712,
+    "dia": 7.5,
+    "gana": 73.9,
+    "pct": 0.86,
+    "usd_dia": 32.4,
+    "perd_media": 26.4,
+    "peor": -31.2,
+    "pf": 1.13,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 10799,
+    "dia": 8.6,
+    "gana": 75.3,
+    "pct": 0.63,
+    "usd_dia": 27,
+    "perd_media": 44.1,
+    "peor": -81.6,
+    "pf": 1.06,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 6416,
+    "dia": 10.22,
+    "gana": 75.3,
+    "pct": 0.34,
+    "usd_dia": 17.5,
+    "perd_media": 50.6,
+    "peor": -81.6,
+    "pf": 1.03,
+    "lev": 7.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 7332,
+    "dia": 5.84,
+    "gana": 73.9,
+    "pct": 0.92,
+    "usd_dia": 27,
+    "perd_media": 26.6,
+    "peor": -31.5,
+    "pf": 1.13,
+    "lev": 3.2
+   },
+   "prueba": {
+    "n": 4267,
+    "dia": 6.79,
+    "gana": 74,
+    "pct": 0.86,
+    "usd_dia": 29.2,
+    "perd_media": 26.3,
+    "peor": -31.2,
+    "pf": 1.13,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 4094,
+    "dia": 3.26,
+    "gana": 75.9,
+    "pct": 1.65,
+    "usd_dia": 26.8,
+    "perd_media": 49.7,
+    "peor": -53.3,
+    "pf": 1.14,
+    "lev": 6.7
+   },
+   "prueba": {
+    "n": 2497,
+    "dia": 3.98,
+    "gana": 74.8,
+    "pct": 0.91,
+    "usd_dia": 18.2,
+    "perd_media": 48.8,
+    "peor": -52.7,
+    "pf": 1.07,
+    "lev": 6.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2469,
+    "dia": 1.97,
+    "gana": 69.5,
+    "pct": 2.71,
+    "usd_dia": 26.6,
+    "perd_media": 64.5,
+    "peor": -81.6,
+    "pf": 1.14,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 1208,
+    "dia": 1.92,
+    "gana": 67.4,
+    "pct": 3.25,
+    "usd_dia": 31.2,
+    "perd_media": 61.3,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3334,
+    "dia": 2.65,
+    "gana": 67.5,
+    "pct": 1.95,
+    "usd_dia": 25.9,
+    "perd_media": 25,
+    "peor": -31.5,
+    "pf": 1.24,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 2010,
+    "dia": 3.2,
+    "gana": 65.6,
+    "pct": 1,
+    "usd_dia": 16,
+    "perd_media": 25.1,
+    "peor": -31.2,
+    "pf": 1.12,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2067,
+    "dia": 1.65,
+    "gana": 54.6,
+    "pct": 3.07,
+    "usd_dia": 25.3,
+    "perd_media": 26.8,
+    "peor": -31.9,
+    "pf": 1.25,
+    "lev": 3.6
+   },
+   "prueba": {
+    "n": 1009,
+    "dia": 1.61,
+    "gana": 52.4,
+    "pct": 2.21,
+    "usd_dia": 17.8,
+    "perd_media": 24.9,
+    "peor": -31.5,
+    "pf": 1.19,
+    "lev": 3.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3312,
+    "dia": 2.64,
+    "gana": 69.9,
+    "pct": 1.91,
+    "usd_dia": 25.2,
+    "perd_media": 51.6,
+    "peor": -54,
+    "pf": 1.12,
+    "lev": 9.1
+   },
+   "prueba": {
+    "n": 1601,
+    "dia": 2.55,
+    "gana": 67,
+    "pct": 0.68,
+    "usd_dia": 8.6,
+    "perd_media": 51,
+    "peor": -53.4,
+    "pf": 1.04,
+    "lev": 8.7
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 8657,
+    "dia": 6.89,
+    "gana": 75.6,
+    "pct": 0.72,
+    "usd_dia": 25,
+    "perd_media": 29.9,
+    "peor": -32,
+    "pf": 1.1,
+    "lev": 4.2
+   },
+   "prueba": {
+    "n": 4993,
+    "dia": 7.95,
+    "gana": 74.9,
+    "pct": 0.55,
+    "usd_dia": 21.8,
+    "perd_media": 29.4,
+    "peor": -31.6,
+    "pf": 1.07,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3677,
+    "dia": 2.93,
+    "gana": 69.5,
+    "pct": 1.7,
+    "usd_dia": 24.9,
+    "perd_media": 29.2,
+    "peor": -32.1,
+    "pf": 1.19,
+    "lev": 4.1
+   },
+   "prueba": {
+    "n": 2248,
+    "dia": 3.58,
+    "gana": 67.9,
+    "pct": 0.81,
+    "usd_dia": 14.5,
+    "perd_media": 28.6,
+    "peor": -31.6,
+    "pf": 1.09,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2561,
+    "dia": 2.04,
+    "gana": 54.6,
+    "pct": 2.38,
+    "usd_dia": 24.3,
+    "perd_media": 30.3,
+    "peor": -32.9,
+    "pf": 1.17,
+    "lev": 5.4
+   },
+   "prueba": {
+    "n": 1242,
+    "dia": 1.98,
+    "gana": 53.6,
+    "pct": 2.11,
+    "usd_dia": 20.8,
+    "perd_media": 29.5,
+    "peor": -32.2,
+    "pf": 1.15,
+    "lev": 5.1
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 9619,
+    "dia": 7.66,
+    "gana": 68.9,
+    "pct": 0.63,
+    "usd_dia": 24.2,
+    "perd_media": 31.2,
+    "peor": -33.4,
+    "pf": 1.06,
+    "lev": 6.3
+   },
+   "prueba": {
+    "n": 5581,
+    "dia": 8.89,
+    "gana": 68,
+    "pct": 0.26,
+    "usd_dia": 11.7,
+    "perd_media": 30.9,
+    "peor": -32.4,
+    "pf": 1.03,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3963,
+    "dia": 3.16,
+    "gana": 70,
+    "pct": 1.51,
+    "usd_dia": 23.8,
+    "perd_media": 30.4,
+    "peor": -32.5,
+    "pf": 1.17,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 2451,
+    "dia": 3.9,
+    "gana": 68.2,
+    "pct": 0.61,
+    "usd_dia": 11.8,
+    "perd_media": 30.2,
+    "peor": -31.9,
+    "pf": 1.06,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 4399,
+    "dia": 3.5,
+    "gana": 75.7,
+    "pct": 1.35,
+    "usd_dia": 23.7,
+    "perd_media": 54.7,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 2751,
+    "dia": 4.38,
+    "gana": 75.1,
+    "pct": 0.61,
+    "usd_dia": 13.4,
+    "perd_media": 59.2,
+    "peor": -81.6,
+    "pf": 1.04,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2408,
+    "dia": 1.92,
+    "gana": 74.6,
+    "pct": 2.45,
+    "usd_dia": 23.4,
+    "perd_media": 66.3,
+    "peor": -81.6,
+    "pf": 1.15,
+    "lev": 6.8
+   },
+   "prueba": {
+    "n": 1170,
+    "dia": 1.86,
+    "gana": 72,
+    "pct": 2.01,
+    "usd_dia": 18.7,
+    "perd_media": 63.9,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 6.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2787,
+    "dia": 2.22,
+    "gana": 61.1,
+    "pct": 2.07,
+    "usd_dia": 23,
+    "perd_media": 50,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 1360,
+    "dia": 2.17,
+    "gana": 60.4,
+    "pct": 3.88,
+    "usd_dia": 42,
+    "perd_media": 49.7,
+    "peor": -81.6,
+    "pf": 1.2,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2469,
+    "dia": 1.97,
+    "gana": 69.5,
+    "pct": 2.31,
+    "usd_dia": 22.7,
+    "perd_media": 48.3,
+    "peor": -53.2,
+    "pf": 1.16,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 1208,
+    "dia": 1.92,
+    "gana": 67.4,
+    "pct": 1.97,
+    "usd_dia": 19,
+    "perd_media": 45.5,
+    "peor": -52.2,
+    "pf": 1.13,
+    "lev": 5.7
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2247,
+    "dia": 1.79,
+    "gana": 53.4,
+    "pct": 2.51,
+    "usd_dia": 22.5,
+    "perd_media": 28.6,
+    "peor": -32.3,
+    "pf": 1.19,
+    "lev": 4.3
+   },
+   "prueba": {
+    "n": 1094,
+    "dia": 1.74,
+    "gana": 53.6,
+    "pct": 2.5,
+    "usd_dia": 21.8,
+    "perd_media": 27.3,
+    "peor": -31.7,
+    "pf": 1.2,
+    "lev": 4.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3312,
+    "dia": 2.64,
+    "gana": 69.9,
+    "pct": 1.66,
+    "usd_dia": 21.9,
+    "perd_media": 49.5,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 1601,
+    "dia": 2.55,
+    "gana": 67,
+    "pct": 1.69,
+    "usd_dia": 21.6,
+    "perd_media": 49.1,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2808,
+    "dia": 2.24,
+    "gana": 69.6,
+    "pct": 1.91,
+    "usd_dia": 21.3,
+    "perd_media": 50.3,
+    "peor": -53.9,
+    "pf": 1.12,
+    "lev": 7.2
+   },
+   "prueba": {
+    "n": 1352,
+    "dia": 2.15,
+    "gana": 68,
+    "pct": 1.68,
+    "usd_dia": 18.1,
+    "perd_media": 48.8,
+    "peor": -52.7,
+    "pf": 1.11,
+    "lev": 6.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2887,
+    "dia": 2.3,
+    "gana": 76.3,
+    "pct": 1.78,
+    "usd_dia": 20.5,
+    "perd_media": 65.9,
+    "peor": -81.6,
+    "pf": 1.11,
+    "lev": 7.5
+   },
+   "prueba": {
+    "n": 1379,
+    "dia": 2.2,
+    "gana": 73.4,
+    "pct": 1.58,
+    "usd_dia": 17.4,
+    "perd_media": 62.4,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.4
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 4809,
+    "dia": 3.83,
+    "gana": 75.6,
+    "pct": 1.04,
+    "usd_dia": 19.9,
+    "perd_media": 45.8,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.9
+   },
+   "prueba": {
+    "n": 3084,
+    "dia": 4.91,
+    "gana": 74.6,
+    "pct": 0.15,
+    "usd_dia": 3.7,
+    "perd_media": 50.4,
+    "peor": -81.6,
+    "pf": 1.01,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 2808,
+    "dia": 2.24,
+    "gana": 69.6,
+    "pct": 1.77,
+    "usd_dia": 19.8,
+    "perd_media": 59.5,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 1352,
+    "dia": 2.15,
+    "gana": 68,
+    "pct": 2.91,
+    "usd_dia": 31.3,
+    "perd_media": 57.6,
+    "peor": -81.6,
+    "pf": 1.16,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3672,
+    "dia": 2.92,
+    "gana": 74.6,
+    "pct": 1.33,
+    "usd_dia": 19.4,
+    "perd_media": 26,
+    "peor": -31.5,
+    "pf": 1.2,
+    "lev": 3.1
+   },
+   "prueba": {
+    "n": 2236,
+    "dia": 3.56,
+    "gana": 73.6,
+    "pct": 0.76,
+    "usd_dia": 13.5,
+    "perd_media": 26.4,
+    "peor": -31.2,
+    "pf": 1.11,
+    "lev": 2.8
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 4399,
+    "dia": 3.5,
+    "gana": 75.7,
+    "pct": 1.1,
+    "usd_dia": 19.2,
+    "perd_media": 51.1,
+    "peor": -53.9,
+    "pf": 1.09,
+    "lev": 8.1
+   },
+   "prueba": {
+    "n": 2751,
+    "dia": 4.38,
+    "gana": 75.1,
+    "pct": 0.43,
+    "usd_dia": 9.5,
+    "perd_media": 50.7,
+    "peor": -53.2,
+    "pf": 1.03,
+    "lev": 7.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2126,
+    "dia": 1.69,
+    "gana": 66.9,
+    "pct": 2.26,
+    "usd_dia": 19.1,
+    "perd_media": 41.8,
+    "peor": -52.4,
+    "pf": 1.16,
+    "lev": 4.6
+   },
+   "prueba": {
+    "n": 1051,
+    "dia": 1.67,
+    "gana": 65.3,
+    "pct": 2.02,
+    "usd_dia": 16.9,
+    "perd_media": 39.5,
+    "peor": -51.6,
+    "pf": 1.15,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2787,
+    "dia": 2.22,
+    "gana": 61.1,
+    "pct": 1.7,
+    "usd_dia": 18.9,
+    "perd_media": 30.6,
+    "peor": -32.9,
+    "pf": 1.14,
+    "lev": 5.4
+   },
+   "prueba": {
+    "n": 1360,
+    "dia": 2.17,
+    "gana": 60.4,
+    "pct": 1.58,
+    "usd_dia": 17.1,
+    "perd_media": 30.2,
+    "peor": -32,
+    "pf": 1.13,
+    "lev": 5.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2164,
+    "dia": 1.72,
+    "gana": 60.2,
+    "pct": 2.19,
+    "usd_dia": 18.9,
+    "perd_media": 27.8,
+    "peor": -31.9,
+    "pf": 1.2,
+    "lev": 3.6
+   },
+   "prueba": {
+    "n": 1074,
+    "dia": 1.71,
+    "gana": 58.6,
+    "pct": 1.75,
+    "usd_dia": 15,
+    "perd_media": 25.9,
+    "peor": -31.4,
+    "pf": 1.16,
+    "lev": 3.4
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 12589,
+    "dia": 10.02,
+    "gana": 75.6,
+    "pct": 0.37,
+    "usd_dia": 18.7,
+    "perd_media": 30.8,
+    "peor": -32.7,
+    "pf": 1.05,
+    "lev": 4.9
+   },
+   "prueba": {
+    "n": 6233,
+    "dia": 9.93,
+    "gana": 75.3,
+    "pct": 0.34,
+    "usd_dia": 16.6,
+    "perd_media": 30.3,
+    "peor": -31.9,
+    "pf": 1.04,
+    "lev": 4.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3304,
+    "dia": 2.63,
+    "gana": 76.4,
+    "pct": 1.42,
+    "usd_dia": 18.6,
+    "perd_media": 58.7,
+    "peor": -81.6,
+    "pf": 1.1,
+    "lev": 7.8
+   },
+   "prueba": {
+    "n": 1573,
+    "dia": 2.5,
+    "gana": 74.5,
+    "pct": 1.32,
+    "usd_dia": 16.5,
+    "perd_media": 58.3,
+    "peor": -81.6,
+    "pf": 1.09,
+    "lev": 7.7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 4372,
+    "dia": 3.48,
+    "gana": 69.3,
+    "pct": 1.06,
+    "usd_dia": 18.4,
+    "perd_media": 31.1,
+    "peor": -32.9,
+    "pf": 1.11,
+    "lev": 6
+   },
+   "prueba": {
+    "n": 2758,
+    "dia": 4.39,
+    "gana": 67.5,
+    "pct": 0.22,
+    "usd_dia": 4.8,
+    "perd_media": 30.9,
+    "peor": -32.4,
+    "pf": 1.02,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2421,
+    "dia": 1.93,
+    "gana": 61,
+    "pct": 1.91,
+    "usd_dia": 18.4,
+    "perd_media": 29.5,
+    "peor": -32.3,
+    "pf": 1.17,
+    "lev": 4.3
+   },
+   "prueba": {
+    "n": 1167,
+    "dia": 1.86,
+    "gana": 59.2,
+    "pct": 1.46,
+    "usd_dia": 13.5,
+    "perd_media": 28.1,
+    "peor": -31.7,
+    "pf": 1.13,
+    "lev": 4.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2887,
+    "dia": 2.3,
+    "gana": 76.3,
+    "pct": 1.5,
+    "usd_dia": 17.2,
+    "perd_media": 49.6,
+    "peor": -53.2,
+    "pf": 1.13,
+    "lev": 6.1
+   },
+   "prueba": {
+    "n": 1379,
+    "dia": 2.2,
+    "gana": 73.4,
+    "pct": 0.75,
+    "usd_dia": 8.2,
+    "perd_media": 47,
+    "peor": -52.2,
+    "pf": 1.06,
+    "lev": 5.8
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 9622,
+    "dia": 7.66,
+    "gana": 75.5,
+    "pct": 0.44,
+    "usd_dia": 16.9,
+    "perd_media": 30.8,
+    "peor": -32.7,
+    "pf": 1.06,
+    "lev": 5.1
+   },
+   "prueba": {
+    "n": 5620,
+    "dia": 8.95,
+    "gana": 75.4,
+    "pct": 0.34,
+    "usd_dia": 15.2,
+    "perd_media": 30.3,
+    "peor": -31.9,
+    "pf": 1.05,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 1,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 1914,
+    "dia": 1.52,
+    "gana": 53.7,
+    "pct": 2.2,
+    "usd_dia": 16.8,
+    "perd_media": 22.8,
+    "peor": -31.4,
+    "pf": 1.21,
+    "lev": 2.8
+   },
+   "prueba": {
+    "n": 929,
+    "dia": 1.48,
+    "gana": 52.1,
+    "pct": 2.16,
+    "usd_dia": 16,
+    "perd_media": 21.7,
+    "peor": -31,
+    "pf": 1.21,
+    "lev": 2.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3304,
+    "dia": 2.63,
+    "gana": 76.4,
+    "pct": 1.25,
+    "usd_dia": 16.5,
+    "perd_media": 50.9,
+    "peor": -53.8,
+    "pf": 1.1,
+    "lev": 7.3
+   },
+   "prueba": {
+    "n": 1573,
+    "dia": 2.5,
+    "gana": 74.5,
+    "pct": 0.55,
+    "usd_dia": 6.9,
+    "perd_media": 49.9,
+    "peor": -52.7,
+    "pf": 1.04,
+    "lev": 7
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 4809,
+    "dia": 3.83,
+    "gana": 75.6,
+    "pct": 0.86,
+    "usd_dia": 16.4,
+    "perd_media": 51.9,
+    "peor": -54,
+    "pf": 1.07,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 3084,
+    "dia": 4.91,
+    "gana": 74.6,
+    "pct": 0,
+    "usd_dia": 0,
+    "perd_media": 51.7,
+    "peor": -53.9,
+    "pf": 1,
+    "lev": 9.1
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.75,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 1960,
+    "dia": 1.56,
+    "gana": 57.9,
+    "pct": 2.1,
+    "usd_dia": 16.4,
+    "perd_media": 23.4,
+    "peor": -31.4,
+    "pf": 1.21,
+    "lev": 2.8
+   },
+   "prueba": {
+    "n": 960,
+    "dia": 1.53,
+    "gana": 56,
+    "pct": 1.75,
+    "usd_dia": 13.4,
+    "perd_media": 22.2,
+    "peor": -31,
+    "pf": 1.18,
+    "lev": 2.6
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 4094,
+    "dia": 3.26,
+    "gana": 75.9,
+    "pct": 0.99,
+    "usd_dia": 16.1,
+    "perd_media": 29.8,
+    "peor": -32,
+    "pf": 1.14,
+    "lev": 4
+   },
+   "prueba": {
+    "n": 2497,
+    "dia": 3.98,
+    "gana": 74.8,
+    "pct": 0.55,
+    "usd_dia": 10.9,
+    "perd_media": 29.3,
+    "peor": -31.6,
+    "pf": 1.07,
+    "lev": 3.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 3830,
+    "dia": 3.05,
+    "gana": 75.8,
+    "pct": 1.04,
+    "usd_dia": 15.9,
+    "perd_media": 51.7,
+    "peor": -54,
+    "pf": 1.08,
+    "lev": 9.2
+   },
+   "prueba": {
+    "n": 1890,
+    "dia": 3.01,
+    "gana": 74.3,
+    "pct": 0.1,
+    "usd_dia": 1.4,
+    "perd_media": 51.5,
+    "peor": -53.3,
+    "pf": 1.01,
+    "lev": 8.8
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 2408,
+    "dia": 1.92,
+    "gana": 74.6,
+    "pct": 1.63,
+    "usd_dia": 15.7,
+    "perd_media": 43.8,
+    "peor": -52.4,
+    "pf": 1.15,
+    "lev": 4.6
+   },
+   "prueba": {
+    "n": 1170,
+    "dia": 1.86,
+    "gana": 72,
+    "pct": 1.36,
+    "usd_dia": 12.6,
+    "perd_media": 41.5,
+    "peor": -51.5,
+    "pf": 1.12,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "×8",
+   "aprendizaje": {
+    "n": 3830,
+    "dia": 3.05,
+    "gana": 75.8,
+    "pct": 0.99,
+    "usd_dia": 15.1,
+    "perd_media": 49,
+    "peor": -81.6,
+    "pf": 1.08,
+    "lev": 8
+   },
+   "prueba": {
+    "n": 1890,
+    "dia": 3.01,
+    "gana": 74.3,
+    "pct": 0.7,
+    "usd_dia": 10.5,
+    "perd_media": 49.6,
+    "peor": -81.6,
+    "pf": 1.05,
+    "lev": 7.9
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3312,
+    "dia": 2.64,
+    "gana": 69.9,
+    "pct": 1.15,
+    "usd_dia": 15.1,
+    "perd_media": 31,
+    "peor": -32.9,
+    "pf": 1.12,
+    "lev": 5.5
+   },
+   "prueba": {
+    "n": 1601,
+    "dia": 2.55,
+    "gana": 67,
+    "pct": 0.41,
+    "usd_dia": 5.2,
+    "perd_media": 30.6,
+    "peor": -32,
+    "pf": 1.04,
+    "lev": 5.2
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2469,
+    "dia": 1.97,
+    "gana": 69.5,
+    "pct": 1.38,
+    "usd_dia": 13.6,
+    "perd_media": 29,
+    "peor": -31.9,
+    "pf": 1.16,
+    "lev": 3.6
+   },
+   "prueba": {
+    "n": 1208,
+    "dia": 1.92,
+    "gana": 67.4,
+    "pct": 1.18,
+    "usd_dia": 11.4,
+    "perd_media": 27.3,
+    "peor": -31.3,
+    "pf": 1.13,
+    "lev": 3.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2808,
+    "dia": 2.24,
+    "gana": 69.6,
+    "pct": 1.15,
+    "usd_dia": 12.8,
+    "perd_media": 30.2,
+    "peor": -32.3,
+    "pf": 1.12,
+    "lev": 4.3
+   },
+   "prueba": {
+    "n": 1352,
+    "dia": 2.15,
+    "gana": 68,
+    "pct": 1.01,
+    "usd_dia": 10.9,
+    "perd_media": 29.3,
+    "peor": -31.6,
+    "pf": 1.11,
+    "lev": 4.1
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 4399,
+    "dia": 3.5,
+    "gana": 75.7,
+    "pct": 0.66,
+    "usd_dia": 11.5,
+    "perd_media": 30.7,
+    "peor": -32.3,
+    "pf": 1.09,
+    "lev": 4.8
+   },
+   "prueba": {
+    "n": 2751,
+    "dia": 4.38,
+    "gana": 75.1,
+    "pct": 0.26,
+    "usd_dia": 5.7,
+    "perd_media": 30.4,
+    "peor": -31.9,
+    "pf": 1.03,
+    "lev": 4.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.5,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2126,
+    "dia": 1.69,
+    "gana": 66.9,
+    "pct": 1.35,
+    "usd_dia": 11.5,
+    "perd_media": 25.1,
+    "peor": -31.4,
+    "pf": 1.16,
+    "lev": 2.8
+   },
+   "prueba": {
+    "n": 1051,
+    "dia": 1.67,
+    "gana": 65.3,
+    "pct": 1.21,
+    "usd_dia": 10.2,
+    "perd_media": 23.7,
+    "peor": -31,
+    "pf": 1.15,
+    "lev": 2.6
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 3,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2887,
+    "dia": 2.3,
+    "gana": 76.3,
+    "pct": 0.9,
+    "usd_dia": 10.3,
+    "perd_media": 29.7,
+    "peor": -31.9,
+    "pf": 1.13,
+    "lev": 3.6
+   },
+   "prueba": {
+    "n": 1379,
+    "dia": 2.2,
+    "gana": 73.4,
+    "pct": 0.45,
+    "usd_dia": 4.9,
+    "perd_media": 28.2,
+    "peor": -31.3,
+    "pf": 1.06,
+    "lev": 3.5
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2.5,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3304,
+    "dia": 2.63,
+    "gana": 76.4,
+    "pct": 0.75,
+    "usd_dia": 9.9,
+    "perd_media": 30.5,
+    "peor": -32.3,
+    "pf": 1.1,
+    "lev": 4.4
+   },
+   "prueba": {
+    "n": 1573,
+    "dia": 2.5,
+    "gana": 74.5,
+    "pct": 0.33,
+    "usd_dia": 4.2,
+    "perd_media": 29.9,
+    "peor": -31.6,
+    "pf": 1.04,
+    "lev": 4.2
+   }
+  },
+  {
+   "estrategia": "reb_rup_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 4809,
+    "dia": 3.83,
+    "gana": 75.6,
+    "pct": 0.51,
+    "usd_dia": 9.8,
+    "perd_media": 31.1,
+    "peor": -32.9,
+    "pf": 1.07,
+    "lev": 6.1
+   },
+   "prueba": {
+    "n": 3084,
+    "dia": 4.91,
+    "gana": 74.6,
+    "pct": 0,
+    "usd_dia": 0,
+    "perd_media": 31,
+    "peor": -32.3,
+    "pf": 1,
+    "lev": 5.4
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 3830,
+    "dia": 3.05,
+    "gana": 75.8,
+    "pct": 0.63,
+    "usd_dia": 9.6,
+    "perd_media": 31,
+    "peor": -32.8,
+    "pf": 1.08,
+    "lev": 5.5
+   },
+   "prueba": {
+    "n": 1890,
+    "dia": 3.01,
+    "gana": 74.3,
+    "pct": 0.06,
+    "usd_dia": 0.9,
+    "perd_media": 30.9,
+    "peor": -32,
+    "pf": 1.01,
+    "lev": 5.3
+   }
+  },
+  {
+   "estrategia": "reb6m",
+   "stop_atr": 4,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 2408,
+    "dia": 1.92,
+    "gana": 74.6,
+    "pct": 0.98,
+    "usd_dia": 9.4,
+    "perd_media": 26.3,
+    "peor": -31.4,
+    "pf": 1.15,
+    "lev": 2.8
+   },
+   "prueba": {
+    "n": 1170,
+    "dia": 1.86,
+    "gana": 72,
+    "pct": 0.81,
+    "usd_dia": 7.6,
+    "perd_media": 24.9,
+    "peor": -30.9,
+    "pf": 1.12,
+    "lev": 2.6
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 10799,
+    "dia": 8.6,
+    "gana": 75.3,
+    "pct": 0.19,
+    "usd_dia": 8,
+    "perd_media": 52,
+    "peor": -54,
+    "pf": 1.01,
+    "lev": 10.5
+   },
+   "prueba": {
+    "n": 6416,
+    "dia": 10.22,
+    "gana": 75.3,
+    "pct": 0.22,
+    "usd_dia": 11.3,
+    "perd_media": 51.7,
+    "peor": -53.9,
+    "pf": 1.02,
+    "lev": 9.1
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 50 %",
+   "aprendizaje": {
+    "n": 14224,
+    "dia": 11.32,
+    "gana": 75.3,
+    "pct": 0.14,
+    "usd_dia": 7.9,
+    "perd_media": 51.9,
+    "peor": -54,
+    "pf": 1.01,
+    "lev": 10.1
+   },
+   "prueba": {
+    "n": 7142,
+    "dia": 11.37,
+    "gana": 75.2,
+    "pct": 0.23,
+    "usd_dia": 13,
+    "perd_media": 51.7,
+    "peor": -53.9,
+    "pf": 1.02,
+    "lev": 8.9
+   }
+  },
+  {
+   "estrategia": "combo_M",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 10799,
+    "dia": 8.6,
+    "gana": 75.3,
+    "pct": 0.1,
+    "usd_dia": 4.4,
+    "perd_media": 31.3,
+    "peor": -33.4,
+    "pf": 1.01,
+    "lev": 6.3
+   },
+   "prueba": {
+    "n": 6416,
+    "dia": 10.22,
+    "gana": 75.3,
+    "pct": 0.13,
+    "usd_dia": 6.8,
+    "perd_media": 31,
+    "peor": -32.3,
+    "pf": 1.02,
+    "lev": 5.5
+   }
+  },
+  {
+   "estrategia": "combo",
+   "stop_atr": 2,
+   "objetivos": 0.35,
+   "apal": "riesgo 30 %",
+   "aprendizaje": {
+    "n": 14224,
+    "dia": 11.32,
+    "gana": 75.3,
+    "pct": 0.08,
+    "usd_dia": 4.3,
+    "perd_media": 31.2,
+    "peor": -33.4,
+    "pf": 1.01,
+    "lev": 6.1
+   },
+   "prueba": {
+    "n": 7142,
+    "dia": 11.37,
+    "gana": 75.2,
+    "pct": 0.14,
+    "usd_dia": 7.9,
+    "perd_media": 31,
+    "peor": -32.3,
+    "pf": 1.02,
+    "lev": 5.4
+   }
+  }
+ ]
+}
