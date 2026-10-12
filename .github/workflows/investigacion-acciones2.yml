@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       ronda:
-        description: '1 = todas las estrategias en diario y 1 h · 2 = diario con filtro de mercado, stop corto y combinaciones'
+        description: '1 = todas las estrategias en diario y 1 h · 2 = filtro de mercado y combinaciones · 3 = optimizar stop, objetivos y apalancamiento'
         default: '1'
 permissions:
   contents: write
