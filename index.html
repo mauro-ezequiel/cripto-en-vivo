@@ -38,7 +38,7 @@ aside{background:var(--panel);border-right:1px solid var(--line);display:flex;fl
 .row.active{background:#1c2333;border-left-color:var(--acc)}
 .row b{font-weight:600}.row small{color:var(--mut)}
 .up{color:var(--up)}.dn{color:var(--dn)}
-.flash-up{animation:fu .6s}.flash-dn{animation:fd .6s}
+.flash-up{animation:fu .6s}.flash-dn{animation:fd .6s}.tk-up{color:#5fd3b8}.tk-dn{color:#ff8a87}
 @keyframes fu{from{background:rgba(38,166,154,.25)}}@keyframes fd{from{background:rgba(239,83,80,.25)}}
 main{display:flex;flex-direction:column;min-width:0;min-height:0}
 .top{display:flex;align-items:center;gap:18px;padding:12px 16px;border-bottom:1px solid var(--line);flex-wrap:wrap}
@@ -273,7 +273,7 @@ body.fs-on .fsbar{display:flex}
   .hrow{grid-template-columns:66px 54px 46px minmax(0,1fr) 28px}
 }
 .live{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:800;color:#fff;background:var(--dn);border-radius:4px;padding:1px 6px;letter-spacing:.04em}
-.live:before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;animation:lv 1.2s infinite}
+.live:before{content:"";width:6px;height:6px;border-radius:50%;background:#fff;animation:lv 1.2s infinite;will-change:opacity}
 @keyframes lv{50%{opacity:.25}}
 @media (prefers-reduced-motion:reduce){.live:before{animation:none}}
 .sg-g b.sl2{font-size:11px;font-weight:500;color:var(--mut)}
@@ -409,8 +409,8 @@ body.trn-on{overflow:hidden}
 .trn-bar{height:12px;background:var(--bg);border:1px solid var(--line);border-radius:999px;overflow:hidden;margin:10px 0 6px}.trn-bar i{display:block;height:100%;background:linear-gradient(90deg,#e0b030,#00c853)}
 .trn-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}.trn-stats div{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:8px;text-align:center}.trn-stats small{display:block;color:var(--mut);font-size:10px}.trn-stats b{font-size:14px}
 .trn-reset{width:100%;border:1px solid var(--line);background:none;color:var(--mut);border-radius:10px;padding:10px;cursor:pointer}
-.iaico{vertical-align:-3px;flex:none;overflow:visible}.iaico-dot{animation:iaDot 1.6s ease-in-out infinite;transform-origin:27px 5px}.iaico .iar{transform-origin:16px 16px;animation:iaSpin 18s linear infinite}.iaico .iao{transform-origin:16px 16px;animation:iaOrb 9s ease-in-out infinite}.iaico .iap{animation:iaTw 2.7s ease-in-out infinite}@keyframes iaSpin{to{transform:rotate(360deg)}}@keyframes iaOrb{0%,100%{opacity:.35}50%{opacity:1}}@keyframes iaTw{0%,100%{opacity:.15;transform:translateY(0)}50%{opacity:1;transform:translateY(-1.4px)}}@media (prefers-reduced-motion:reduce){.iaico .iar,.iaico .iao,.iaico .iap,.iaico-dot{animation:none}}@keyframes iaDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
-#iaTab .iaico{filter:drop-shadow(0 0 4px rgba(110,168,255,.75));animation:iaPulse 3s ease-in-out infinite}@keyframes iaPulse{0%,100%{filter:drop-shadow(0 0 2px rgba(110,168,255,.5))}50%{filter:drop-shadow(0 0 7px rgba(110,168,255,.95))}}
+.iaico{vertical-align:-3px;flex:none;overflow:visible}.iaico-dot{transform-origin:27px 5px}.iaico .iar,.iaico .iao{transform-origin:16px 16px}#iaTab .iaico-dot,.iab .iaico-dot{animation:iaDot 1.6s ease-in-out 4}#iaTab .iaico .iao,.iab .iaico .iao{animation:iaOrb 9s ease-in-out 1}#iaTab .iaico .iap,.iab .iaico .iap{animation:iaTw 2.7s ease-in-out 3}#iaTab:hover .iaico .iap{animation:iaTw 2.7s ease-in-out infinite}@keyframes iaSpin{to{transform:rotate(360deg)}}@keyframes iaOrb{0%,100%{opacity:.35}50%{opacity:1}}@keyframes iaTw{0%,100%{opacity:.15;transform:translateY(0)}50%{opacity:1;transform:translateY(-1.4px)}}@media (prefers-reduced-motion:reduce){.iaico .iar,.iaico .iao,.iaico .iap,.iaico-dot{animation:none}}@keyframes iaDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+#iaTab .iaico{filter:drop-shadow(0 0 4px rgba(110,168,255,.75))}#iaTab:hover .iaico{filter:drop-shadow(0 0 7px rgba(110,168,255,.95))}@keyframes iaPulse{0%,100%{filter:drop-shadow(0 0 2px rgba(110,168,255,.5))}50%{filter:drop-shadow(0 0 7px rgba(110,168,255,.95))}}
 .ia-ttl{display:inline-flex;align-items:center;gap:6px}.ia-ttl .iaico{filter:drop-shadow(0 0 4px rgba(110,168,255,.6))}#iaPanel h4 .iaico{vertical-align:-3px}.iab .iaico{vertical-align:-3px}
 #iaTab{position:fixed;right:0;top:42%;z-index:8600;background:#12203a;color:#c2d0e6;border:1px solid #2b4a7a;border-right:0;border-radius:10px 0 0 10px;padding:8px 6px;font-size:18px;line-height:1;display:flex;flex-direction:column;align-items:center;gap:3px;cursor:pointer;box-shadow:0 6px 18px #000a}#iaTab span{font-size:11px;font-weight:800;letter-spacing:.05em}#iaTab[hidden]{display:none}
 #iaPanel{position:fixed;inset:0;z-index:9300;background:#0a111e;color:#9fb2cf;overflow:auto;font-size:13px}#iaPanel[hidden]{display:none}body.ia-on{overflow:hidden}
@@ -426,7 +426,7 @@ body.trn-on{overflow:hidden}
 .iab{background:#12203a;color:#9fb2cf;border:1px solid #2b4a7a;border-radius:6px;padding:1px 7px;font-size:12px;cursor:pointer;margin-left:4px;white-space:nowrap}
 .iab.fin{background:none;border:0;position:relative;width:26px;height:24px;padding:0;display:inline-flex;align-items:center;justify-content:center}
 
-.iab.fin .br{position:relative;animation:iaFloat 2.6s ease-in-out infinite;filter:drop-shadow(0 0 3px rgba(95,180,255,.7))}
+.iab.fin .br{position:relative;animation:iaFloat 2.6s ease-in-out infinite;will-change:transform;filter:drop-shadow(0 0 3px rgba(95,180,255,.7))}
 @keyframes iaGlow{0%,100%{transform:translateY(1px) scale(.9);opacity:.75}50%{transform:translateY(-2px) scale(1.1);opacity:1}}@keyframes iaFloat{0%,100%{transform:translateY(1px)}50%{transform:translateY(-2px)}}
 .ia-prog{background:#0f1a2d;border:1px solid #1c2c47;border-radius:10px;padding:9px 10px;margin:8px 0}.ia-prog-t{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px}.ia-prog-t span{font-size:18px;font-weight:800;color:#c2d0e6}
 .ia-bar2{position:relative;height:12px;background:#16243b;border-radius:6px;overflow:hidden}.ia-bar2 i{position:absolute;left:0;top:0;bottom:0;border-radius:6px}.ia-bar2 em{position:absolute;top:-2px;bottom:-2px;width:2px;background:#c2d0e6;opacity:.7}
@@ -1727,7 +1727,10 @@ const cv=$('overlay'), ctx=cv.getContext('2d');
 function tfSeconds(){const n=parseInt(tf),u=tf.slice(-1);return n*({m:60,h:3600,d:86400,w:604800,M:2592000}[u]);}
 function dur(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.floor(s%3600/60);
   return [d&&d+'d',h&&h+'h',m&&m+'m'].filter(Boolean).join(' ')||'0m';}
-function draw(){
+/* octubre 2026 · rendimiento: el dibujo de encima del gráfico (indicadores propios, regla) ya no se rehace en cada cuadro (60 veces por
+   segundo), solo cuando algo cambió: zoom o desplazamiento, cursor, datos nuevos, tamaño, o como mucho una vez por segundo. */
+let ovDirty=true,ovLast=0;const ovReq=()=>{ovDirty=true;};
+function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||document.hidden){requestAnimationFrame(draw);return;}ovDirty=false;ovLast=now;
   const w=$('chart').clientWidth,h=$('chart').clientHeight,dpr=devicePixelRatio||1;
   if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';}
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
@@ -1761,6 +1764,8 @@ function arrow(x1,y1,x2,y2){
   ctx.beginPath();ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(a-.5),y2-7*Math.sin(a-.5));
   ctx.moveTo(x2,y2);ctx.lineTo(x2-7*Math.cos(a+.5),y2-7*Math.sin(a+.5));ctx.stroke();
 }
+try{chart.timeScale().subscribeVisibleLogicalRangeChange(ovReq);chart.subscribeCrosshairMove(ovReq);chart.timeScale().subscribeSizeChange&&chart.timeScale().subscribeSizeChange(ovReq);}catch(e){}
+['pointerdown','pointermove','wheel','touchmove'].forEach(ev=>$('chart').addEventListener(ev,ovReq,{passive:true}));addEventListener('resize',ovReq);
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
 requestAnimationFrame(draw);
 
@@ -1784,12 +1789,25 @@ function renderList(){
   if(q) arr=arr.filter(t=>t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||b.q-a.q);
   else arr.sort((a,b)=>b.q-a.q);
   if(favOnly) arr=arr.filter(t=>favs.has(t.s));
-  arr=arr.slice(0,q?400:1500);
+  LISTALL=arr.length;arr=arr.slice(0,q?Math.min(400,LISTN):LISTN);
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
     <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i><b>${t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE'):t.fut?'/USDT · perp':'/USDT'}</small></span>
     <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span></div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
+  ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
 }
+/* rendimiento (octubre 2026): la lista muestra 150 y suma de a 200 al llegar al final (antes dibujaba 1.500 filas y las actualizaba todas
+   cada segundo); los precios se pintan como mucho una vez por segundo y solo si la lista se ve */
+var LISTN=150,LISTALL=0,ROWS=new Map(),ROWQ=new Map(),rowRaf=0;
+let rowScT=0;$('list').addEventListener('scroll',()=>{const l=$('list');if(LISTN<LISTALL&&l.scrollTop+l.clientHeight>l.scrollHeight-400){LISTN+=200;const st=l.scrollTop;renderList();l.scrollTop=st;}
+  clearTimeout(rowScT);rowScT=setTimeout(()=>{for(const r of l.querySelectorAll('.row[data-st]')){const t=tickers[r.dataset.s];delete r.dataset.st;if(!t)continue;r.querySelector('[data-c]').textContent=fp(t.c);const p=r.querySelector('[data-p]');p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';}},120);},{passive:true});
+function rowFlush(){rowRaf=0;const l=$('list');if(!l||!l.offsetParent||document.hidden){ROWQ.clear();return;}
+  const top=l.scrollTop,bot=top+l.clientHeight,W=[];
+  for(const [s,up] of ROWQ){const row=ROWS.get(s),t=tickers[s];if(!row||!t)continue;const y=row.offsetTop;W.push([row,t,up,y+row.offsetHeight>top&&y<bot]);} // primero se lee, después se escribe (sin recalcular a cada fila)
+  for(const [row,t,up,v] of W){if(!v){row.dataset.st=1;continue;}const c=row.querySelector('[data-c]'),p=row.querySelector('[data-p]'); // las que no se ven se actualizan al aparecer
+    c.textContent=fp(t.c);p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';
+    c.className=up?'tk-up':'tk-dn';} // el precio se pinta del color del último movimiento (sin animación: es mucho más liviano)
+  ROWQ.clear();}
 let qTimer;
 $('q').oninput=()=>{
   renderList();clearTimeout(qTimer);
@@ -1823,13 +1841,10 @@ function connectTickers(){
     for(const m of JSON.parse(e.data)){
       const t=tickers[m.s];if(!t)continue;
       const old=t.c;t.c=+m.c;t.h=+m.h;t.l=+m.l;t.q=+m.q;t.p=(+m.c-+m.o)/+m.o*100;
-      const row=$('list').querySelector(`[data-s="${m.s}"]`);
-      if(row&&old!==t.c){
-        const c=row.querySelector('[data-c]'),p=row.querySelector('[data-p]');
-        c.textContent=fp(t.c);p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';
-        row.classList.remove('flash-up','flash-dn');void row.offsetWidth;row.classList.add(t.c>old?'flash-up':'flash-dn');
+      if(old!==t.c&&ROWS.has(m.s)){ROWQ.set(m.s,t.c>old);
       }
     }
+    if(ROWQ.size&&!rowRaf)rowRaf=setTimeout(()=>requestAnimationFrame(rowFlush),300);
     updateTop();
   };
 }
@@ -2455,7 +2470,11 @@ function renderHistOld(){
     return `<div class="srow${o.ll?' ll':''}"><span class="ht">${fdate(o.t)}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'LONG':'SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="mut">entrada ${fp(o.entry)}</span><span class="${o.state==='open'?'neu':o.pnl>0?'up':'dn'}">${o.state==='open'?'en curso':o.pnl>0?'ganada':'perdida'}</span><b class="${p>=0?'up':'dn'}">${fusd2(p)}</b></div>`;};
   $('simList').innerHTML=month.length?month.slice().sort((a,b)=>b.t-a.t).slice(0,30).map(rowS).join(''):'<div class="mut">Este mes todavía no hay operaciones simuladas en este modo.</div>';
 }
-setInterval(liveOps,2000);setInterval(renderHist,5000);setTimeout(syncOps,4000);setInterval(syncOps,180e3);
+/* rendimiento: lo que se redibuja solo cada pocos segundos se salta si esa sección no está en pantalla o la pestaña está oculta */
+const VIS=new Set();const seen=id=>!document.hidden&&VIS.has(id);
+try{const io=new IntersectionObserver(es=>{for(const e of es)e.isIntersecting?VIS.add(e.target.id):VIS.delete(e.target.id);},{rootMargin:'300px'});
+  setTimeout(()=>['histBox','sigBox','intBox','obBox','lqBox','acuBox','pilBox','newsBox','rsiBox'].forEach(id=>{const el=$(id);if(el)io.observe(el);}),0);}catch(e){['histBox','sigBox','intBox','obBox','lqBox','acuBox'].forEach(id=>VIS.add(id));}
+setInterval(liveOps,2000);setInterval(()=>{if(seen('histBox'))renderHist();},5000);setTimeout(syncOps,4000);setInterval(syncOps,180e3);
 $('facMore').onclick=()=>{const f=$('factors');f.classList.toggle('open');$('facMore').textContent=f.classList.contains('open')?'Ver menos ▲':'Ver todos los factores ▼';};
 
 
@@ -3686,7 +3705,7 @@ $('intTabs').onclick=e=>{const b=e.target.closest('[data-t]');if(!b)return;INT_T
 $('intBody').onclick=e=>{const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;intRender();return;}
   const x=e.target.closest('[data-x]');if(x){ledExport(x.dataset.x);return;}
   const g=e.target.closest('[data-sym]');if(g){select(g.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}};
-setInterval(intTick,5000);setTimeout(intTick,4000);
+setInterval(()=>{if(seen('intBox'))intTick();},5000);setTimeout(intTick,4000);
 /* ---------- MI DIARIO: operaciones reales que cerraste desde PILOTEAR ---------- */
 let JRN=[];try{JRN=JSON.parse(localStorage.getItem('cv_jrn')||'[]')||[];}catch(e){}
 const saveJrn=()=>{try{localStorage.setItem('cv_jrn',JSON.stringify(JRN));localStorage.setItem('cv_jrn_t',String(Date.now()))}catch(e){}if(typeof cloudSave==='function')cloudSave(true);};
@@ -3895,7 +3914,7 @@ function acuRender(check){const el=$('acuList');if(!el)return;const f=v=>(v>=0?'
   for(const [nm,A,s,k] of ch)try{if(typeof notify==='function')notify(`🟢 ACUMULACIÓN · ${nm}`,`Entró en zona de acumulación a largo plazo (${A.why.join(' · ')}). Comprá de a partes y sin apalancamiento.`,'acu-'+s,{sym:s,m:k==='c'?'medio':'a'});}catch(e){}}
 $('acuList').onclick=e=>{const b=e.target.closest('[data-acu]');if(!b)return;const s=b.dataset.acu,k=b.dataset.k;if(k==='a'&&mode!=='a')applyMode('a');else if(k==='c'&&mode==='a')applyMode('medio');
   if(TF_MODE[mode].includes('1w')&&tf!=='1w'){tf='1w';renderTfs();}select(s);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});};
-setTimeout(acuLoad,3000);setInterval(()=>{if(Date.now()-ACUT>30*6e4)acuLoad();else acuRender(false);},60e3);
+setTimeout(acuLoad,3000);setInterval(()=>{if(Date.now()-ACUT>30*6e4)acuLoad();else if(seen('acuBox'))acuRender(false);},60e3);
 
 /* ---------- ACCIONES pasa a NYSE en dólares: se descartan operaciones y señales viejas de BYMA en pesos ---------- */
 OPS=OPS.filter(o=>!(o.m==='a'&&o.t<1791218400000));try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}
@@ -4721,7 +4740,7 @@ function iaSigRender(){const el=$('iaSig');if(!el)return;el.hidden=SIGV!=='ia';i
     const hr=e.target.closest('.hrow');if(hr){const id=hr.dataset.op;HOPEN.has(id)?HOPEN.delete(id):HOPEN.add(id);iaSigRender();return;}
     const c=e.target.closest('.sig[data-sym]');if(!c)return;const m=IAF==='sh'?'x':'medio';if(mode!==m)applyMode(m);if(c.dataset.tf&&TF_MODE[mode].includes(c.dataset.tf)&&tf!==c.dataset.tf){tf=c.dataset.tf;renderTfs();}select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});});}
   const s=el.querySelector('.ia-sig-sum');if(s&&IAM){const a=iaSemaforo('sh'),t=iaSemaforo('tr'),dot=c=>({g:'🟢',y:'🟡',r:'🔴'})[c];s.textContent=`· SHOOTER ${dot(a.c)} · TRADING ${dot(t.c)}`;}}
-setInterval(iaSigRender,3e4);
+setInterval(()=>{if(seen('sigBox'))iaSigRender();},3e4);
 /* ---------- operaciones propias: la IA busca sola en todas las monedas y opera en simulación ---------- */
 const IAOP_CFG={tr:{mg:350,lev:10,age:7*864e5,nm:'TRADING',cool:24*36e5,max:4},sh:{mg:50,lev:15,age:12*36e5,nm:'SHOOTER',cool:36e5,max:6}};
 const IA_FEE=.0008; // comisiones de entrada y salida sobre el tamaño de la posición
