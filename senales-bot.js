@@ -162,7 +162,8 @@ async function main() {
   if (!S.acuT || now - S.acuT >= 6 * 36e5) { S.acuT = now; S.acu = S.acu || {};
     for (const [s, nm, cr] of [['BTCUSDT', 'Bitcoin', 1], ['ETHUSDT', 'Ethereum', 1], ['SPY', 'S&P 500 (SPY)', 0], ['QQQ', 'Nasdaq 100 (QQQ)', 0], ['DIA', 'Dow Jones (DIA)', 0], ['IWM', 'Russell 2000 (IWM)', 0]]) {
       try { let c, h; if (cr) { const w = await kl(s, '1w', 1000); c = w.map(b => b.close); h = w.map(b => b.high); }
-        else { const j = await (await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1wk&range=max`, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json(); const x = j.chart.result[0], q = x.indicators.quote[0]; c = q.close.filter(v => v != null); h = q.high.filter(v => v != null); }
+        else { const j = await (await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?interval=1d&range=20y`, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json(); const x = j.chart.result[0], q = x.indicators.quote[0]; c = []; h = []; let cur = null;
+          x.timestamp.forEach((t, i) => { if (q.close[i] == null) return; const k = Math.floor((t / 86400 + 3) / 7); if (k !== cur) { cur = k; c.push(q.close[i]); h.push(q.high[i] || q.close[i]); } else { c[c.length - 1] = q.close[i]; h[h.length - 1] = Math.max(h[h.length - 1], q.high[i] || 0); } }); }
         if (c.length < 210) continue; const p = c[c.length - 1], done = c.slice(0, -1), sma = done.slice(-200).reduce((a, v) => a + v, 0) / 200, ath = Math.max(...h);
         let g = 0, l = 0; for (let i = 1; i < done.length; i++) { const d = done[i] - done[i - 1], u = Math.max(d, 0), w2 = Math.max(-d, 0); if (i <= 14) { g += u / 14; l += w2 / 14; } else { g = (g * 13 + u) / 14; l = (l * 13 + w2) / 14; } }
         const rsi = l ? 100 - 100 / (1 + g / l) : 100, dd = p / ath - 1, dist = p / sma - 1, z = dist < 0 || rsi < 30 || (cr && dd <= -.5) ? 'g' : dist < .1 || rsi < 40 || (cr && dd <= -.35) ? 'y' : 'w';
