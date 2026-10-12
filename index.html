@@ -2051,7 +2051,8 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    +3,6 % del margen por operación (antes +2,6 %) · peor racha −2,8 márgenes (antes −5,0) · primeros 5 meses +3,4 % (antes −0,1 %).
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:10,max:.076,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
-const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.35,max:.05}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
+/* octubre 2026 v7: TRADING objetivos 0,75 × stop (antes 0,5) y no entra si el precio se alejó más de 8 % de la EMA 200 · SHOOTER stop 4 ATR y objetivos 0,25 × stop, solo sobre la EMA 200 */
+const NEWG={medio:{a:3,r:.75,max:.036},x:{a:4,r:.25,max:.05}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
 const MINCERT={medio:62,x:56,p:0,a:30},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:44,g:44,p3:0,n:2147,usd:25,txt:'rebote tras una caída moderada (sin desplome ni subida histórica), con el S&P 500 sobre su media de 200 días'},'c-rup':{p:43,g:43,p3:1,n:2946,usd:31,txt:'ruptura de máximos de 20 días con volumen, en tendencia alcista y con el S&P 500 sobre su media de 200 días'},'c-rsi2':{p:36,g:52,p3:3,n:5183,usd:19.9,txt:'caída corta (RSI 2 bajo) dentro de una tendencia alcista'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
@@ -2082,8 +2083,9 @@ function evalShooter(cs,hc,mins=15){
     const out={keep:true,score:0,dir:0,c,atr,adx,htf:up1h?1:-1,mid:bm[i],reasons:[],setup:null};
     if(r7==null||!(atrP>0))return out; // el stop se recorta al 5 % si 3 ATR es más (así se probó)
     if(!(z<=-1.8&&r7<=35&&drop<=-3&&up1h))return out;
+    const e200=emaArr(cl,200)[i];if(!(e200!=null&&cb>e200))return out; // v7: solo con el precio sobre la EMA 200
     out.dir=1;out.score=1;out.setup='sh-c';
-    out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora (velas de '+mins+' min)','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','la moneda no está en modo impredecible');
+    out.reasons.push('cayó '+Math.abs(drop).toFixed(1)+' % en la última hora (velas de '+mins+' min)','cerró bajo la banda inferior de Bollinger','RSI 7 en '+r7.toFixed(0)+' (sobreventa)','la tendencia de 1 h sigue a favor','precio sobre la EMA 200 (tendencia de fondo alcista)','la moneda no está en modo impredecible');
     return out;
   });
 }
@@ -2103,8 +2105,9 @@ function evalTrading(cs,hc){
     if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.05/3))return out;
     /* octubre 2026: el retroceso tiene que frenar al menos media ATR antes de la EMA 50 (1 año, 55 monedas: objetivo 1 del 79 al 84 %, ganancia por operación de +7,5 a +13 % del margen) */
     const d50=dir*(cb-e50)/atr;if(!(d50>=.5))return out;
+    if(dir*(cb/e200-1)*100>8)return out; // v7: el precio no se alejó más de 8 % de la EMA 200
     out.setup='t-pb';out.dir=dir;out.score=dir;
-    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'el retroceso frenó antes de la EMA 50 ('+d50.toFixed(1)+' ATR)','volumen bajo en el retroceso','volatilidad justa para el stop');
+    out.reasons.push('tendencia alineada (Supertrend, EMA 21/50/200)','retroceso: RSI 14 en '+r14.toFixed(0),'el retroceso frenó antes de la EMA 50 ('+d50.toFixed(1)+' ATR)','a '+(dir*(cb/e200-1)*100).toFixed(1)+' % de la EMA 200 (el movimiento no está estirado)','volumen bajo en el retroceso','volatilidad justa para el stop');
     if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;
   });
@@ -2264,8 +2267,8 @@ setInterval(checkSignals,2000);
    SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
-           x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 3 × ATR con tope 5 % (−37,5 USD) · sin salvavidas'}};
+const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · objetivos 0,75 / 1,5 / 2,25 × stop · salvavidas 175 USD'},
+           x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 4 × ATR con tope 5 % (−37,5 USD) · objetivos 0,25 / 0,5 / 0,75 × stop · sin salvavidas'}};
 SIM.p={...SIM.medio};
 SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD · apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20) · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
@@ -2289,8 +2292,32 @@ function opsToCurrent(){let ch=false;const seen=[];
     if(d){OPS_DROP.add(o.id);ch=true;continue;}keep.push(o);}
   if(ch){OPS=keep;try{localStorage.setItem('cv_ops',JSON.stringify(OPS));localStorage.setItem('cv_ops_drop',JSON.stringify([...OPS_DROP].slice(-800)));}catch(e){}}
   return ch;}
-function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(OPS_DROP.has(o.id))continue;if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open')Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}try{opsToCurrent();}catch(e){}}
+function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(OPS_DROP.has(o.id))continue;if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open'&&!h.v7)Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}try{opsToCurrent();}catch(e){}}
 try{opsToCurrent();}catch(e){}
+/* octubre 2026 v7: las operaciones ya hechas de TRADING y SHOOTER se rehacen con las reglas nuevas. Si con el filtro nuevo
+   (TRADING: precio a menos de 8 % de la EMA 200 · SHOOTER: precio sobre la EMA 200) la señal no se hubiera tomado, se borra.
+   Si se hubiera tomado, se vuelve a seguir vela a vela desde que abrió con el stop y los objetivos nuevos (y el salvavidas en TRADING):
+   puede terminar antes, después o con otro resultado. Una sola vez por operación (queda marcada v7). */
+let v7Busy=false;
+async function opsToV7(){if(v7Busy)return;v7Busy=true;let ch=false;
+  try{for(const o of OPS.filter(x=>(x.m==='medio'||x.m==='x')&&!x.v7&&NEWG_SET[x.setup]&&x.t)){
+    try{const tf=o.m==='x'?(o.tf==='30m'?'30m':'15m'):'4h',ms=TF_MS[tf],raw=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${tf}&limit=300&endTime=${o.t}`);
+      const cs=raw.map(toBar).filter(b=>b.t+ms<=o.t+6e4);if(cs.length<210){o.v7=1;ch=true;continue;}
+      const X=withCandles(cs,()=>{const i=cs.length-1,cl=closes();return {e200:emaArr(cl,200)[i],atr:wilder(trArr(),14)[i],c:cl[i]};});
+      const d=o.dir,keep=X.e200!=null&&(o.m==='x'?X.c>X.e200:d*(X.c/X.e200-1)*100<=8);
+      if(!keep){OPS_DROP.add(o.id);OPS=OPS.filter(x=>x!==o);if(SIG[o.m])SIG[o.m]=SIG[o.m].filter(x=>x.op!==o.id);ch=true;continue;}
+      const G=NEWG[o.m],c=SIM[o.m],e=o.entry,atrP=X.atr/X.c,slD=Math.min(G.max,Math.max(.004,G.a*atrP)),not=c.margin*c.lev,liqD=slD<=c.maxLoss/not+1e-9?slD:c.maxLoss/not;
+      Object.assign(o,{tp0:e*(1+d*G.r*slD),tp1:e*(1+d*2*G.r*slD),tp2:e*(1+d*3*G.r*slD),fail:e*(1-d*liqD),liqD,not,lev:c.lev,loss:+(not*liqD).toFixed(2),llAt:o.m==='x'?null:e*(1-d*liqD*LLTH),llMargin:c.margin/2,
+        state:'open',hit:0,real:0,ae:null,sz:null,ll:null,llNo:false,llPend:null,llTry:0,closeAt:null,px:null,why:null,pnl:null,cut:false,cutAt:null,last:o.t,v7:1});
+      for(let from=o.t,g=0;g<8&&o.state==='open';g++){const k=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${c.kl}&startTime=${from}&limit=1000`);if(!k||!k.length)break;
+        for(const b of k){const ts=+b[0];if(ts+c.klMs<o.t)continue;if(ts>Date.now())break;let r=stepOp(o,+b[2],+b[3],Math.max(ts,o.t));if(r==='ll'){await llResolve(o);r=stepOp(o,+b[2],+b[3],Math.max(ts,o.t));}if(r===true)break;}
+        if(k.length<1000)break;from=+k[k.length-1][0]+c.klMs;}
+      if(o.state==='open')o.last=Date.now();
+      const sg=(SIG[o.m]||[]).find(x=>x.op===o.id);if(sg){if(o.state!=='open')SIG[o.m]=SIG[o.m].filter(x=>x!==sg);else Object.assign(sg,{tp0:o.tp0,tp1:o.tp1,tp2:o.tp2,sl:o.fail});}
+      ch=true;}catch(e){}
+    await new Promise(r=>setTimeout(r,120));}}
+  finally{v7Busy=false;if(ch){try{localStorage.setItem('cv_ops_drop',JSON.stringify([...OPS_DROP].slice(-800)));}catch(e){}saveOps();try{saveSig();}catch(e){}try{renderSignals();renderHist();}catch(e){}}}}
+setTimeout(()=>{try{opsToV7();}catch(e){}},8000);setInterval(()=>{if(OPS.some(x=>(x.m==='medio'||x.m==='x')&&!x.v7&&NEWG_SET[x.setup]))opsToV7();},120e3);
 /* SALVAVIDAS: si el precio llega al 65 % del camino al stop sin tocar ningún objetivo y los datos siguen confirmando la señal,
    se suma media posición (la mitad del margen, mismas X). La entrada pasa a ser el promedio y el stop se recalcula a la misma
    distancia desde el promedio (lo máximo que permite el apalancamiento antes de la liquidación real). Una sola vez por señal.
@@ -2307,7 +2334,7 @@ function addSig(m,f){
   if(OPS.some(o=>o.m===m&&o.sym===f.sym&&o.dir===f.dir&&Math.abs(o.t-(f.t||Date.now()))<10*6e4))return; // ya está (otra pestaña o el servidor)
   SIG[m].push(f);try{sigPop(m,f);}catch(e){}const c=SIM[m],plus=f.setup==='tp-x',sd=f.sl?Math.abs(f.sl/f.entry-1):0,levA=m==='a'&&sd>0?stkLev(sd):null,not=c.margin*(plus?PLUSG.lev:levA||c.lev),liqD=sd>0&&(plus||m==='a'||sd<=c.maxLoss/not+1e-9)?sd:c.maxLoss/not,fail=f.entry*(1-f.dir*liqD);
   f.op=f.sym+'-'+f.t;
-  OPS.push({id:f.op,m,setup:f.setup||null,tf:f.tf,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||m==='a'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:levA||c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
+  OPS.push({id:f.op,m,setup:f.setup||null,tf:f.tf,sym:f.sym,dir:f.dir,entry:f.entry,tp0:f.tp0,tp1:f.tp1,tp2:f.tp2,fail,not,loss:+(not*liqD).toFixed(2),liqD,llAt:m==='x'||m==='a'||plus?null:f.entry*(1-f.dir*liqD*LLTH),llMargin:c.margin/2,lev:plus?PLUSG.lev:levA||c.lev,cutAt:plus?f.entry*(1-f.dir*liqD*PLUSG.cut):null,v7:1,conf:f.conf,reasons:(f.reasons||[]).slice(0,6),t:f.t,last:f.t,state:'open',hit:0,real:0});saveOps();
   if(typeof notifySig==='function')notifySig(m,f);
 }
 /* se cierra 1/3 de la posición en cada objetivo; tras el primero, el stop del resto pasa a la entrada (promedio si hubo salvavidas) */
@@ -4110,6 +4137,7 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     const out={keep:true,score:0,dir:0,c,atr,adx,htf,reasons:[],setup:null,plus:false};
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;if(!dir)return out;
+    if(dir*(cb/e200-1)*100>8)return out; // v7: el precio no se alejó más de 8 % de la EMA 200
     const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3,d50=dir*(cb-e50)/atr;
     let fl6=0,v6=0;for(let j=i-5;j<=i;j++){fl6+=barDelta(cc[j]);v6+=cc[j].v;}fl6=v6?dir*fl6/v6:0;const r24=dir*(cb/cc[i-6].close-1)*100;
     if(core&&rank>=40&&rr<50&&d50<.5)return out; // retroceso demasiado hondo (octubre 2026)

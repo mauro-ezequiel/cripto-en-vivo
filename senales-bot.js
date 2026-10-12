@@ -20,7 +20,8 @@ const SIGCFG = {
    SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas.
    TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
 const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 } };
-const GEOM = { medio: { a: 3, r: .5, maxSl: .036 }, x: { a: 3, r: .35, maxSl: .05 } };
+/* octubre 2026 v7: TRADING objetivos 0,75 × stop (antes 0,5) · SHOOTER stop 4 ATR (antes 3) y objetivos 0,25 × stop (antes 0,35) */
+const GEOM = { medio: { a: 3, r: .75, maxSl: .036 }, x: { a: 4, r: .25, maxSl: .05 } };
 /* universo (octubre 2026, 14 variantes probadas): TRADING todas con más de 10 M USD de volumen, SHOOTER las 30 con más volumen.
    Las de menos volumen eran las impredecibles. El filtro de rango de 1 h no mejoró nada: apagado (WILD_MAX = 0). */
 const MINVOL = 1e7, WILD_MAX = 0, WILDC = {};
@@ -80,6 +81,7 @@ function evalShooter(cs, hc, mins = 15) { const cc = cs.slice(0, -1), back = Mat
     const out = { dir: 0, c, atr, reasons: [], setup: null };
     if (r7 == null || !(atrP > 0)) return out; // el stop se recorta al tope (5 %)
     if (!(z <= -1.8 && r7 <= 35 && drop <= -3 && up1h)) return out;
+    const e200 = emaArr(cl, 200)[i]; if (!(e200 != null && cb > e200)) return out; // octubre 2026 v7: solo con el precio sobre la EMA 200
     out.dir = 1; out.setup = 'sh-c'; out.reasons.push('cayó ' + Math.abs(drop).toFixed(1) + ' % en la última hora (velas de ' + mins + ' min)', 'cerró bajo la banda inferior de Bollinger', 'RSI 7 en ' + r7.toFixed(0) + ' (sobreventa)', 'la tendencia de 1 h sigue a favor');
     return out; }); }
 function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
@@ -89,6 +91,7 @@ function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
     if (e200 == null || r14 == null) return out;
     const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0;
     if (!dir || L.vr >= 1 || !(atrP > .01 && atrP <= .05 / 3)) return out;
+    if (dir * (cb / e200 - 1) * 100 > 8) return out; // octubre 2026 v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
     const pull = dir > 0 ? r14 < 50 : r14 > 50, soft = dir > 0 ? r14 < 55 : r14 > 45, adx = calcADX(14).adx[i];
     if (pull && dir * (cb - e50) / atr < .5) return out; // octubre 2026: el retroceso tiene que frenar al menos media ATR antes de la EMA 50
     if (pull) out.setup = rank < 40 ? 't-pb' : 'tp-u80';

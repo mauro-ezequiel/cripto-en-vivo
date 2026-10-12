@@ -28,9 +28,9 @@ const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || 1e7
 function wildArr(hb) { const out = Array(hb.length).fill(null); let s = 0; for (let i = 0; i < hb.length; i++) { s += (hb[i].high - hb[i].low) / hb[i].close * 100; if (i >= 168) s -= (hb[i - 168].high - hb[i - 168].low) / hb[i - 168].close * 100; if (i >= 167) out[i] = s / 168; } return out; }
 const tooWild = (hb, W, t) => { if (!WILD) return false; const i = lastClosed(hb, 36e5, t); return i >= 0 && W[i] != null && W[i] > WILD; };
 const GEO = {
-  core: { L: 10, a: 3, cap: .036, floor: .004, r: .5, ex: 'no', ll: true, margin: 350 },   // TRADING
+  core: { L: 10, a: 3, cap: .036, floor: .004, r: +(process.env.TR_R || .75), ex: 'no', ll: true, margin: 350 },   // TRADING (v7: objetivos 0,75 × stop)
   plus: { L: +(process.env.PLUS_LEV || 10), a: 3, cap: +(process.env.PLUS_CAP || .076), floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+ (× 10 desde octubre 2026)
-  sh:   { L: +(process.env.SH_LEV || 15), a: 3, cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .35), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
+  sh:   { L: +(process.env.SH_LEV || 15), a: +(process.env.SH_A || 4), cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .25), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
 };
 const SH_SKIP = (process.env.SH_CAPMODE || 'cap') === 'skip'; // por defecto el stop se recorta al tope (5 % con × 15); 'skip' no opera
 const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x' };
@@ -73,6 +73,7 @@ function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = clos
   if (e200 == null || r14 == null) return null;
   const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0; if (!dir) return null;
   let vs = 0; for (let j = Math.max(0, i - 19); j <= i; j++) vs += cc[j].v; const vr = cc[i].v / ((vs / Math.min(i + 1, 20)) || 1);
+  if (!process.env.SIN_D200 && dir * (cb / e200 - 1) * 100 > 8) return null; // v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
   const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 && atrP <= .05 / 3 && atrP <= .017;
   const d50 = dir * (cb - emaArr(cl, 50)[i]) / (atrP * cb); // octubre 2026: el retroceso tiene que frenar antes de la EMA 50
   if (core && rr < 50) return d50 >= .5 ? { k: 'core', dir, atrP, setup: rank < 40 ? 't-pb' : 'tp-u80' } : null;
@@ -207,7 +208,7 @@ async function runShooter(s, rank = 0) {
   const he = emaArr(hb.map(b => b.close), 50), W1 = wildArr(hb); let first = null;
   for (const tf of SH.tfs) { const tfMs = TFMIN[tf] * 6e4, back = Math.round(60 / TFMIN[tf]);
     const tb = await klRange(s, tf, tfMs, FROM - 300 * tfMs, NOW); if (tb.length < 400) continue;
-    candles = tb; const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), [bm, bs] = smaStd(cl, 20), P3 = IAON ? IA.prep(tb) : null;
+    candles = tb; const cl = closes(), atr = wilder(trArr(), 14), r7 = calcRSI(7), [bm, bs] = smaStd(cl, 20), e200s = emaArr(cl, 200), P3 = IAON ? IA.prep(tb) : null;
     for (let i = 299; i < tb.length; i++) { const t = tb[i].t + tfMs; if (t < FROM) continue;
       const cb = tb[i].close, atrP = atr[i] / cb; if (r7[i] == null || !bs[i] || !(atrP > 0)) continue;
       const z = (cb - bm[i]) / bs[i];
@@ -215,6 +216,7 @@ async function runShooter(s, rank = 0) {
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
         if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
+      if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) continue; // v7: solo con el precio sobre la EMA 200
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       if (tooWild(hb, W1, t)) continue;
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
