@@ -313,10 +313,13 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2{grid-template-columns:40px 40px 58px minmax(36px,1fr) 66px 28px 64px 20px;gap:5px}
-.hrow.h2 .hpin{padding:2px 0;font-size:11px}.hrow.h2 .hh{color:var(--mut)}.hrow.h2 .hk{color:var(--mut);text-align:center}.hrow.h2 .hdt{display:flex;flex-direction:column;align-items:flex-start;gap:3px}.hrow.h2 .hdt .hpin{width:24px}.hrow.h2 .hpu{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}.hrow.h2 .hpu small{font-size:10.5px;font-weight:700}.hrow.h2 .hs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hrow.h2>*{white-space:nowrap;min-width:0}.hrow.h2 .live{padding:1px 5px;font-size:10px}
-@media (max-width:800px){.hrow.h2{grid-template-columns:32px 32px 46px minmax(26px,1fr) 52px 22px 54px 16px;gap:3px;font-size:10.5px}.hrow.h2 .hd{font-size:9.5px}.hrow.h2 .hs{font-size:9.5px}.hrow.h2 .live{padding:1px 3px;font-size:8px;letter-spacing:-.2px}}
+.hrow.h2{grid-template-columns:34px minmax(0,1fr) auto minmax(18px,auto);gap:8px;padding:6px 4px;align-items:center}
+.hrow.h2 .hdt{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:11px}.hrow.h2 .hpin{width:26px;height:20px;padding:0;font-size:10px;display:flex;align-items:center;justify-content:center}
+.hrow.h2 .hm{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap;overflow:hidden}.hrow.h2 .hm>*{flex:0 0 auto}.hrow.h2 .hm b{flex:0 0 auto}.hrow.h2 .hm .hh{font-size:10.5px}.hrow.h2 .hia>*{font-size:10px!important;padding:2px 5px!important;gap:3px!important}
+.hrow.h2 .hh{color:var(--mut)}.hrow.h2 .hk{color:var(--mut)}.hrow.h2 .live{padding:1px 6px;font-size:10px}
+.hrow.h2 .hpu{display:flex;flex-direction:column;align-items:flex-end;line-height:1.2;font-variant-numeric:tabular-nums;white-space:nowrap}.hrow.h2 .hpu b{font-size:12.5px}.hrow.h2 .hpu small{font-size:11px;font-weight:600;opacity:.9}
+.hrow.h2 .hia{display:flex;align-items:center;justify-content:center}
+@media (max-width:800px){.hrow.h2{gap:5px;font-size:11.5px}.hrow.h2 .hm{gap:4px}.hrow.h2 .hd{font-size:10.5px}.hrow.h2 .live{font-size:9px;padding:1px 4px}}
 .hx{margin:4px 0 10px;display:flex;flex-direction:column;gap:8px}.hx-box{border:1px solid #2a3140;border-radius:9px;padding:9px 11px;font-size:12px}
 .hx-live{background:#1b2130}.hx-ent{background:#141822}.hx-t{font-weight:800;font-size:13px;margin-bottom:3px}.hx-t.bad{color:#ef5350}.hx-t.warn{color:#ffb74d}.hx-t.good{color:#26a69a}
 .hx-w{margin:5px 0 0;padding-left:16px;color:var(--mut);font-size:11.5px}.hx-w li{margin:1px 0}.hx-sem{font-weight:700;margin-bottom:4px}.hx-f{color:var(--mut);font-size:11.5px;margin-bottom:6px}
@@ -3761,8 +3764,8 @@ const hxLive=(o,p)=>o.ia?iaOpLive(o.ia,p):pnlAt(o,p);
 /* operación propia de la IA con la misma forma que una del historial */
 const iaAsOp=x=>({id:'ia-'+x.id,m:x.f==='sh'?'x':'medio',sym:x.sym,dir:x.dir,t:x.t,state:x.st==='open'?'open':x.st==='fail'?'fail':x.st==='win'?'win':'exp',hit:x.hit||0,pnl:x.pnl,why:x.why,entry:x.entry,lev:x.lev,mg:x.mg,ia:x,tf:x.tf,simLab:`${x.mg} USD × ${x.lev} · operación propia de la IA`});
 function hxRow(o){const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-  const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'EN VIVO'}</span>`:o.state==='win'?'':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
-  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hs">${stt}</span><span class="hk">${o.state==='fail'?'':(o.hit||0)+'/3'}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span>${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
+  const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'VIVO'}</span>`:o.state==='win'?'':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
+  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hm"><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b>${stt?`<span class="hs">${stt}</span>`:''}${o.state==='fail'?'':`<span class="hk">${o.hit||0}/3</span>`}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span class="hia">${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
 function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=hxLive(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
   const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
 const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
@@ -3775,6 +3778,15 @@ function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o
         <span>Resultado</span><b class="${v.usd>=0?'up':'dn'}">${v.ok?fusd2(v.usd)+' ('+hxPct(v.pct)+' del margen)':o.state==='open'?'en curso':'—'}</b>
         <span>Simulación</span><b>${sim}</b></div>
       <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${o.tf||cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
+/* consejo en vivo con el plan propio de la señal (su stop y sus objetivos; el de la IA si es de la IA) y la tendencia de PILOTEAR */
+function hxAdvice(o,D,c){const d=o.dir,x=o.ia,e=o.ae||o.entry,hit=o.hit||0,tps=x?x.tps:[o.tp0,o.tp1,o.tp2],stop0=x?x.stop:o.fail,stop=hit?e:stop0,usd=hxLive(o,c),u=fusd2(usd);
+  const fav=d*(.2*D.f15.tr+.4*D.f1.tr+.4*D.f4.tr),against=D.f1.adx>22&&D.f1.di===-d,sd=Math.abs(e-stop0)||e*.01,toStop=d*(c-stop)/sd,nx=hit<3?tps[hit]:null,who=x?'de la IA':'de la señal';
+  if(usd<0&&toStop<=.3)return {cls:'bad',title:'🚨 SALÍ YA: está muy cerca del stop',txt:`Faltan ${(Math.abs(c/stop-1)*100).toFixed(2).replace('.',',')} % para el stop ${who} (${fp(stop)}). Resultado ahora ${u}.`};
+  if(usd<0&&fav<=-.34&&against)return {cls:'bad',title:'⛔ SALÍ: el movimiento va en contra',txt:`La tendencia está en contra en varias temporalidades y el ADX empuja en contra. Resultado ahora ${u}; stop ${who} en ${fp(stop)}.`};
+  if(usd>0&&fav<=-.34)return {cls:'warn',title:'💰 ASEGURÁ: la tendencia está girando',txt:`Vas ganando ${u}. Cerrá una parte o subí el stop a la entrada (${fp(e)}).${nx?` Próximo objetivo: ${fp(nx)}.`:''}`};
+  if(hit>=1)return {cls:'good',title:'✅ DEJÁ CORRER: el stop ya está en la entrada',txt:`Tocó ${hit}/3 objetivos y ya no puede perder. Resultado ahora ${u}.${nx?` Próximo objetivo: ${fp(nx)}.`:''}`};
+  if(usd>=0)return {cls:'good',title:'👍 MANTENER',txt:`Vas ganando ${u}. Objetivo 1 en ${fp(tps[0])} · stop ${who} en ${fp(stop)}.`};
+  return {cls:'warn',title:'⏳ AGUANTAR por ahora',txt:`Resultado ahora ${u}, pero los datos no confirman un movimiento fuerte en contra. Objetivo 1 en ${fp(tps[0])} · stop ${who} en ${fp(stop)}.`};}
 /* 4h hasta un momento dado → mismos 5 factores del semáforo de PILOTEAR */
 function hxQ4(c4){return withCandles(c4,()=>{const i=c4.length-1,cl=closes(),atr=wilder(trArr(),14)[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i];
   let f6=0,v6=0;for(let j=Math.max(0,i-5);j<=i;j++){f6+=barDelta(c4[j]);v6+=c4[j].v;}
@@ -3785,10 +3797,8 @@ async function hxFill(o){const c=HXC[o.id]=HXC[o.id]||{};if(c.busy)return;const 
   try{if(o.m==='a'){put('live','<div class="hx-t">📡 Ahora en el mercado</div><div class="mut">Para acciones el análisis en vivo todavía no está disponible: mirá el gráfico y el termómetro.</div>');put('ent','<div class="mut">El semáforo de entrada es de cripto (velas de 4 h de Binance).</div>');return;}
     /* 1) datos en tiempo real (los de PILOTEAR) */
     try{const D=await pilData(o.sym),px=tickers[o.sym]?.c||D.c1,trend=a=>a.why.filter(x=>!/^Semáforo/.test(x)).map(x=>`<li>${esc(x)}</li>`).join('');
-      if(o.state==='open'&&!o.lite&&px){const P=HXC[o.id].pos=HXC[o.id].pos||{sym:o.sym,dir:o.dir,entry:o.ae||o.entry,lev:o.lev||SIM[o.m].lev,margin:hxMg(o),t:o.t};const a=pilAnalyze(P,D,px);
-        const cls=['liq','peligro','stopplan','aviso','salir','vuelta'].includes(a.st)?'bad':a.st==='asegurar'?'warn':'good';
-        const vb=hxLive(o,px),tx=a.txt.split(pilMoney(a.usd)).join(fusd2(vb)).split(pilMoney(a.usd).replace('−','')).join(fusd2(vb).replace('−',''));
-        put('live',`<div class="hx-t ${cls}">${esc(a.title)}</div><div>${esc(tx)}</div><ul class="hx-w">${trend(a)}</ul>`);}
+      if(o.state==='open'&&!o.lite&&px){const a=pilAnalyze({sym:o.sym,dir:o.dir,entry:px,lev:10,margin:100,t:now},D,px),A=hxAdvice(o,D,px);
+        put('live',`<div class="hx-t ${A.cls}">${esc(A.title)}</div><div>${esc(A.txt)}</div><ul class="hx-w">${trend(a)}</ul>`);}
       else{const a=pilAnalyze({sym:o.sym,dir:o.dir,entry:px,lev:10,margin:100,t:now},D,px);
         put('live',`<div class="hx-t">📡 Ahora en el mercado${o.state==='open'?'':' · la señal ya terminó'}</div><div class="mut">${o.sym.replace('USDT','')} a ${fp(px)}. Así está para un ${o.dir>0?'LONG':'SHORT'}:</div><ul class="hx-w">${trend(a)}</ul>`);}}
     catch(e){put('live','<div class="mut">No se pudieron leer los datos en vivo de este activo.</div>');}
