@@ -78,7 +78,7 @@ function sim3(b, P, i, c) { const e = b[i].c, a = P.atr[i]; if (!a) return null;
     while (hit < 3 && x.h >= tps[hit]) { real += (tps[hit] / e - 1) / 3; hit++; } if (hit >= 3) { pnl = real; break; } }
   if (pnl == null) { if (j >= b.length) return null; pnl = c.todo1 ? b[Math.min(j, b.length - 1)].c / e - 1 : real + (1 - hit / 3) * (b[Math.min(j, b.length - 1)].c / e - 1); }
   return { t: b[i].t, j: Math.min(j, b.length - 1), pct: 100 * lev * (Math.max(-sl, pnl) - 2 * FEE), hit, lev }; }
-function run3(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk = new Map(SPY.map((x, i) => [new Date(x.t).toISOString().slice(0, 10), s200[i] != null && x.c > s200[i]]));
+function run3(DATA, SPY, G) { G = G || { k: [2, 2.5, 3, 4], r: [.35, .5, .75, 1], sz: [['×8', { L: 8 }], ['riesgo 30 %', { risk: .3 }], ['riesgo 50 %', { risk: .5 }]] }; const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk = new Map(SPY.map((x, i) => [new Date(x.t).toISOString().slice(0, 10), s200[i] != null && x.c > s200[i]]));
   const strat = { reb_rup_M: [(b, P, i) => ENTRY.reb6m(b, P, i, true) || ENTRY.ruptura(b, P, i), true], combo: [(b, P, i) => ENTRY.reb6m(b, P, i, true) || ENTRY.ruptura(b, P, i) || ENTRY.rsi2(b, P, i), false],
     combo_M: [(b, P, i) => ENTRY.reb6m(b, P, i, true) || ENTRY.ruptura(b, P, i) || ENTRY.rsi2(b, P, i), true], reb6m: [(b, P, i) => ENTRY.reb6m(b, P, i, true), false] };
   const PP = Object.fromEntries(Object.entries(DATA).map(([s, b]) => [s, prep(b)])), E = {};
@@ -86,7 +86,7 @@ function run3(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk
       for (let i = 210; i < b.length - 1; i++) if (fn(b, P, i) && (!useM || mk.get(new Date(b[i].t).toISOString().slice(0, 10)))) L.push(i); E[nm][s] = L; } }
   const all = Object.values(DATA).flatMap(b => [b[210] ? b[210].t : 0, b[b.length - 1].t]).filter(Boolean), t1 = Math.min(...all), t2 = Math.max(...all), cut = t1 + (t2 - t1) * 2 / 3;
   const R = [];
-  for (const nm of Object.keys(strat)) for (const k of [2, 2.5, 3, 4]) for (const r of [.35, .5, .75, 1]) for (const [sz, c0] of [['×8', { L: 8 }], ['riesgo 30 %', { risk: .3 }], ['riesgo 50 %', { risk: .5 }]]) {
+  for (const nm of Object.keys(strat)) for (const k of G.k) for (const r of G.r) for (const [sz, c0] of G.sz) {
     const c = { ...c0, k, r }, ops = [];
     for (const [s, b] of Object.entries(DATA)) { let free = 0; for (const i of E[nm][s]) { if (i < free) continue; const o = sim3(b, PP[s], i, c); if (!o) continue; ops.push(o); free = o.j + 1; } }
     const tr = ops.filter(o => o.t < cut), te = ops.filter(o => o.t >= cut), D = x => Math.max(1, x / 864e5);
@@ -97,7 +97,7 @@ function run3(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk
 (async () => { try { const t0 = Date.now(), D1 = {}, H1 = {}; let q = 0, ok1 = 0, okh = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const d = await yahoo(s, '1d', '6y'); if (d && d.length > 300) { D1[s] = d; ok1++; }
-    if (!['2', '3', '4', '5'].includes(process.env.RONDA)) { const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } } await sleep(120); } }));
+    if (!['2', '3', '4', '5', '6'].includes(process.env.RONDA)) { const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } } await sleep(120); } }));
   console.log('acciones', LIST.length, 'diario', ok1, '1 h', okh, ((Date.now() - t0) / 1000).toFixed(0), 's');
   const OUT = { fecha: new Date().toISOString(), acciones: LIST.length, con_diario: ok1, con_1h: okh, res: {} };
   const SPY = await yahoo('SPY', '1d', '6y');
@@ -124,6 +124,10 @@ function run3(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk
         return { n, obj1: +(A.filter(o => o.hit >= 1).length / n * 100).toFixed(1), obj3: +(A.filter(o => o.hit >= 3).length / n * 100).toFixed(1), gana: +(A.filter(o => o.pct > 0).length / n * 100).toFixed(1), pct: +(A.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd500: +(A.reduce((a, o) => a + o.pct, 0) / n * 5).toFixed(1), lev: +(A.reduce((a, o) => a + o.lev, 0) / n).toFixed(1) }; };
       by[set] = { seis_anios: f(L), ultimo_anio: f(Y) }; }
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda4: by }, null, 1)); console.log(JSON.stringify(by)); return; }
+  if (process.env.RONDA === '6') { /* RONDA 6 · prioridad: ganancia por operación y poca pérdida por operación (objetivos más lejos, stop y tamaño) */
+    const R6 = run3(D1, SPY, { k: [2, 2.5, 3, 4], r: [.75, 1, 1.25, 1.5, 2], sz: [['×8', { L: 8 }], ['riesgo 30 %', { risk: .3 }], ['riesgo 40 %', { risk: .4 }], ['riesgo 50 %', { risk: .5 }]] });
+    R6.sort((a, b) => (b.aprendizaje.pct || 0) - (a.aprendizaje.pct || 0));
+    fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda6: R6 }, null, 1)); console.log(JSON.stringify(R6.slice(0, 5))); return; }
   if (process.env.RONDA === '3') { const R3 = run3(D1, SPY); R3.sort((a, b) => (b.aprendizaje.usd_dia || 0) - (a.aprendizaje.usd_dia || 0));
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda3: R3 }, null, 1)); console.log(JSON.stringify(R3.slice(0, 10))); return; }
   const RUNS = process.env.RONDA === '2' ? [['diario2', D1, true, () => run2(D1, SPY)]] : [['diario', D1, true], ['1h', H1, false]];
