@@ -52,6 +52,23 @@ function sim(rb, j0, e, d, sl, r, maxMs, t0) { const tps = [1, 2, 3].map(k => e 
     while (hit < 3 && d * (fav - tps[hit]) >= 0) { real += d * (tps[hit] / e - 1) / 3; hit++; } if (hit >= 3) return { f: real, hit, end: b.t }; }
   if (j >= rb.length && rb.length && rb[rb.length - 1].t - t0 < maxMs) return null; // todavía abierta
   const k = Math.min(Math.max(j - 1, j0), rb.length - 1); return { f: Math.max(-sl, real + (1 - hit / 3) * d * (rb[k].c / e - 1)), hit, end: rb[k].t }; }
+/* GESTIÓN (MODO=gestion): la misma operación con salvavidas y/o aviso de salida.
+   salvavidas: antes del objetivo 1, si el precio llega al 65 % del camino al stop y la tendencia de fondo sigue a favor (ll(t)),
+   se suma medio margen más (entrada promedio mejor, stop a la misma distancia de la nueva entrada) — como la página.
+   aviso: antes del objetivo 1, si una vela cierra a `cut` del camino al stop, sale. Con `semaforo`, solo sale si además la tendencia
+   de fondo ya está en contra (si sigue a favor, aguanta y deja actuar al salvavidas). */
+function sim2(rb, j0, e, d, sl, r, maxMs, t0, O) { const tps = [1, 2, 3].map(k => e * (1 + d * k * r * sl)), llAt = e * (1 - d * sl * .65); let fail = e * (1 - d * sl), hit = 0, real = 0, j = j0, ae = e, sz = 1, ll = 0, llNo = !O.ll;
+  const val = px => real + (1 - hit / 3) * sz * d * (px / ae - 1);
+  for (; j < rb.length; j++) { const b = rb[j]; if (b.t - t0 >= maxMs) break; const adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, tc = b.t + O.res;
+    if (!hit && !ll && !llNo && d * (adv - llAt) <= 0) { if (O.ll(tc)) { ae = (e + .5 * llAt) / 1.5; sz = 1.5; fail = ae * (1 - d * sl); ll = 1; } else llNo = true; }
+    const stop = hit ? ae : fail;
+    if (d * (stop - adv) >= 0) return { f: val(stop), hit, end: b.t, sz, ll, k: hit ? 'seguro' : 'stop' };
+    while (hit < 3 && d * (fav - tps[hit]) >= 0) { real += sz * d * (tps[hit] / ae - 1) / 3; hit++; } if (hit >= 3) return { f: real, hit, end: b.t, sz, ll, k: 'obj3' };
+    if (O.cut && !hit && d * (ae - b.c) / ae >= O.cut * sl && (!O.semaforo || !O.trend(tc))) return { f: val(b.c), hit, end: b.t, sz, ll, k: 'aviso' }; }
+  if (j >= rb.length && rb.length && rb[rb.length - 1].t - t0 < maxMs) return null;
+  const k = Math.min(Math.max(j - 1, j0), rb.length - 1); return { f: Math.max(-sz * sl, val(rb[k].c)), hit, end: rb[k].t, sz, ll, k: 'plazo' }; }
+const GV = { sin: {}, salvavidas: { ll: 1 }, aviso_50: { cut: .5 }, aviso_65: { cut: .65 }, salvavidas_y_aviso_50: { ll: 1, cut: .5 }, semaforo_50: { cut: .5, semaforo: 1 }, salvavidas_y_semaforo_50: { ll: 1, cut: .5, semaforo: 1 }, salvavidas_y_semaforo_35: { ll: 1, cut: .35, semaforo: 1 } };
+const GEST = process.env.MODO === 'gestion';
 /* estadísticas de una lista de resultados (% del margen) */
 function st(L, days) { const n = L.length; if (!n) return { n: 0 }; const lo = L.filter(v => v < 0), w = L.filter(v => v > 0).reduce((a, v) => a + v, 0), l = -lo.reduce((a, v) => a + v, 0);
   return { n, dia: +(n / days).toFixed(2), pct: +(L.reduce((a, v) => a + v, 0) / n).toFixed(2), gana: +((n - lo.length) / n * 100).toFixed(1), perd_media: lo.length ? +(l / lo.length).toFixed(1) : 0, peor: +Math.min(...L).toFixed(1), pf: l ? +(w / l).toFixed(2) : null }; }
@@ -79,7 +96,8 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
   const GRID = []; for (const L of [3, 5, 10, 15, 20]) for (const a of [2, 3, 4]) for (const r of [.5, .75, 1]) GRID.push({ L, a, r });
   R.trading = []; R.trading_base = null;
   for (const h of TFS) { const ms = h * H, sc = Math.sqrt(h / 4), BT = agg(B1.BTCUSDT, h), PB = prep(BT); const C = [];
-    for (const [ri, s] of LT.entries()) { const rank = ri + OFF; const b1 = B1[s]; if (!b1) continue; const b = agg(b1, h), P = prep(b);
+    if (GEST && h !== 4) continue; const TR4 = {};
+    for (const [ri, s] of LT.entries()) { const rank = ri + OFF; const b1 = B1[s]; if (!b1) continue; const b = agg(b1, h), P = prep(b); TR4[s] = { b, e200: P.e200 };
       for (let i = 210; i < b.length; i++) { const t = b[i].t + ms; if (t < FROM_T) continue; const cb = b[i].c, atrP = P.atr[i] / cb;
         if (P.e200[i] == null || P.r14[i] == null) continue;
         const dir = P.st[i] === 1 && P.e21[i] > P.e50[i] && cb > P.e200[i] ? 1 : P.st[i] === -1 && P.e21[i] < P.e50[i] && cb < P.e200[i] ? -1 : 0; if (!dir) continue;
@@ -89,6 +107,13 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
         C.push({ s, t, dir, e: cb, atrP, i, cn: canal(b, i), d200: dir * (cb / P.e200[i] - 1) * 100, z: P.bs[i] ? dir * (cb - P.bm[i]) / P.bs[i] : 0, vr: P.vr[i] }); } }
     const maxMs = Math.min(14 * DAY, 42 * ms), cool = Math.max(24 * H, 6 * ms), j0 = {};
     for (const c of C) c.j0 = idxAfter(B1[c.s], c.t);
+    if (GEST) { R.gestion_trading = []; const trendAt = (c, t) => { const T = TR4[c.s], k = lastClosed(T.b, ms, t); return k >= 0 && T.e200[k] != null && c.dir * (T.b[k].c - T.e200[k]) > 0; };
+      for (const [nm, g, F] of [['hoy', { L: 10, a: 3, r: .5 }, FILT.hoy], ['nueva', { L: 10, a: 3, r: .75 }, FILT.d200_8], ['nueva_stop4', { L: 10, a: 4, r: .75 }, FILT.d200_8]]) { const cap = .36 / g.L;
+        for (const [gv, O0] of Object.entries(GV)) { const O = C.filter(F).map(c => { const sl = Math.min(cap, Math.max(.004, g.a * c.atrP)), opt = { res: H, cut: O0.cut, semaforo: O0.semaforo, ll: O0.ll ? t => trendAt(c, t) : null, trend: t => trendAt(c, t) }, o = sim2(B1[c.s], c.j0, c.e, c.dir, sl, g.r, maxMs, c.t, opt);
+            return o ? { ...c, o, pct: 100 * g.L * (o.f - 2 * FEE * o.sz) } : { ...c, o: null }; });
+          const P = pickOps(O, cool), A = P.filter(x => x.t < CUT_T), Te = P.filter(x => x.t >= CUT_T), cnt = L => ({ salvavidas: L.filter(x => x.o.ll).length, avisos: L.filter(x => x.o.k === 'aviso').length });
+          R.gestion_trading.push({ estrategia: nm, gestion: gv, aprendizaje: { ...st(A.map(x => x.pct), DAYS_T * 2 / 3), ...cnt(A) }, prueba: { ...st(Te.map(x => x.pct), DAYS_T / 3), ...cnt(Te) } }); } }
+      console.log('gestión TRADING', JSON.stringify(R.gestion_trading).slice(0, 1500)); continue; }
     for (const g of GRID) { const cap = .36 / g.L; // mismo riesgo que hoy: con × 10 el stop máximo es 3,6 % (−36 % del margen)
       const O = C.map(c => { const sl = Math.min(cap, Math.max(.004, g.a * c.atrP)), o = sim(B1[c.s], c.j0, c.e, c.dir, sl, g.r, maxMs, c.t); return o ? { ...c, o, pct: 100 * g.L * (o.f - 2 * FEE) } : { ...c, o: null }; });
       for (const [fn, F] of Object.entries(FILT)) { const P = pickOps(O.filter(F), cool), A = P.filter(x => x.t < CUT_T).map(x => x.pct), Te = P.filter(x => x.t >= CUT_T).map(x => x.pct);
@@ -101,7 +126,8 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
   const SB = {}; q = 0; await Promise.all(Array.from({ length: 4 }, async () => { while (q < LS.length) { const s = LS[q++]; const m15 = await klines(s, '15m', 9e5, NOW - (DAYS_S + 20) * DAY); if (m15.length > 5000) SB[s] = m15; } }));
   console.log('SHOOTER monedas', Object.keys(SB).length, ((Date.now() - t0) / 1e3).toFixed(0), 's');
   const C = [];
-  for (const s in SB) { const m15 = SB[s], h1 = (() => { const out = []; let cur = null; for (const x of m15) { const k = Math.floor(x.t / H) * H; if (!cur || cur.t !== k) { if (cur && cur.n === 4) out.push(cur); cur = { ...x, t: k, n: 1 }; } else { cur.h = Math.max(cur.h, x.h); cur.l = Math.min(cur.l, x.l); cur.c = x.c; cur.v += x.v; cur.n++; } } return out; })(), he = ema(h1.map(x => x.c), 50);
+  const SH1 = {};
+  for (const s in SB) { const m15 = SB[s], h1 = (() => { const out = []; let cur = null; for (const x of m15) { const k = Math.floor(x.t / H) * H; if (!cur || cur.t !== k) { if (cur && cur.n === 4) out.push(cur); cur = { ...x, t: k, n: 1 }; } else { cur.h = Math.max(cur.h, x.h); cur.l = Math.min(cur.l, x.l); cur.c = x.c; cur.v += x.v; cur.n++; } } return out; })(), he = ema(h1.map(x => x.c), 50); SH1[s] = { h1, he };
     for (const [tf, mins] of [['15m', 15], ['30m', 30]]) { const b = mins === 15 ? m15 : (() => { const out = []; let cur = null; for (const x of m15) { const k = Math.floor(x.t / 18e5) * 18e5; if (!cur || cur.t !== k) { if (cur && cur.n === 2) out.push(cur); cur = { ...x, t: k, n: 1 }; } else { cur.h = Math.max(cur.h, x.h); cur.l = Math.min(cur.l, x.l); cur.c = x.c; cur.v += x.v; cur.n++; } } return out; })();
       const P = prep(b), ms = mins * 6e4, back = 60 / mins;
       for (let i = 210; i < b.length; i++) { const t = b[i].t + ms; if (t < FROM_S) continue; const cb = b[i].c; if (P.r7[i] == null || !P.bs[i] || !P.atr[i]) continue;
@@ -109,6 +135,13 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
         const k = lastClosed(h1, H, t); if (!(k >= 0 && he[k] != null && h1[k].c > he[k])) continue;
         C.push({ s, tf, t, dir: 1, e: cb, atrP: P.atr[i] / cb, cn: canal(b, i), d200: P.e200[i] ? (cb / P.e200[i] - 1) * 100 : 0, z, vr: P.vr[i], j0: idxAfter(m15, t) }); } } }
   console.log('SHOOTER candidatas', C.length);
+  if (GEST) { R.gestion_shooter = []; const up = (c, t) => { const T = SH1[c.s], k = lastClosed(T.h1, H, t); return k >= 0 && T.he[k] != null && T.h1[k].c > T.he[k]; };
+    for (const [nm, g, F] of [['hoy', { L: 15, a: 3, r: .35 }, () => true], ['mejora_monedas1', { L: 15, a: 4, r: .25 }, c => c.d200 > 0]]) { const cap = .75 / g.L;
+      for (const [gv, O0] of Object.entries(GV)) { const O = C.filter(F).map(c => { const sl = Math.min(cap, Math.max(.004, g.a * c.atrP)), opt = { res: 9e5, cut: O0.cut, semaforo: O0.semaforo, ll: O0.ll ? t => up(c, t) : null, trend: t => up(c, t) }, o = sim2(SB[c.s], c.j0, c.e, 1, sl, g.r, 12 * H, c.t, opt);
+          return o ? { ...c, o, pct: 100 * g.L * (o.f - 2 * FEE * o.sz) } : { ...c, o: null }; });
+        const P = pickOps(O, H), A = P.filter(x => x.t < CUT_S), Te = P.filter(x => x.t >= CUT_S), cnt = L => ({ salvavidas: L.filter(x => x.o.ll).length, avisos: L.filter(x => x.o.k === 'aviso').length });
+        R.gestion_shooter.push({ estrategia: nm, gestion: gv, aprendizaje: { ...st(A.map(x => x.pct), DAYS_S * 2 / 3), ...cnt(A) }, prueba: { ...st(Te.map(x => x.pct), DAYS_S / 3), ...cnt(Te) } }); } }
+    R.secs = Math.round((Date.now() - t0) / 1e3); fs.writeFileSync('investigacion-trading.json', JSON.stringify(R)); console.log('listo gestión', R.secs, 's'); return; }
   const FS = { hoy: () => true, canal: c => c.cn && c.cn.dir >= 0 && c.cn.pos <= .35, canal_lateral: c => c.cn && c.cn.dir === 0 && c.cn.pos <= .35,
     d200_bajo: c => c.d200 <= 0, d200_alto: c => c.d200 > 0, atr_bajo: c => c.atrP <= .008, atr_alto: c => c.atrP > .008, volumen_alto: c => c.vr >= 1.5,
     canal_y_atr_bajo: c => c.cn && c.cn.dir >= 0 && c.cn.pos <= .35 && c.atrP <= .008 };
