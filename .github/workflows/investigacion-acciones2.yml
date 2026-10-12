@@ -2,6 +2,10 @@ name: Investigación de ACCIONES (estrategias y temporalidades)
 # Se corre a mano: compara estrategias en velas diarias y de 1 h con datos de Yahoo y guarda el resultado en la rama acc2-<número>.
 on:
   workflow_dispatch:
+    inputs:
+      ronda:
+        description: '1 = todas las estrategias en diario y 1 h · 2 = diario con filtro de mercado, stop corto y combinaciones'
+        default: '1'
 permissions:
   contents: write
 jobs:
@@ -14,6 +18,8 @@ jobs:
         with:
           node-version: '20'
       - run: node --max-old-space-size=6000 herramientas/investigacion-acciones2.js
+        env:
+          RONDA: ${{ inputs.ronda }}
       - name: Guardar el resultado
         if: always()
         run: |

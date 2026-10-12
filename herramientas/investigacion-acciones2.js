@@ -40,11 +40,11 @@ const ENTRY = {
   ruptura: (b, P, i) => { if (i < 21 || P.e200[i] == null || b[i].c < P.e200[i] || !P.vavg[i]) return false; let h = 0; for (let j = i - 20; j < i; j++) h = Math.max(h, b[j].h); return b[i].c > h && b[i].v > 1.5 * P.vavg[i]; },
 };
 /* simulación de una operación entrando al cierre de la vela i */
-function sim(b, P, i, g, kind) { const e = b[i].c, a = P.atr[i]; if (!a) return null; const sl = Math.min(g.cap, Math.max(.004, 3 * a / e)), stop0 = e * (1 - sl), tps = [1, 2, 3].map(k => e * (1 + k * .5 * sl));
+function sim(b, P, i, g, kind) { const e = b[i].c, a = P.atr[i]; if (!a) return null; const sl = Math.min(g.cap, Math.max(.004, (g.k || 3) * a / e)), stop0 = e * (1 - sl), tps = [1, 2, 3].map(k => e * (1 + k * .5 * sl));
   let hit = 0, real = 0, j = i + 1, pnl = null;
   for (; j < b.length && j <= i + g.max; j++) { const x = b[j], stop = hit ? e : stop0;
     if (x.l <= stop) { pnl = real + (1 - hit / 3) * (stop / e - 1); break; }
-    if (kind === 'A') { while (hit < 3 && x.h >= tps[hit]) { real += (tps[hit] / e - 1) / 3; hit++; } if (hit >= 3) { pnl = real; break; } }
+    if (kind === 'A' || kind === 'A2') { while (hit < 3 && x.h >= tps[hit]) { real += (tps[hit] / e - 1) / 3; hit++; } if (hit >= 3) { pnl = real; break; } }
     else if (P.s5[j] != null && x.c > P.s5[j]) { pnl = x.c / e - 1; hit = x.c > e ? 1 : 0; break; } }
   if (pnl == null) { if (j >= b.length) return null; pnl = real + (1 - hit / 3) * (b[Math.min(j, b.length - 1)].c / e - 1); }
   if (kind === 'B' && pnl > 0) hit = Math.max(hit, 1);
@@ -59,13 +59,24 @@ function stats(L, days) { const n = L.length; if (!n) return { n: 0 }; const tot
   const gw = L.filter(o => o.pct > 0).reduce((a, o) => a + o.pct, 0), gl = -lo.reduce((a, o) => a + o.pct, 0);
   return { n, dia: +(n / days).toFixed(2), obj1: +(L.filter(o => o.hit >= 1).length / n * 100).toFixed(1), gana: +(w / n * 100).toFixed(1), pct: +(tot / n).toFixed(2), usd500: +(tot / n * 5).toFixed(1),
     perdida_media: lo.length ? +(gl / lo.length).toFixed(2) : 0, peor: +L.reduce((a, o) => Math.min(a, o.pct), 1e9).toFixed(1), pf: gl ? +(gw / gl).toFixed(2) : null, total_usd500: Math.round(tot * 5) }; }
+/* RONDA 2 (solo diario): filtro de mercado (S&P 500 sobre su media de 200 días), stop de 2 × ATR y combinación de estrategias */
+function run2(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk = new Map(SPY.map((x, i) => [new Date(x.t).toISOString().slice(0, 10), s200[i] != null && x.c > s200[i]])), R = {};
+  const combo = (b, P, i, d) => ENTRY.reb6m(b, P, i, d) || ENTRY.ruptura(b, P, i, d) || ENTRY.rsi2(b, P, i, d);
+  const strat = { reb6m: ENTRY.reb6m, ruptura: ENTRY.ruptura, rsi2: ENTRY.rsi2, combo, reb_rup: (b, P, i, d) => ENTRY.reb6m(b, P, i, d) || ENTRY.ruptura(b, P, i, d) };
+  for (const [name, fn] of Object.entries(strat)) for (const filt of ['', 'M']) for (const [kind, k] of [['A', 3], ['A2', 2], ['B', 3]]) { const ops = [], g = { cap: .096, max: 30, k };
+    for (const [s, b] of Object.entries(DATA)) { const P = prep(b); let free = 0;
+      for (let i = 210; i < b.length - 1; i++) { if (i < free || !fn(b, P, i, true)) continue; if (filt && !mk.get(new Date(b[i].t).toISOString().slice(0, 10))) continue; const o = sim(b, P, i, g, kind); if (!o) continue; o.s = s; ops.push(o); free = o.j + 1; } }
+    if (ops.length) R[name + (filt ? '+mercado' : '') + '·' + kind] = ops; }
+  return R; }
 (async () => { try { const t0 = Date.now(), D1 = {}, H1 = {}; let q = 0, ok1 = 0, okh = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const d = await yahoo(s, '1d', '6y'); if (d && d.length > 300) { D1[s] = d; ok1++; }
-    const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } await sleep(120); } }));
+    if (process.env.RONDA !== '2') { const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } } await sleep(120); } }));
   console.log('acciones', LIST.length, 'diario', ok1, '1 h', okh, ((Date.now() - t0) / 1000).toFixed(0), 's');
   const OUT = { fecha: new Date().toISOString(), acciones: LIST.length, con_diario: ok1, con_1h: okh, res: {} };
-  for (const [tf, DATA, daily] of [['diario', D1, true], ['1h', H1, false]]) { const R = run(DATA, daily), all = Object.values(R).flat(); if (!all.length) continue;
+  const SPY = await yahoo('SPY', '1d', '6y');
+  const RUNS = process.env.RONDA === '2' ? [['diario2', D1, true, () => run2(D1, SPY)]] : [['diario', D1, true], ['1h', H1, false]];
+  for (const [tf, DATA, daily, fx] of RUNS) { const R = fx ? fx() : run(DATA, daily), all = Object.values(R).flat(); if (!all.length) continue;
     const t1 = all.reduce((a, o) => Math.min(a, o.t), 1e18), t2 = all.reduce((a, o) => Math.max(a, o.t), 0), cut = t1 + (t2 - t1) * 2 / 3, D = x => Math.max(1, x / 864e5);
     for (const [k, ops] of Object.entries(R)) { const tr = ops.filter(o => o.t < cut), te = ops.filter(o => o.t >= cut);
       OUT.res[tf + ' · ' + k] = { todo: stats(ops, D(t2 - t1)), aprendizaje: stats(tr, D(cut - t1)), prueba: stats(te, D(t2 - cut)) }; } }
