@@ -672,30 +672,30 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
+    inds: ['liq','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 15m (señales en 15 y 30 min)', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '15m', bars: 180,
-    inds: ['liq','trend','bollinger','vwap','rsi','adx','cvd','kon']
+    inds: ['liq','trend','canal','bollinger','vwap','rsi','adx','cvd','kon']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','adx','stochrsi','cvd','kon'],
-    def: ['liq','trend','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
+    inds: ['liq','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','adx','stochrsi','cvd','kon'],
+    def: ['liq','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
     name: 'ACCIONES', tag: 'NYSE + NASDAQ · USD',
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
     info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
     tf: '1d', bars: 160,
-    inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
-    def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
+    inds: ['liq','trend','canal','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
+    def: ['liq','trend','canal','supertrend','ema','vprofile','rsi','adx','cvd','kon']
   }
 };
 let mode = 'medio';
@@ -758,6 +758,7 @@ function setNames(){const pr=PRM[mode];IND.rsi.name=`RSI (${pr.rsi})`;IND.supert
   if(typeof applyCuStyles==='function')applyCuStyles();}
 const IND = {
   trend:     {name:'Línea de tendencia (todos los datos)',color:'#eceff1',pane:false},
+  canal:     {name:'Canal de tendencia',color:'#64b5f6',pane:false},
   vwap:      {name:'VWAP diario ±σ',      color:'#ff9f43', pane:false},
   ema:       {name:'EMA 9 / 21',          color:'#4dd0e1', pane:false},
   stochrsi:  {name:'Stoch RSI (14,14,3,3)',color:'#26c6da', pane:true},
@@ -862,6 +863,7 @@ function calcInd(full){
   if(active.has('stochrsi'))C.srsi=calcStochRSI(...(PRM[mode].srsi||[]));
   if(active.has('cvd'))C.cvd=calcCVD();
   C.trend=active.has('trend')?calcTrendLine():null;
+  C.canal=active.has('canal')?calcCanal():null;
   const push=(ser,arr,colorFn)=>{
     const pts=[];arr.forEach((v,i)=>{if(v!=null){const p={time:candles[i].time,value:v};if(colorFn)p.color=colorFn(v,i);pts.push(p);}});
     if(full) ser.setData(pts); else if(pts.length) ser.update(pts.at(-1));
@@ -966,7 +968,7 @@ function gaugeSVG(sc){
 function renderLegend(){
   const fs=allFactors(),ind=fs.filter(x=>!x.mk);
   // leyenda sobre el gráfico (indicadores superpuestos)
-  $('legend').innerHTML=(active.has('trend')&&C.trend&&trendNow()!=null?`<span style="color:${trendCol(trendNow())}"><i style="background:${trendCol(trendNow())}"></i>Línea de tendencia: <b>${trendTxt(trendNow())}</b> · hacia adelante: <b>${fwdSym(TFWD)} ${fwdTxt(TFWD)}</b></span>`:'')+ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
+  $('legend').innerHTML=(active.has('canal')&&C.canal?canalLegend():'')+(active.has('trend')&&C.trend&&trendNow()!=null?`<span style="color:${trendCol(trendNow())}"><i style="background:${trendCol(trendNow())}"></i>Línea de tendencia: <b>${trendTxt(trendNow())}</b> · hacia adelante: <b>${fwdSym(TFWD)} ${fwdTxt(TFWD)}</b></span>`:'')+ind.filter(x=>!IND[x.k].pane).map(x=>`<span style="color:${IND[x.k].color}"><i style="background:${IND[x.k].color}"></i>${IND[x.k].name}: <b class="${x.s>.15?'up':x.s<-.15?'dn':''}">${x.txt}</b></span>`).join('');
   // flechas en cada botón de indicador
   document.querySelectorAll('#inds [data-ind]').forEach(b=>{const f=ind.find(x=>x.k===b.dataset.ind),bd=b.querySelector('.bdg');if(!bd)return;
     if(!f){bd.className='bdg';bd.textContent='';return;}
@@ -1033,6 +1035,7 @@ function drawInd(ctx,w,h){
     poly(C.bb.u,hexA(bc,.8),bw);poly(C.bb.l,hexA(bc,.8),bw);poly(C.bb.m,hexA(bc,.6),bw,[4,4]);}
   if(active.has('vwap')&&C.vwap){const V=C.vwap,[vc,vw]=sty('vwap',0,'#ff9f43',2);band(V.u1,V.l1,hexA(vc,.06),hexA(vc,.06));poly(V.u2,hexA(vc,.35),1,[3,4]);poly(V.l2,hexA(vc,.35),1,[3,4]);poly(V.u1,hexA(vc,.55),1);poly(V.l1,hexA(vc,.55),1);poly(V.v,vc,vw);}
   if(active.has('ema')&&C.ema){poly(C.ema.f,...sty('ema',0,'#4dd0e1',1.6));poly(C.ema.s,...sty('ema',1,'#ab47bc',1.6));if(C.ema.t)poly(C.ema.t,...sty('ema',2,'#ffb74d',2));}
+  if(active.has('canal')&&C.canal)drawCanal(ctx,X,Y,from,to);
   if(active.has('trend')&&C.trend)drawTrend(ctx,X,Y,from,to);
   if(active.has('supertrend')&&C.st){const {st,dir}=C.st,[su,sW]=sty('supertrend',0,'#26a69a',2),[sd]=sty('supertrend',1,'#ef5350',2);ctx.lineWidth=sW;
     for(let i=Math.max(from,1);i<to&&i<st.length;i++){if(st[i]==null||st[i-1]==null||dir[i]!==dir[i-1])continue;
@@ -1447,6 +1450,7 @@ function applyMode(m){setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   setNames();
   let saved=null;try{saved=JSON.parse(localStorage.getItem('cv_ind4_'+m))}catch(e){}
   try{if(saved&&!saved.includes('trend')&&!localStorage.getItem('cv_tr_'+m)){saved.push('trend');localStorage.setItem('cv_tr_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
+  try{if(saved&&!saved.includes('canal')&&!localStorage.getItem('cv_cn_'+m)){saved.push('canal');localStorage.setItem('cv_cn_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('kon')&&!localStorage.getItem('cv_kon_'+m)){saved.push('kon');localStorage.setItem('cv_kon_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   active=new Set((indUser()||saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
@@ -1664,7 +1668,7 @@ $('fs').onclick=async()=>{
   if(document.body.classList.contains('fs-on')){$('fsExit').click();return;}
   const el=$('chartWrap');setFs(true);
   try{if(el.requestFullscreen)await el.requestFullscreen();else if(el.webkitRequestFullscreen)el.webkitRequestFullscreen();}catch(e){}
-  try{await screen.orientation.lock('landscape')}catch(e){}
+  try{screen.orientation.unlock()}catch(e){} // se queda en vertical; gira solo si el celular tiene la rotación automática activada
 };
 $('fsExit').onclick=()=>{try{if(document.fullscreenElement)document.exitFullscreen();}catch(e){}try{screen.orientation.unlock()}catch(e){}setFs(false);};
 document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&document.body.classList.contains('fs-on')){try{screen.orientation.unlock()}catch(e){}setFs(false);}});
@@ -2880,6 +2884,59 @@ document.addEventListener('click',e=>{if(e.target.closest('#indTog'))$('inds').c
    Rojo intenso = caída fuerte · rojo claro = bajista · blanco = neutral · verde claro = alcista · verde intenso = subida fuerte */
 function wmaArr(v,p){const o=Array(v.length).fill(null),den=p*(p+1)/2;for(let i=p-1;i<v.length;i++){let s=0,ok=true;for(let j=0;j<p;j++){const x=v[i-j];if(x==null){ok=false;break;}s+=x*(p-j);}if(ok)o[i]=s/den;}return o;}
 function hmaArr(v,p){const h=wmaArr(v,Math.max(2,Math.round(p/2))),f=wmaArr(v,p);return wmaArr(v.map((_,i)=>h[i]!=null&&f[i]!=null?2*h[i]-f[i]:null),Math.max(2,Math.round(Math.sqrt(p))));}
+/* ---------- 📐 CANAL DE TENDENCIA (automático) ----------
+   Ajusta una recta a los cierres (en escala logarítmica, para que funcione igual en monedas baratas y caras) y la desplaza hasta los
+   máximos (techo) y los mínimos (piso) de ese tramo. Según la pendiente es alcista, bajista o lateral.
+   · Toque y vuelta hacia adentro = rebote (▲ en el piso, ▼ en el techo).
+   · Dos cierres seguidos afuera por más de 0,3 ATR = ruptura: el canal termina y empieza uno nuevo desde ahí.
+   · Si sale y en 3 velas vuelve a entrar = falsa ruptura (○): el canal sigue igual.
+   Es un dibujo para leer la estructura: no entra en las señales ni en el termómetro (todavía no está probado con el historial). */
+function canalFit(cs,a,b){let n=0,sx=0,sy=0,sxx=0,sxy=0;for(let i=a;i<=b;i++){const y=Math.log(cs[i].close);n++;sx+=i;sy+=y;sxx+=i*i;sxy+=i*y;}
+  const m=(n*sxy-sx*sy)/((n*sxx-sx*sx)||1),c=(sy-m*sx)/n,ru=[],rl=[];
+  for(let i=a;i<=b;i++){ru.push(Math.log(cs[i].high)-(c+m*i));rl.push(Math.log(cs[i].low)-(c+m*i));}
+  ru.sort((x,y)=>x-y);rl.sort((x,y)=>x-y);const q=(A,p)=>A[Math.min(A.length-1,Math.max(0,Math.round(p*(A.length-1))))];
+  return {m,c,up:q(ru,.96),lo:q(rl,.04)};}
+const canalAt=(F,i,w)=>Math.exp(F.c+F.m*i+(w>0?F.up:F.lo));
+function calcCanal(){const cs=candles,n=cs.length;if(n<80)return null;const atr=wilder(trArr(),14),MIN=30,start=Math.max(0,n-420),seg=[],mk=[];
+  let a=start;
+  while(a<n-MIN){let b=a+MIN-1,F=canalFit(cs,a,b),out=0,brk=null;
+    for(let i=b+1;i<n;i++){const c=cs[i].close,A=atr[i]||c*.01,u=canalAt(F,i,1),l=canalAt(F,i,-1),d=c>u+.3*A?1:c<l-.3*A?-1:0;
+      if(d){if(out===d||out===0){out=d;
+          if(i+1<n&&(cs[i+1].close>u+.3*A?1:cs[i+1].close<l-.3*A?-1:0)===d){ // dos cierres afuera: ¿vuelve en 3 velas?
+            let back=false;for(let k=i+2;k<=Math.min(n-1,i+4);k++){const ck=cs[k].close;if(ck<canalAt(F,k,1)&&ck>canalAt(F,k,-1)){back=true;break;}}
+            if(back){mk.push({i,t:'f',p:c});out=0;i+=2;continue;}
+            brk={i,d};break;}}}
+      else{out=0;if(cs[i].low<=l+.15*A&&c>l)mk.push({i,t:'p',p:cs[i].low});else if(cs[i].high>=u-.15*A&&c<u)mk.push({i,t:'t',p:cs[i].high});}
+      if((i-a)%5===0)F=canalFit(cs,a,i);b=i;}
+    const w=(F.up-F.lo),tot=F.m*(b-a),dir=tot>.6*w?1:tot<-.6*w?-1:0;seg.push({a,b:brk?brk.i:n-1,F,dir,brk});
+    if(!brk)break;mk.push({i:brk.i,t:'r',d:brk.d,p:cs[brk.i].close});a=Math.max(a+MIN,brk.i-8);}
+  const cur=seg.at(-1),last=n-1;if(!cur)return null;
+  const rb=mk.filter(x=>x.i>=cur.a&&(x.t==='p'||x.t==='t')),pos=cur?(Math.log(cs[last].close)-(cur.F.c+cur.F.m*last)-cur.F.lo)/((cur.F.up-cur.F.lo)||1):.5;
+  /* rebotes de un mismo toque cuentan una vez (velas seguidas) */
+  const uniq=[];for(const x of rb)if(!uniq.length||x.i-uniq.at(-1).i>2||x.t!==uniq.at(-1).t)uniq.push(x);
+  return {seg,mk:mk.filter((x,k,A)=>!(x.t==='p'||x.t==='t')||!A[k-1]||x.i-A[k-1].i>2||A[k-1].t!==x.t),cur,pos,reb:uniq.length,up:canalAt(cur.F,last,1),lo:canalAt(cur.F,last,-1)};}
+const canalTxt=d=>d>0?'alcista':d<0?'bajista':'lateral',canalCol=d=>d>0?'#00e676':d<0?'#ff5252':'#b0bec5';
+function drawCanal(ctx,X,Y,from,to){const K=C.canal;if(!K)return;const n=candles.length;ctx.save();
+  const keep=K.seg.slice(-3),a0=keep[0].a;
+  for(const S of keep){if(S.b<from-2||S.a>to+2)continue;const col=canalCol(S.dir),isCur=S===K.cur,end=isCur?n-1+10:S.b,pts=[];
+    for(let i=Math.max(S.a,from-2);i<=Math.min(end,to+12);i++)pts.push([i,canalAt(S.F,i,1),canalAt(S.F,i,-1)]);if(pts.length<2)continue;
+    const P=pts.map(([i,u,l])=>[X(i),Y(u),Y(l),i]).filter(p=>p[0]!=null&&p[1]!=null&&p[2]!=null);if(P.length<2)continue;
+    ctx.globalAlpha=isCur?.10:.06;ctx.fillStyle=col;ctx.beginPath();P.forEach((p,k)=>k?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));for(let k=P.length-1;k>=0;k--)ctx.lineTo(P[k][0],P[k][2]);ctx.closePath();ctx.fill();
+    ctx.globalAlpha=isCur?.95:.5;ctx.strokeStyle=col;ctx.lineWidth=isCur?2:1.3;
+    for(const side of [1,2]){ctx.beginPath();let moved=false,proj=false;for(const p of P){const fut=p[3]>n-1;if(fut&&!proj){ctx.stroke();ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(prevX,prevY);proj=true;}
+        if(!moved){ctx.moveTo(p[0],p[side]);moved=true;}else ctx.lineTo(p[0],p[side]);var prevX=p[0],prevY=p[side];}ctx.stroke();ctx.setLineDash([]);}
+    /* línea media punteada */
+    ctx.globalAlpha=isCur?.45:.25;ctx.setLineDash([2,4]);ctx.lineWidth=1;ctx.beginPath();P.forEach((p,k)=>{const ym=(p[1]+p[2])/2;k?ctx.lineTo(p[0],ym):ctx.moveTo(p[0],ym);});ctx.stroke();ctx.setLineDash([]);}
+  ctx.globalAlpha=1;
+  for(const x of K.mk){if(x.i<from||x.i>to||x.i<a0)continue;const px=X(x.i),py=Y(x.p);if(px==null||py==null)continue;
+    if(x.t==='p'){ctx.fillStyle='#00e676';ctx.beginPath();ctx.moveTo(px,py+6);ctx.lineTo(px+5,py+14);ctx.lineTo(px-5,py+14);ctx.closePath();ctx.fill();}
+    else if(x.t==='t'){ctx.fillStyle='#ff5252';ctx.beginPath();ctx.moveTo(px,py-6);ctx.lineTo(px+5,py-14);ctx.lineTo(px-5,py-14);ctx.closePath();ctx.fill();}
+    else if(x.t==='f'){ctx.strokeStyle='#ffd54f';ctx.lineWidth=1.6;ctx.beginPath();ctx.arc(px,py,6,0,7);ctx.stroke();}
+    else if(x.t==='r'){const c=x.d>0?'#00e676':'#ff5252';ctx.strokeStyle=c;ctx.lineWidth=2.2;ctx.beginPath();ctx.moveTo(px-6,py-6);ctx.lineTo(px+6,py+6);ctx.moveTo(px+6,py-6);ctx.lineTo(px-6,py+6);ctx.stroke();
+      ctx.fillStyle=c;ctx.font='bold 10px system-ui,sans-serif';ctx.fillText(x.d>0?'ruptura ▲':'ruptura ▼',px+8,py+(x.d>0?-8:14));}}
+  ctx.restore();}
+function canalLegend(){const K=C.canal;if(!K)return '';const c=canalCol(K.cur.dir),z=K.pos>.8?'cerca del techo':K.pos<.2?'cerca del piso':'en el medio';
+  return `<span style="color:${c}"><i style="background:${c}"></i>Canal de tendencia: <b>${canalTxt(K.cur.dir)}</b> · piso ${fp(K.lo)} · techo ${fp(K.up)} · ${z} · ${K.reb} rebote${K.reb===1?'':'s'}</span>`;}
 function calcTrendLine(){
   const n=candles.length;if(n<60)return null;const pr=PRM[mode],cl=closes(),tp=candles.map(b=>(b.high+b.low+b.close)/3);
   const line=hmaArr(tp,mode==='x'?14:21),st=calcST(...pr.st).dir,ef=emaArr(cl,pr.ema[0]),es=emaArr(cl,pr.ema[1]),r=calcRSI(pr.rsi),M=calcMACD(...(pr.macd||[])),A=calcADX(pr.adx||14),atr=wilder(trArr(),14);
@@ -3979,6 +4036,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  lev:{g:'Primeros pasos',t:'⚖️ Apalancamiento y liquidación',b:'Con ×10 movés 10 veces tu margen: un 1 % a favor es +10 % del margen, pero cerca de un 10 % en contra te <b>liquidan</b> y perdés todo el margen. A más apalancamiento, más cerca está la liquidación.',h:['Usá apalancamientos bajos (×3 a ×10) mientras aprendés.','Tu stop tiene que estar siempre <b>antes</b> que el precio de liquidación.','En este simulador ves el precio de liquidación antes de abrir.'],x:['q_lev','e12']},
  risk:{g:'Primeros pasos',t:'🛡 Gestión de riesgo',b:'Lo que te mantiene en el juego no es acertar siempre sino perder poco cuando fallás. La regla clásica: arriesgar 1–2 % del saldo por operación.',h:['Riesgo = tamaño de la posición × distancia al stop. Ej.: saldo 500.000, riesgo 1 % = 5.000; con stop a 2 % la posición puede ser de 250.000 (margen 25.000 con ×10).','Escalá las ganancias: cerrá 1/3 en cada objetivo y pasá el stop a la entrada después del primero (así trabajan las señales).','Nunca muevas el stop en contra para "aguantar".'],x:['q_risk','e2','e3']},
  chart:{g:'Gráfico',t:'📈 Gráfico, temporalidades y herramientas',b:'Arriba elegís el modo y la temporalidad. Con <b>Regla</b> medís distancias y %, con <b>Línea</b> marcás precios (soportes, resistencias, tu entrada), <b>Borrar</b> quita la línea que tocás después y <b>LOG</b> pone la escala logarítmica.',h:['Marcá con Línea los máximos y mínimos recientes: son tus soportes y resistencias.','Entrá cerca de un soporte en long (o de una resistencia en short) y poné el stop un poco más allá.','Con la Regla medí si el objetivo está al menos tan lejos como el stop.'],x:['q_tf']},
+ canal:{g:'Indicadores',t:'📐 Canal de tendencia',ind:'canal',b:'Dibuja solo un canal con techo y piso sobre el tramo actual: alcista (verde), bajista (rojo) o lateral (gris). ▲ verde = rebote en el piso, ▼ rojo = rebote en el techo, ○ amarillo = falsa ruptura (salió y volvió a entrar), ✕ = ruptura (dos cierres afuera): ahí empieza un canal nuevo.',h:['En un canal alcista, los rebotes en el piso son las zonas más sanas para comprar; en uno bajista, los del techo para vender.','Una ruptura con volumen suele cambiar la tendencia; si vuelve a entrar en 3 velas fue falsa.','Todavía no está probado con el historial: usalo para leer el gráfico, no como señal.']},
  trend:{g:'Indicadores',t:'📏 Línea de tendencia',ind:'trend',b:'Une los mínimos (tendencia alcista) o los máximos (bajista) usando todos los datos. Mientras el precio la respete, la tendencia sigue sana.',h:['En tendencia alcista, los toques a la línea son zonas para comprar.','Si el precio la rompe con fuerza y volumen, la tendencia puede estar terminando: no compres más.'],x:['q_trend']},
  supertrend:{g:'Indicadores',t:'🟩 Supertrend',ind:'supertrend',b:'Línea que va <b>debajo</b> del precio cuando la tendencia es alcista y <b>encima</b> cuando es bajista. Cambia de lado cuando la tendencia se da vuelta.',h:['Usalo como filtro: solo long con Supertrend alcista, solo short con bajista.','La línea sirve como stop dinámico.','En mercados de rango da muchas señales falsas: combinalo con ADX.'],x:['e4','q_st']},
  ema:{g:'Indicadores',t:'〰️ Medias móviles (EMA)',ind:'ema',b:'Promedian el precio dando más peso a lo reciente. Las rápidas (9, 21) sobre las lentas (50, 200) = alcista. El precio sobre la EMA 200 = mercado alcista de fondo.',h:['En tendencia alcista, los retrocesos a la EMA 21 o 50 son zonas de entrada.','Cruce de la rápida sobre la lenta = posible inicio de tendencia (llega tarde, pero confirma).','Es la base de la regla de TRADING: EMA 21 > 50 y precio > EMA 200.'],x:['e5','q_ema']},
