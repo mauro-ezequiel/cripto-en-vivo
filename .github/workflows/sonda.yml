@@ -6,6 +6,9 @@ on:
       urls:
         description: 'Direcciones a probar (separadas por espacios)'
         default: ''
+      guardar:
+        description: 'Guardar las respuestas completas (1 = sí)'
+        default: ''
 permissions:
   contents: write
 jobs:
@@ -20,6 +23,7 @@ jobs:
       - run: node herramientas/sonda.js
         env:
           SONDA: ${{ inputs.urls }}
+          GUARDAR: ${{ inputs.guardar }}
       - run: |
-          mkdir out && cp sonda.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Sonda"
+          mkdir out && cp sonda.json out/ && (cp archivo-*.txt out/ 2>/dev/null || true) && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Sonda"
           git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:sonda-${{ github.run_id }}
