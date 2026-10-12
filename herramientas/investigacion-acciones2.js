@@ -96,10 +96,20 @@ function run3(DATA, SPY) { const sc = SPY.map(x => x.c), s200 = sma(sc, 200), mk
 (async () => { try { const t0 = Date.now(), D1 = {}, H1 = {}; let q = 0, ok1 = 0, okh = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const d = await yahoo(s, '1d', '6y'); if (d && d.length > 300) { D1[s] = d; ok1++; }
-    if (process.env.RONDA !== '2' && process.env.RONDA !== '3') { const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } } await sleep(120); } }));
+    if (!['2', '3', '4'].includes(process.env.RONDA)) { const h = await yahoo(s, '60m', '730d'); if (h && h.length > 400) { H1[s] = h; okh++; } } await sleep(120); } }));
   console.log('acciones', LIST.length, 'diario', ok1, '1 h', okh, ((Date.now() - t0) / 1000).toFixed(0), 's');
   const OUT = { fecha: new Date().toISOString(), acciones: LIST.length, con_diario: ok1, con_1h: okh, res: {} };
   const SPY = await yahoo('SPY', '1d', '6y');
+  if (process.env.RONDA === '4') { /* la configuración elegida, separada por regla: % de acierto real de cada una para la página */
+    const PP = Object.fromEntries(Object.entries(D1).map(([s, b]) => [s, prep(b)])), c = { L: 8, k: 4, r: 1 }, ops = [];
+    for (const [s, b] of Object.entries(D1)) { const P = PP[s]; let free = 0;
+      for (let i = 210; i < b.length - 1; i++) { if (i < free) continue; const set = ENTRY.reb6m(b, P, i, true) ? 'c-reb' : ENTRY.ruptura(b, P, i) ? 'c-rup' : ENTRY.rsi2(b, P, i) ? 'c-rsi2' : null; if (!set) continue;
+        const o = sim3(b, P, i, c); if (!o) continue; o.set = set; ops.push(o); free = o.j + 1; } }
+    const last = Date.now() - 365 * 864e5, by = {};
+    for (const set of ['c-reb', 'c-rup', 'c-rsi2', 'todas']) { const L = ops.filter(o => set === 'todas' || o.set === set), Y = L.filter(o => o.t >= last), f = A => { const n = A.length; if (!n) return { n: 0 };
+        return { n, obj1: +(A.filter(o => o.hit >= 1).length / n * 100).toFixed(1), obj3: +(A.filter(o => o.hit >= 3).length / n * 100).toFixed(1), gana: +(A.filter(o => o.pct > 0).length / n * 100).toFixed(1), pct: +(A.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd500: +(A.reduce((a, o) => a + o.pct, 0) / n * 5).toFixed(1), lev: +(A.reduce((a, o) => a + o.lev, 0) / n).toFixed(1) }; };
+      by[set] = { seis_anios: f(L), ultimo_anio: f(Y) }; }
+    fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda4: by }, null, 1)); console.log(JSON.stringify(by)); return; }
   if (process.env.RONDA === '3') { const R3 = run3(D1, SPY); R3.sort((a, b) => (b.aprendizaje.usd_dia || 0) - (a.aprendizaje.usd_dia || 0));
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda3: R3 }, null, 1)); console.log(JSON.stringify(R3.slice(0, 10))); return; }
   const RUNS = process.env.RONDA === '2' ? [['diario2', D1, true, () => run2(D1, SPY)]] : [['diario', D1, true], ['1h', H1, false]];
