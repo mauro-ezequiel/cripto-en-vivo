@@ -1,7 +1,6 @@
 /* ACCIONES · velas intradiarias y planilla de RSI (corre en GitHub Actions cada 30 min con el mercado abierto).
    data912 solo tiene velas diarias, y el navegador no puede leer Yahoo directo (no permite CORS), así que esto baja de Yahoo las velas de
-   15 min de los últimos 60 días de cada acción de la planilla (de ahí salen 30 min, 1 h, 2 h y 4 h) y, para las principales (las 8 primeras
-   de cada sector), también las de 1 min (2 días) y 5 min (10 días). Publica en la rama "intradia", comprimido (la página las lee de ahí y
+   15 min de los últimos 60 días de cada acción de la planilla (de ahí se arman las de 1 h, 2 h y 4 h). Publica en la rama "intradia", comprimido (la página las lee de ahí y
    les suma el precio en vivo). También calcula el RSI 14 diario (con lo necesario para seguirlo en vivo) y el RSI 14 de 1 hora.
    Uso: node herramientas/intradia.js [carpeta-anterior] → escribe out/c/<ACCION>.json.gz y out/rsi.json */
 const fs = require('fs'), path = require('path');
@@ -27,7 +26,6 @@ const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const m = await yahoo(s, '15m', '60d'); let row = (prev.d || {})[s] || null;
     if (m && m.c.length > 20) { const F = { s, upd: Date.now(), m15: m };
-      if (MAIN.has(s)) { const m5 = await yahoo(s, '5m', '10d'), m1 = await yahoo(s, '1m', '2d'); if (m5 && m5.c.length) F.m5 = m5; if (m1 && m1.c.length) F.m1 = m1; }
       fs.writeFileSync(path.join(OUT, 'c', s + '.json.gz'), zlib.gzipSync(JSON.stringify(F), { level: 9 })); ok.push(s);
       /* RSI de 1 h con las velas de 15 min agrupadas por hora */
       const hc = []; let hk = null; m.t.forEach((t, i) => { const k = Math.floor(t / 3600); if (k !== hk) { hc.push(m.c[i]); hk = k; } else hc[hc.length - 1] = m.c[i]; });

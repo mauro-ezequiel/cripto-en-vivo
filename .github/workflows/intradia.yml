@@ -1,5 +1,5 @@
 name: Acciones · velas de 30 min y RSI
-# Cada 30 min con el mercado de EE. UU. abierto: baja las velas de 15 min (60 días; y de 1 y 5 min para las principales) y calcula el RSI.
+# Cada 30 min con el mercado de EE. UU. abierto: baja las velas de 15 min (60 días; de ahí salen 1 h, 2 h y 4 h) y calcula el RSI.
 # Publica todo en la rama "intradia" (se reemplaza entera cada vez, así no crece el historial del repositorio).
 on:
   schedule:

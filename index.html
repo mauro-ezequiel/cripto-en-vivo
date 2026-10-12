@@ -573,7 +573,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Reset</button>
         <button class="btn" id="fs" title="Pantalla completa (F)">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
-        <button class="btn on" id="logBtn" title="Escala logarítmica: las subas y bajadas se ven en proporción (%)">LOG</button>
+        <button class="btn on" id="logBtn" title="Escala logarítmica en el gráfico principal: las subas y bajadas se ven en proporción (%). Los indicadores de abajo quedan en escala normal">LOG</button>
         <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
       </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
       <div class="inds hide" id="inds"></div>
@@ -692,7 +692,7 @@ const MODES = {
   a: {
     name: 'ACCIONES', tag: 'NYSE + NASDAQ · USD',
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
-    info: ['Velas desde 1 min (principales) y 15 min (todas, 60 días) hasta diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
+    info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señal: rebote tras una caída moderada, revisando antes caídas y subidas históricas', 'Simulación: 500 USD × 8, stop 3 × ATR diario (máx. 9,6 %), objetivos 0,5 / 1 / 1,5 × stop, sin salvavidas'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
     def: ['liq','trend','supertrend','ema','vprofile','rsi','adx','cvd','kon']
@@ -1440,6 +1440,7 @@ $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const 
 $('fsInd').onclick=e=>$('inds').onclick(e);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
+const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
 function applyMode(m){setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   const wasA=mode==='a';mode=m;const M=MODES[m];if(typeof pilRender==='function')setTimeout(pilRender,0);
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
@@ -1450,7 +1451,7 @@ function applyMode(m){setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   active=new Set((indUser()||saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
-  tf=(window.__bootTf&&TF_MS[window.__bootTf])?window.__bootTf:M.tf;window.__bootTf=null;
+  tf=(window.__bootTf&&TF_MS[window.__bootTf]&&TF_MODE[m].includes(window.__bootTf))?window.__bootTf:M.tf;window.__bootTf=null;
   renderTfs();
   try{localStorage.setItem('cv_mode',m)}catch(e){}
   loadChart();
@@ -1555,7 +1556,6 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
 });
 
 /* ---------- temporalidades ---------- */
-const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1m','5m','15m','30m','1h','2h','4h','1d','1w','1M']};
 function renderTfs(){$('tfs').innerHTML=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');}
 renderTfs();
 $('tfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;tf=b.dataset.tf;
@@ -3571,7 +3571,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('.i-btn');if(!b)r
 
 /* ---------- escala logarítmica ---------- */
 let LOGS=true;try{LOGS=localStorage.getItem('cv_log')!=='0';}catch(e){}
-function applyLog(){series.priceScale().applyOptions({mode:LOGS?LightweightCharts.PriceScaleMode.Logarithmic:LightweightCharts.PriceScaleMode.Normal});$('logBtn').classList.toggle('on',LOGS);hmKey='';}
+/* LOG solo en el gráfico principal (velas y lo que va encima: EMAs, Bollinger, Supertrend…); los indicadores de abajo siempre en escala normal */
+function applyLog(){series.priceScale().applyOptions({mode:LOGS?LightweightCharts.PriceScaleMode.Logarithmic:LightweightCharts.PriceScaleMode.Normal});for(const id of ['vol','rsi','stochrsi','macd','adx','cvd','kon']){try{chart.priceScale(id).applyOptions({mode:LightweightCharts.PriceScaleMode.Normal});}catch(e){}}$('logBtn').classList.toggle('on',LOGS);hmKey='';}
 applyLog();$('logBtn').onclick=()=>{LOGS=!LOGS;try{localStorage.setItem('cv_log',LOGS?'1':'0')}catch(e){}applyLog();};
 /* si cerrás o cambiás de pestaña, guarda en la nube lo que esté pendiente */
 addEventListener('pagehide',()=>{if(cloudTimer)cloudSave(true);});
@@ -3784,7 +3785,7 @@ function viewSave(){if(window.__viewHold)return;const o=viewGet();if(o&&o.sym===
 function cloudViewData(){const o={},v=viewGet(),u=indUser();if(v)o.view=v;if(u){o.inds=u;o.indsT=+(localStorage.getItem('cv_ind_user_t')||0);}return o;}
 function goView(v){if(!v||!v.sym||!MODES[v.m])return;window.__viewHold=true;
   try{if(v.m!==mode){if(v.m==='a')LSYM.a=v.sym;else{LSYM.c=v.sym;if(mode!=='a')symbol=v.sym;}window.__bootTf=v.tf;applyMode(v.m);if(symbol!==v.sym)select(v.sym);}
-    else{if(v.tf&&TF_MS[v.tf])tf=v.tf;renderTfs();select(v.sym);}}
+    else{if(v.tf&&TF_MS[v.tf]&&TF_MODE[mode].includes(v.tf))tf=v.tf;renderTfs();select(v.sym);}}
   finally{window.__viewHold=false;}
   try{localStorage.setItem('cv_view',JSON.stringify(v));}catch(e){}}
 function applyCloudView(d,nav){
