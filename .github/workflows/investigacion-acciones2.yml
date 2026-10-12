@@ -9,6 +9,15 @@ on:
       r6:
         description: 'ronda 6: objetivos (× stop) separados por coma'
         default: ''
+      k4:
+        description: 'ronda 4: stop (× ATR)'
+        default: ''
+      r4:
+        description: 'ronda 4: objetivos (× stop)'
+        default: ''
+      m4:
+        description: 'ronda 4: 1 = solo con el S&P 500 sobre su media de 200 y sin RSI2'
+        default: ''
 permissions:
   contents: write
 jobs:
@@ -24,6 +33,9 @@ jobs:
         env:
           RONDA: ${{ inputs.ronda }}
           R6: ${{ inputs.r6 }}
+          K4: ${{ inputs.k4 }}
+          R4: ${{ inputs.r4 }}
+          M4: ${{ inputs.m4 }}
       - name: Guardar el resultado
         if: always()
         run: |

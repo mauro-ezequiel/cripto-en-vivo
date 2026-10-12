@@ -115,13 +115,13 @@ function run3(DATA, SPY, G) { G = G || { k: [2, 2.5, 3, 4], r: [.35, .5, .75, 1]
     R.sort((a, b) => ((b.aprendizaje.pct > 0) - (a.aprendizaje.pct > 0)) || (b.aprendizaje.gana - a.aprendizaje.gana));
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda5: R }, null, 1)); return; }
   if (process.env.RONDA === '4') { /* la configuración elegida, separada por regla: % de acierto real de cada una para la página */
-    const PP = Object.fromEntries(Object.entries(D1).map(([s, b]) => [s, prep(b)])), c = { L: 8, k: 4, r: 1 }, ops = [];
+    const PP = Object.fromEntries(Object.entries(D1).map(([s, b]) => [s, prep(b)])), c = { L: 8, k: +(process.env.K4 || 4), r: +(process.env.R4 || 1) }, ops = [], M4 = process.env.M4 === '1', sc4 = SPY.map(x => x.c), s4 = sma(sc4, 200), mk4 = new Map(SPY.map((x, i) => [new Date(x.t).toISOString().slice(0, 10), s4[i] != null && x.c > s4[i]]));
     for (const [s, b] of Object.entries(D1)) { const P = PP[s]; let free = 0;
-      for (let i = 210; i < b.length - 1; i++) { if (i < free) continue; const set = ENTRY.reb6m(b, P, i, true) ? 'c-reb' : ENTRY.ruptura(b, P, i) ? 'c-rup' : ENTRY.rsi2(b, P, i) ? 'c-rsi2' : null; if (!set) continue;
+      for (let i = 210; i < b.length - 1; i++) { if (i < free) continue; const set = ENTRY.reb6m(b, P, i, true) ? 'c-reb' : ENTRY.ruptura(b, P, i) ? 'c-rup' : !M4 && ENTRY.rsi2(b, P, i) ? 'c-rsi2' : null; if (!set) continue; if (M4 && !mk4.get(new Date(b[i].t).toISOString().slice(0, 10))) continue;
         const o = sim3(b, P, i, c); if (!o) continue; o.set = set; ops.push(o); free = o.j + 1; } }
     const last = Date.now() - 365 * 864e5, by = {};
     for (const set of ['c-reb', 'c-rup', 'c-rsi2', 'todas']) { const L = ops.filter(o => set === 'todas' || o.set === set), Y = L.filter(o => o.t >= last), f = A => { const n = A.length; if (!n) return { n: 0 };
-        return { n, obj1: +(A.filter(o => o.hit >= 1).length / n * 100).toFixed(1), obj3: +(A.filter(o => o.hit >= 3).length / n * 100).toFixed(1), gana: +(A.filter(o => o.pct > 0).length / n * 100).toFixed(1), pct: +(A.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd500: +(A.reduce((a, o) => a + o.pct, 0) / n * 5).toFixed(1), lev: +(A.reduce((a, o) => a + o.lev, 0) / n).toFixed(1) }; };
+        return { n, obj1: +(A.filter(o => o.hit >= 1).length / n * 100).toFixed(1), obj3: +(A.filter(o => o.hit >= 3).length / n * 100).toFixed(1), gana: +(A.filter(o => o.pct > 0).length / n * 100).toFixed(1), perd_media: +(-A.filter(o => o.pct < 0).reduce((a, o) => a + o.pct, 0) / Math.max(1, A.filter(o => o.pct < 0).length)).toFixed(1), pct: +(A.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd500: +(A.reduce((a, o) => a + o.pct, 0) / n * 5).toFixed(1), lev: +(A.reduce((a, o) => a + o.lev, 0) / n).toFixed(1) }; };
       by[set] = { seis_anios: f(L), ultimo_anio: f(Y) }; }
     fs.writeFileSync('acciones2.json', JSON.stringify({ fecha: new Date().toISOString(), con_diario: ok1, ronda4: by }, null, 1)); console.log(JSON.stringify(by)); return; }
   if (process.env.RONDA === '6') { /* RONDA 6 · prioridad: ganancia por operación y poca pérdida por operación (objetivos más lejos, stop y tamaño) */
