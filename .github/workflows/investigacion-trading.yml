@@ -1,0 +1,25 @@
+name: Investigación TRADING y SHOOTER (temporalidades, X y filtros nuevos)
+# Se corre a mano: no cambia la página. Guarda el resultado en la rama invtr-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      env:
+        description: 'Variables, por ejemplo: DIAS_T=730 NT=60 TFS=1,2,3,4,5,6,7,8,9,10,12'
+        default: ''
+permissions:
+  contents: write
+jobs:
+  investigar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: env ${{ inputs.env }} node --max-old-space-size=6500 herramientas/investigacion-trading.js
+      - name: Guardar el resultado
+        if: always()
+        run: |
+          mkdir out && (cp investigacion-trading.json out/ || echo '{}' > out/investigacion-trading.json) && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Investigación TRADING y SHOOTER"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:invtr-${{ github.run_id }}
