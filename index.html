@@ -198,6 +198,9 @@ body.fs-on .fsbar{display:flex}
 @media (min-width:1001px){.dash{grid-template-columns:230px minmax(0,1fr) 300px}.fac{grid-template-columns:minmax(100px,150px) 96px 50px minmax(0,1fr)}.ft{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}}
 @media (max-width:1000px){.nw{grid-template-columns:64px minmax(0,1fr) 86px}.nw .ntags,.nw .nsrc{display:none}}
 /* señales */
+.sig-tabs button.ia-t.on{border-color:#4f8cff;background:linear-gradient(180deg,rgba(79,140,255,.28),rgba(79,140,255,.08))}.sig-tabs button.ia-t svg{vertical-align:-3px}
+#sigBox:not(.iav) #iaSig{display:none!important}#sigBox.iav .sig-warn,#sigBox.iav #ntfRow,#sigBox.iav #sigList,#sigBox.iav #histBox{display:none!important}#sigBox.iav #iaSig>summary{display:none}#sigBox.iav #iaSig{margin-top:0}
+.ia-ft{display:flex;gap:6px;margin:0 0 10px}.ia-ft button{flex:1;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:7px 6px;font-size:12px;font-weight:700;cursor:pointer}.ia-ft button.on{border-color:#4f8cff;background:#1e2a4a}
 .ia-sig{margin:10px 0;border:1px solid #2b4a7a;border-radius:10px;padding:8px 12px;background:linear-gradient(180deg,rgba(43,74,122,.16),transparent 120px)}.ia-sig>summary{cursor:pointer;font-weight:800;font-size:13px}
 .ia-sm{border-top:1px solid var(--line);padding:10px 0 6px;margin-top:8px}.ia-sm-h{display:flex;align-items:center;gap:10px}.ia-sm-e{margin-left:auto;text-align:right}.ia-sm-e b{font-size:20px;font-variant-numeric:tabular-nums}.ia-sm-e small{display:block;color:var(--mut);font-size:10.5px}
 .ia-sem{width:22px;height:22px;border-radius:50%;flex:none;display:inline-flex;align-items:center;justify-content:center;background:#222a36;box-shadow:inset 0 0 0 2px #333c4b}.ia-sem i{width:14px;height:14px;border-radius:50%}
@@ -652,7 +655,7 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 10, salvavidas 175 USD · solo a favor de BTC</small></button>
     <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas · RSI extremo y BTC a favor</small></button>
     <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
-    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ) en dólares · velas diarias · impulso con el S&P 500 a favor · stop 3 × ATR diario · objetivos 1 / 2 / 3 veces el stop · simulación 500 USD × 8, sin salvavidas</small></button></div>
+    <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ) en dólares · velas diarias · rebote tras caída de 6 meses o ruptura de 20 días con volumen, con el S&P 500 sobre su media de 200 días · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 veces el stop · 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen)</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
     <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
   <section><h4>Notificaciones</h4><div id="drwNtf"></div>
@@ -697,7 +700,7 @@ const MODES = {
   a: {
     name: 'ACCIONES', tag: 'NYSE + NASDAQ · USD',
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
-    info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señales (velas diarias): rebote tras caída de 6 meses y ruptura de máximos de 20 días con volumen, solo con el S&P 500 sobre su media de 200 días', 'Simulación: 500 USD × hasta 8, stop 2,5 × ATR diario (tope 15 %), objetivos 3 / 6 / 9 × stop, sin salvavidas'],
+    info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señales (velas diarias): rebote tras caída de 6 meses y ruptura de máximos de 20 días con volumen, solo con el S&P 500 sobre su media de 200 días', 'Simulación: 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20), stop 2,5 × ATR diario, objetivos 3 / 6 / 9 × stop'],
     tf: '1d', bars: 160,
     inds: ['liq','trend','canal','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon'],
     def: ['liq','trend','canal','supertrend','ema','vprofile','rsi','adx','cvd','kon']
@@ -2038,7 +2041,7 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:10,max:.076,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 const NEWG={medio:{a:3,r:.5,max:.036},x:{a:3,r:.35,max:.05}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
-const MINCERT={medio:62,x:56,p:0,a:30},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:44,g:44,p3:0,n:2147,usd:39,txt:'rebote tras una caída moderada (sin desplome ni subida histórica), con el S&P 500 sobre su media de 200 días'},'c-rup':{p:43,g:43,p3:1,n:2946,usd:48.1,txt:'ruptura de máximos de 20 días con volumen, en tendencia alcista y con el S&P 500 sobre su media de 200 días'},'c-rsi2':{p:36,g:52,p3:3,n:5183,usd:19.9,txt:'caída corta (RSI 2 bajo) dentro de una tendencia alcista'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const MINCERT={medio:62,x:56,p:0,a:30},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:44,g:44,p3:0,n:2147,usd:25,txt:'rebote tras una caída moderada (sin desplome ni subida histórica), con el S&P 500 sobre su media de 200 días'},'c-rup':{p:43,g:43,p3:1,n:2946,usd:31,txt:'ruptura de máximos de 20 días con volumen, en tendencia alcista y con el S&P 500 sobre su media de 200 días'},'c-rsi2':{p:36,g:52,p3:3,n:5183,usd:19.9,txt:'caída corta (RSI 2 bajo) dentro de una tendencia alcista'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -2127,8 +2130,11 @@ async function futData(m,syms){
    Stop 2,5 × ATR diario (tope 15 %), objetivos 3 / 6 / 9 × stop (1/3 en cada uno, stop a la entrada tras el 1), hasta × 8, plazo 30 ruedas.
    Prueba (últimos 2 años): +8,04 % del margen por operación (v5 +4,56 %), pérdida media −53 % (v5 −58 %), factor 1,26 (v5 1,16),
    +123 USD por día (v5 +119), 3,1 señales por día (v5 5,2) y 43 % ganadas (v5 52 %). */
-const STKG={a:2.5,r:3,max:.15,L:8};
-const stkLev=sl=>Math.max(1,Math.min(STKG.L,Math.floor(.8/sl)));
+/* v6 de menor riesgo (elegida): mismo stop y objetivos, pero el apalancamiento se ajusta a cada acción para que tocar el stop cueste
+   siempre ~40 % del margen (× 0,4 / stop, tope × 20; el stop siempre antes de la liquidación). Prueba: +5,17 % por operación,
+   pérdida media −37 % (−185 USD), peor operación −42 %, factor 1,24, +79 USD por día, 3,1 señales por día, 43 % ganadas. */
+const STKG={a:2.5,r:3,max:.15,L:20,risk:.4};
+const stkLev=sl=>Math.max(1,Math.min(STKG.L,Math.floor(STKG.risk/sl),Math.floor(.8/sl)));
 const smaArrS=(v,p)=>{const o=Array(v.length).fill(null);let s=0;for(let i=0;i<v.length;i++){s+=v[i];if(i>=p)s-=v[i-p];if(i>=p-1)o[i]=s/p;}return o;};
 /* indicadores de las reglas (dentro de withCandles) y la regla que se cumple en la vela i */
 function stkPrepX(b){const cl=b.map(x=>x.close);return {e200:emaArr(cl,200),s200:smaArrS(cl,200),r2:calcRSI(2),vav:smaArrS(b.map(x=>x.v||0),20)};}
@@ -2210,7 +2216,7 @@ function checkSignals(){
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
 function renderSignals(){try{iaSigRender();}catch(e){}
   const m=mode,cfg=SIGCFG[m],now=Date.now();
-  $('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
+  if(SIGV!=='ia')$('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales probadas con 6 años de velas diarias de 356 acciones de EE. UU. (elegidas con los primeros 4 años y medidas en los últimos 2). El % es cuántas operaciones terminaron ganando: los objetivos están lejos (1, 2 y 3 veces el stop), así que el objetivo 1 se toca menos seguido, pero cada acierto paga más. Ninguna es segura: usá siempre el stop.':sw.dataset.def;}}
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const pinned=[];
@@ -2250,7 +2256,7 @@ setInterval(checkSignals,2000);
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · salvavidas 175 USD'},
            x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 3 × ATR con tope 5 % (−37,5 USD) · sin salvavidas'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD × hasta 8 · stop 2,5 × ATR diario (tope 15 %) · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días · sin salvavidas'};
+SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD · apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20) · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 /* operaciones descartadas al rehacer el historial con las reglas nuevas: no se vuelven a importar del servidor ni de la nube */
@@ -3484,7 +3490,7 @@ const pc0=v=>v==null?'—':Math.round(v)+' %';
    365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
    ACCIONES se calcula acá con las velas diarias que ya usa la página. */
 var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
-try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===6)HIST_A=c.ops;}catch(e){}
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===7)HIST_A=c.ops;}catch(e){}
 const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
   HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
@@ -3504,7 +3510,7 @@ function histFollow(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o
     if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,hit>0?'llegó al objetivo '+hit+' y venció el plazo':'venció el plazo sin llegar a un objetivo',Math.max(-loss,pnlAt(px)));}
     if(o.cutAt&&!hit&&b.t+resMs<=now&&d*(b.close-o.cutAt)<=0){const r=close('exp',b.close,b.t+resMs,'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',pnlAt(b.close));r.cut=true;return r;}}
   o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;}
-/* ACCIONES: último año con las reglas actuales (S&P 500 a favor, impulso, stop 3 × ATR diario, × 8, sin salvavidas) */
+/* ACCIONES: último año con las reglas actuales (v6 de menor riesgo) */
 async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.length)return;histABusy=true;
   try{const NOW=Date.now(),FROM=NOW-365*864e5,D=864e5,ops=[];
     const j=await getJ(`${D912}/historical/usa_stocks/SPY`,25000),sp=j.dates.map((d,i)=>({t:Date.parse(d+'T00:00:00Z'),c:+j.prices[i]})).filter(x=>x.c>0),se=emaArr(sp.map(x=>x.c),50);
@@ -3521,7 +3527,7 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
           const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+STKG.r*sl)),tp1:P(c*(1+2*STKG.r*sl)),tp2:P(c*(1+3*STKG.r*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:null,llMargin:SIM.a.margin/2,lev,conf:CAL.a[setup].p,hist:1};
           histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:o.closeAt;}});
       await new Promise(r=>setTimeout(r,20));}
-    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:6,ops}));}catch(e){}
+    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:7,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
 function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
   if(m==='medio')L=L.filter(o=>o.setup!=='tp-x');return L;} // TRADING+ eliminado (octubre 2026): su historial ya no se cuenta
@@ -3801,8 +3807,13 @@ async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now
   if(ch){saveSig();renderSignals();renderHist();setTimeout(()=>{try{syncOps();}catch(e){}},800);}}catch(e){}}
 setTimeout(srvImport,4000);setInterval(srvImport,120000);
 /* ---------- accesos directos a TRADING, SHOOTER y ACCIONES dentro de Señales ---------- */
-function sigTabsRender(){const el=$('sigTabs');if(!el)return;el.innerHTML=[['medio','📈 TRADING'],['x','🎯 SHOOTER'],['a','🏛 ACCIONES']].map(([m,l])=>{const n=(SIG[m]||[]).filter(s=>s.state==='live').length;return `<button type="button" data-m="${m}" class="${mode===m?'on':''}">${l}${n?`<b>${n}</b>`:''}</button>`;}).join('');}
-$('sigTabs').onclick=e=>{const b=e.target.closest('[data-m]');if(!b||b.dataset.m===mode)return;applyMode(b.dataset.m);renderSignals();renderHist();sigTabsRender();};
+var SIGV='',IAF='sh';try{SIGV=localStorage.getItem('cv_sigv')==='ia'?'ia':'';IAF=localStorage.getItem('cv_iaf')==='tr'?'tr':'sh';}catch(e){}
+function sigTabsRender(){const el=$('sigTabs');if(!el)return;let ni=0;try{ni=IAOPS.filter(x=>x.st==='open').length;}catch(_){}
+  el.innerHTML=[['medio','📈 TRADING'],['x','🎯 SHOOTER'],['a','🏛 ACCIONES']].map(([m,l])=>{const n=(SIG[m]||[]).filter(s=>s.state==='live').length;return `<button type="button" data-m="${m}" class="${!SIGV&&mode===m?'on':''}">${l}${n?`<b>${n}</b>`:''}</button>`;}).join('')
+    +`<button type="button" data-v="ia" class="ia-t${SIGV==='ia'?' on':''}" title="Señales propias de la IA">${(()=>{try{return iaIco('ia',16)}catch(_){return '🧠'}})()} IA${ni?`<b>${ni}</b>`:''}</button>`;
+  const bx=$('sigBox');if(bx)bx.classList.toggle('iav',SIGV==='ia');}
+function setSigV(v){SIGV=v;try{localStorage.setItem('cv_sigv',v)}catch(e){}sigTabsRender();try{iaSigRender();}catch(e){}if(!v)renderSignals();}
+$('sigTabs').onclick=e=>{if(e.target.closest('[data-v="ia"]')){setSigV('ia');return;}const b=e.target.closest('[data-m]');if(!b)return;if(b.dataset.m===mode){if(SIGV)setSigV('');return;}SIGV='';try{localStorage.setItem('cv_sigv','')}catch(_){}applyMode(b.dataset.m);renderSignals();renderHist();sigTabsRender();};
 {const _rs=renderSignals;renderSignals=function(){_rs.apply(this,arguments);sigTabsRender();};}
 sigTabsRender();
 
@@ -4548,7 +4559,8 @@ function iaSemaforo(f){const E=iaFamEff(f),en=IAM&&IAM[f]&&IAM[f].entry,P=en&&en
   let c=sc>=3?'g':sc>=1?'y':'r';if(E.n<20&&c==='g'){c='y';why.push('pocas comparaciones todavía');}
   return {c,sc,why,E,lab:{g:'Conviene seguir sus consejos',y:'Ni bien ni mal: usalo con cuidado',r:'Todavía no conviene'}[c]};}
 function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
-  return [['sh','SHOOTER','15 y 30 min'],['tr','TRADING','4 h']].map(([f,nm,tf])=>{const S=iaSemaforo(f),L=IAOPS.filter(x=>x.f===f),st=iaOpsStats(L),open=L.filter(x=>x.st==='open').sort((a,b)=>b.t-a.t),done=L.filter(x=>x.st!=='open').sort((a,b)=>(b.closeT||b.t)-(a.closeT||a.t)).slice(0,5);
+  const dot=c=>({g:'🟢',y:'🟡',r:'🔴'})[c],ft=`<div class="ia-ft">${[['sh','🎯 SHOOTER'],['tr','📈 TRADING']].map(([f,l])=>`<button type="button" data-iaf="${f}" class="${IAF===f?'on':''}">${l} ${dot(iaSemaforo(f).c)}</button>`).join('')}</div>`;
+  return ft+[['sh','SHOOTER','15 y 30 min'],['tr','TRADING','4 h']].filter(([f])=>f===IAF).map(([f,nm,tf])=>{const S=iaSemaforo(f),L=IAOPS.filter(x=>x.f===f),st=iaOpsStats(L),open=L.filter(x=>x.st==='open').sort((a,b)=>b.t-a.t),done=L.filter(x=>x.st!=='open').sort((a,b)=>(b.closeT||b.t)-(a.closeT||a.t)).slice(0,5);
     const card=x=>{const p=tickers[x.sym]&&tickers[x.sym].c,v=p?iaOpLive(x,p):0,pc=t=>fpct((t/x.entry-1)*100);
       return `<div class="sig ${x.dir>0?'long':'short'} ia-own" data-sym="${x.sym}" data-tf="${x.tf}"><div class="sg-h"><span class="sg-dir">${x.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${x.sym.replace('USDT','')}</b><small>/USDT · ${x.tf} · ${iaIco('ia',14)} propia de la IA</small><span class="sg-conf">${Math.round(x.p*100)} %<small>puntaje IA</small></span></div>
         <div class="sg-g"><span>Entrada</span><b>${fp(x.entry)}</b><span>Objetivo 1</span><b class="tgt">${fp(x.tps[0])} (${pc(x.tps[0])})</b><span>Objetivo 2</span><b class="tgt">${fp(x.tps[1])} (${pc(x.tps[1])})</b><span>Objetivo 3</span><b class="tgt">${fp(x.tps[2])} (${pc(x.tps[2])})</b>
@@ -4562,8 +4574,11 @@ function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
       <div class="int-g"><div>Operaciones propias<b>${st.all}</b><small>${st.n} cerradas · ${st.open} en curso</small></div><div>Llegó al objetivo 1<b>${pc0(st.o1)}</b><small>ganadas ${pc0(st.win)}</small></div>
         <div>Resultado neto<b class="${st.net>=0?'up':'dn'}">${intMoney(st.net)}</b><small>${st.avg!=null?intMoney(st.avg)+' por operación':'—'}</small></div><div>Factor de ganancia<b>${st.pf!=null?st.pf.toFixed(2):'—'}</b><small>más de 1 = gana</small></div></div>
       ${open.length?`<div class="siglist">${open.map(card).join('')}</div>`:`<div class="mut">Ahora no tiene operaciones propias abiertas en ${nm}.${S.c==='r'?' Abre solas cuando sus entradas ganen en la prueba.':''}</div>`}
-      ${rows?`<div class="ia-srl"><div class="mut">Últimas cerradas</div>${rows}</div>`:''}</div>`;}).join('')+`<div class="mut" style="font-size:11px">Simulación con ${IAOP_CFG.sh.mg} USD × ${IAOP_CFG.sh.lev} (SHOOTER) y ${IAOP_CFG.tr.mg} USD × ${IAOP_CFG.tr.lev} (TRADING). El semáforo se actualiza solo con cada estudio diario y con cada operación que cierra. No es un consejo de inversión.</div>`;}
-function iaSigRender(){const el=$('iaSig');if(!el)return;el.hidden=mode==='a';if(mode==='a')return;const b=el.querySelector('.ia-sb');if(b)b.innerHTML=iaSigHTML();
+      </div>`;}).join('')+`<div class="mut" style="font-size:11px">Simulación con ${IAOP_CFG[IAF].mg} USD × ${IAOP_CFG[IAF].lev}. Las operaciones cerradas están en la sección IA. El semáforo se actualiza solo con cada estudio diario y con cada operación que cierra. No es un consejo de inversión.</div>`;}
+function iaSigRender(){const el=$('iaSig');if(!el)return;el.hidden=SIGV!=='ia';if(SIGV!=='ia')return;el.open=true;const b=el.querySelector('.ia-sb');if(b)b.innerHTML=iaSigHTML();
+  $('sigHead').textContent='Señales de la IA · sus operaciones propias · el semáforo dice si conviene copiarlas';
+  if(!el.dataset.h){el.dataset.h=1;el.addEventListener('click',e=>{const t=e.target.closest('[data-iaf]');if(t){IAF=t.dataset.iaf;try{localStorage.setItem('cv_iaf',IAF)}catch(_){}iaSigRender();return;}
+    const c=e.target.closest('.sig[data-sym]');if(!c)return;const m=IAF==='sh'?'x':'medio';if(mode!==m)applyMode(m);if(c.dataset.tf&&TF_MODE[mode].includes(c.dataset.tf)&&tf!==c.dataset.tf){tf=c.dataset.tf;renderTfs();}select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});});}
   const s=el.querySelector('.ia-sig-sum');if(s&&IAM){const a=iaSemaforo('sh'),t=iaSemaforo('tr'),dot=c=>({g:'🟢',y:'🟡',r:'🔴'})[c];s.textContent=`· SHOOTER ${dot(a.c)} · TRADING ${dot(t.c)}`;}}
 setInterval(iaSigRender,3e4);
 /* ---------- operaciones propias: la IA busca sola en todas las monedas y opera en simulación ---------- */
@@ -4676,7 +4691,7 @@ function iaContext(q){const R=IAM||{},syms=iaSymsIn(q),recs=iaRecs(),fmtRec=r=>`
   const px=syms.map(s=>tickers[s+'USDT']?`${s}: ${tickers[s+'USDT'].c} (${(tickers[s+'USDT'].p||0).toFixed(2)} % en 24 h)`:'').filter(Boolean);
   return `Sos la IA de CRIPTO-LIVE, una página argentina de señales de cripto y acciones. Respondé en español rioplatense (voseo), claro y corto, sin jerga innecesaria.
 Reglas: usá solo los datos de abajo para hablar de resultados, no inventes números; si no tenés el dato, decilo. Explicá el porqué de cada salida con los datos (objetivos tocados, stop, probabilidad, indicadores). No des asesoramiento financiero personalizado ni prometas ganancias: aclará que es información para que la persona decida. Sé honesto: hoy la IA todavía no le gana a los bots en los meses de prueba.
-CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; (TRADING+ fue eliminado en octubre 2026); SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída moderada, 500 USD × 8). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
+CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; (TRADING+ fue eliminado en octubre 2026); SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída de 6 meses o ruptura de 20 días con volumen, con el S&P 500 sobre su media de 200 días · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 veces el stop · 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen)). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
 EFECTIVIDAD (operaciones ganadas y ganancia por operación en % del margen): ${JSON.stringify(R.resumen||{})}
 ESTIMACIÓN PARA ALCANZAR A LOS BOTS: ${iaEtaTxt()}
 AUTOEVALUACIÓN: saca el ${R.progreso&&R.progreso.valor} % de la ganancia de los bots (objetivos sucesivos: ${IA_META.join(', ')} %; cuando llega a uno sigue con el próximo). Objetivos de calidad: ${iaGoals().map(g=>(g[1]?'✓ ':'✗ ')+g[0]+' ('+g[2]+')').join('; ')}.
@@ -4701,7 +4716,7 @@ const iaStrip=h=>String(h||'').replace(/<[^>]+>/g,'').replace(/&nbsp;/g,' ');
 const iaModoTxt={trading:'TRADING (4 h): busca un retroceso dentro de una tendencia alineada (Supertrend, EMA 21/50/200) con BTC a favor y volumen bajo; el retroceso tiene que frenar antes de la EMA 50. 350 USD × 10, stop 3 × ATR (máx. 3,6 %), objetivos 0,5 / 1 / 1,5 × stop.',
   'trading+':'TRADING+ fue eliminado en octubre 2026 (ya no da señales). Era (4 h): tendencia muy fuerte (ADX ≥ 35) que ya se movió 1 % a favor en 24 h con el flujo de órdenes a favor. 350 USD × 10, stop 3 × ATR (máx. 7,6 %), objetivos 0,35 / 0,7 / 1,05 × stop y aviso de salida si se da vuelta.',
   shooter:'SHOOTER (15 y 30 min): compra el rebote cuando una moneda cae 3 % en una hora, cierra bajo la banda inferior de Bollinger con RSI 7 en sobreventa y la tendencia de 1 h sigue a favor. 50 USD × 15, stop 3 × ATR (máx. 5 %), objetivos 0,35 / 0,7 / 1,05 × stop, plazo 12 h.',
-  acciones:'ACCIONES (diario): rebote tras una caída moderada (bajó 10 % en 6 meses, sin desplome mayor al 35 % ni subida histórica) con una vela alcista fuerte. 500 USD × 8, stop 3 × ATR (máx. 9,6 %).',
+  acciones:'ACCIONES (diario, v6): rebote tras caída de 6 meses o ruptura de 20 días con volumen, con el S&P 500 sobre su media de 200 días · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 veces el stop · 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen).',
   pilotear:'PILOTEAR: cargás tu operación real y la página te sigue: stop sugerido de 3 × ATR, aviso si una vela de 1 h cierra a mitad de camino al stop, y un semáforo con 5 factores de la entrada.',
   salvavidas:'Salvavidas (solo TRADING): si el precio llega al 65 % del camino al stop sin tocar objetivos y los datos siguen confirmando, se suma medio margen para mejorar la entrada promedio.',
   ia:'La IA usa las mismas entradas que los bots pero decide sola cuándo salir: en cada cierre de vela estima la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR. Se reentrena cada día con el último año y solo cambia el plan del bot cuando le gana en meses que no usó para aprender.'};
@@ -4771,7 +4786,7 @@ async function iaGeo(sym){const s=sym+'USDT';if(!tickers[s])return null;
     al:st===Math.sign(P.e21[j]-P.e50[j])&&(P.e200[j]==null||st===Math.sign(px-P.e200[j]))};}
 const iaLiqLev=sl=>Math.max(1,Math.floor(.8/sl)); // apalancamiento máximo para que la liquidación quede bien lejos del stop
 async function iaLevTxt(sym,q){const cap=(q.match(/(?:^|[^x\w$])(\d[\d.,]*)(?!\s*x)(?!\s*%)/i)||[])[1],C0=cap?+cap.replace(/\.(?=\d{3}\b)/g,'').replace(',','.'):null,C=C0&&C0>=20?C0:null;
-  const lines=['Cómo dimensionar la operación (lo que usa la página):','• TRADING: 350 USD × 10. SHOOTER: 50 USD × 15. ACCIONES: 500 USD × 8.','• Regla de oro: que el stop esté antes que la liquidación. Con × 10 te liquidan con un movimiento de ~10 % en contra; con × 15, de ~6,5 %; con × 20, de ~5 %.','• Arriesgá 1 a 2 % de tu capital por operación: margen = capital × riesgo ÷ (distancia al stop × apalancamiento).'];
+  const lines=['Cómo dimensionar la operación (lo que usa la página):','• TRADING: 350 USD × 10. SHOOTER: 50 USD × 15. ACCIONES: 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20).','• Regla de oro: que el stop esté antes que la liquidación. Con × 10 te liquidan con un movimiento de ~10 % en contra; con × 15, de ~6,5 %; con × 20, de ~5 %.','• Arriesgá 1 a 2 % de tu capital por operación: margen = capital × riesgo ÷ (distancia al stop × apalancamiento).'];
   if(sym){try{const g=await iaGeo(sym);if(g){lines.push(`\n${sym} ahora (${fp(g.px)}): se mueve ${iaN(g.atr4*100,1)} % por vela de 4 h y ${iaN(g.atr15*100,2)} % por vela de 15 min.`);
       lines.push(`• En 4 h el stop queda a ${iaN(g.tr.sl*100,1)} % → apalancamiento máximo sensato × ${Math.min(20,iaLiqLev(g.tr.sl))} (la página usa × 10).`);
       lines.push(`• En 15 min el stop queda a ${iaN(g.sh.sl*100,1)} % → máximo × ${Math.min(25,iaLiqLev(g.sh.sl))} (la página usa × 15).`);
