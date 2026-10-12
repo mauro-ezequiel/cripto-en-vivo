@@ -313,10 +313,10 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2{grid-template-columns:24px 40px 38px 58px minmax(36px,1fr) 66px 28px 56px 64px 20px;gap:5px}
-.hrow.h2 .hpin{padding:2px 0;font-size:11px}.hrow.h2 .hh{color:var(--mut)}.hrow.h2 .hk{color:var(--mut);text-align:center}.hrow.h2 .hp,.hrow.h2 .hu{text-align:right;font-weight:700}.hrow.h2 .hs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hrow.h2{grid-template-columns:40px 40px 58px minmax(36px,1fr) 66px 28px 64px 20px;gap:5px}
+.hrow.h2 .hpin{padding:2px 0;font-size:11px}.hrow.h2 .hh{color:var(--mut)}.hrow.h2 .hk{color:var(--mut);text-align:center}.hrow.h2 .hdt{display:flex;flex-direction:column;align-items:flex-start;gap:3px}.hrow.h2 .hdt .hpin{width:24px}.hrow.h2 .hpu{display:flex;flex-direction:column;align-items:flex-end;line-height:1.15}.hrow.h2 .hpu small{font-size:10.5px;font-weight:700}.hrow.h2 .hs{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .hrow.h2>*{white-space:nowrap;min-width:0}.hrow.h2 .live{padding:1px 5px;font-size:10px}
-@media (max-width:800px){.hrow.h2{grid-template-columns:20px 30px 30px 45px minmax(24px,1fr) 50px 18px 42px 46px 16px;gap:3px;font-size:10.5px}.hrow.h2 .hd{font-size:9.5px}.hrow.h2 .hs{font-size:9.5px}.hrow.h2 .live{padding:1px 3px;font-size:8px;letter-spacing:-.2px}}
+@media (max-width:800px){.hrow.h2{grid-template-columns:32px 32px 46px minmax(26px,1fr) 52px 22px 54px 16px;gap:3px;font-size:10.5px}.hrow.h2 .hd{font-size:9.5px}.hrow.h2 .hs{font-size:9.5px}.hrow.h2 .live{padding:1px 3px;font-size:8px;letter-spacing:-.2px}}
 .hx{margin:4px 0 10px;display:flex;flex-direction:column;gap:8px}.hx-box{border:1px solid #2a3140;border-radius:9px;padding:9px 11px;font-size:12px}
 .hx-live{background:#1b2130}.hx-ent{background:#141822}.hx-t{font-weight:800;font-size:13px;margin-bottom:3px}.hx-t.bad{color:#ef5350}.hx-t.warn{color:#ffb74d}.hx-t.good{color:#26a69a}
 .hx-w{margin:5px 0 0;padding-left:16px;color:var(--mut);font-size:11.5px}.hx-w li{margin:1px 0}.hx-sem{font-weight:700;margin-bottom:4px}.hx-f{color:var(--mut);font-size:11.5px;margin-bottom:6px}
@@ -3750,27 +3750,31 @@ function renderRes(force){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=l
     if(o.state==='win')return `<span class="up">✓ ${o.hit===3?'Llegó a los 3 objetivos':'Llegó al '+TGT[o.hit-1]} · ${fusd2(o.pnl)}</span>`;
     if(o.state==='fail')return `<span class="dn">✕ Stop · ${fusd2(o.pnl)}</span>`;
     return `<span class="${o.pnl>=0?'up':'dn'}">• ${esc(o.why||'cerrada')} · ${fusd2(o.pnl)}</span>`;};
-  const row=o=>{const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
-    const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'EN VIVO'}</span>`:o.state==='win'?'<span class="up">✓ cerrada</span>':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
-    return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button><span class="ht">${dd}</span><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hs">${stt}</span><span class="hk">${o.hit||0}/3</span><span class="hp ${v.usd>=0?'up':'dn'}">${v.ok?hxPct(v.pct):'—'}</span><span class="hu ${v.usd>=0?'up':'dn'}">${v.ok?hxUsd(v.usd):'—'}</span><span>${typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;};
+  const row=hxRow;
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
   const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,HSRC==='sim'?100:40));
   $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';
   for(const o of L)if(HOPEN.has(o.id))hxFill(o);}
 /* fila y detalle de cada señal en Resultados (octubre 2026) */
-const hxMg=o=>(SIM[o.m]?SIM[o.m].margin:100)+(o.ll?o.ll.margin:0);
-function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=pnlAt(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
+const hxMg=o=>o.mg||(SIM[o.m]?SIM[o.m].margin:100)+(o.ll?o.ll.margin:0);
+const hxLive=(o,p)=>o.ia?iaOpLive(o.ia,p):pnlAt(o,p);
+/* operación propia de la IA con la misma forma que una del historial */
+const iaAsOp=x=>({id:'ia-'+x.id,m:x.f==='sh'?'x':'medio',sym:x.sym,dir:x.dir,t:x.t,state:x.st==='open'?'open':x.st==='fail'?'fail':x.st==='win'?'win':'exp',hit:x.hit||0,pnl:x.pnl,why:x.why,entry:x.entry,lev:x.lev,mg:x.mg,ia:x,tf:x.tf,simLab:`${x.mg} USD × ${x.lev} · operación propia de la IA`});
+function hxRow(o){const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
+  const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'EN VIVO'}</span>`:o.state==='win'?'':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
+  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hs">${stt}</span><span class="hk">${o.state==='fail'?'':(o.hit||0)+'/3'}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span>${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
+function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=hxLive(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
   const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
 const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
 const HXC={};
-function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:'');
+function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.simLab||(o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:''));
   return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
     <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>
-      <div class="hx-g"><span>Modo</span><b>${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}</b>
+      <div class="hx-g"><span>Modo</span><b>${o.ia?'IA · ':''}${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}</b>
         <span>Inicio de la señal</span><b>${fdate(o.t)}</b><span>Objetivos</span><b>${o.hit||0}/3</b>
         <span>Resultado</span><b class="${v.usd>=0?'up':'dn'}">${v.ok?fusd2(v.usd)+' ('+hxPct(v.pct)+' del margen)':o.state==='open'?'en curso':'—'}</b>
         <span>Simulación</span><b>${sim}</b></div>
-      <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
+      <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${o.tf||cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
 /* 4h hasta un momento dado → mismos 5 factores del semáforo de PILOTEAR */
 function hxQ4(c4){return withCandles(c4,()=>{const i=c4.length-1,cl=closes(),atr=wilder(trArr(),14)[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i];
   let f6=0,v6=0;for(let j=Math.max(0,i-5);j<=i;j++){f6+=barDelta(c4[j]);v6+=c4[j].v;}
@@ -3783,7 +3787,7 @@ async function hxFill(o){const c=HXC[o.id]=HXC[o.id]||{};if(c.busy)return;const 
     try{const D=await pilData(o.sym),px=tickers[o.sym]?.c||D.c1,trend=a=>a.why.filter(x=>!/^Semáforo/.test(x)).map(x=>`<li>${esc(x)}</li>`).join('');
       if(o.state==='open'&&!o.lite&&px){const P=HXC[o.id].pos=HXC[o.id].pos||{sym:o.sym,dir:o.dir,entry:o.ae||o.entry,lev:o.lev||SIM[o.m].lev,margin:hxMg(o),t:o.t};const a=pilAnalyze(P,D,px);
         const cls=['liq','peligro','stopplan','aviso','salir','vuelta'].includes(a.st)?'bad':a.st==='asegurar'?'warn':'good';
-        const vb=pnlAt(o,px),tx=a.txt.split(pilMoney(a.usd)).join(fusd2(vb)).split(pilMoney(a.usd).replace('−','')).join(fusd2(vb).replace('−',''));
+        const vb=hxLive(o,px),tx=a.txt.split(pilMoney(a.usd)).join(fusd2(vb)).split(pilMoney(a.usd).replace('−','')).join(fusd2(vb).replace('−',''));
         put('live',`<div class="hx-t ${cls}">${esc(a.title)}</div><div>${esc(tx)}</div><ul class="hx-w">${trend(a)}</ul>`);}
       else{const a=pilAnalyze({sym:o.sym,dir:o.dir,entry:px,lev:10,margin:100,t:now},D,px);
         put('live',`<div class="hx-t">📡 Ahora en el mercado${o.state==='open'?'':' · la señal ya terminó'}</div><div class="mut">${o.sym.replace('USDT','')} a ${fp(px)}. Así está para un ${o.dir>0?'LONG':'SHORT'}:</div><ul class="hx-w">${trend(a)}</ul>`);}}
@@ -4624,11 +4628,16 @@ function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
       <div class="mut ia-sm-w">${why}</div>
       <div class="int-g"><div>Operaciones propias<b>${st.all}</b><small>${st.n} cerradas · ${st.open} en curso</small></div><div>Llegó al objetivo 1<b>${pc0(st.o1)}</b><small>ganadas ${pc0(st.win)}</small></div>
         <div>Resultado neto<b class="${st.net>=0?'up':'dn'}">${intMoney(st.net)}</b><small>${st.avg!=null?intMoney(st.avg)+' por operación':'—'}</small></div><div>Factor de ganancia<b>${st.pf!=null?st.pf.toFixed(2):'—'}</b><small>más de 1 = gana</small></div></div>
-      ${open.length?`<div class="siglist">${open.map(card).join('')}</div>`:`<div class="mut">Ahora no tiene operaciones propias abiertas en ${nm}.${S.c==='r'?' Abre solas cuando sus entradas ganen en la prueba.':''}</div>`}
-      </div>`;}).join('')+`<div class="mut" style="font-size:11px">Simulación con ${IAOP_CFG[IAF].mg} USD × ${IAOP_CFG[IAF].lev}. Las operaciones cerradas están en la sección IA. El semáforo se actualiza solo con cada estudio diario y con cada operación que cierra. No es un consejo de inversión.</div>`;}
+      ${open.length?'':`<div class="mut">Ahora no tiene operaciones propias abiertas en ${nm}.${S.c==='r'?' Abre solas cuando sus entradas ganen en la prueba.':''}</div>`}
+      ${L.length?`<div class="ia-rows">${(()=>{const A=L.map(iaAsOp),isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;return A.filter(isP).sort(srt).concat(A.filter(o=>!isP(o)).sort(srt).slice(0,40)).map(hxRow).join('');})()}</div>`:''}
+      </div>`;}).join('')+`<div class="mut" style="font-size:11px">Simulación con ${IAOP_CFG[IAF].mg} USD × ${IAOP_CFG[IAF].lev}. Tocá una operación para ver sus datos en vivo y si fue una buena entrada. El semáforo se actualiza solo con cada estudio diario y con cada operación que cierra. No es un consejo de inversión.</div>`;}
 function iaSigRender(){const el=$('iaSig');if(!el)return;el.hidden=SIGV!=='ia';if(SIGV!=='ia')return;el.open=true;const b=el.querySelector('.ia-sb');if(b)b.innerHTML=iaSigHTML();
   $('sigHead').textContent='Señales de la IA · sus operaciones propias · el semáforo dice si conviene copiarlas';
+  for(const x of IAOPS)if(HOPEN.has('ia-'+x.id))hxFill(iaAsOp(x));
   if(!el.dataset.h){el.dataset.h=1;el.addEventListener('click',e=>{const t=e.target.closest('[data-iaf]');if(t){IAF=t.dataset.iaf;try{localStorage.setItem('cv_iaf',IAF)}catch(_){}iaSigRender();return;}
+    const hp=e.target.closest('[data-hpin]');if(hp){e.stopPropagation();const id=hp.dataset.hpin;PINS.has(id)?PINS.delete(id):PINS.add(id);savePins();iaSigRender();return;}
+    const g=e.target.closest('[data-go]');if(g){openFromNotif({sym:g.dataset.go,tf:g.dataset.tf,m:g.dataset.m});$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
+    const hr=e.target.closest('.hrow');if(hr){const id=hr.dataset.op;HOPEN.has(id)?HOPEN.delete(id):HOPEN.add(id);iaSigRender();return;}
     const c=e.target.closest('.sig[data-sym]');if(!c)return;const m=IAF==='sh'?'x':'medio';if(mode!==m)applyMode(m);if(c.dataset.tf&&TF_MODE[mode].includes(c.dataset.tf)&&tf!==c.dataset.tf){tf=c.dataset.tf;renderTfs();}select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});});}
   const s=el.querySelector('.ia-sig-sum');if(s&&IAM){const a=iaSemaforo('sh'),t=iaSemaforo('tr'),dot=c=>({g:'🟢',y:'🟡',r:'🔴'})[c];s.textContent=`· SHOOTER ${dot(a.c)} · TRADING ${dot(t.c)}`;}}
 setInterval(iaSigRender,3e4);
