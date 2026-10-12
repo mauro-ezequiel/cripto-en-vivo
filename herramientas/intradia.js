@@ -43,9 +43,9 @@ const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
   fs.writeFileSync(path.join(OUT, 'rsi.json'), JSON.stringify(out));
   /* ACUMULACIÓN: velas semanales de toda la historia de los índices (una vez por día; el resto de las corridas usa las de antes) */
   { let acu = null; try { acu = JSON.parse(fs.readFileSync(path.join(PREV, 'acum.json'), 'utf8')); } catch (e) {}
-    if (!acu || needDaily || acu.dia !== today) { const d = {}; for (const s of ['SPY', 'QQQ', 'DIA', 'IWM']) { const y = await yahoo(s, '1d', '20y'); let w = null; // Yahoo con "max" agrupa en meses: se bajan las diarias de 20 años y se arman las semanales
+    if (!acu || acu.v !== 2 || needDaily || acu.dia !== today) { const d = {}; for (const s of ['SPY', 'QQQ', 'DIA', 'IWM']) { const y = await yahoo(s, '1d', '20y'); let w = null; // Yahoo con "max" agrupa en meses: se bajan las diarias de 20 años y se arman las semanales
         if (y && y.c.length > 1500) { w = { t: [], c: [], h: [] }; let cur = null; y.t.forEach((t, i) => { const k = Math.floor((t / 86400 + 3) / 7); if (k !== cur) { cur = k; w.t.push(t); w.c.push(y.c[i]); w.h.push(y.h[i]); } else { const n = w.c.length - 1; w.c[n] = y.c[i]; w.h[n] = Math.max(w.h[n], y.h[i]); } }); }
         if (w && w.c.length > 220) d[s] = { t: w.t, c: w.c, h: w.h }; else if (acu && acu.d && acu.d[s]) d[s] = acu.d[s]; await sleep(300); }
-      acu = { upd: Date.now(), dia: today, d }; }
+      acu = { v: 2, upd: Date.now(), dia: today, d }; }
     fs.writeFileSync(path.join(OUT, 'acum.json'), JSON.stringify(acu)); }
   console.log('velas', ok.length, 'sin datos', fail.length, fail.slice(0, 30).join(' '), 'diario', needDaily); })();
