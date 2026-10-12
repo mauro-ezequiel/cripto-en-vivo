@@ -146,7 +146,19 @@ const lastClosed = (arr, ms, t) => { let lo = 0, hi = arr.length; while (lo < hi
 
 /* ---------- simulación de una operación (como la página) ----------
    kind: 1 stop · 2 aviso de salida (TRADING+) · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 plazo */
-function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0) {
+/* PRUEBA (RECUP=1, no cambia las señales): cláusula "volvió a cero y la tendencia se da vuelta": si antes de tocar el objetivo 1 la
+   operación estuvo en pérdida (al menos D × stop) y vuelve a ganancia 0 o pérdida chica (−X × stop o mejor), pero la tendencia de las
+   velas de la operación está en contra (precio bajo la EMA 21, Supertrend en contra o DMI en contra), sale al cierre de esa vela. */
+const RECUP = !!process.env.RECUP, RV = [];
+if (RECUP) for (const D of [.25, .4, .6]) for (const X of [0, .1, .2]) for (const T of ['d21', 'st', 'di', 'st+d21']) RV.push({ D, X, T });
+const TRC = new WeakMap();
+function trendOf(rb) { let o = TRC.get(rb); if (o) return o; const keep = candles; candles = rb;
+  const st = calcST(10, 3).dir, e21 = emaArr(closes(), 21), n = rb.length, pdm = [0], mdm = [0];
+  for (let i = 1; i < n; i++) { const up = rb[i].high - rb[i - 1].high, dn = rb[i - 1].low - rb[i].low; pdm.push(up > dn && up > 0 ? up : 0); mdm.push(dn > up && dn > 0 ? dn : 0); }
+  const sp = wilder(pdm, 14), sm = wilder(mdm, 14); candles = keep; o = { st, e21, di: sp.map((v, i) => v == null || sm[i] == null ? null : v - sm[i]) }; TRC.set(rb, o); return o; }
+function against(rb, j, dir, T) { const o = trendOf(rb), c = rb[j].close, a21 = o.e21[j] != null && dir * (c - o.e21[j]) < 0, ast = o.st[j] != null && o.st[j] !== dir, adi = o.di[j] != null && dir * o.di[j] < 0;
+  return T === 'd21' ? a21 : T === 'st' ? ast : T === 'di' ? adi : ast && a21; }
+function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V) { let minR = 0;
   let hit = 0, real = 0, j = j0, kind = 5, ae = entry, sz = 1, ll = 0, llNo = !llConf, pnl = null;
   const tps = [1, 2, 3].map(k => entry * (1 + dir * k * r * sl)); let fail = entry * (1 - dir * sl); const llAt = entry * (1 - dir * sl * .65);
   const val = px => real + (1 - hit / 3) * sz * dir * (px / ae - 1);
@@ -157,7 +169,8 @@ function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0) {
     if (dir * (stop - adv) >= 0) { pnl = val(stop); kind = hit ? 3 : 1; break; }
     while (hit < 3 && dir * (fav - tps[hit]) >= 0) { real += sz * dir * (tps[hit] / ae - 1) / 3; hit++; }
     if (hit >= 3) { pnl = real; kind = 4; break; }
-    if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; } }
+    if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; }
+    if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } } }
   const open = pnl == null && (j >= rb.length || !rb.length) && rb.length && rb[rb.length - 1].t - t0 <= maxAge;
   if (pnl == null) { const jj = Math.min(Math.max(j, j0), rb.length - 1), px = rb[jj] ? rb[jj].close : entry; pnl = Math.max(-sz * sl, val(px)); j = jj; }
   const end = rb[Math.min(Math.max(j, 0), rb.length - 1)];
@@ -183,6 +196,7 @@ async function run4h(s, rank) {
     if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
     const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
+    if (RECUP) res.alt = RV.map(V => { const o = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
     CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, ...res,
       ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
   return { rb, tb, llConf }; }
@@ -205,6 +219,7 @@ async function runShooter(s, rank = 0) {
       if (tooWild(hb, W1, t)) continue;
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
       const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
+      if (RECUP) res.alt = RV.map(V => { const o = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
       CANDS.push({ m: 'x', setup: 'sh-c', tf, s, t, dir, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, ...res,
         ia: IAON ? iaPath(P3, i + 1, cb, dir, sl, g.r, SH.maxAge, t, tfMs) : null }); }
     if (!first) first = { rb: tb, tfMs, ok: j => atr[j] != null }; }
@@ -329,6 +344,13 @@ async function main() { const t0 = Date.now();
     cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin] */
     ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd]) };
+  if (RECUP) { const done = ops.filter(o => !o.open && o.alt && o.setup !== 'tp-x'); out.recup = { variantes: RV };
+    const sumr = L => { const n = L.length; if (!n) return { n: 0 }; const lo = L.filter(v => v < 0), w = L.filter(v => v > 0).reduce((a, v) => a + v, 0), l = -lo.reduce((a, v) => a + v, 0);
+      return { n, pct: +(L.reduce((a, v) => a + v, 0) / n).toFixed(2), gana: +((n - lo.length) / n * 100).toFixed(1), perd_media: lo.length ? +(l / lo.length).toFixed(1) : 0, peor: +Math.min(...L).toFixed(1), pf: l ? +(w / l).toFixed(2) : null }; };
+    for (const m of ['medio', 'x']) { const L = done.filter(o => o.m === m).sort((a, b) => a.t - b.t); if (!L.length) continue; const cut = L[Math.floor(L.length * 2 / 3)].t, A = L.filter(o => o.t < cut), P = L.filter(o => o.t >= cut);
+      out.recup[m] = { desde_prueba: cut, sin: { aprendizaje: sumr(A.map(o => o.pct)), prueba: sumr(P.map(o => o.pct)) },
+        con: RV.map((V, k) => ({ v: V, aprendizaje: sumr(A.map(o => o.alt[k][0])), prueba: sumr(P.map(o => o.alt[k][0])), salen_prueba: P.filter(o => o.alt[k][1]).length })) }; }
+    console.log('recup', JSON.stringify(out.recup).slice(0, 3000)); }
   const body = JSON.stringify(out);
   fs.writeFileSync('historial.json', body);
   if (IAON) { const zlib = require('zlib');
