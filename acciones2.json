@@ -1,0 +1,80 @@
+{
+ "fecha": "2026-10-12T15:41:39.178Z",
+ "con_diario": 356,
+ "ronda4": {
+  "c-reb": {
+   "seis_anios": {
+    "n": 2147,
+    "obj1": 8,
+    "obj3": 0,
+    "gana": 44.4,
+    "perd_media": 51.1,
+    "pct": 7.8,
+    "usd500": 39,
+    "lev": 7.8
+   },
+   "ultimo_anio": {
+    "n": 521,
+    "obj1": 8.6,
+    "obj3": 0.2,
+    "gana": 44,
+    "perd_media": 53.7,
+    "pct": 9.86,
+    "usd500": 49.3,
+    "lev": 7.7
+   }
+  },
+  "c-rup": {
+   "seis_anios": {
+    "n": 2946,
+    "obj1": 11.5,
+    "obj3": 0.5,
+    "gana": 42.5,
+    "perd_media": 50.4,
+    "pct": 9.63,
+    "usd500": 48.1,
+    "lev": 7.7
+   },
+   "ultimo_anio": {
+    "n": 563,
+    "obj1": 11.4,
+    "obj3": 1.1,
+    "gana": 43.7,
+    "perd_media": 55.6,
+    "pct": 11.57,
+    "usd500": 57.9,
+    "lev": 7.6
+   }
+  },
+  "c-rsi2": {
+   "seis_anios": {
+    "n": 0
+   },
+   "ultimo_anio": {
+    "n": 0
+   }
+  },
+  "todas": {
+   "seis_anios": {
+    "n": 5093,
+    "obj1": 10.1,
+    "obj3": 0.3,
+    "gana": 43.3,
+    "perd_media": 50.7,
+    "pct": 8.86,
+    "usd500": 44.3,
+    "lev": 7.7
+   },
+   "ultimo_anio": {
+    "n": 1084,
+    "obj1": 10.1,
+    "obj3": 0.6,
+    "gana": 43.8,
+    "perd_media": 54.7,
+    "pct": 10.75,
+    "usd500": 53.7,
+    "lev": 7.7
+   }
+  }
+ }
+}
