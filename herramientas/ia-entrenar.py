@@ -5,7 +5,7 @@ Lee ia-datos.json.gz (lo genera historial-anual.js con IA=1: cada señal del úl
   2. ENTRADA: qué indicadores ayudan de verdad a que una entrada llegue al objetivo 1.
 Antes de publicar se prueba en los últimos 4 meses (que no usó para aprender) contra la gestión fija del bot.
 Escribe ia.json (modelos como árboles, umbral de salida, resultados de la prueba e indicadores que sirven)."""
-import json, gzip, sys, time
+import json, gzip, sys, time, os
 DAY = 864e5
 import numpy as np
 from sklearn.ensemble import GradientBoostingClassifier
@@ -344,12 +344,15 @@ def fam_entry(ent, fam):
     # Puntaje = ganancia total con las pérdidas pesando 1,5 veces: más señales mientras sigan siendo eficientes, y castiga perder.
     trI = np.where(tr)[0]; c1 = np.quantile(t[trI], .7); a, v = trI[t[trI] < c1], trI[t[trI] >= c1]
     mv = gbc(120).fit(X[a], Y[a]); pv = mv.predict_proba(X[v])[:, 1]; pa = mv.predict_proba(X[a])[:, 1]
-    best_q, best_s = .9, -1e18
-    for q in (.5, .6, .7, .75, .8, .85, .9, .93, .95, .97):
+    # octubre 2026: antes el puntaje era la ganancia TOTAL y empujaba a tomar muchas entradas flojas (SHOOTER pasó de ~4 a ~22 por día y
+    # bajó la calidad). Ahora prioriza la ganancia POR OPERACIÓN con las pérdidas pesando 1,5 veces (lo que pidió el usuario), desde el mejor 20 %.
+    CAL_Q = os.environ.get('IA_TOTAL') != '1'
+    best_q, best_s = .97 if CAL_Q else .9, -1e18
+    for q in ((.8, .85, .9, .93, .95, .97, .98) if CAL_Q else (.5, .6, .7, .75, .8, .85, .9, .93, .95, .97)):
         pk = picks(v, pv, float(np.quantile(pa, q)))
         if len(pk) < 15:
             continue
-        PP = P[pk]; sc = PP.sum() + .5 * PP[PP < 0].sum()
+        PP = P[pk]; sc = (PP.mean() + .5 * PP[PP < 0].sum() / len(PP)) if CAL_Q else PP.sum() + .5 * PP[PP < 0].sum()
         if PP.mean() > 0 and Y[pk].mean() >= Y[v].mean() and sc > best_s:
             best_q, best_s = q, sc
     ptr = m.predict_proba(X[tr])[:, 1]; thr = float(np.quantile(ptr, best_q))

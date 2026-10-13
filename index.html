@@ -2223,6 +2223,7 @@ async function scanSignals(mm){
         else{[cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
           e=m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc);if(m==='medio'&&e.dir&&!(await wildOK(s)))e.dir=0;}
         const ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
+        if(!ex&&(m==='medio'||m==='x')&&OPS.some(o=>o.m===m&&o.sym===s&&(o.state==='open'||Date.now()-o.t<(m==='x'?36e5:24*36e5))))continue; // una operación por moneda a la vez y espera entre señales (como en la simulación)
         if(ex){ex.score=e.score;if(!e.keep&&(Math.sign(e.score)!==ex.dir||Math.abs(e.score)<.2))lose(ex,'los indicadores ya no confirman la dirección');}
         else{const sg=buildSignalV2(m,s,e,fd);if(sg){if(tf30)sg.tf='30m';fresh.push(sg);}}
       }catch(err){}
@@ -2310,7 +2311,10 @@ function opsToCurrent(){let ch=false;const seen=[];
     o.loss=+(o.not*(o.liqD||cap||.03)).toFixed(2);
     if(o.state!=='open'&&typeof o.pnl==='number')o.pnl=Math.round(Math.max(-o.loss-o.not*.001,o.pnl*k)*100)/100;
     ch=true;}
-  const keep=[];for(const o of OPS.sort((a,b)=>a.t-b.t)){const d=keep.find(x=>x.m===o.m&&x.sym===o.sym&&x.dir===o.dir&&Math.abs(x.t-o.t)<10*6e4);
+  /* octubre 2026: además, como en la simulación, en TRADING y SHOOTER una operación por moneda a la vez y una espera entre señales (1 h SHOOTER, 24 h TRADING):
+     si la página y el bot 24 h abrieron la misma moneda con minutos de diferencia, o se abrió otra con la anterior todavía en curso, la repetida se borra */
+  const keep=[];for(const o of OPS.sort((a,b)=>a.t-b.t)){const cool=o.m==='x'?36e5:o.m==='medio'?24*36e5:0;
+    const d=keep.find(x=>x.m===o.m&&x.sym===o.sym&&(x.dir===o.dir&&Math.abs(x.t-o.t)<10*6e4||cool&&o.t>=x.t&&(o.t<x.t+cool||x.state==='open'||(x.closeAt&&o.t<x.closeAt))));
     if(d){OPS_DROP.add(o.id);ch=true;continue;}keep.push(o);}
   if(ch){OPS=keep;try{localStorage.setItem('cv_ops',JSON.stringify(OPS));localStorage.setItem('cv_ops_drop',JSON.stringify([...OPS_DROP].slice(-800)));}catch(e){}}
   return ch;}
@@ -3823,11 +3827,14 @@ function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};c
   const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
 const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
 const HXC={};
+/* entrada y stop (y entrada promedio si hubo salvavidas) en el detalle de cada operación, en vivo o cerrada */
+function hxLevels(o){const e=o.entry,st=o.ia?o.ia.stop:o.fail;if(!(e>0))return '';const pc=v=>` (${hxPct((v/e-1)*100)})`,ae=o.ae&&o.ll?o.ae:null;
+  return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
 function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.simLab||(o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:''));
   return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
     <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>
       <div class="hx-g"><span>Modo</span><b>${o.ia?'IA · ':''}${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}</b>
-        <span>Inicio de la señal</span><b>${fdate(o.t)}</b><span>Objetivos</span><b>${o.hit||0}/3</b>
+        <span>Inicio de la señal</span><b>${fdate(o.t)}</b>${hxLevels(o)}<span>Objetivos</span><b>${o.hit||0}/3</b>
         <span>Resultado</span><b class="${v.usd>=0?'up':'dn'}">${v.ok?fusd2(v.usd)+' ('+hxPct(v.pct)+' del margen)':o.state==='open'?'en curso':'—'}</b>
         <span>Simulación</span><b>${sim}</b></div>
       <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${o.tf||cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
@@ -4726,15 +4733,33 @@ function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
     return `<div class="ia-sm"><div class="ia-sm-h"><span class="ia-sem ${S.c}"><i></i></span><div><b>${iaIco('ia',16)} IA · ${nm}</b> <span class="mut">${tf}</span><div class="ia-sem-t ${S.c}">${S.lab}</div></div>
         <div class="ia-sm-e"><b>${S.E.eff==null?'—':S.E.eff>=999?'+∞':iaD(S.E.eff)+' %'}</b><small>efectividad contra los bots${S.E.n?` · ${S.E.n} comparaciones`:''}</small></div></div>
       <div class="mut ia-sm-w">${why}</div>
-      <div class="int-g"><div>Operaciones propias<b>${st.all}</b><small>${st.n} cerradas · ${st.open} en curso</small></div><div>Llegó al objetivo 1<b>${pc0(st.o1)}</b><small>ganadas ${pc0(st.win)}</small></div>
-        <div>Resultado neto<b class="${st.net>=0?'up':'dn'}">${intMoney(st.net)}</b><small>${st.avg!=null?intMoney(st.avg)+' por operación':'—'}</small></div><div>Factor de ganancia<b>${st.pf!=null?st.pf.toFixed(2):'—'}</b><small>más de 1 = gana</small></div></div>
+      ${iaLedHTML(f,L)}
       ${open.length?'':`<div class="mut">Ahora no tiene operaciones propias abiertas en ${nm}.${S.c==='r'?' Abre solas cuando sus entradas ganen en la prueba.':''}</div>`}
       ${L.length?`<div class="ia-rows">${(()=>{const A=L.map(iaAsOp),isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;return A.filter(isP).sort(srt).concat(A.filter(o=>!isP(o)).sort(srt).slice(0,40)).map(hxRow).join('');})()}</div>`:''}
       </div>`;}).join('')+`<div class="mut" style="font-size:11px">Simulación con ${IAOP_CFG[IAF].mg} USD × ${IAOP_CFG[IAF].lev}. Tocá una operación para ver sus datos en vivo y si fue una buena entrada. El semáforo se actualiza solo con cada estudio diario y con cada operación que cierra. No es un consejo de inversión.</div>`;}
+/* el mismo cuadro de resultados que TRADING, SHOOTER y ACCIONES, con las operaciones propias de la IA */
+var IALP=30;
+function iaLedHTML(f,L0){const t0=IALP?Date.now()-IALP*864e5:0,L=L0.filter(x=>x.t>=t0||x.st==='open'),C=L.filter(x=>x.st!=='open'),n=C.length,o1=n?C.filter(x=>x.hit>=1).length/n*100:null,o3=n?C.filter(x=>x.hit>=3).length/n*100:null;
+  const liq=C.filter(x=>x.st==='fail').length,g=C.filter(x=>x.pnl>0).reduce((a,x)=>a+x.pnl,0),l=C.filter(x=>x.pnl<0).reduce((a,x)=>a+x.pnl,0),net=g+l,avg=n?net/n:null,pf=l?g/-l:null;
+  const E=IAM&&IAM[f]&&IAM[f].entry,PR=E&&E.test&&(E.futuros&&E.futuros.usar?E.futuros.test:E.test.propias),mg=IAOP_CFG[f].mg;
+  const per=[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']].map(([d,t])=>`<button data-iap="${d}" class="${IALP===d?'on':''}">${t}</button>`).join('');
+  const bt=PR&&PR.pct!=null?PR.pct/100*mg:null,verdict=!n?'Todavía no hay operaciones propias cerradas en este período.':n<20?`Muestra chica (${n} cerradas): con menos de 20 el porcentaje puede moverse decenas de puntos por azar. Todavía no alcanza para sacar conclusiones.`
+    :`${net>=0?'Gana':'Pierde'} ${intMoney(avg)} por operación${bt!=null?` (en la prueba ${intMoney(bt)})`:''}. Llega al objetivo 1 el ${Math.round(o1)} %${PR&&PR.obj1!=null?` (prueba ${PR.obj1} %)`:''}.`;
+  return `<div class="int-p">${per}<span class="mut">IA · ${IAOP_CFG[f].nm}</span></div>
+    <div class="int-g"><div>Señales<b>${L.length}</b><small>${n} cerradas · ${L.length-n} en curso</small></div>
+      <div>Llegó al objetivo 1<b>${pc0(o1)}</b><small>prueba ${PR&&PR.obj1!=null?PR.obj1+' %':'—'}</small></div>
+      <div>Llegó a los 3 objetivos<b>${pc0(o3)}</b><small>de las cerradas</small></div>
+      <div>Tocaron el stop<b class="dn">${liq}</b><small>${n?Math.round(liq/n*100)+' % de las cerradas':'—'}</small></div>
+      <div>Ganado / perdido<b><span class="up">${intMoney(g)}</span></b><small class="dn">${intMoney(l)}</small></div>
+      <div>Resultado neto<b class="${net>=0?'up':'dn'}">${intMoney(net)}</b><small>${avg!=null?intMoney(avg)+' por operación':'—'}</small></div>
+      <div>Factor de ganancia<b>${pf!=null?pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div>
+      <div>Contra la prueba<b class="${avg!=null&&bt!=null?(avg-bt>=0?'up':'dn'):''}">${avg!=null&&bt!=null?intMoney(avg-bt):'—'}</b><small>por operación · prueba ${bt!=null?intMoney(bt):'—'}</small></div></div>
+    <div class="int-v">${verdict}</div>`;}
 function iaSigRender(){const el=$('iaSig');if(!el)return;el.hidden=SIGV!=='ia';if(SIGV!=='ia')return;el.open=true;const b=el.querySelector('.ia-sb');if(b)b.innerHTML=iaSigHTML();
   $('sigHead').textContent='Señales de la IA · sus operaciones propias · el semáforo dice si conviene copiarlas';
   for(const x of IAOPS)if(HOPEN.has('ia-'+x.id))hxFill(iaAsOp(x));
   if(!el.dataset.h){el.dataset.h=1;el.addEventListener('click',e=>{const t=e.target.closest('[data-iaf]');if(t){IAF=t.dataset.iaf;try{localStorage.setItem('cv_iaf',IAF)}catch(_){}iaSigRender();return;}
+    const ip=e.target.closest('[data-iap]');if(ip){IALP=+ip.dataset.iap;iaSigRender();return;}
     const hp=e.target.closest('[data-hpin]');if(hp){e.stopPropagation();const id=hp.dataset.hpin;PINS.has(id)?PINS.delete(id):PINS.add(id);savePins();iaSigRender();return;}
     const g=e.target.closest('[data-go]');if(g){openFromNotif({sym:g.dataset.go,tf:g.dataset.tf,m:g.dataset.m});$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
     const hr=e.target.closest('.hrow');if(hr){const id=hr.dataset.op;HOPEN.has(id)?HOPEN.delete(id):HOPEN.add(id);iaSigRender();return;}
@@ -4783,7 +4808,7 @@ async function iaFutRaw(s){const c=IAFX[s];if(c&&Date.now()-c.t<5*6e4)return c.v
 async function iaFutX(s,d){const v=await iaFutRaw(s);if(!v)return null;const x=[v.oi24,v.oi1,d*v.tk,d*v.top,d*v.ret,d*v.f];return x.every(isFinite)?x:null;}
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
-    for(const [f,tfs,U,cap,r] of [['tr',['4h'],universe('medio'),.036,.5],['sh',['15m','30m'],universe('x'),.05,.35]]){const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
+    for(const [f,tfs,U,cap,r,ka] of [['tr',['4h'],universe('medio'),NEWG.medio.max,NEWG.medio.r,NEWG.medio.a],['sh',['15m','30m'],universe('x'),NEWG.x.max,NEWG.x.r,NEWG.x.a]]){ // octubre 2026: misma geometría con la que aprende (antes usaba la vieja: el stop y los objetivos no coincidían con su entrenamiento)const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
       const EF=E&&E.futuros&&E.futuros.usar?E.futuros:null;
       if(!E||E.thr==null||!PR||!((PR.pct>0&&PR.pct>PR.base_pct)||EF))continue; // solo busca donde sus entradas propias ganaron en la prueba
       for(const tf of tfs){const bs=await btcSide(tf);
@@ -4792,7 +4817,7 @@ async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IA
             else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
             if(!d)continue;const xv=IA.entryX(P,j,d,bs);let p,fx=null;
             if(EF){fx=await iaFutX(s,d);}if(fx){p=IA.predict(EF.model,xv.concat(fx));if(p<EF.thr)continue;}else{if(!(PR.pct>0&&PR.pct>PR.base_pct))continue;p=IA.predict(E.model,xv);if(p<E.thr)continue;}
-            const sl=Math.min(cap,Math.max(.004,3*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
+            const sl=Math.min(cap,Math.max(.004,ka*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
           await new Promise(z=>setTimeout(z,80));}}}
     IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
     for(const x of IAIDEAS){const C=IAOP_CFG[x.f];if(Date.now()-x.t>TF_MS[x.tf])continue; // solo velas recién cerradas: precio de entrada real
@@ -4940,9 +4965,9 @@ function iaEficiencia(){const j=window.HISTYR,R=IAM&&IAM.resumen;if(!j||!j.ops)r
 /* niveles de una moneda con la misma geometría que usan los bots (stop 3 × ATR con tope, objetivos en fracciones del stop) */
 async function iaGeo(sym){const s=sym+'USDT';if(!tickers[s])return null;
   const [b4,b15]=await Promise.all([kl(s,'4h',300),kl(s,'15m',300)]);const c4=b4.slice(0,-1),c15=b15.slice(0,-1),P=IA.prep(c4),Q=IA.prep(c15),j=c4.length-1,k=c15.length-1,px=tickers[s].c;
-  const st=P.st[j]||1,mk=(atr,cap,r,d)=>{const sl=Math.min(cap,Math.max(.004,3*atr/px));return {d,sl,stop:px*(1-d*sl),tps:[1,2,3].map(n=>px*(1+d*n*r*sl))};};
+  const st=P.st[j]||1,mk=(atr,cap,r,d,a=3)=>{const sl=Math.min(cap,Math.max(.004,a*atr/px));return {d,sl,stop:px*(1-d*sl),tps:[1,2,3].map(n=>px*(1+d*n*r*sl))};};
   let p=null;const E=IAM&&IAM.tr&&IAM.tr.entry;if(E){try{p=IA.predict(E.model,IA.entryX(P,j,st,0));}catch(e){}}
-  return {px,st,tr:mk(P.atr[j]||0,.036,.5,st),sh:mk(Q.atr[k]||0,.05,.35,1),atr4:(P.atr[j]||0)/px,atr15:(Q.atr[k]||0)/px,r14:P.r14[j],adx:P.adx[j],p,
+  return {px,st,tr:mk(P.atr[j]||0,NEWG.medio.max,NEWG.medio.r,st),sh:mk(Q.atr[k]||0,NEWG.x.max,NEWG.x.r,1,NEWG.x.a),atr4:(P.atr[j]||0)/px,atr15:(Q.atr[k]||0)/px,r14:P.r14[j],adx:P.adx[j],p,
     al:st===Math.sign(P.e21[j]-P.e50[j])&&(P.e200[j]==null||st===Math.sign(px-P.e200[j]))};}
 const iaLiqLev=sl=>Math.max(1,Math.floor(.8/sl)); // apalancamiento máximo para que la liquidación quede bien lejos del stop
 async function iaLevTxt(sym,q){const cap=(q.match(/(?:^|[^x\w$])(\d[\d.,]*)(?!\s*x)(?!\s*%)/i)||[])[1],C0=cap?+cap.replace(/\.(?=\d{3}\b)/g,'').replace(',','.'):null,C=C0&&C0>=20?C0:null;
