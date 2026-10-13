@@ -172,6 +172,26 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 .ltabs button.on{color:var(--txt);border-color:#3a4256;background:#1b2130}
 .star{font-style:normal;color:#3a4256;margin-right:6px;cursor:pointer;padding:2px}
 .star.on{color:#f7c548}
+/* octubre 2026 · gráfico estilo TradingView: indicadores en una barra desplegable, temporalidad y herramientas al costado del gráfico,
+   y en pantalla completa arriba solo el activo y los indicadores, abajo buscador + temporalidad + herramientas */
+.chrow{flex:1;display:flex;min-height:0;position:relative}
+.rail{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-right:1px solid var(--line);background:var(--panel);flex:none;width:44px;overflow:visible;z-index:12}
+.rbtn{width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:8px;color:var(--txt);cursor:pointer;padding:0;flex:none}
+.rbtn svg{width:18px;height:18px}.rbtn:hover{background:#1a1f29}.rbtn.on{background:#1e2a4a;border-color:var(--acc);color:#fff}.rbtn.txt{font-size:10px;font-weight:800;letter-spacing:.02em}
+.rbtn.tfb{font-size:11.5px;font-weight:800;border-color:var(--line);background:var(--bg)}.rsep{width:24px;height:1px;background:var(--line);margin:3px 0;flex:none}
+.rtf{position:relative}.tfpop{position:absolute;left:40px;top:0;z-index:30;background:rgba(22,26,34,.98);border:1px solid var(--line);border-radius:10px;padding:5px;box-shadow:0 8px 24px rgba(0,0,0,.5)}
+.tfpop #tfs,.tfpop .fstf{display:grid!important;grid-template-columns:repeat(3,52px);gap:4px;max-width:none;background:none;border:0;padding:0;overflow:visible}
+.tfpop .btn{padding:6px 0;font-size:12px;text-align:center;border:1px solid var(--line);background:var(--bg)}.tfpop .btn.on{background:#1e2a4a;border-color:var(--acc);color:#fff}
+.tfpop.up{left:0;right:auto;top:auto;bottom:40px}
+.ind-top{display:flex;align-items:center;gap:6px}.ind-top svg{width:15px;height:15px}.ind-top i{font-style:normal;color:var(--mut);transition:transform .15s}body.ind-open .ind-top{border-color:var(--acc)}body.ind-open .ind-top i{transform:rotate(180deg)}
+.ind-tog{display:none!important}.inds:not(.open){display:none!important}body:not(.ind-open) .liq-row{display:none!important}body:not(.ind-open) .legend{display:none!important}
+.fsbot{display:none;align-items:center;gap:4px;padding:5px 8px calc(5px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--panel);flex:none}
+body.fs-on .fsbot{display:flex}body.fs-on .rail{display:none}
+.fsq{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:0 8px;height:34px;color:var(--mut)}.fsq svg{width:15px;height:15px;flex:none}
+.fsq input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--txt);font-size:13px}
+.fsqr{position:absolute;left:0;min-width:240px;bottom:40px;z-index:30;background:rgba(22,26,34,.98);border:1px solid var(--line);border-radius:10px;padding:4px;max-height:50vh;overflow:auto}
+.fsqr button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--txt);padding:8px 10px;border-radius:7px;font-size:13px;cursor:pointer}.fsqr button:hover{background:#1a1f29}.fsqr small{color:var(--mut)}
+body.fs-on .fsbar{top:8px;left:8px;max-width:calc(100% - 70px)}body.fs-on .fs-exit{top:8px;right:8px;display:flex;align-items:center;justify-content:center}body.fs-on .fs-exit svg{width:18px;height:18px}
 .fsbar{position:absolute;top:8px;left:8px;z-index:8;display:none;flex-direction:column;gap:5px;align-items:flex-start;max-width:calc(100% - 130px)}
 .fsrow{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .fstf{display:flex;gap:3px;overflow-x:auto;max-width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:rgba(15,17,21,.85);border:1px solid var(--line);border-radius:9px;padding:3px}.fstf::-webkit-scrollbar{display:none}
@@ -580,29 +600,12 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
     <div id="chartWrap">
       <div class="toolbar">
         <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span>
-        <span class="sep"></span>
-        <span id="tfs"></span>
-        <span class="sep"></span>
-        <button class="btn on" data-tool="cursor" title="Mover / zoom (Esc)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg>Cursor</button>
-        <button class="btn" data-tool="ruler" title="Regla de medición (R)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg>Regla</button>
-        <button class="btn" data-tool="hline" title="Línea horizontal (H)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg>Línea</button>
-        <button class="btn" id="clear" data-tool="erase" title="Borrar una línea: tocá este botón y después la línea">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg>Borrar</button>
-        <button class="btn" id="alertBtn" title="Crear una alerta de precio para esta moneda">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>Alerta</button>
-        <span class="sep"></span>
-        <button class="btn" id="fit" title="Restablecer zoom">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg>Reset</button>
-        <button class="btn" id="fs" title="Pantalla completa (F)">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>Pantalla completa</button>
-        <button class="btn on" id="logBtn" title="Escala logarítmica en el gráfico principal: las subas y bajadas se ven en proporción (%). Los indicadores de abajo quedan en escala normal">LOG</button>
-        <span class="hint" id="hint">Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla</span><button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
-      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li></ul></div>
+        <button class="btn ind-top" id="indTop" type="button" title="Mostrar u ocultar los indicadores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 4 8-9"/></svg>Indicadores · <b id="indN">0</b> <i>▾</i></button>
+        <button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
+      </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>Indicadores ▾</b>: muestra u oculta la barra de indicadores (y sus textos sobre el gráfico). <b>Al costado del gráfico</b>: temporalidad (tocala para ver las demás), cursor, regla, línea, borrar, alerta, reset, LOG y pantalla completa. En pantalla completa, abajo están el buscador de activos, la temporalidad y las herramientas.</li><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li><li class="mut">Gráficos hechos con <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts™</a>.</li></ul></div>
       <div class="inds hide" id="inds"></div>
-      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><div class="fstf" id="fsTfs"></div><div class="fsrow"><button class="btn on" data-tool="cursor">Cursor</button><button class="btn" data-tool="ruler">Regla</button><button class="btn" data-tool="hline">Línea</button><button class="btn" id="fsClear" data-tool="erase">Borrar</button><button class="btn" id="fsIndBtn">Indicadores ▾</button><button class="btn" id="fsLog">LOG</button><button class="btn" id="fsFit">Ajustar</button></div><div class="fsohlc" id="fsOhlc"></div></div><button id="fsLive" class="fs-live" hidden title="Ir a la última vela">»</button><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Salir de pantalla completa">✕</button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div>
+<div class="chrow"><div class="rail" id="rail"><div class="rtf"><button class="rbtn tfb" id="tfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop" id="tfPop" hidden><span id="tfs"></span></div></div><span class="rsep"></span><button class="rbtn on" data-tool="cursor" title="Mover / zoom (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla de medición (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea horizontal (H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" id="clear" data-tool="erase" title="Borrar una línea: tocá este botón y después la línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn" id="alertBtn" title="Crear una alerta de precio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><span class="rsep"></span><button class="rbtn" id="fit" title="Restablecer zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button><button class="rbtn txt on" id="logBtn" title="Escala logarítmica en el gráfico principal (los indicadores de abajo quedan en escala normal)">LOG</button><button class="rbtn" id="fs" title="Pantalla completa (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><div class="fsrow"><button class="btn" id="fsIndBtn">Indicadores ▾</button></div><div class="fsohlc" id="fsOhlc"></div></div><button id="fsLive" class="fs-live" hidden title="Ir a la última vela">»</button><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Achicar (salir de pantalla completa)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div></div><div class="fsbot" id="fsBot"><div class="fsq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="fsQ" placeholder="Buscar activo" autocomplete="off"><div class="fsqr" id="fsQr" hidden></div></div><div class="rtf"><button class="rbtn tfb" id="fsTfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop up" id="fsTfPop" hidden><div class="fstf" id="fsTfs"></div></div></div><button class="rbtn on" data-tool="cursor" title="Cursor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" id="fsClear" data-tool="erase" title="Borrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn txt" id="fsLog" title="Escala logarítmica">LOG</button><button class="rbtn" id="fsFit" title="Ajustar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button></div>
     </div>
     <section class="dash hide" id="dash">
       <div class="dcard gauge">
@@ -739,7 +742,7 @@ const fpct = v => (v>=0?'+':'')+(+v).toFixed(2)+'%';
 /* ---------- gráfico ---------- */
 const chart = LightweightCharts.createChart($('chart'), {
   autoSize: true,
-  layout:{background:{type:'solid',color:'#0f1115'},textColor:'#b2b5be',fontSize:12},
+  layout:{background:{type:'solid',color:'#0f1115'},textColor:'#b2b5be',fontSize:12,attributionLogo:false},
   grid:{vertLines:{color:'#1b1f29'},horzLines:{color:'#1b1f29'}},
   crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
   rightPriceScale:{borderColor:'#262b36'},
@@ -1461,7 +1464,7 @@ function renderChips(){
   $('inds').classList.toggle('hide',!M.inds.length);
   $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
   $('fsInd').innerHTML=M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
-  $('fsIndBtn').hidden=!M.inds.length;
+  $('fsIndBtn').hidden=!M.inds.length;if($('indN'))$('indN').textContent=active.size;if($('indTop'))$('indTop').hidden=!M.inds.length;$('inds').classList.toggle('open',document.body.classList.contains('ind-open'));
   if($('liqOptsRow'))$('liqOptsRow').hidden=!active.has('liq')||!M.inds.length;
 }
 $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const k=b.dataset.ind;
@@ -1588,10 +1591,10 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
 });
 
 /* ---------- temporalidades ---------- */
-function renderTfs(){const h=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');$('tfs').innerHTML=h;const f=$('fsTfs');if(f)f.innerHTML=h;}
+function renderTfs(){const h=TFS.filter(([v])=>TF_MODE[mode].includes(v)).map(([v,l])=>`<button class="btn${v===tf?' on':''}" data-tf="${v}">${l}</button>`).join('');$('tfs').innerHTML=h;const f=$('fsTfs');if(f)f.innerHTML=h;try{tfBtns();}catch(e){}}
 renderTfs();
-function tfMark(){['tfs','fsTfs'].forEach(id=>{const el=$(id);if(el)[...el.children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));});}
-$('tfs').onclick=$('fsTfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;e.stopPropagation();if(b.dataset.tf===tf)return;tf=b.dataset.tf;tfMark();loadChart();};
+function tfMark(){['tfs','fsTfs'].forEach(id=>{const el=$(id);if(el)[...el.children].forEach(x=>x.classList.toggle('on',x.dataset.tf===tf));});try{tfBtns();}catch(e){}}
+$('tfs').onclick=$('fsTfs').onclick=e=>{const b=e.target.closest('[data-tf]');if(!b)return;e.stopPropagation();try{$('tfPop').hidden=true;$('fsTfPop').hidden=true;}catch(_){}if(b.dataset.tf===tf)return;tf=b.dataset.tf;tfMark();loadChart();};
 
 /* ---------- herramientas ---------- */
 const hints={cursor:'Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla',
@@ -2991,6 +2994,22 @@ function switchMarket(toA){
   renderList();updateTop();
 }
 document.addEventListener('click',e=>{if(e.target.closest('#indTog'))$('inds').classList.toggle('open');});
+/* barra de indicadores desplegable (se recuerda abierta o cerrada) */
+function indOpen(on){document.body.classList.toggle('ind-open',on);$('inds').classList.toggle('open',on);try{localStorage.setItem('cv_indopen',on?'1':'0')}catch(e){}try{layout();}catch(e){}ovReq&&ovReq();}
+try{indOpen(localStorage.getItem('cv_indopen')==='1');}catch(e){indOpen(false);}
+$('indTop').onclick=()=>indOpen(!document.body.classList.contains('ind-open'));
+/* temporalidad al costado (y abajo en pantalla completa): un botón con la actual; al tocarlo se ven las demás */
+const tfLbl=()=>{const x=TFS.find(t=>t[0]===tf);return x?x[1]:tf;};
+function tfBtns(){['tfBtn','fsTfBtn'].forEach(id=>{const b=$(id);if(b)b.textContent=tfLbl();});}tfBtns();
+$('tfBtn').onclick=e=>{e.stopPropagation();$('tfPop').hidden=!$('tfPop').hidden;$('fsTfPop').hidden=true;};
+$('fsTfBtn').onclick=e=>{e.stopPropagation();$('fsTfPop').hidden=!$('fsTfPop').hidden;$('tfPop').hidden=true;};
+document.addEventListener('click',e=>{if(!e.target.closest('.rtf')){$('tfPop').hidden=true;$('fsTfPop').hidden=true;}if(!e.target.closest('.fsq'))$('fsQr').hidden=true;});
+/* buscador de activos en pantalla completa */
+$('fsQ').oninput=()=>{const q=$('fsQ').value.trim().toUpperCase().replace(/USDT$/,''),r=$('fsQr');if(!q){r.hidden=true;return;}
+  const L=Object.values(mode==='a'?STK:tickers).filter(t=>t.s&&t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.replace('USDT','').startsWith(q)-a.s.replace('USDT','').startsWith(q))||(b.q||0)-(a.q||0)).slice(0,8);
+  r.innerHTML=L.length?L.map(t=>`<button type="button" data-s="${t.s}"><b>${t.s.replace('USDT','')}</b><small>${fp(t.c)} · ${fpct(t.p||0)}</small></button>`).join(''):'<div class="mut" style="padding:8px">Sin resultados</div>';r.hidden=false;};
+$('fsQ').onkeydown=e=>{if(e.key==='Enter'){const b=$('fsQr').querySelector('[data-s]');if(b)b.click();}};
+$('fsQr').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;select(b.dataset.s);$('fsQ').value='';$('fsQr').hidden=true;$('fsQ').blur();};
 
 /* ---------- línea de tendencia con todos los datos ----------
    Recorrido: media de Hull sobre el precio típico. Color de cada tramo: promedio de Supertrend, EMAs, RSI, MACD,
