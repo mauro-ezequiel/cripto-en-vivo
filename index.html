@@ -188,13 +188,13 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 .tfpop.up{left:0;right:auto;top:auto;bottom:40px}
 .ind-top{display:flex;align-items:center;gap:6px}.ind-top svg{width:15px;height:15px}.ind-top i{font-style:normal;color:var(--mut);transition:transform .15s}body.ind-open .ind-top{border-color:var(--acc)}body.ind-open .ind-top i{transform:rotate(180deg)}
 .ind-tog{display:none!important}.inds:not(.open){display:none!important}body:not(.ind-open) .liq-row{display:none!important}body:not(.ind-open) .legend{display:none!important}
-.fsbot{display:none;align-items:center;gap:4px;padding:5px 8px calc(5px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--panel);flex:none}
+.fsbot{display:none;align-items:center;gap:4px;padding:8px 10px calc(18px + env(safe-area-inset-bottom));border-top:1px solid var(--line);background:var(--panel);flex:none}
 body.fs-on .fsbot{display:flex}body.fs-on .rail{display:none}
 .fsq{position:relative;flex:1;min-width:0;display:flex;align-items:center;gap:6px;background:var(--bg);border:1px solid var(--line);border-radius:9px;padding:0 8px;height:34px;color:var(--mut)}.fsq svg{width:15px;height:15px;flex:none}
 .fsq input{flex:1;min-width:0;background:none;border:0;outline:0;color:var(--txt);font-size:13px}
 .fsqr{position:absolute;left:0;min-width:240px;bottom:40px;z-index:30;background:rgba(22,26,34,.98);border:1px solid var(--line);border-radius:10px;padding:4px;max-height:50vh;overflow:auto}
 .fsqr button{display:flex;justify-content:space-between;width:100%;background:none;border:0;color:var(--txt);padding:8px 10px;border-radius:7px;font-size:13px;cursor:pointer}.fsqr button:hover{background:#1a1f29}.fsqr small{color:var(--mut)}
-body.fs-on .fsbar{top:8px;left:8px;max-width:calc(100% - 70px)}body.fs-on .fs-exit{top:8px;right:8px;display:flex;align-items:center;justify-content:center}body.fs-on .fs-exit svg{width:18px;height:18px}
+body.fs-on .fsbar{top:8px;left:8px;max-width:calc(100% - 80px)}body.fs-on .fsohlc{order:-1;white-space:normal}.fsym{display:block;font-size:19px;font-weight:800;color:var(--txt);margin-bottom:2px;letter-spacing:.01em}.fsym small{font-size:12px;color:var(--mut);font-weight:600;margin-left:2px}body.fs-on .fs-exit{top:8px;right:8px;width:46px;height:46px;display:flex;align-items:center;justify-content:center}body.fs-on .fs-exit svg{width:24px;height:24px}
 .fsbar{position:absolute;top:8px;left:8px;z-index:8;display:none;flex-direction:column;gap:5px;align-items:flex-start;max-width:calc(100% - 130px)}
 .fsrow{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
 .fstf{display:flex;gap:3px;overflow-x:auto;max-width:100%;scrollbar-width:none;-webkit-overflow-scrolling:touch;background:rgba(15,17,21,.85);border:1px solid var(--line);border-radius:9px;padding:3px}.fstf::-webkit-scrollbar{display:none}
@@ -1705,7 +1705,7 @@ $('fsFit').onclick=e=>{e.stopPropagation();$('fit').click();};
 $('fsLive').onclick=e=>{e.stopPropagation();chart.timeScale().scrollToRealTime();};
 chart.timeScale().subscribeVisibleLogicalRangeChange(r=>{const b=$('fsLive');if(!b||!r)return;let n=0;try{n=series.data().length}catch(_){}b.hidden=!(n&&r.to<n-3);});
 function fsOhlcSet(b,prev){const el=$('fsOhlc');if(!el)return;if(!b||b.open==null){el.innerHTML='';return;}const d=x=>(+x).toFixed(dec(b.close)),ch=prev&&prev.close?(b.close/prev.close-1)*100:(b.close/b.open-1)*100,col=ch>=0?'#26a69a':'#ef5350';
-  el.innerHTML=`${symbol||''} · A <b>${d(b.open)}</b> M <b>${d(b.high)}</b> m <b>${d(b.low)}</b> C <b style="color:${col}">${d(b.close)}</b> <span style="color:${col}">${ch>=0?'+':''}${ch.toFixed(2)}%</span>`;}
+  el.innerHTML=`<span class="fsym">${(symbol||'').replace(/USDT$/,'')}<small>${/USDT$/.test(symbol||'')?'/USDT':''}</small></span>A <b>${d(b.open)}</b> M <b>${d(b.high)}</b> m <b>${d(b.low)}</b> C <b style="color:${col}">${d(b.close)}</b> <span style="color:${col}">${ch>=0?'+':''}${ch.toFixed(2)}%</span>`;}
 function fsOhlcLast(){let a=[];try{a=series.data()}catch(_){}fsOhlcSet(a[a.length-1],a[a.length-2]);}
 let fsHov=false;setInterval(()=>{if(!fsHov&&document.body.classList.contains('fs-on'))fsOhlcLast();},1000);
 chart.subscribeCrosshairMove(p=>{if(!document.body.classList.contains('fs-on'))return;const b=p&&p.seriesData&&p.seriesData.get(series);fsHov=!!b;if(!b){fsOhlcLast();return;}
