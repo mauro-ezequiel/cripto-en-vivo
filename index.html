@@ -4716,7 +4716,7 @@ function iaFamEff(f){const now=Date.now(),R=iaRecs().filter(r=>r[3]>=now-90*864e
   return {eff:sb>0?100*si/sb:(si>0?999:null),n,sb:n?sb/n:0,si:n?si/n:0};}
 function iaSemaforo(f){const E=iaFamEff(f),en=IAM&&IAM[f]&&IAM[f].entry,P=en&&en.test&&en.test.propias,F=en&&en.futuros,why=[];let sc=0;
   if(E.eff!=null){if(E.eff>=100){sc+=2;why.push(`le gana a los bots (${iaD(Math.min(E.eff,999))} %)`);}else if(E.eff>=80){sc+=1;why.push(`casi iguala a los bots (${iaD(E.eff)} %)`);}else why.push(`saca menos que los bots (${iaD(E.eff)} %)`);}
-  const okP=(P&&P.pct>0&&P.pct>P.base_pct)||(F&&F.usar);if(okP){sc+=1;why.push('sus entradas propias ganaron en la prueba');}else why.push('sus entradas propias todavía no ganan en la prueba');
+  const okP=(P&&P.pct>=1&&P.pct>P.base_pct)||(F&&F.usar&&F.test&&F.test.pct>=1);if(okP){sc+=1;why.push('sus entradas propias ganaron en la prueba');}else why.push('sus entradas propias todavía no ganan en la prueba');
   const C=IAOPS.filter(x=>x.f===f&&x.st!=='open');if(C.length>=5){const net=C.reduce((a,x)=>a+(x.pnl||0),0);if(net>0){sc+=1;why.push(`en vivo va ganando (${fusd2(net)})`);}else{sc-=1;why.push(`en vivo va perdiendo (${fusd2(net)})`);}}
   let c=sc>=3?'g':sc>=1?'y':'r';if(E.n<20&&c==='g'){c='y';why.push('pocas comparaciones todavía');}
   return {c,sc,why,E,lab:{g:'Conviene seguir sus consejos',y:'Ni bien ni mal: usalo con cuidado',r:'Todavía no conviene'}[c]};}
@@ -4809,14 +4809,15 @@ async function iaFutX(s,d){const v=await iaFutRaw(s);if(!v)return null;const x=[
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
     for(const [f,tfs,U,cap,r,ka] of [['tr',['4h'],universe('medio'),NEWG.medio.max,NEWG.medio.r,NEWG.medio.a],['sh',['15m','30m'],universe('x'),NEWG.x.max,NEWG.x.r,NEWG.x.a]]){ // octubre 2026: misma geometría con la que aprende (antes usaba la vieja: el stop y los objetivos no coincidían con su entrenamiento)const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
-      const EF=E&&E.futuros&&E.futuros.usar?E.futuros:null;
-      if(!E||E.thr==null||!PR||!((PR.pct>0&&PR.pct>PR.base_pct)||EF))continue; // solo busca donde sus entradas propias ganaron en la prueba
+      const EF=E&&E.futuros&&E.futuros.usar&&E.futuros.test&&E.futuros.test.pct>=1?E.futuros:null;
+      /* octubre 2026: solo opera sola si en la prueba sus entradas ganaron al menos 1 % del margen por operación (antes alcanzaba con apenas > 0) */
+      if(!E||E.thr==null||!PR||!((PR.pct>=1&&PR.pct>PR.base_pct)||EF))continue; // solo busca donde sus entradas propias ganaron en la prueba
       for(const tf of tfs){const bs=await btcSide(tf);
         for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
             if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
             else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
             if(!d)continue;const xv=IA.entryX(P,j,d,bs);let p,fx=null;
-            if(EF){fx=await iaFutX(s,d);}if(fx){p=IA.predict(EF.model,xv.concat(fx));if(p<EF.thr)continue;}else{if(!(PR.pct>0&&PR.pct>PR.base_pct))continue;p=IA.predict(E.model,xv);if(p<E.thr)continue;}
+            if(EF){fx=await iaFutX(s,d);}if(fx){p=IA.predict(EF.model,xv.concat(fx));if(p<EF.thr)continue;}else{if(!(PR.pct>=1&&PR.pct>PR.base_pct))continue;p=IA.predict(E.model,xv);if(p<E.thr)continue;}
             const sl=Math.min(cap,Math.max(.004,ka*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
           await new Promise(z=>setTimeout(z,80));}}}
     IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
