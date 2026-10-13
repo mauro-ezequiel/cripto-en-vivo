@@ -227,6 +227,7 @@ body.fs-on .fsbar{display:flex}
 .ia-sem.g i{background:#2ecc71;box-shadow:0 0 10px #2ecc71}.ia-sem.y i{background:#f1c40f;box-shadow:0 0 10px #f1c40f}.ia-sem.r i{background:#e74c3c;box-shadow:0 0 10px #e74c3c}
 .ia-sem-t{font-size:12px;font-weight:700}.ia-sem-t.g{color:#2ecc71}.ia-sem-t.y{color:#e5b74a}.ia-sem-t.r{color:#ef5350}.ia-sm-w{font-size:11.5px;margin:4px 0 2px}
 .sig.ia-own{border-left-color:#5fb4ff}.ia-srl{margin-top:6px;font-size:12px}.ia-sr{display:grid;grid-template-columns:auto auto auto 1fr auto;gap:8px;padding:3px 0;border-top:1px solid var(--line);align-items:center}
+.pil-tg{margin:8px 0;border:1px solid #2a3140;border-radius:9px;padding:8px 10px;background:#1b2130;display:flex;flex-direction:column;gap:6px}.pil-tgh{font-weight:800;font-size:12.5px}.pil-tgr{display:grid;grid-template-columns:auto 1fr auto;gap:2px 10px;align-items:baseline;font-size:12px;padding:5px 7px;border-radius:7px;background:var(--bg)}.pil-tgr small.mut{grid-column:1/-1;font-size:11px}.pil-tgr.rec{outline:1px solid #26a69a}
 .acu{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel);flex-shrink:0}.acu .dt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .acu-l{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:8px;margin-top:8px}.acu-c{border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:var(--bg);display:flex;flex-direction:column;gap:6px}
 .acu-c.g{border-color:#26a69a;background:linear-gradient(180deg,rgba(38,166,154,.14),transparent 90px)}.acu-c.y{border-color:#c9a227;background:linear-gradient(180deg,rgba(255,193,7,.10),transparent 90px)}
@@ -3438,7 +3439,18 @@ function pilAnalyze(p,D,c){
   else if(pf>0&&pf>=atr){st='stop';title='✅ DEJÁ CORRER: mové el stop a la entrada';txt=`Vas ganando ${pilMoney(usd)} y la tendencia acompaña. Con el stop en ${fp(avg)} ya no podés perder.${res!=null?` Próxima ${d>0?'resistencia':'soporte'}: ${fp(res)}.`:''}`;}
   else{st='mantener';act=false;title=pf>=0?'👍 MANTENER':'⏳ AGUANTAR por ahora';txt=pf>=0?`Vas ganando ${pilMoney(usd)}. Sin señales en contra.`:`Vas perdiendo ${pilMoney(usd).replace('−','')}, pero los datos no confirman un movimiento fuerte en contra. Te aviso si una vela de 1 h cierra ${d>0?'por debajo de':'por encima de'} ${fp(P.cut)}; stop recomendado en ${fp(P.stop)}.`;}
   if(st==='mantener'&&pf>=0)txt+=` Stop recomendado en ${fp(P.stop)}.`;
-  return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt};}
+  /* octubre 2026 · 2 OBJETIVOS DE SALIDA, se vaya ganando o perdiendo. Se arman con las herramientas de PILOTEAR: máximos y mínimos de 1 h
+     (soportes/resistencias), la zona de liquidez a favor, la entrada (salir sin pérdida) y la volatilidad (ATR de 1 h). En rojo con la tendencia
+     en contra, el objetivo 1 es el rebote más cercano para salir perdiendo lo menos posible; con la tendencia a favor se apunta más lejos. */
+  const tg=(()=>{const q=pilQty(p),lv=[],add=(px,why)=>{if(px>0&&d*(px-c)/c>=.25*atr)lv.push({px,why});};
+    (d>0?D.highs:D.lows).forEach(x=>add(x,d>0?'resistencia de 1 h':'soporte de 1 h'));if(zF)add(zF.p,`zona de liquidez de ${d>0?'shorts':'longs'} (imán)`);if(pf<0)add(avg,'tu entrada: salir sin pérdida');
+    lv.sort((a,b)=>d*(a.px-b.px));const L=[];for(const x of lv){if(!L.length||d*(x.px-L[L.length-1].px)/c>=.6*atr)L.push(x);if(L.length===2)break;}
+    if(!L.length)L.push({px:c*(1+d*1.2*atr),why:'1,2 × el movimiento normal de 1 h'});if(L.length<2)L.push({px:L[0].px*(1+d*1.2*atr),why:'siguiente tramo (1,2 × el movimiento normal de 1 h)'});
+    if(d*(L[0].px-liq)<=0)return null;const out=L.map(x=>{const u=d*(x.px-avg)*q;return {...x,u,pm:u/mg*100,mv:(x.px/c-1)*100};});
+    const rec=fav<=-.34||against?0:1;out[rec].rec=true;
+    return {L:out,txt:fav<=-.34?(pf<0?'La tendencia va en contra: conviene salir en el objetivo 1, en el primer rebote, para perder lo menos posible.':'La tendencia está girando: asegurá en el objetivo 1.'):fav>=.34?'La tendencia acompaña: podés apuntar al objetivo 2 (cerrá una parte en el 1).':'Tendencia neutral: cerrá la mitad en el objetivo 1 y el resto en el 2.'};})();
+  return {st,title,txt,act,why,c,avg,liq,pf,usd,mg,sup,res,exitAt,tg};}
+const pilTgHTML=a=>!a||!a.tg?'':`<div class="pil-tg"><div class="pil-tgh">🎯 Objetivos de salida</div>${a.tg.L.map((x,i)=>`<div class="pil-tgr${x.rec?' rec':''}"><b>Objetivo ${i+1}${x.rec?' · recomendado':''}</b><span>${fp(x.px)} <small>(${fpct(x.mv)})</small></span><span class="${x.u>=0?'up':'dn'}">${pilMoney(x.u)} <small>(${x.pm>=0?'+':''}${x.pm.toFixed(0)} % del margen)</small></span><small class="mut">${esc(x.why)}</small></div>`).join('')}<div class="mut" style="font-size:11px">${esc(a.tg.txt)}</div></div>`;
 function pilNotify(p,a){if(!a.act||!ntfAny())return;
   notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:'1h',m:'medio'});}
 let pilBusy=false;
@@ -3458,7 +3470,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cn
         <span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
-      ${pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
+      ${pilTgHTML(a)}${pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
       ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
 /* ---------- PILOTEAR v3: costos reales y datos de Binance ----------
    Antes: liquidación con un margen de mantenimiento fijo de 0,5 % y resultado sin comisiones ni funding.
