@@ -67,11 +67,16 @@ function smaStd(v, p) { const m = Array(v.length).fill(null), s = Array(v.length
     if (i >= p - 1) { const mu = a / p; m[i] = mu; s[i] = Math.sqrt(Math.max(0, q / p - mu * mu)); } }
   return [m, s]; }
 
+/* octubre 2026 · CICLO DEL HALVING: TRADING solo da SHORTS en la fase de caída del ciclo de BTC (del máximo del ciclo hasta ~400 días después).
+   4 años de simulación: los shorts en las fases de subida (2022-11 → 2025-10) daban −3,9 % y −7,2 % del margen por operación con 55–59 % ganadas;
+   en la caída, +13,5 % y 72 %. Sin ellos: 64 → 69 % ganadas y +3.884 → +6.597 USD en 4 años (mejoró en las dos mitades). Los longs no cambian. */
+const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d => Date.parse(d + 'T00:00:00Z')), cycFall = t => CYC_TOPS.some(a => t >= a && t < a + 400 * 864e5);
 /* TRADING y TRADING+ sobre la ventana de 299 velas cerradas (igual que la página y el bot) */
 function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = closes(), cb = cc[i].close, atrP = wilder(trArr(), 14)[i] / cb;
   const st = calcST(10, 3).dir[i], e21 = emaArr(cl, 21)[i], e50 = emaArr(cl, 50)[i], e200 = emaArr(cl, 200)[i], r14 = calcRSI(14)[i];
   if (e200 == null || r14 == null) return null;
   const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0; if (!dir) return null;
+  if (dir < 0 && !process.env.SIN_CICLO && !cycFall(cc[i].t)) return null; // shorts solo en la fase de caída del ciclo del halving
   let vs = 0; for (let j = Math.max(0, i - 19); j <= i; j++) vs += cc[j].v; const vr = cc[i].v / ((vs / Math.min(i + 1, 20)) || 1);
   if (!process.env.SIN_D200 && dir * (cb / e200 - 1) * 100 > 8) return null; // v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
   const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 && atrP <= .05 / 3 && atrP <= .017;

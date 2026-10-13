@@ -2127,6 +2127,10 @@ function evalShooter(cs,hc,mins=15){
    Regla: retroceso dentro de la tendencia (Supertrend 10,3 + EMA 21/50 + EMA 200 alineadas, RSI 14 bajo 50 en long / sobre 50 en short),
    volumen bajo en el retroceso y ATR de 4H entre 1 % y 1,67 %.
    Backtest ~11 meses × 60 criptos (con salvavidas): objetivo 1 el 87 %, los 3 objetivos el 36 %, +6,5 % del margen por operación. */
+/* octubre 2026 · CICLO DEL HALVING: TRADING solo da SHORTS en la fase de caída del ciclo de BTC (del máximo del ciclo hasta ~400 días después).
+   4 años de simulación: los shorts en las fases de subida (2022-11 → 2025-10) daban −3,9 % y −7,2 % del margen por operación con 55–59 % ganadas;
+   en la caída, +13,5 % y 72 %. Sin ellos: 64 → 69 % ganadas y +3.884 → +6.597 USD en 4 años (mejoró en las dos mitades). Los longs no cambian. */
+var CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d => Date.parse(d + 'T00:00:00Z')); var cycFall = t => CYC_TOPS.some(a => t >= a && t < a + 400 * 864e5);
 function evalTrading(cs,hc){
   const cc=cs.slice(0,-1);
   return withCandles(cc,()=>{
@@ -2136,6 +2140,7 @@ function evalTrading(cs,hc){
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;
     if(!dir||!(dir>0?r14<50:r14>50)||L.vr>=1||!(atrP>.01&&atrP<=.05/3))return out;
+    if(dir<0&&!cycFall(Date.now()))return out; // shorts solo en la fase de caída del ciclo del halving
     /* octubre 2026: el retroceso tiene que frenar al menos media ATR antes de la EMA 50 (1 año, 55 monedas: objetivo 1 del 79 al 84 %, ganancia por operación de +7,5 a +13 % del margen) */
     const d50=dir*(cb-e50)/atr;if(!(d50>=.5))return out;
     if(dir*(cb/e200-1)*100>8)return out; // v7: el precio no se alejó más de 8 % de la EMA 200
@@ -4290,6 +4295,7 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
     if(e200==null||r14==null)return out;
     const dir=st===1&&e21>e50&&cb>e200?1:st===-1&&e21<e50&&cb<e200?-1:0;if(!dir)return out;
     if(dir*(cb/e200-1)*100>8)return out; // v7: el precio no se alejó más de 8 % de la EMA 200
+    if(dir<0&&!cycFall(Date.now()))return out; // shorts solo en la fase de caída del ciclo del halving
     const rr=dir>0?r14:100-r14,core=L.vr<1&&atrP>.01&&atrP<=.05/3,d50=dir*(cb-e50)/atr;
     let fl6=0,v6=0;for(let j=i-5;j<=i;j++){fl6+=barDelta(cc[j]);v6+=cc[j].v;}fl6=v6?dir*fl6/v6:0;const r24=dir*(cb/cc[i-6].close-1)*100;
     if(core&&rank>=40&&rr<50&&d50<.5)return out; // retroceso demasiado hondo (octubre 2026)
@@ -4897,7 +4903,7 @@ async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IA
       if(!E||E.thr==null||!PR||!((PR.pct>=1&&PR.pct>PR.base_pct)||EF))continue; // solo busca donde sus entradas propias ganaron en la prueba
       for(const tf of tfs){const bs=await btcSide(tf);
         for(const s of U){try{const b=(await kl(s,tf,300)).slice(0,-1);if(b.length<220)continue;const P=IA.prep(b),j=b.length-1,c=b[j].close;let d=0;
-            if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;}
+            if(f==='tr'){const st=P.st[j];if(st&&P.e200[j]!=null&&Math.sign(P.e21[j]-P.e50[j])===st&&Math.sign(c-P.e200[j])===st)d=st;if(d<0&&!cycFall(Date.now()))d=0;} // la IA tampoco abre shorts fuera de la fase de caída
             else{const z=P.bs[j]?(c-P.bm[j])/P.bs[j]:0;if(z<=-1.8&&P.r7[j]!=null&&P.r7[j]<=35)d=1;}
             if(!d)continue;const xv=IA.entryX(P,j,d,bs);let p,fx=null;
             if(EF){fx=await iaFutX(s,d);}if(fx){p=IA.predict(EF.model,xv.concat(fx));if(p<EF.thr)continue;}else{if(!(PR.pct>=1&&PR.pct>PR.base_pct))continue;p=IA.predict(E.model,xv);if(p<E.thr)continue;}
