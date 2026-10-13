@@ -175,6 +175,9 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
 /* octubre 2026 · gráfico estilo TradingView: indicadores en una barra desplegable, temporalidad y herramientas al costado del gráfico,
    y en pantalla completa arriba solo el activo y los indicadores, abajo buscador + temporalidad + herramientas */
 .chrow{flex:1;display:flex;min-height:0;position:relative}
+.modes-row{display:flex;align-items:center;padding:6px 10px;border-bottom:1px solid var(--line);background:var(--panel);flex:none}
+.toolbar .rail{flex-direction:row;width:auto;border:0;background:none;padding:0;gap:2px}.toolbar .rsep{width:1px;height:20px;margin:0 4px}
+.toolbar .tfpop{left:0;top:38px}@media (max-width:800px){.toolbar .ind-top{order:-1}.ind-top{font-size:12px;padding:5px 8px}}
 .rail{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-right:1px solid var(--line);background:var(--panel);flex:none;width:44px;overflow:visible;z-index:12}
 .rbtn{width:34px;height:32px;display:flex;align-items:center;justify-content:center;background:none;border:1px solid transparent;border-radius:8px;color:var(--txt);cursor:pointer;padding:0;flex:none}
 .rbtn svg{width:18px;height:18px}.rbtn:hover{background:#1a1f29}.rbtn.on{background:#1e2a4a;border-color:var(--acc);color:#fff}.rbtn.txt{font-size:10px;font-weight:800;letter-spacing:.02em}
@@ -598,9 +601,10 @@ body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
       <div class="stat">Volumen 24h (USDT)<b id="s-vol">—</b></div>
       <div class="signal hide" id="signal" title="Resumen de los 8 indicadores activos. No es consejo financiero."></div>
     </div>
+    <div class="modes-row"><span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span></div>
     <div id="chartWrap">
       <div class="toolbar">
-        <span class="seg" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span>
+        <span class="tb-slot" id="tbSlot"></span>
         <button class="btn ind-top" id="indTop" type="button" title="Mostrar u ocultar los indicadores"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17l5-6 4 4 8-9"/></svg>Indicadores · <b id="indN">0</b> <i>▾</i></button>
         <button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
       </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>Indicadores ▾</b>: muestra u oculta la barra de indicadores (y sus textos sobre el gráfico). <b>Al costado del gráfico</b>: temporalidad (tocala para ver las demás), cursor, regla, línea, borrar, alerta, reset, LOG y pantalla completa. En pantalla completa, abajo están el buscador de activos, la temporalidad y las herramientas.</li><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li><li class="mut">Gráficos hechos con <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts™</a>.</li></ul></div>
@@ -2999,6 +3003,8 @@ document.addEventListener('click',e=>{if(e.target.closest('#indTog'))$('inds').c
 function indOpen(on){document.body.classList.toggle('ind-open',on);$('inds').classList.toggle('open',on);try{localStorage.setItem('cv_indopen',on?'1':'0')}catch(e){}try{layout();}catch(e){}ovReq&&ovReq();}
 try{indOpen(localStorage.getItem('cv_indopen')==='1');}catch(e){indOpen(false);}
 $('indTop').onclick=()=>indOpen(!document.body.classList.contains('ind-open'));
+/* la barra de herramientas va arriba, en el lugar donde estaban los modos (los modos pasan debajo del activo) */
+try{$('tbSlot').replaceWith($('rail'));}catch(e){}
 /* temporalidad al costado (y abajo en pantalla completa): un botón con la actual; al tocarlo se ven las demás */
 const tfLbl=()=>{const x=TFS.find(t=>t[0]===tf);return x?x[1]:tf;};
 function tfBtns(){['tfBtn','fsTfBtn'].forEach(id=>{const b=$(id);if(b)b.textContent=tfLbl();});}tfBtns();
