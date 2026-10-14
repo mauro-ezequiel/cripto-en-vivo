@@ -153,4 +153,5 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
   R.secs = Math.round((Date.now() - t0) / 1e3);
   fs.writeFileSync('investigacion-trading.json', JSON.stringify(R));
   console.log('listo', R.secs, 's', JSON.stringify({ tb: R.trading_base, sb: R.shooter_base })); }
-main().catch(e => { console.error(e); fs.writeFileSync('investigacion-trading.json', JSON.stringify({ error: String(e && e.stack || e) })); process.exitCode = 1; });
+module.exports = { klines, prep, sim, st, pickOps, agg, idxAfter, lastClosed, getJ, ema, canal };
+if (require.main === module) main().catch(e => { console.error(e); fs.writeFileSync('investigacion-trading.json', JSON.stringify({ error: String(e && e.stack || e) })); process.exitCode = 1; });
