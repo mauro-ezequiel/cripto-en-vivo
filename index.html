@@ -377,6 +377,16 @@ body.fs-on .fsbar{display:flex}
 .pil-note{font-size:10px;color:var(--mut);margin-top:6px}
 .int{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.int .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .int-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.int-tabs button,.int-p button,.int-a button,.int-go{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}
+.vcal{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 8px}.vcal>summary{cursor:pointer;font-size:12.5px;font-weight:700}.vcal>summary .mut{font-weight:400;font-size:11px}
+.vc-t{position:relative;height:16px;margin:8px 0 2px 74px;font-size:10px;color:var(--mut)}.vc-t span{position:absolute;transform:translateX(-50%);white-space:nowrap}
+.vc-r{display:flex;align-items:center;gap:6px;margin:3px 0}.vc-nm{width:68px;flex:none;font-size:11px;font-weight:700;color:var(--txt)}.vc-b{position:relative;flex:1;height:22px;background:var(--bg);border-radius:4px;overflow:hidden}
+.vc-s{position:absolute;top:0;bottom:0;border-right:1px solid var(--panel);display:flex;align-items:center;justify-content:center;gap:3px;padding:0 2px;font-size:10px;white-space:nowrap;overflow:hidden;color:#fff;box-sizing:border-box}
+.vc-s.g{background:#1e8e3e}.vc-s.y{background:#b38f00}.vc-s.r{background:#c62828}.vc-s.n{background:#4a4f59}
+.vc-ley{font-size:10.5px;color:var(--mut);margin:6px 0;display:flex;flex-wrap:wrap;gap:2px 10px}.vc-ley span{white-space:nowrap}.vc-ley i{font-style:normal}.vc-g{color:#1e8e3e}.vc-y{color:#b38f00}.vc-r{color:#e53935}.vc-n{color:#6b7280}
+.vc-tb tr.vc-h td{font-weight:700;color:var(--txt);padding-top:8px;border-bottom:1px solid var(--line)}
+.vc-w{overflow-x:auto}.vc-tb{width:100%;border-collapse:collapse;font-size:11px}.vc-tb th{text-align:left;color:var(--mut);font-weight:400;padding:3px 4px;border-bottom:1px solid var(--line)}.vc-tb td{padding:3px 4px;border-bottom:1px solid var(--line);vertical-align:top;white-space:nowrap}
+.vc-tb td small{display:block;color:var(--mut);white-space:normal;font-size:10px;line-height:1.25}.vc-tb td:first-child{white-space:normal}.vc-tb tr.cur td{background:rgba(38,198,218,.07)}td.vc-g{color:#2ecc71;font-weight:700}td.vc-y{color:#e0b400;font-weight:700}td.vc-r{color:#ef5350;font-weight:700}
+.hrc{font-size:11px;color:#26c6da;margin-left:2px}
 .int-tabs button.on,.int-p button.on{background:#26c6da;color:#0f1115;border-color:#26c6da;font-weight:700}.int-p,.int-a{display:flex;gap:4px;flex-wrap:wrap;align-items:center;margin:8px 0}.int-p .mut{margin-left:6px;font-size:11px}
 .sup{margin:8px 0;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 10px}.sup summary{cursor:pointer;font-weight:700;font-size:12.5px}.sup .mut{font-size:11.5px;margin:8px 0 4px}
 .sup-t{width:100%;border-collapse:collapse;font-size:12px;font-variant-numeric:tabular-nums}.sup-t th{font-weight:600;color:var(--mut);text-align:right;padding:3px 6px;font-size:11px}.sup-t td{padding:4px 6px;text-align:right;border-top:1px solid var(--line)}.sup-t td:first-child,.sup-t th:first-child{text-align:left}.sup-t tr.base td{font-weight:700}.sup-t small{display:block;font-size:10.5px}
@@ -2325,7 +2335,12 @@ const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 /* operaciones descartadas al rehacer el historial con las reglas nuevas: no se vuelven a importar del servidor ni de la nube */
 var OPS_DROP=new Set();try{OPS_DROP=new Set(JSON.parse(localStorage.getItem('cv_ops_drop')||'[]'));}catch(e){}
-const saveOps=()=>{if(OPS.length>400)OPS=OPS.slice(-400);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
+/* octubre 2026 · NO SE BORRA NADA: toda operación que sale de la lista (repetida, rehecha con reglas nuevas, vieja o por el tope de 400)
+   se guarda acá tal como estaba. "📡 Mis señales en vivo → 🕓 Como pasó realmente" la sigue mostrando. */
+var OPS_ARCH=[];try{OPS_ARCH=JSON.parse(localStorage.getItem('cv_ops_arch')||'[]');if(!Array.isArray(OPS_ARCH))OPS_ARCH=[];}catch(e){OPS_ARCH=[];}
+function opsArch(o,why){try{if(!o||!o.id)return;const k=o.id+'|'+why;if(OPS_ARCH.some(x=>x.ak===k))return;const c=JSON.parse(JSON.stringify(o));delete c.reasons;delete c.llBusy;c.arch=why;c.ak=k;c.archT=Date.now();
+  OPS_ARCH.push(c);if(OPS_ARCH.length>3000)OPS_ARCH=OPS_ARCH.slice(-3000);localStorage.setItem('cv_ops_arch',JSON.stringify(OPS_ARCH));}catch(e){}}
+const saveOps=()=>{if(OPS.length>400){for(const o of OPS.slice(0,OPS.length-400))opsArch(o,'tope');OPS=OPS.slice(-400);}try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}if(typeof cloudSave==='function')cloudSave();};
 /* octubre 2026: las operaciones guardadas se pasan a las medidas actuales de la simulación (TRADING y TRADING+ 350 USD × 10,
    SHOOTER 50 USD × 15): ganancia y pérdida se escalan con el nuevo apalancamiento y el stop se recorta al tope nuevo (TRADING+ 7,6 %, SHOOTER 5 %).
    También se borran las repetidas (misma moneda, mismo modo y dirección, con menos de 10 minutos de diferencia). Se puede correr las veces que sea. */
@@ -2342,7 +2357,7 @@ function opsToCurrent(){let ch=false;const seen=[];
      si la página y el bot 24 h abrieron la misma moneda con minutos de diferencia, o se abrió otra con la anterior todavía en curso, la repetida se borra */
   const keep=[];for(const o of OPS.sort((a,b)=>a.t-b.t)){const cool=o.m==='x'?36e5:o.m==='medio'?24*36e5:0;
     const d=keep.find(x=>x.m===o.m&&x.sym===o.sym&&(x.dir===o.dir&&Math.abs(x.t-o.t)<10*6e4||cool&&o.t>=x.t&&(o.t<x.t+cool||x.state==='open'||(x.closeAt&&o.t<x.closeAt))));
-    if(d){OPS_DROP.add(o.id);ch=true;continue;}keep.push(o);}
+    if(d){opsArch(o,'repetida');OPS_DROP.add(o.id);ch=true;continue;}keep.push(o);}
   if(ch){OPS=keep;try{localStorage.setItem('cv_ops',JSON.stringify(OPS));localStorage.setItem('cv_ops_drop',JSON.stringify([...OPS_DROP].slice(-800)));}catch(e){}}
   return ch;}
 function mergeOps(arr){const have=new Map(OPS.map(o=>[o.id,o]));for(const o of arr){if(OPS_DROP.has(o.id))continue;if(o.m==='a'&&o.t<1791218400000)continue;const h=have.get(o.id);if(!h){OPS.push(o);have.set(o.id,o);}else if(h.state==='open'&&o.state!=='open'&&!h.v7)Object.assign(h,o);}OPS.sort((a,b)=>a.t-b.t);try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}try{opsToCurrent();}catch(e){}}
@@ -2358,8 +2373,8 @@ async function opsToV7(){if(v7Busy)return;v7Busy=true;let ch=false;
       const cs=raw.map(toBar).filter(b=>b.t+ms<=o.t+6e4);if(cs.length<210){o.v7=1;ch=true;continue;}
       const X=withCandles(cs,()=>{const i=cs.length-1,cl=closes();return {e200:emaArr(cl,200)[i],atr:wilder(trArr(),14)[i],c:cl[i]};});
       const d=o.dir,keep=X.e200!=null&&(o.m==='x'?X.c>X.e200:d*(X.c/X.e200-1)*100<=8);
-      if(!keep){OPS_DROP.add(o.id);OPS=OPS.filter(x=>x!==o);if(SIG[o.m])SIG[o.m]=SIG[o.m].filter(x=>x.op!==o.id);ch=true;continue;}
-      const G=NEWG[o.m],c=SIM[o.m],e=o.entry,atrP=X.atr/X.c,slD=Math.min(G.max,Math.max(.004,G.a*atrP)),not=c.margin*c.lev,liqD=slD<=c.maxLoss/not+1e-9?slD:c.maxLoss/not;
+      if(!keep){opsArch(o,'v7');OPS_DROP.add(o.id);OPS=OPS.filter(x=>x!==o);if(SIG[o.m])SIG[o.m]=SIG[o.m].filter(x=>x.op!==o.id);ch=true;continue;}
+      opsArch(o,'v7');const G=NEWG[o.m],c=SIM[o.m],e=o.entry,atrP=X.atr/X.c,slD=Math.min(G.max,Math.max(.004,G.a*atrP)),not=c.margin*c.lev,liqD=slD<=c.maxLoss/not+1e-9?slD:c.maxLoss/not;
       Object.assign(o,{tp0:e*(1+d*G.r*slD),tp1:e*(1+d*2*G.r*slD),tp2:e*(1+d*3*G.r*slD),fail:e*(1-d*liqD),liqD,not,lev:c.lev,loss:+(not*liqD).toFixed(2),llAt:o.m==='x'?null:e*(1-d*liqD*LLTH),llMargin:c.margin/2,
         state:'open',hit:0,real:0,ae:null,sz:null,ll:null,llNo:false,llPend:null,llTry:0,closeAt:null,px:null,why:null,pnl:null,cut:false,cutAt:null,last:o.t,v7:1});
       for(let from=o.t,g=0;g<8&&o.state==='open';g++){const k=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${c.kl}&startTime=${from}&limit=1000`);if(!k||!k.length)break;
@@ -3696,9 +3711,41 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
       await new Promise(r=>setTimeout(r,20));}
     ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:7,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
-function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}else L=OPS.filter(o=>o.m===m);
+/* ---------- 📡 Mis señales en vivo: rehechas con las reglas de hoy (sin borrar nada) ----------
+   🕓 Como pasó realmente: las operaciones tal cual se dieron (las de la página + las archivadas + la bitácora del bot 24 h).
+   ↻ Con las reglas de hoy (por defecto): desde tu primera señal en vivo, cada día se toma lo que las reglas actuales hubieran hecho
+   sobre las velas reales (la simulación diaria del último año): las señales que hoy no se tomarían salen, las que sí se vuelven a seguir
+   con el stop y objetivos actuales, y se suman las que faltaban (buenas o malas). Desde la última actualización de la simulación
+   siguen las señales en vivo, que ya usan las reglas actuales. Cuando cambien las reglas, se rehace sola. */
+var LIVEV='rec';try{LIVEV=localStorage.getItem('cv_livev')==='real'?'real':'rec';}catch(e){}
+var BITOPS=null,bitPgT=0;
+const BIT_WHY={1:'tocó el stop',4:'llegó a los 3 objetivos',5:'venció el plazo'};
+async function bitPgLoad(){if(Date.now()-bitPgT<10*6e4)return;bitPgT=Date.now();
+  try{const j=await getJ('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/bitacora.json?t='+Math.floor(Date.now()/6e5));if(!j||!Array.isArray(j.ops))return;
+    BITOPS=j.ops.filter(r=>SIM[r.m]&&Array.isArray(r.tp)).map(r=>{const o=r.out,mg=SIM[r.m].margin;return {id:r.id,m:r.m,setup:r.setup,sym:r.sym,dir:r.dir,entry:r.entry,tp0:r.tp[0],tp1:r.tp[1],tp2:r.tp[2],fail:r.sl,t:r.t,v:r.v,bot:1,
+      hit:o?o.hit:0,state:!o?'open':o.c===1?'fail':o.hit>0?'win':'exp',pnl:o?Math.round(o.pct*mg)/100:null,closeAt:o?o.t:null,lite:o?0:1,
+      why:o?(o.c===3?'llegó al objetivo '+o.hit+' y el resto se cerró en la entrada':o.c===5&&o.hit?'llegó al objetivo '+o.hit+' y venció el plazo':BIT_WHY[o.c]||''):''};});
+    if(HSRC==='live')renderRes(true);}catch(e){}}
+function realOps(m){const L=[],seen=new Set(),inOps=new Set(OPS.map(o=>o.id)),orig=new Map();
+  for(const a of OPS_ARCH)if(a.arch==='v7'&&inOps.has(a.id)&&a.state!=='open'&&!orig.has(a.id))orig.set(a.id,a);
+  const add=o=>{if(!o||o.m!==m||o.setup==='tp-x')return;const k=o.sym+o.dir+Math.round(o.t/6e5);if(seen.has(o.id)||seen.has(k))return;seen.add(o.id);seen.add(k);L.push(o);};
+  for(const o of OPS)add(orig.get(o.id)||o);
+  for(const a of OPS_ARCH)if(!(a.arch==='v7'&&inOps.has(a.id)))add(a);
+  for(const b of BITOPS||[])add(b);
+  return L.sort((a,b)=>a.t-b.t);}
+const REC_TOL={medio:8*36e5,x:36e5,a:2*864e5};
+function recOps(m){const R=realOps(m),sim=m==='a'?HIST_A:histOps()&&histOps().filter(o=>o.m===m&&o.setup!=='tp-x');if(!sim)return null;
+  const t0=R.length?R[0].t:Date.now()-30*864e5,cut=m==='a'?Infinity:(window.HISTYR&&HISTYR.upd)||Date.now(),A=sim.filter(o=>o.t>=t0&&o.t<cut);
+  for(const o of R)if(o.t>=cut&&!o.arch&&!A.some(x=>x.sym===o.sym&&x.t<o.t&&(x.state==='open'||(x.closeAt&&o.t<x.closeAt))))A.push(o);
+  const before=R.filter(o=>o.t<cut),tol=REC_TOL[m]||36e5,used=new Set();let keep=0;
+  for(const o of before){const x=A.find(y=>y.hist&&!used.has(y)&&y.sym===o.sym&&y.dir===o.dir&&Math.abs(y.t-o.t)<=tol);if(x){used.add(x);keep++;}}
+  REC_INFO[m]={t0,cut,n:before.length,keep,out:before.length-keep,add:A.filter(y=>y.hist).length-used.size,has:R.length>0};
+  return A.sort((a,b)=>a.t-b.t);}
+var REC_INFO={};
+function ledOps(m){let L;if(HSRC==='sim'){if(m==='a'){if(!HIST_A&&!histABusy)setTimeout(histStocks,50);L=HIST_A||[];}else L=(histOps()||[]).filter(o=>o.m===m);}
+  else{if(!BITOPS)bitPgLoad();if(LIVEV==='real')L=realOps(m);else{if(m==='a'&&!HIST_A&&!histABusy)setTimeout(histStocks,50);L=recOps(m)||realOps(m);}}
   if(m==='medio')L=L.filter(o=>o.setup!=='tp-x');return L;} // TRADING+ eliminado (octubre 2026): su historial ya no se cuenta
-const ledLoading=m=>HSRC==='sim'&&(m==='a'?!HIST_A:!histOps());
+const ledLoading=m=>(HSRC==='sim'||LIVEV==='rec')&&(m==='a'?!HIST_A:!histOps());
 /* detalle corto de una operación del historial simulado (no guarda precios) */
 function histDet(o){const cfg=SIGCFG[o.m],c=(CAL[o.m]||{})[o.setup];
   return `<div class="hdet"><div class="g"><span>Modo</span><b>${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}/USDT</b>${c?`<span>Tipo de señal</span><b>${c.txt}</b>`:''}
@@ -3712,7 +3759,8 @@ function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=ledOps(m).filt
 function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-reb']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
   const per=(HSRC==='sim'?[[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año']]:[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']]).map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
   const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button></div>`;
-  if(ledLoading(m))return srcRow+`<div class="int-v">⏳ ${m==='a'?'Calculando el último año de ACCIONES con las reglas actuales (unos segundos)…':'Cargando el último año simulado…'}</div>`;
+  const lvRow=HSRC==='live'?`<div class="int-p"><button data-lv="rec" class="${LIVEV==='rec'?'on':''}" title="Tus señales rehechas con las reglas de hoy">↻ Con las reglas de hoy</button><button data-lv="real" class="${LIVEV==='real'?'on':''}" title="Tal cual se dieron, nada se borró">🕓 Como pasó realmente</button></div>`:'';
+  if(ledLoading(m))return srcRow+lvRow+`<div class="int-v">⏳ ${m==='a'?'Calculando el último año de ACCIONES con las reglas actuales (unos segundos)…':'Cargando el último año simulado…'}</div>`;
   const simNote=HSRC==='sim'?`<div class="int-v mut" style="font-size:12px">📅 Simulación de los últimos 365 días con las reglas que usa hoy la página, sobre ${m==='a'?'velas diarias reales de NYSE (comisión 0,1 % por lado)':'velas reales de Binance (comisión 0,05 % por lado)'}. Se recalcula todos los días: entra el día nuevo y sale el más viejo.${m!=='a'&&window.HISTYR?` Actualizado ${fdate(window.HISTYR.upd)}.`:''}${m==='a'?' No incluye el termómetro de noticias de las acciones.':''}</div>`:'';
   let verdict;if(!S.n)verdict='Todavía no hay operaciones cerradas en este período. Las señales se registran solas apenas aparecen.';
   else if(S.n<20)verdict=`Muestra chica (${S.n} cerradas): con menos de 20 el porcentaje puede moverse decenas de puntos por azar. Todavía no alcanza para sacar conclusiones.`;
@@ -3721,7 +3769,9 @@ function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&
       +`Llega al objetivo 1 el ${Math.round(S.o1)} % (azar ${az.p} %). Lo que importa es la plata por operación, no el porcentaje: un objetivo cerca da mucho acierto pero poca ganancia.`;}
   else if(az)verdict=S.o1-az.p>=5?`En vivo llega al objetivo 1 ${Math.round(S.o1-az.p)} puntos más que operar al azar con el mismo stop y objetivos (${az.p} %): la señal aporta.`:S.o1-az.p>-5?`En vivo está en línea con el azar (${az.p} %): por ahora la señal no muestra ventaja clara.`:`En vivo está ${Math.round(az.p-S.o1)} puntos por debajo del azar (${az.p} %): algo no está funcionando.`;
   else verdict=`${S.n} operaciones cerradas.`;
-  return `${srcRow}${simNote}<div class="int-p">${per}<span class="mut">Modo ${SIGCFG[m]?.name||m}${m==='medio'&&HSUB!=='all'?' · '+(HSUB==='plus'?'TRADING+':'solo TRADING'):''}</span></div>
+  const RI=REC_INFO[m],recNote=HSRC==='live'?(LIVEV==='rec'?(RI&&RI.has?`<div class="int-v mut" style="font-size:12px">↻ Rehecho con las reglas de hoy desde tu primera señal (${fdate(RI.t0)}): de tus ${RI.n} señales hasta ${RI.cut===Infinity?'hoy':fdate(RI.cut)} se mantienen <b>${RI.keep}</b>, <b>${RI.out}</b> hoy no se hubieran tomado y se suman <b>${RI.add}</b> que las reglas de hoy sí hubieran dado (buenas o malas), seguidas vela a vela con el stop y los objetivos actuales${m==='a'?'':' (comisión 0,05 % por lado)'}.${RI.cut===Infinity?'':' Después siguen tus señales en vivo.'} Nada se borró: tocá 🕓 Como pasó realmente.</div>`:`<div class="int-v mut" style="font-size:12px">↻ Todavía no hay señales en vivo propias en este modo: se muestran las que hubieran dado las reglas de hoy en los últimos 30 días.</div>`)
+    :`<div class="int-v mut" style="font-size:12px">🕓 Tal cual pasaron: las señales de la página, las que se habían sacado por repetidas o por reglas nuevas (archivadas, nunca se borran) y la bitácora del bot 24 h.</div>`):'';
+  return `${srcRow}${lvRow}${simNote}${recNote}<div class="int-p">${per}<span class="mut">Modo ${SIGCFG[m]?.name||m}${m==='medio'&&HSUB!=='all'?' · '+(HSUB==='plus'?'TRADING+':'solo TRADING'):''}</span></div>
     <div class="int-g"><div>Señales<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
       <div>Llegó al objetivo 1<b>${pc0(S.o1)}</b><small>backtest ${cal?cal.p+' %':'—'}${az?` · azar ${az.p} %`:''}</small></div>
       <div>Llegó a los 3 objetivos<b>${pc0(S.o3)}</b><small>backtest ${cal&&cal.p3!=null?cal.p3+' %':'—'}${az&&az.p3!=null?` · azar ${az.p3} %`:''}</small></div>
@@ -3732,7 +3782,38 @@ function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&
       <div>Factor de ganancia<b>${S.pf!=null?S.pf.toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div>
       <div>Ventaja sobre el azar<b class="${S.avg!=null&&az&&az.usd!=null?(S.avg-az.usd>=0?'up':'dn'):''}">${S.avg!=null&&az&&az.usd!=null?intMoney(S.avg-az.usd):'—'}</b><small>por operación · azar ${az&&az.usd!=null?intMoney(az.usd):'—'}${BT_USD[m]!=null?` · backtest ${intMoney(BT_USD[m])}`:''}</small></div></div>
     <div class="int-v">${verdict}</div>
-    ${HSRC==='sim'&&(m==='medio'||m==='x')?supHTML(m):''}<div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>`;}
+    ${HSRC==='sim'&&(m==='medio'||m==='x')?supHTML(m):''}${vcalHTML()}<div class="int-a"><button data-x="csv">Exportar CSV</button><button data-x="json">Exportar JSON</button></div>`;}
+/* ---------- 📆 Calendario de versiones: cuándo empezó y terminó cada actualización y cómo le fue en vivo ----------
+   Cuenta las operaciones reales (como pasaron, sin rehacer) abiertas mientras regía cada versión. Verde = ganó plata por operación con
+   60 % o más ganadas · amarillo = ganó plata con menos acierto · rojo = perdió plata · gris = sin operaciones cerradas. */
+const VERS={
+  medio:[['v2','2026-10-07T12:53:00+02:00','stop según volatilidad (ATR) y objetivos proporcionales al stop'],['v3','2026-10-07T14:45:00+02:00','× 10 y solo a favor de BTC'],['v4','2026-10-08T14:57:00+02:00','el retroceso tiene que frenar antes de la EMA 50'],
+    ['v7','2026-10-12T19:57:00+02:00','EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v7.1','2026-10-13T21:07:00+02:00','una operación por moneda a la vez'],['v7 + ciclo','2026-10-13T23:57:00+02:00','shorts solo en la fase de caída del ciclo de BTC']],
+  x:[['v2','2026-10-07T12:53:00+02:00','stop según volatilidad, sin salvavidas'],['v3','2026-10-07T15:16:00+02:00','RSI 7 extremo y solo a favor de BTC'],['v3b','2026-10-08T15:08:00+02:00','velas de 3 min: rebote tras caída fuerte'],['v4','2026-10-08T17:02:00+02:00','velas de 15 y 30 min, las 30 con más volumen'],
+    ['v7','2026-10-12T19:57:00+02:00','sobre la EMA 200, stop 4 ATR, objetivos 0,25 × stop'],['v7.1','2026-10-13T21:07:00+02:00','una operación por moneda a la vez'],['v8','2026-10-14T16:29:00+02:00','30 con más volumen de 7 días y sin caídas de más de 10 % en 24 h']],
+  a:[['v2','2026-10-07T15:30:00+02:00','primera versión calibrada'],['v3','2026-10-07T20:18:00+02:00','solo impulso, stop 3 ATR'],['v4','2026-10-08T14:49:00+02:00','rebote tras caída moderada'],['v5','2026-10-12T07:20:00+02:00','tres reglas en diario, hasta × 8'],['v6','2026-10-12T17:42:00+02:00','menor riesgo: rebote y ruptura con el S&P 500 sobre su media de 200']],
+  ia:[['v1','2026-10-08T23:01:00+02:00','entradas propias: opera sola donde ganó en la prueba'],['v2','2026-10-09T22:53:00+02:00','modelo de entradas con datos de futuros'],['v3','2026-10-13T21:07:00+02:00','opera con el stop y objetivos con los que aprende y elige por ganancia por operación'],
+    ['v4','2026-10-13T21:27:00+02:00','solo si en la prueba gana 1 % del margen por operación'],['v5','2026-10-14T16:30:00+02:00','además 70 % de acierto en TRADING y 80 % en SHOOTER']]};
+var VCOPEN=false;
+function vcalStats(L){const n=L.length;if(!n)return {n:0};const net=L.reduce((a,o)=>a+(o.pnl||0),0),mg=L.reduce((a,o)=>a+(o.mg||hxMg(o)),0);return {n,win:L.filter(o=>(o.pnl||0)>0).length/n*100,avg:net/n,pct:mg?net/mg*100:0};}
+const vcalCls=S=>!S.n?'n':S.avg>0&&S.win>=60?'g':S.avg>0?'y':'r';
+function vcalHTML(){try{const now=Date.now(),rows=[['medio','TRADING'],['x','SHOOTER'],['a','ACCIONES'],['ia','IA']],T0=Math.min(...Object.values(VERS).map(v=>Date.parse(v[0][1]))),D0=new Date(T0);D0.setHours(0,0,0,0);
+    const a0=D0.getTime(),span=Math.max(864e5,now-a0),X=t=>Math.max(0,Math.min(100,(t-a0)/span*100)),days=Math.ceil(span/864e5),step=Math.max(1,Math.ceil(days/12));
+    const ticks=Array.from({length:days},(_,k)=>a0+k*864e5).filter((_,k)=>k%step===0).map(t=>{const d=new Date(t);return `<span style="left:${X(t)}%">${d.getDate()}/${d.getMonth()+1}</span>`;}).join('');
+    const fd=t=>{const d=new Date(t);return d.getDate()+'/'+(d.getMonth()+1)+' '+d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});};
+    let bars='',list='';
+    for(const [m,nm] of rows){const V=VERS[m],ops=m==='ia'?(typeof IAOPS!=='undefined'?IAOPS:[]).filter(x=>x.st!=='open').map(x=>({t:x.t,pnl:x.pnl,mg:x.mg||100})):realOps(m).filter(o=>o.state!=='open');
+      let seg='';V.forEach(([v,d,txt],k)=>{const a=Date.parse(d),b=k+1<V.length?Date.parse(V[k+1][1]):now,S=vcalStats(ops.filter(o=>o.t>=a&&o.t<b)),c=vcalCls(S),w=X(b)-X(a),lab=S.n?Math.round(S.win)+' %':'—';
+        seg+=`<div class="vc-s ${c}" style="left:${X(a)}%;width:${Math.max(.6,w)}%" title="${nm} ${v}: ${fd(a)} → ${k+1<V.length?fd(b):'hoy'} · ${S.n?S.n+' cerradas · '+Math.round(S.win)+' % ganadas · '+hxPct(S.pct)+' del margen por op.':'sin operaciones cerradas'}">${w>16?`<b>${esc(v)}</b>${lab}`:w>7?lab:''}</div>`;
+        list+=`${k?'':`<tr class="vc-h"><td colspan="5">${nm}</td></tr>`}<tr class="${k+1<V.length?'':'cur'}"><td><b>${esc(v)}</b><small>${esc(txt)}</small></td><td>${fd(a)}<br>${k+1<V.length?'→ '+fd(b):'→ <b>vigente</b>'}</td><td>${S.n||'—'}</td><td class="vc-${c}">${S.n?Math.round(S.win)+' %':'—'}</td><td class="${S.n?(S.pct>=0?'up':'dn'):''}">${S.n?hxPct(S.pct):'—'}</td></tr>`;});
+      bars+=`<div class="vc-r"><span class="vc-nm">${nm}</span><div class="vc-b">${seg}</div></div>`;}
+    const sy=m=>{const L=(histOps()||[]).filter(o=>o.m===m&&o.state!=='open');const S=vcalStats(L);return S.n?`${m==='x'?'SHOOTER':'TRADING'} ${Math.round(S.win)} % ganadas y ${hxPct(S.pct)} por op.`:'';};
+    const ref=[sy('medio'),sy('x')].filter(Boolean).join(' · ');
+    return `<details class="vcal"${VCOPEN?' open':''}><summary>📆 Calendario de versiones <span class="mut">cómo le fue en vivo a cada actualización</span></summary>
+      <div class="vc-t">${ticks}</div>${bars}
+      <div class="vc-ley"><span><i class="vc-g">■</i> ganó plata y 60 % o más ganadas</span><span><i class="vc-y">■</i> ganó plata con menos acierto</span><span><i class="vc-r">■</i> perdió plata</span><span><i class="vc-n">■</i> sin cerradas</span><span>el % es de operaciones ganadas</span></div>
+      <div class="vc-w"><table class="vc-tb"><tr><th>Versión</th><th>Período</th><th>Cerr.</th><th>Ganadas</th><th>Por op.</th></tr>${list}</table></div>
+      <div class="mut" style="font-size:11px;margin-top:6px">Cuenta las operaciones reales de cada período, como pasaron (sin rehacer)${ref?`. Las reglas de hoy en el último año simulado: ${ref}`:''}. Por op. = % del margen con comisiones.</div></details>`;}catch(e){return '';}}
 /* ---------- 🧪 suplementos en prueba: bots como están hoy contra bots con cada suplemento (no están activos) ---------- */
 function supHTML(m){const S=window.HISTYR&&HISTYR.suplementos;if(!S||!S.anio)return '';const MS=m==='x'?['SHOOTER']:['TRADING'];
   const usdT=(G)=>MS.reduce((a,k)=>a+((G[k]&&G[k].total)||0),0),nT=G=>MS.reduce((a,k)=>a+((G[k]&&G[k].n)||0),0),agg=G=>{const n=nT(G);if(!n)return null;const w=MS.reduce((a,k)=>a+((G[k]&&G[k].n)?G[k].obj1*G[k].n:0),0)/n,u=usdT(G);return {n,dia:MS.reduce((a,k)=>a+((G[k]&&G[k].dia)||0),0),obj1:w,usd:u/n,total:u,peor:Math.min(...MS.map(k=>G[k]&&G[k].n?G[k].peor:0))};};
@@ -3921,7 +4002,7 @@ const hxLive=(o,p)=>o.ia?iaOpLive(o.ia,p):pnlAt(o,p);
 const iaAsOp=x=>({id:'ia-'+x.id,m:x.f==='sh'?'x':'medio',sym:x.sym,dir:x.dir,t:x.t,state:x.st==='open'?'open':x.st==='fail'?'fail':x.st==='win'?'win':'exp',hit:x.hit||0,pnl:x.pnl,why:x.why,entry:x.entry,lev:x.lev,mg:x.mg,ia:x,tf:x.tf,simLab:`${x.mg} USD × ${x.lev} · operación propia de la IA`});
 function hxRow(o){const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
   const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'VIVO'}</span>`:o.state==='win'?'':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
-  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hm"><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b>${stt?`<span class="hs">${stt}</span>`:''}${o.state==='fail'?'':`<span class="hk">${o.hit||0}/3</span>`}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span class="hia">${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
+  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hm"><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b>${HSRC==='live'&&o.hist?'<span class="hrc" title="Rehecha con las reglas de hoy (simulación sobre las velas reales)">↻</span>':''}${stt?`<span class="hs">${stt}</span>`:''}${o.state==='fail'?'':`<span class="hk">${o.hit||0}/3</span>`}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span class="hia">${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
 function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=hxLive(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
   const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
 const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
@@ -3970,7 +4051,8 @@ async function hxFill(o){const c=HXC[o.id]=HXC[o.id]||{};if(c.busy)return;const 
     catch(e){put('ent','<div class="mut">No se pudo revisar la entrada.</div>');}
     c.t=Date.now();}finally{c.busy=false;}}
 setInterval(()=>{try{if(!$('histList')||!HOPEN.size)return;for(const id of HOPEN){const el=$('hxl-'+id);if(!el)continue;const o=ledOps(mode).find(x=>String(x.id)===String(id));if(o&&o.state==='open'){HXC[id]&&(HXC[id].t=0);hxFill(o);}}}catch(e){}},30e3);
-$('resStats').onclick=e=>{const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
+$('resStats').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('vcal'))VCOPEN=e.target.open;},true);
+$('resStats').onclick=e=>{const lv=e.target.closest('[data-lv]');if(lv){LIVEV=lv.dataset.lv;try{localStorage.setItem('cv_livev',LIVEV)}catch(_){}renderRes(true);return;}const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
   const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes(true);return;}
   const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes(true);return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
 $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
@@ -4023,7 +4105,7 @@ $('acuList').onclick=e=>{const b=e.target.closest('[data-acu]');if(!b)return;con
 setTimeout(acuLoad,3000);setInterval(()=>{if(Date.now()-ACUT>30*6e4)acuLoad();else if(seen('acuBox'))acuRender(false);},60e3);
 
 /* ---------- ACCIONES pasa a NYSE en dólares: se descartan operaciones y señales viejas de BYMA en pesos ---------- */
-OPS=OPS.filter(o=>!(o.m==='a'&&o.t<1791218400000));try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}
+for(const o of OPS)if(o.m==='a'&&o.t<1791218400000)opsArch(o,'vieja');OPS=OPS.filter(o=>!(o.m==='a'&&o.t<1791218400000));try{localStorage.setItem('cv_ops',JSON.stringify(OPS))}catch(e){}
 SIG.a=SIG.a.filter(x=>x.t>=1791218400000);saveSig();
 
 /* ---------- buscador del inicio en el celular: se abre una lista del 40 % de la pantalla ---------- */

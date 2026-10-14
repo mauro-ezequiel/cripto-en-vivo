@@ -120,16 +120,43 @@ async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin
   await sendTo(CHAT, text); if (canal && CANAL) await sendTo(CANAL, text); }
 
 /* ---------- publica las señales en la rama "datos" para que la página las muestre ---------- */
-async function ghPublish() { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
+async function ghPublish() { return ghPut('senales.json', JSON.stringify({ upd: Date.now(), senales: S.hist || [] }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
+async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
   const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'cripto-live-bot' }, api = 'https://api.github.com/repos/' + repo;
   try { if (!S.brOk) { let r = await fetch(api + '/git/ref/heads/datos', { headers: H });
       if (r.status === 404) { const mm = await (await fetch(api + '/git/ref/heads/main', { headers: H })).json(); r = await fetch(api + '/git/refs', { method: 'POST', headers: H, body: JSON.stringify({ ref: 'refs/heads/datos', sha: mm.object.sha }) }); }
       if (!r.ok) { console.log('rama datos:', r.status); return false; } S.brOk = true; }
-    let sha = S.fileSha; if (!sha) { const g = await fetch(api + '/contents/senales.json?ref=datos', { headers: H }); if (g.ok) sha = (await g.json()).sha; }
-    const body = JSON.stringify({ upd: Date.now(), senales: S.hist || [] });
-    const r = await fetch(api + '/contents/senales.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: 'Señales del servidor', content: Buffer.from(body).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
-    if (r.ok) { S.fileSha = (await r.json()).content.sha; console.log('Publicadas', (S.hist || []).length, 'señales'); return true; }
-    console.log('publicar:', r.status, (await r.text()).slice(0, 200)); S.fileSha = null; return false; } catch (e) { console.log('publicar error', e.message); return false; } }
+    let sha = S[shaKey]; if (!sha) { const g = await fetch(api + '/contents/' + file + '?ref=datos', { headers: H }); if (g.ok) sha = (await g.json()).sha; }
+    const r = await fetch(api + '/contents/' + file, { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: msg, content: Buffer.from(body).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
+    if (r.ok) { S[shaKey] = (await r.json()).content.sha; console.log('Publicado', file, info || ''); return true; }
+    console.log('publicar', file, r.status, (await r.text()).slice(0, 200)); S[shaKey] = null; return false; } catch (e) { console.log('publicar error', file, e.message); return false; } }
+
+/* ---------- BITÁCORA PERMANENTE (octubre 2026) ----------
+   Cada señal del bot queda guardada para siempre en datos/bitacora.json con: la versión de las reglas que la dio, una foto del libro de órdenes
+   en ese momento (desequilibrio ±0,5 / 1 / 2 %, diferencia compra/venta, profundidad, precio) y cómo terminó (código como el historial:
+   1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
+   Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
+const VER = { medio: 'v7+ciclo', x: 'v8' };
+const bitId = x => x.sym + '-' + x.t;
+const bitRec = x => ({ id: bitId(x), m: x.m, sym: x.sym, dir: x.dir, entry: x.entry, tp: x.tp, sl: x.sl, ll: x.ll == null ? null : x.ll, setup: x.setup || null, conf: x.conf || null, t: x.t, v: x.v || null, libro: x.libro || null, out: null });
+async function bitLoad() { if (Array.isArray(S.bit)) return true;
+  try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/bitacora.json?t=' + Date.now());
+    if (r.ok) { const j = await r.json(); S.bit = Array.isArray(j.ops) ? j.ops : []; } else if (r.status === 404) S.bit = []; else return false; } catch (e) { return false; } // si falla la lectura no se pisa nada: se reintenta
+  for (const x of S.hist || []) if (!S.bit.some(b => b.id === bitId(x))) S.bit.push(bitRec(x)); // las de los últimos 10 días que ya estaban publicadas
+  S.bit.sort((a, b) => a.t - b.t); S.bitDirty = true; return true; }
+/* resultado como % del margen (1/3 de la posición en cada objetivo, el resto al precio de salida), con 0,05 % de comisión por lado */
+function bitPct(r, hit, px) { const lev = SIM[r.m].lev, d = r.dir; let v = 0; for (let k = 0; k < hit; k++) v += d * (r.tp[k] / r.entry - 1) / 3; v += (1 - hit / 3) * d * (px / r.entry - 1); return +((v - .001) * lev * 100).toFixed(2); }
+function bitClose(id, c, hit, px, t) { const r = (S.bit || []).find(b => b.id === id); if (!r || r.out) return; r.out = { c, hit, p: px, t, pct: bitPct(r, hit, px) }; S.bitDirty = true; }
+/* las que no se siguieron en vivo (por ejemplo de antes de la bitácora) se resuelven con velas de 15 min, igual que el seguimiento del bot */
+async function bitResolve(r) { const maxAge = SIGCFG[r.m].maxAge, d = r.dir; let hit = 0;
+  const k = await kl15From(r.sym, r.t); if (!k) return;
+  for (const b of k) { if (b.t + 9e5 <= r.t) continue; const adv = d > 0 ? b.low : b.high, fav = d > 0 ? b.high : b.low;
+    if (!hit && d * (adv - r.sl) <= 0) return bitClose(r.id, 1, 0, r.sl, b.t);
+    if (hit && d * (adv - r.entry) <= 0) return bitClose(r.id, 3, hit, r.entry, b.t);
+    while (hit < 3 && d * (fav - r.tp[hit]) >= 0) hit++;
+    if (hit === 3) return bitClose(r.id, 4, 3, r.tp[2], b.t);
+    if (b.t - r.t > maxAge) return bitClose(r.id, 5, hit, b.close, b.t); } }
+const kl15From = (s, t) => getJ(`${API}/klines?symbol=${s}&interval=15m&startTime=${t - 9e5}&limit=1000`).then(d => d.map(toBar)).catch(() => null);
 
 /* ---------- estado (para no repetir avisos) ---------- */
 let S = { last: {}, open: [], boot: 0, hist: [] };
@@ -155,12 +182,13 @@ async function main() {
 
   /* 1) seguimiento de las señales ya enviadas */
   for (const o of S.open) { const p = px[o.sym]; if (!p) continue; const d = o.dir, c = o.sym.replace('USDT', ''), cfg = SIGCFG[o.m];
+    const bid = o.sym + '-' + o.t;
     while (o.hit < 3 && d * (p - o.tp[o.hit]) >= 0) { o.hit++; await tg(`✅ ${cfg.name} ${c}: llegó al objetivo ${o.hit} (${fp(o.tp[o.hit - 1])}, ${pct(o.tp[o.hit - 1], o.entry)})${o.hit === 1 ? '. Cerrá 1/3 y pasá el stop a la entrada.' : o.hit === 3 ? '. Operación completa 🎯' : '.'}`); }
-    if (o.hit >= 3) { o.done = true; continue; }
+    if (o.hit >= 3) { o.done = true; bitClose(bid, 4, 3, o.tp[2], now); continue; }
     const stop = o.hit > 0 ? o.entry : o.sl;
-    if (d * (stop - p) >= 0) { o.done = true; await tg(o.hit > 0 ? `↩️ ${cfg.name} ${c}: volvió a la entrada (${fp(o.entry)}) después del objetivo ${o.hit}. Se cierra sin pérdida.` : `🛑 ${cfg.name} ${c}: tocó el stop (${fp(o.sl)}, ${pct(o.sl, o.entry)}).`); continue; }
+    if (d * (stop - p) >= 0) { o.done = true; bitClose(bid, o.hit > 0 ? 3 : 1, o.hit, stop, now); await tg(o.hit > 0 ? `↩️ ${cfg.name} ${c}: volvió a la entrada (${fp(o.entry)}) después del objetivo ${o.hit}. Se cierra sin pérdida.` : `🛑 ${cfg.name} ${c}: tocó el stop (${fp(o.sl)}, ${pct(o.sl, o.entry)}).`); continue; }
     if (o.ll != null && !o.llSent && o.hit === 0 && d * (o.ll - p) >= 0) { o.llSent = true; await tg(`🟡🛟 ${cfg.name} ${c}: llegó a la zona del salvavidas (${fp(o.ll)}). Abrí la página para ver si los datos confirman agregar la mitad del margen.`); }
-    if (now - o.t > cfg.maxAge) { o.done = true; await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
+    if (now - o.t > cfg.maxAge) { o.done = true; bitClose(bid, 5, o.hit, p, now); await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
   }
   S.open = S.open.filter(o => !o.done);
   /* ACUMULACIÓN (largo plazo): BTC, ETH y los índices. Aviso por Telegram cuando entran en zona de acumulación (cada 6 h se revisa) */
@@ -202,7 +230,10 @@ async function main() {
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
-        (S.hist = S.hist || []).push({ m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now }); S.histDirty = true;
+        const hx = { m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now, v: VER[m] };
+        (S.hist = S.hist || []).push(hx); S.histDirty = true;
+        let libro = null; try { const dp = await getJ(`${API}/depth?symbol=${s}&limit=1000`); if (dp && dp.bids && dp.bids.length && dp.asks.length) libro = require('./herramientas/libro-lib.js').stats(dp); } catch (er) {} // foto del libro en el momento de la señal
+        if (Array.isArray(S.bit)) { S.bit.push(bitRec(Object.assign({}, hx, { libro }))); S.bitDirty = true; } else (S.bitPend = S.bitPend || []).push(bitRec(Object.assign({}, hx, { libro })));
         await tg(`${d > 0 ? '🟢' : '🔴'} ${cfg.name}: ${d > 0 ? '▲ LONG' : '▼ SHORT'} ${sym}\nEntrada ${fp(c - zone)} – ${fp(c + zone)}\nObjetivos ${fp(tp[0])} · ${fp(tp[1])} · ${fp(tp[2])}\nStop ${fp(sl)} (${pct(sl, c)})${ll != null ? ` · Salvavidas en ${fp(ll)}` : ''}\nAcierto histórico ${conf} % · ${e.reasons.join(' · ')}\n${PAGE}?sym=${s}&tf=${cfg.tf}&m=${m}\nℹ️ Solo informativo, no es consejo financiero.`);
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
@@ -212,6 +243,10 @@ async function main() {
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
   S.hist = (S.hist || []).filter(x => now - x.t < 10 * 864e5).slice(-150);
   if (S.histDirty || !S.pubOk) { if (await ghPublish()) { S.histDirty = false; S.pubOk = true; } }
+  if (await bitLoad()) { if (S.bitPend) { for (const r of S.bitPend) if (!S.bit.some(b => b.id === r.id)) S.bit.push(r); S.bitPend = null; S.bitDirty = true; }
+    let k = 0; for (const r of S.bit) { if (r.out || S.open.some(o => o.sym + '-' + o.t === r.id) || now - r.t < 36e5 || !SIGCFG[r.m] || !Array.isArray(r.tp)) continue; if (k++ >= 6) break; try { await bitResolve(r); } catch (e) {} await sleep(100); }
+    if (S.bitDirty && (!S.bitT || now - S.bitT >= 15 * 6e4) && process.env.GH_TOKEN) { const cerr = S.bit.filter(r => r.out).length;
+      if (await ghPut('bitacora.json', JSON.stringify({ upd: now, nota: 'Todas las señales del bot 24 h, nunca se borran. libro = [i05, i1, i2, spread_pb, prof1_log10, precio] en el momento de la señal. out.c: 1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; out.pct = % del margen con comisión, sin salvavidas.', ops: S.bit }), 'bitSha', 'Bitácora del bot 24 h', S.bit.length + ' señales, ' + cerr + ' cerradas')) { S.bitDirty = false; S.bitT = now; } } }
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }

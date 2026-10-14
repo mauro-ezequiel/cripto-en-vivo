@@ -566,6 +566,44 @@ def libro():
 
 
 OUT['libro'] = libro()
+
+
+def bitacora():
+    """Bitácora permanente del bot 24 h (datos/bitacora.json): cada señal real con su versión de reglas, la foto del libro de órdenes
+    en ese momento y cómo terminó. Mide: % ganadas y % del margen por operación por modo y versión, y si el libro a favor de la
+    dirección (desequilibrio a ±1 %) en el momento de la señal anticipa un mejor resultado."""
+    try:
+        L = json.load(open('bitacora.json'))['ops']
+    except Exception:
+        return {'n': 0}
+    C = [r for r in L if r.get('out')]
+    out = {'n': len(L), 'cerradas': len(C), 'por_modo': {}, 'libro': {}}
+    VERS = {'medio': [('v3', 0), ('v4', 1791464220000), ('v7', 1791827820000), ('v7+ciclo', 1791928620000)],
+            'x': [('v3', 0), ('v4', 1791471720000), ('v7', 1791827820000), ('v8', 1791988140000)]}
+
+    def ver(r):
+        if r.get('v'):
+            return r['v']
+        v = '?'
+        for nm, t in VERS.get(r['m'], []):
+            if r['t'] >= t:
+                v = nm
+        return v
+    for m in ('medio', 'x'):
+        G = {}
+        for r in C:
+            if r['m'] == m:
+                G.setdefault(ver(r), []).append(r['out']['pct'])
+        out['por_modo'][m] = {v: {'n': len(x), 'ganadas': round(100 * sum(1 for y in x if y > 0) / len(x), 1), 'pct_op': round(float(np.mean(x)), 2)} for v, x in G.items()}
+        a = [r['out']['pct'] for r in C if r['m'] == m and r.get('libro') and r['libro'][1] * r['dir'] > .1]
+        c = [r['out']['pct'] for r in C if r['m'] == m and r.get('libro') and r['libro'][1] * r['dir'] < -.1]
+        f = lambda x: {'n': len(x), 'ganadas': round(100 * sum(1 for y in x if y > 0) / len(x), 1), 'pct_op': round(float(np.mean(x)), 2)} if x else {'n': 0}
+        out['libro'][m] = {'a_favor': f(a), 'en_contra': f(c)}
+    return out
+
+
+OUT['bitacora'] = bitacora()
+print('bitacora', OUT['bitacora'])
 print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'], 'libro', OUT['libro'])
 OUT['secs'] = round(time.time() - t0)
 json.dump(OUT, open('ia.json', 'w'), separators=(',', ':'))
