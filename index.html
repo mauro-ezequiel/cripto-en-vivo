@@ -2002,7 +2002,18 @@ function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
      (la volatilidad excesiva se descarta después con el ATR de cada regla) */
   /* octubre 2026 (14 variantes probadas en un año): TRADING y TRADING+ miran todas las cripto con más de 10 M USD de volumen; SHOOTER, las 30 con más volumen.
      Las de menos volumen son las impredecibles: sumarlas empeoró todos los modos. Siguen afuera las que se movieron ±25 % en 24 h. */
-  return Object.values(tickers).filter(t=>!t.fut&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,cfg.n).map(t=>t.s);}
+  const L=Object.values(tickers).filter(t=>!t.fut&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q);
+  if(m==='x'&&SH7.set)return L.filter(t=>SH7.set.has(t.s)&&(t.p||0)>-10).slice(0,cfg.n).map(t=>t.s);
+  return L.slice(0,cfg.n).map(t=>t.s);}
+/* octubre 2026 · SHOOTER v8: la lista de monedas era la del volumen del momento y una moneda que se desploma entra a "las 30 con más volumen"
+   por el pánico: el bot compraba su rebote y seguía cayendo. Diagnóstico de 1 año: con la lista del momento 82,7 % ganadas y +2,6 % por operación;
+   usando solo monedas que están entre las 30 con más volumen PROMEDIO de los últimos 7 días y que no cayeron más de 10 % en 24 h:
+   84,8 % y +3,7 % (mejor en las dos mitades del año). Las que cayeron más de 10 % en 24 h daban 50 % ganadas y −30 % por operación. */
+var SH7={set:null,t:0,busy:false};
+async function sh7Load(){if(SH7.busy||Date.now()-SH7.t<36e5&&SH7.set)return;SH7.busy=true;
+  try{const L=Object.values(tickers).filter(t=>!t.fut&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL).sort((a,b)=>b.q-a.q).slice(0,70),avg=[];
+    for(const t of L){try{const k=await getJ(`${API}/klines?symbol=${t.s}&interval=1d&limit=8`);const c=k.slice(0,-1).slice(-7);if(c.length>=5)avg.push([t.s,c.reduce((a,x)=>a+ +x[7],0)/c.length]);}catch(e){}await new Promise(r=>setTimeout(r,40));}
+    if(avg.length>=30){SH7.set=new Set(avg.sort((a,b)=>b[1]-a[1]).slice(0,30).map(x=>x[0]));SH7.t=Date.now();}}finally{SH7.busy=false;}}
 /* filtro opcional de monedas en modo "locura" (rango promedio de 1 h de la semana): en la prueba del año no mejoró nada, queda apagado (WILD_MAX=0) */
 const UNI_MINVOL=1e7,WILD_MAX=0,WILDC={};
 async function wildOK(s,hc){if(!WILD_MAX)return true;const c=WILDC[s];if(!hc&&c&&Date.now()-c.t<36e5)return c.ok;
@@ -2229,7 +2240,7 @@ async function scanSignals(mm){
   try{
     const fresh=[],U=universe(m),fd=m==='a'?null:await safe(futData(m,U));
     if(m==='a'){try{const j=await getJ(`${D912}/historical/usa_stocks/SPY`,20000),c=j.prices.map(Number).filter(x=>x>0).slice(-200),e=emaArr(c,50);window.__spyUp=c.at(-1)>e.at(-1)?1:-1;const c2=j.prices.map(Number).filter(x=>x>0);if(c2.length>=200){const m2=c2.slice(-200).reduce((a,x)=>a+x,0)/200;window.__spy200=c2.at(-1)>m2?1:-1;}}catch(e){}}
-    if(m==='x'){const bk=await safe(kl('BTCUSDT','1h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir1h=cl.at(-1)>e.at(-1)?1:-1;}}
+    if(m==='x'){try{await sh7Load();}catch(e){}const bk=await safe(kl('BTCUSDT','1h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir1h=cl.at(-1)>e.at(-1)?1:-1;}}
     if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
     for(const s of U){
       if(m==='a'&&OPS.some(o=>o.m==='a'&&o.sym===s&&Date.now()-o.t<15*864e5))continue; // ACCIONES: una señal por acción cada 15 días (como en la prueba)

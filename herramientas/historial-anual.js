@@ -207,6 +207,13 @@ async function run4h(s, rank) {
       ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
   return { rb, tb, llConf }; }
 
+/* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
+   volumen PROMEDIO de los 7 días anteriores (entre las 70 con más volumen de hoy) y se descartan las que cayeron más de 10 % en 24 h. SH_ESTATICA=1 vuelve a la lista fija. */
+let SH7 = !process.env.SH_ESTATICA; const SH7DAY = new Map();
+const sh7ok = (s, t, ch24) => { const d = Math.floor(t / DAY) * DAY, set = SH7DAY.get(d); return !!set && set.has(s) && ch24 > -10; };
+async function sh7Build(list) { const V = {}; for (const s of list) { try { const b = await klRange(s, '1d', DAY, FROM - 40 * DAY, NOW); V[s] = new Map(b.map(x => [x.t, x.v * x.close])); } catch (e) {} }
+  for (let d = Math.floor(FROM / DAY) * DAY; d <= NOW; d += DAY) { const arr = []; for (const s in V) { let a = 0, n = 0; for (let k = 1; k <= 7; k++) { const v = V[s].get(d - k * DAY); if (v) { a += v; n++; } } if (n >= 5) arr.push([s, a / n]); }
+    SH7DAY.set(d, new Set(arr.sort((x, y) => y[1] - x[1]).slice(0, 30).map(x => x[0]))); } }
 async function runShooter(s, rank = 0) {
   const MX = IAX && IAON && rank < IAXN ? await loadMetrics(s) : null;
   const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 300 * SH.htfMs, NOW); if (hb.length < 200) return;
@@ -224,6 +231,7 @@ async function runShooter(s, rank = 0) {
       if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) continue; // v7: solo con el precio sobre la EMA 200
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       if (tooWild(hb, W1, t)) continue;
+      if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) continue; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
       const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
       if (RECUP) res.alt = RV.map(V => { const o = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
@@ -325,6 +333,7 @@ async function main() { const t0 = Date.now();
   let n4 = UNI === 'all' ? base.length : T4.n, nS = Math.min(SH.n, base.length); console.log('monedas', base.length, 'TRADING', n4, 'SHOOTER', nS);
   /* con FUT=1 las de solo futuros se SUMAN al final: las de spot quedan igual que siempre y se comparan por separado */
   let shList = base.slice(0, nS), trList = base.slice(0, n4);
+  if (SH7) { const sup = base.slice(0, 70); await sh7Build(sup); const ever = new Set(); for (const set of SH7DAY.values()) for (const x of set) ever.add(x); shList = sup.filter(x => ever.has(x)); if (shList.length < 10) { SH7 = false; shList = base.slice(0, nS); console.log('SHOOTER v8: sin volumen diario, se usa la lista fija'); } console.log('SHOOTER v8: monedas que pasaron por la lista de 7 días', shList.length); }
   if (FUTON) { let F = []; try { F = await futOnlyList(new Set(T.map(t => t.symbol))); } catch (e) { console.log('no se pudo listar las de futuros:', e.message); } F.forEach(s => FUTSET.add(s)); trList = trList.concat(F); shList = shList.concat(F); console.log('se suman', F.length, F.join(' ')); }
   { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50) }; }
   { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; BTC1 = { b, e: emaArr(closes(), 50) }; }

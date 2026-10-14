@@ -177,7 +177,13 @@ async function main() {
 
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
-    const cfg = SIGCFG[m], U = base.slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
+/* octubre 2026 · SHOOTER v8: la lista de monedas era la del volumen del momento y una moneda que se desploma entra a "las 30 con más volumen"
+   por el pánico: el bot compraba su rebote y seguía cayendo. Diagnóstico de 1 año: con la lista del momento 82,7 % ganadas y +2,6 % por operación;
+   usando solo monedas que están entre las 30 con más volumen PROMEDIO de los últimos 7 días y que no cayeron más de 10 % en 24 h:
+   84,8 % y +3,7 % (mejor en las dos mitades del año). Las que cayeron más de 10 % en 24 h daban 50 % ganadas y −30 % por operación. */
+    if (m === 'x' && (!S.sh7 || now - S.sh7.t > 36e5)) { const avg = []; for (const t of base.slice(0, 70)) { try { const k = await getJ(`${API}/klines?symbol=${t.symbol}&interval=1d&limit=8`); const c = k.slice(0, -1).slice(-7); if (c.length >= 5) avg.push([t.symbol, c.reduce((a, x) => a + +x[7], 0) / c.length]); } catch (e) {} await sleep(40); }
+      if (avg.length >= 30) S.sh7 = { t: now, set: avg.sort((a, b) => b[1] - a[1]).slice(0, 30).map(x => x[0]) }; }
+    const cfg = SIGCFG[m], U = (m === 'x' && S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
     if (m === 'x') { try { const bk = await kl('BTCUSDT', '1h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     if (m === 'medio') { try { const bk = await kl('BTCUSDT', '4h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     for (const s of U) {
