@@ -98,7 +98,7 @@ function run(b, j0, d, lev, cap, ex, G) { const e0 = b[j0].c; let marg = 200, qt
   /* las mejores según lo que pidió el usuario: ≥ 90 % ganadas en aprendizaje, ordenadas por ganancia por operación y peor operación */
   const ok = Object.entries(OUT.res).filter(([, v]) => v.apr.n >= 15 && v.apr.gan >= 90).sort((a, b) => b[1].apr.usd_op - a[1].apr.usd_op);
   OUT.mejores = ok.slice(0, 80).map(([k, v]) => ({ k, ...v }));
-  const top = OUT.mejores.slice(0, 5).map(x => x.k).concat((process.env.DET || '').split(',').filter(k => R[k]));
+  const top = OUT.mejores.slice(0, 5).map(x => x.k).concat((process.env.DET || '').split(',').map(k => k.replace(/:/g, '|')).filter(k => R[k]));
   OUT.res_lista = Object.entries(OUT.res).map(([k, v]) => [k, v.apr.n, v.apr.gan, v.apr.usd_op, v.apr.peor, v.apr.liq, v.prueba.n, v.prueba.gan, v.prueba.usd_op, v.prueba.peor, v.prueba.liq, v.capital]); delete OUT.res; OUT.detalle = {}; for (const k of top) OUT.detalle[k] = R[k].map(x => ({ s: x.s.replace('USDT', ''), t: new Date(x.t).toISOString().slice(0, 10), d: x.d, f: x.f, usd: Math.round(x.usd), adds: x.adds, dias: +x.dias.toFixed(1), liq: x.liq || 0, open: x.open || 0 }));
   fs.writeFileSync('investigacion-ciclo.json', JSON.stringify(OUT, null, 1));
   for (const x of OUT.mejores.slice(0, 15)) console.log(x.k, JSON.stringify(x.apr), '→ prueba', JSON.stringify(x.prueba)); })();
