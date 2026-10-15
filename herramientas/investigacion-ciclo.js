@@ -37,17 +37,20 @@ const ENTRIES = {
   cualquiera: () => true, // referencia: entra apenas puede, solo con la fase
   retroceso4h: (X, i, k, d) => d > 0 ? X.r4[i] < 35 && X.r4[i - 1] >= 35 && X.dc[k] > X.d50[k] : X.r4[i] > 65 && X.r4[i - 1] <= 65 && X.dc[k] < X.d50[k],
   extremo_diario: (X, i, k, d) => d > 0 ? X.dr[k] < 35 : X.dr[k] > 65,
+  extremo30: (X, i, k, d) => d > 0 ? X.dr[k] < 30 : X.dr[k] > 70,
+  extremo40: (X, i, k, d) => d > 0 ? X.dr[k] < 40 : X.dr[k] > 60,
   ema50_diaria: (X, i, k, d) => X.d200[k] != null && (d > 0 ? X.d50[k] > X.d200[k] && X.l4[i] <= X.d50[k] && X.c4[i] > X.d50[k] : X.d50[k] < X.d200[k] && X.h4[i] >= X.d50[k] && X.c4[i] < X.d50[k]),
   bollinger4h: (X, i, k, d) => d > 0 ? X.z4[i] <= -2.2 && X.dc[k] > X.d200[k] : X.z4[i] >= 2.2 && X.dc[k] < X.d200[k],
   doble: (X, i, k, d) => d > 0 ? X.dr[k] < 40 && X.r4[i] < 30 : X.dr[k] > 60 && X.r4[i] > 70,
   btc_y_moneda: (X, i, k, d, B) => B && (d > 0 ? X.dr[k] < 40 && B.dr < 45 : X.dr[k] > 60 && B.dr > 55) };
 /* ---------- gestión ---------- */
 const LEVS = (process.env.LEVS || '2,3,5').split(',').map(Number), CAPS = (process.env.CAPS || '8,15,30').split(',').map(Number);
-const EXITS = { tp60: { tp: .6 }, tp100: { tp: 1 }, seg: { act: .5, back: .25 } };
+const EXITS = Object.fromEntries(Object.entries({ tp60: { tp: .6 }, tp100: { tp: 1 }, tp150: { tp: 1.5 }, seg: { act: .5, back: .25 }, seg100: { act: 1, back: .3 } }).filter(([k]) => (process.env.EXS || 'tp60,tp100,seg').split(',').includes(k)));
 /* resguardo del ciclo: sin = como antes · cierra = si la fase cambia en contra, se cierra ahí · cierra90 = además no se abre en los últimos 90 días de una fase */
-const GUARDS = { sin: { close: 0, last: 0 }, cierra: { close: 1, last: 0 }, cierra90: { close: 1, last: 90 } };
+const GUARDS0 = { sin: { close: 0, last: 0 }, cierra: { close: 1, last: 0 }, cierra90: { close: 1, last: 90 }, cierra150: { close: 1, last: 150 } };
+const GUARDS = Object.fromEntries(Object.entries(GUARDS0).filter(([k]) => (process.env.GDS || 'sin,cierra,cierra90').split(',').includes(k)));
 const ENTS = (process.env.ENTS || 'cualquiera,extremo_diario,doble,btc_y_moneda').split(',');
-const UNIS = { todas: null, grandes: new Set('BTC,ETH,BNB,XRP,SOL,ADA,DOGE,LINK,LTC,TRX,BCH,DOT,AVAX'.split(',').map(x => x + 'USDT')), btc_eth: new Set(['BTCUSDT', 'ETHUSDT']) }; // tp = ganancia sobre el margen total
+const UNIS = { todas: null, grandes: new Set('BTC,ETH,BNB,XRP,SOL,ADA,DOGE,LINK,LTC,TRX,BCH,DOT,AVAX'.split(',').map(x => x + 'USDT')), btc_eth: new Set(['BTCUSDT', 'ETHUSDT']), top4: new Set(['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT']), top5: new Set(['BTCUSDT', 'ETHUSDT', 'BNBUSDT', 'SOLUSDT', 'XRPUSDT']) }; // tp = ganancia sobre el margen total
 function run(b, j0, d, lev, cap, ex, G) { const e0 = b[j0].c; let marg = 200, qty = 200 * lev / e0, cost = qty * e0, fees = cost * FEE, adds = 0, peak = -1e9, mx = 200, fund = 0, t0 = b[j0].t;
   for (let j = j0 + 1; j < b.length; j++) { const x = b[j], adv = d > 0 ? x.l : x.h, fav = d > 0 ? x.h : x.l, a0 = adds;
     fund += qty * x.c * FUND * H4;
