@@ -1,0 +1,3605 @@
+{
+ "fecha": "2026-10-15T07:01:58.705Z",
+ "fases": "subida = halving → +535 d · caída = +535 → +900 · acumulación = +900 → próximo halving",
+ "monedas": [
+  "BTC desde 2017-08",
+  "ETH desde 2017-08"
+ ],
+ "mejores": [
+  {
+   "k": "extremo_diario|3|30|tp100|cierra150|todas",
+   "apr": {
+    "n": 15,
+    "gan": 100,
+    "usd_op": 586.7,
+    "total": 8800,
+    "peor": 200,
+    "liq": 0,
+    "margen_prom": 587,
+    "margen_max": 3200,
+    "dias": 72.2,
+    "abiertas": 0,
+    "long": 8,
+    "short": 7
+   },
+   "prueba": {
+    "n": 13,
+    "gan": 92.3,
+    "usd_op": 462,
+    "total": 6006,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 492,
+    "margen_max": 3200,
+    "dias": 92.3,
+    "abiertas": 0,
+    "long": 8,
+    "short": 5
+   },
+   "todo": {
+    "n": 28,
+    "gan": 96.4,
+    "usd_op": 528.8,
+    "total": 14806,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 543,
+    "margen_max": 3200,
+    "dias": 81.5,
+    "abiertas": 0,
+    "long": 16,
+    "short": 12
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 4,
+     "usd": 2700,
+     "liq": 0
+    },
+    "2022": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 3,
+     "usd": 3700,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra150|grandes",
+   "apr": {
+    "n": 15,
+    "gan": 100,
+    "usd_op": 586.7,
+    "total": 8800,
+    "peor": 200,
+    "liq": 0,
+    "margen_prom": 587,
+    "margen_max": 3200,
+    "dias": 72.2,
+    "abiertas": 0,
+    "long": 8,
+    "short": 7
+   },
+   "prueba": {
+    "n": 13,
+    "gan": 92.3,
+    "usd_op": 462,
+    "total": 6006,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 492,
+    "margen_max": 3200,
+    "dias": 92.3,
+    "abiertas": 0,
+    "long": 8,
+    "short": 5
+   },
+   "todo": {
+    "n": 28,
+    "gan": 96.4,
+    "usd_op": 528.8,
+    "total": 14806,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 543,
+    "margen_max": 3200,
+    "dias": 81.5,
+    "abiertas": 0,
+    "long": 16,
+    "short": 12
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 4,
+     "usd": 2700,
+     "liq": 0
+    },
+    "2022": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 3,
+     "usd": 3700,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra150|btc_eth",
+   "apr": {
+    "n": 15,
+    "gan": 100,
+    "usd_op": 586.7,
+    "total": 8800,
+    "peor": 200,
+    "liq": 0,
+    "margen_prom": 587,
+    "margen_max": 3200,
+    "dias": 72.2,
+    "abiertas": 0,
+    "long": 8,
+    "short": 7
+   },
+   "prueba": {
+    "n": 13,
+    "gan": 92.3,
+    "usd_op": 462,
+    "total": 6006,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 492,
+    "margen_max": 3200,
+    "dias": 92.3,
+    "abiertas": 0,
+    "long": 8,
+    "short": 5
+   },
+   "todo": {
+    "n": 28,
+    "gan": 96.4,
+    "usd_op": 528.8,
+    "total": 14806,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 543,
+    "margen_max": 3200,
+    "dias": 81.5,
+    "abiertas": 0,
+    "long": 16,
+    "short": 12
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 4,
+     "usd": 2700,
+     "liq": 0
+    },
+    "2022": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 3,
+     "usd": 3700,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra150|top4",
+   "apr": {
+    "n": 15,
+    "gan": 100,
+    "usd_op": 586.7,
+    "total": 8800,
+    "peor": 200,
+    "liq": 0,
+    "margen_prom": 587,
+    "margen_max": 3200,
+    "dias": 72.2,
+    "abiertas": 0,
+    "long": 8,
+    "short": 7
+   },
+   "prueba": {
+    "n": 13,
+    "gan": 92.3,
+    "usd_op": 462,
+    "total": 6006,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 492,
+    "margen_max": 3200,
+    "dias": 92.3,
+    "abiertas": 0,
+    "long": 8,
+    "short": 5
+   },
+   "todo": {
+    "n": 28,
+    "gan": 96.4,
+    "usd_op": 528.8,
+    "total": 14806,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 543,
+    "margen_max": 3200,
+    "dias": 81.5,
+    "abiertas": 0,
+    "long": 16,
+    "short": 12
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 4,
+     "usd": 2700,
+     "liq": 0
+    },
+    "2022": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 3,
+     "usd": 3700,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra150|top5",
+   "apr": {
+    "n": 15,
+    "gan": 100,
+    "usd_op": 586.7,
+    "total": 8800,
+    "peor": 200,
+    "liq": 0,
+    "margen_prom": 587,
+    "margen_max": 3200,
+    "dias": 72.2,
+    "abiertas": 0,
+    "long": 8,
+    "short": 7
+   },
+   "prueba": {
+    "n": 13,
+    "gan": 92.3,
+    "usd_op": 462,
+    "total": 6006,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 492,
+    "margen_max": 3200,
+    "dias": 92.3,
+    "abiertas": 0,
+    "long": 8,
+    "short": 5
+   },
+   "todo": {
+    "n": 28,
+    "gan": 96.4,
+    "usd_op": 528.8,
+    "total": 14806,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 543,
+    "margen_max": 3200,
+    "dias": 81.5,
+    "abiertas": 0,
+    "long": 16,
+    "short": 12
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 4,
+     "usd": 2700,
+     "liq": 0
+    },
+    "2022": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 3,
+     "usd": 3700,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra90|todas",
+   "apr": {
+    "n": 17,
+    "gan": 100,
+    "usd_op": 539.9,
+    "total": 9179,
+    "peor": 179,
+    "liq": 0,
+    "margen_prom": 559,
+    "margen_max": 3200,
+    "dias": 72,
+    "abiertas": 0,
+    "long": 9,
+    "short": 8
+   },
+   "prueba": {
+    "n": 14,
+    "gan": 92.9,
+    "usd_op": 443.3,
+    "total": 6206,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 471,
+    "margen_max": 3200,
+    "dias": 87,
+    "abiertas": 0,
+    "long": 9,
+    "short": 5
+   },
+   "todo": {
+    "n": 31,
+    "gan": 96.8,
+    "usd_op": 496.3,
+    "total": 15385,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 519,
+    "margen_max": 3200,
+    "dias": 78.8,
+    "abiertas": 0,
+    "long": 18,
+    "short": 13
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 5,
+     "usd": 2900,
+     "liq": 0
+    },
+    "2022": {
+     "n": 5,
+     "usd": 979,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 4,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra90|grandes",
+   "apr": {
+    "n": 17,
+    "gan": 100,
+    "usd_op": 539.9,
+    "total": 9179,
+    "peor": 179,
+    "liq": 0,
+    "margen_prom": 559,
+    "margen_max": 3200,
+    "dias": 72,
+    "abiertas": 0,
+    "long": 9,
+    "short": 8
+   },
+   "prueba": {
+    "n": 14,
+    "gan": 92.9,
+    "usd_op": 443.3,
+    "total": 6206,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 471,
+    "margen_max": 3200,
+    "dias": 87,
+    "abiertas": 0,
+    "long": 9,
+    "short": 5
+   },
+   "todo": {
+    "n": 31,
+    "gan": 96.8,
+    "usd_op": 496.3,
+    "total": 15385,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 519,
+    "margen_max": 3200,
+    "dias": 78.8,
+    "abiertas": 0,
+    "long": 18,
+    "short": 13
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 5,
+     "usd": 2900,
+     "liq": 0
+    },
+    "2022": {
+     "n": 5,
+     "usd": 979,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 4,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra90|btc_eth",
+   "apr": {
+    "n": 17,
+    "gan": 100,
+    "usd_op": 539.9,
+    "total": 9179,
+    "peor": 179,
+    "liq": 0,
+    "margen_prom": 559,
+    "margen_max": 3200,
+    "dias": 72,
+    "abiertas": 0,
+    "long": 9,
+    "short": 8
+   },
+   "prueba": {
+    "n": 14,
+    "gan": 92.9,
+    "usd_op": 443.3,
+    "total": 6206,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 471,
+    "margen_max": 3200,
+    "dias": 87,
+    "abiertas": 0,
+    "long": 9,
+    "short": 5
+   },
+   "todo": {
+    "n": 31,
+    "gan": 96.8,
+    "usd_op": 496.3,
+    "total": 15385,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 519,
+    "margen_max": 3200,
+    "dias": 78.8,
+    "abiertas": 0,
+    "long": 18,
+    "short": 13
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 5,
+     "usd": 2900,
+     "liq": 0
+    },
+    "2022": {
+     "n": 5,
+     "usd": 979,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 4,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra90|top4",
+   "apr": {
+    "n": 17,
+    "gan": 100,
+    "usd_op": 539.9,
+    "total": 9179,
+    "peor": 179,
+    "liq": 0,
+    "margen_prom": 559,
+    "margen_max": 3200,
+    "dias": 72,
+    "abiertas": 0,
+    "long": 9,
+    "short": 8
+   },
+   "prueba": {
+    "n": 14,
+    "gan": 92.9,
+    "usd_op": 443.3,
+    "total": 6206,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 471,
+    "margen_max": 3200,
+    "dias": 87,
+    "abiertas": 0,
+    "long": 9,
+    "short": 5
+   },
+   "todo": {
+    "n": 31,
+    "gan": 96.8,
+    "usd_op": 496.3,
+    "total": 15385,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 519,
+    "margen_max": 3200,
+    "dias": 78.8,
+    "abiertas": 0,
+    "long": 18,
+    "short": 13
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 5,
+     "usd": 2900,
+     "liq": 0
+    },
+    "2022": {
+     "n": 5,
+     "usd": 979,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 4,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  },
+  {
+   "k": "extremo_diario|3|30|tp100|cierra90|top5",
+   "apr": {
+    "n": 17,
+    "gan": 100,
+    "usd_op": 539.9,
+    "total": 9179,
+    "peor": 179,
+    "liq": 0,
+    "margen_prom": 559,
+    "margen_max": 3200,
+    "dias": 72,
+    "abiertas": 0,
+    "long": 9,
+    "short": 8
+   },
+   "prueba": {
+    "n": 14,
+    "gan": 92.9,
+    "usd_op": 443.3,
+    "total": 6206,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 471,
+    "margen_max": 3200,
+    "dias": 87,
+    "abiertas": 0,
+    "long": 9,
+    "short": 5
+   },
+   "todo": {
+    "n": 31,
+    "gan": 96.8,
+    "usd_op": 496.3,
+    "total": 15385,
+    "peor": -94,
+    "liq": 0,
+    "margen_prom": 519,
+    "margen_max": 3200,
+    "dias": 78.8,
+    "abiertas": 0,
+    "long": 18,
+    "short": 13
+   },
+   "capital": 3700,
+   "anios": {
+    "2018": {
+     "n": 3,
+     "usd": 1200,
+     "liq": 0
+    },
+    "2019": {
+     "n": 3,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2020": {
+     "n": 1,
+     "usd": 200,
+     "liq": 0
+    },
+    "2021": {
+     "n": 5,
+     "usd": 2900,
+     "liq": 0
+    },
+    "2022": {
+     "n": 5,
+     "usd": 979,
+     "liq": 0
+    },
+    "2023": {
+     "n": 4,
+     "usd": 800,
+     "liq": 0
+    },
+    "2024": {
+     "n": 2,
+     "usd": 1000,
+     "liq": 0
+    },
+    "2025": {
+     "n": 4,
+     "usd": 3900,
+     "liq": 0
+    },
+    "2026": {
+     "n": 4,
+     "usd": 506,
+     "liq": 0
+    }
+   }
+  }
+ ],
+ "res_lista": [
+  [
+   "extremo_diario|3|30|tp100|cierra90|todas",
+   17,
+   100,
+   539.9,
+   179,
+   0,
+   14,
+   92.9,
+   443.3,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra90|grandes",
+   17,
+   100,
+   539.9,
+   179,
+   0,
+   14,
+   92.9,
+   443.3,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra90|btc_eth",
+   17,
+   100,
+   539.9,
+   179,
+   0,
+   14,
+   92.9,
+   443.3,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra90|top4",
+   17,
+   100,
+   539.9,
+   179,
+   0,
+   14,
+   92.9,
+   443.3,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra90|top5",
+   17,
+   100,
+   539.9,
+   179,
+   0,
+   14,
+   92.9,
+   443.3,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra150|todas",
+   15,
+   100,
+   586.7,
+   200,
+   0,
+   13,
+   92.3,
+   462,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra150|grandes",
+   15,
+   100,
+   586.7,
+   200,
+   0,
+   13,
+   92.3,
+   462,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra150|btc_eth",
+   15,
+   100,
+   586.7,
+   200,
+   0,
+   13,
+   92.3,
+   462,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra150|top4",
+   15,
+   100,
+   586.7,
+   200,
+   0,
+   13,
+   92.3,
+   462,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp100|cierra150|top5",
+   15,
+   100,
+   586.7,
+   200,
+   0,
+   13,
+   92.3,
+   462,
+   -94,
+   0,
+   3700
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra90|todas",
+   13,
+   100,
+   1283,
+   179,
+   0,
+   10,
+   100,
+   827.7,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra90|grandes",
+   13,
+   100,
+   1283,
+   179,
+   0,
+   10,
+   100,
+   827.7,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra90|btc_eth",
+   13,
+   100,
+   1283,
+   179,
+   0,
+   10,
+   100,
+   827.7,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra90|top4",
+   13,
+   100,
+   1283,
+   179,
+   0,
+   10,
+   100,
+   827.7,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra90|top5",
+   13,
+   100,
+   1283,
+   179,
+   0,
+   10,
+   100,
+   827.7,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra150|todas",
+   12,
+   100,
+   1375,
+   300,
+   0,
+   9,
+   100,
+   886.3,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra150|grandes",
+   12,
+   100,
+   1375,
+   300,
+   0,
+   9,
+   100,
+   886.3,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra150|btc_eth",
+   12,
+   100,
+   1375,
+   300,
+   0,
+   9,
+   100,
+   886.3,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra150|top4",
+   12,
+   100,
+   1375,
+   300,
+   0,
+   9,
+   100,
+   886.3,
+   145,
+   0,
+   6400
+  ],
+  [
+   "extremo_diario|3|30|tp150|cierra150|top5",
+   12,
+   100,
+   1375,
+   300,
+   0,
+   9,
+   100,
+   886.3,
+   145,
+   0,
+   6400
+  ]
+ ],
+ "detalle": {
+  "extremo_diario|3|30|tp100|cierra150|todas": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp100|cierra150|grandes": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp100|cierra150|btc_eth": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp100|cierra150|top4": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp100|cierra150|top5": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp150|cierra90|btc_eth": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 210,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 217.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 63,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 3150,
+    "adds": 19,
+    "dias": 136,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 181.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 98.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 35.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 108.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 450,
+    "adds": 1,
+    "dias": 193.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 332,
+    "adds": 1,
+    "dias": 224.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 145,
+    "adds": 0,
+    "dias": 365,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 1200,
+    "adds": 6,
+    "dias": 109.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 24.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 207.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 450,
+    "adds": 1,
+    "dias": 75.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 194,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-07-19",
+    "d": -1,
+    "f": "caida",
+    "usd": 179,
+    "adds": 3,
+    "dias": 101.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 84.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 270.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 1050,
+    "adds": 5,
+    "dias": 153,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 95,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-06-23",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 23.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 149.8,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp150|cierra150|btc_eth": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 210,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 217.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 63,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 3150,
+    "adds": 19,
+    "dias": 136,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 181.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 98.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 35.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 108.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 450,
+    "adds": 1,
+    "dias": 193.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 332,
+    "adds": 1,
+    "dias": 224.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 145,
+    "adds": 0,
+    "dias": 365,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 1200,
+    "adds": 6,
+    "dias": 109.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 24.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 207.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 450,
+    "adds": 1,
+    "dias": 75.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 194,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 84.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 300,
+    "adds": 0,
+    "dias": 270.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 1050,
+    "adds": 5,
+    "dias": 153,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 4800,
+    "adds": 30,
+    "dias": 95,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 300,
+    "adds": 0,
+    "dias": 149.8,
+    "liq": 0,
+    "open": 0
+   }
+  ],
+  "extremo_diario|3|30|tp100|cierra90|btc_eth": [
+   {
+    "s": "BTC",
+    "t": "2018-04-25",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 49.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2018-07-18",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 125.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2019-09-25",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 500,
+    "adds": 3,
+    "dias": 137.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2020-09-04",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 53.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-04-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 2100,
+    "adds": 19,
+    "dias": 107.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2021-11-09",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 25.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-03-28",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 42.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 68.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2023-08-18",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2024-05-02",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 190.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-02-25",
+    "d": 1,
+    "f": "subida",
+    "usd": 300,
+    "adds": 1,
+    "dias": 136.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2025-10-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 45.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-01-06",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 31.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "BTC",
+    "t": "2026-04-18",
+    "d": -1,
+    "f": "caida",
+    "usd": -94,
+    "adds": 1,
+    "dias": 172.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2018-04-21",
+    "d": -1,
+    "f": "caida",
+    "usd": 800,
+    "adds": 6,
+    "dias": 53.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-01-30",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 19.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2019-07-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 203.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-05-24",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 2.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-06-22",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 40,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2021-10-30",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 83.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-03-27",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 46,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-07-19",
+    "d": -1,
+    "f": "caida",
+    "usd": 179,
+    "adds": 3,
+    "dias": 101.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2022-11-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 65.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-03-10",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.7,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2023-06-15",
+    "d": 1,
+    "f": "acumulacion",
+    "usd": 200,
+    "adds": 0,
+    "dias": 173.8,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2024-07-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 700,
+    "adds": 5,
+    "dias": 130.5,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-02-05",
+    "d": 1,
+    "f": "subida",
+    "usd": 3200,
+    "adds": 30,
+    "dias": 93.3,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2025-06-23",
+    "d": 1,
+    "f": "subida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 18,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-01-07",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 26.2,
+    "liq": 0,
+    "open": 0
+   },
+   {
+    "s": "ETH",
+    "t": "2026-03-17",
+    "d": -1,
+    "f": "caida",
+    "usd": 200,
+    "adds": 0,
+    "dias": 81.3,
+    "liq": 0,
+    "open": 0
+   }
+  ]
+ }
+}
