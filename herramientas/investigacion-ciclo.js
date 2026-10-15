@@ -14,6 +14,9 @@ const API = 'https://data-api.binance.vision/api/v3', DAY = 864e5, H4 = 4 * 36e5
 const SPLIT = Date.parse('2023-01-01');
 const SYMS = (process.env.SYMS || 'BTC,ETH,BNB,XRP,ADA,SOL,DOGE,LTC,LINK,TRX,DOT,AVAX,BCH,XLM,ATOM,ETC,NEAR,UNI,FIL,EOS,NEO,LUNA,FTT,IOTA,XMR').split(',').map(s => s + 'USDT');
 const HALV = ['2012-11-28', '2016-07-09', '2020-05-11', '2024-04-20', '2028-04-15'].map(d => Date.parse(d));
+function faseEnd(t) { let h = HALV[0], nx = HALV[HALV.length - 1]; for (let k = 0; k < HALV.length; k++) if (HALV[k] <= t) { h = HALV[k]; nx = HALV[k + 1] || h + 1460 * DAY; } const d = (t - h) / DAY;
+  return d < 535 ? h + 535 * DAY : d < 900 ? h + 900 * DAY : nx; } // cuándo termina la fase actual
+const dirF = f => f === 'caida' ? -1 : 1;
 function fase(t) { let h = HALV[0]; for (const x of HALV) if (x <= t) h = x; const d = (t - h) / DAY; return d < 535 ? 'subida' : d < 900 ? 'caida' : 'acumulacion'; }
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function getJ(u) { for (let k = 0; k < 6; k++) { try { const r = await fetch(u); if (r.ok) return await r.json(); if (r.status === 400) return null; } catch (e) {} await sleep(1500 * (k + 1)); } return null; }
@@ -39,11 +42,16 @@ const ENTRIES = {
   doble: (X, i, k, d) => d > 0 ? X.dr[k] < 40 && X.r4[i] < 30 : X.dr[k] > 60 && X.r4[i] > 70,
   btc_y_moneda: (X, i, k, d, B) => B && (d > 0 ? X.dr[k] < 40 && B.dr < 45 : X.dr[k] > 60 && B.dr > 55) };
 /* ---------- gestión ---------- */
-const LEVS = (process.env.LEVS || '3,5,10').split(',').map(Number), CAPS = (process.env.CAPS || '2,4,8,30').split(',').map(Number);
-const EXITS = { tp30: { tp: .3 }, tp60: { tp: .6 }, tp100: { tp: 1 }, seg: { act: .5, back: .25 } }; // tp = ganancia sobre el margen total
-function run(b, j0, d, lev, cap, ex) { const e0 = b[j0].c; let marg = 200, qty = 200 * lev / e0, cost = qty * e0, fees = cost * FEE, adds = 0, peak = -1e9, mx = 200, fund = 0, t0 = b[j0].t;
+const LEVS = (process.env.LEVS || '2,3,5').split(',').map(Number), CAPS = (process.env.CAPS || '8,15,30').split(',').map(Number);
+const EXITS = { tp60: { tp: .6 }, tp100: { tp: 1 }, seg: { act: .5, back: .25 } };
+/* resguardo del ciclo: sin = como antes · cierra = si la fase cambia en contra, se cierra ahí · cierra90 = además no se abre en los últimos 90 días de una fase */
+const GUARDS = { sin: { close: 0, last: 0 }, cierra: { close: 1, last: 0 }, cierra90: { close: 1, last: 90 } };
+const ENTS = (process.env.ENTS || 'cualquiera,extremo_diario,doble,btc_y_moneda').split(',');
+const UNIS = { todas: null, grandes: new Set('BTC,ETH,BNB,XRP,SOL,ADA,DOGE,LINK,LTC,TRX,BCH,DOT,AVAX'.split(',').map(x => x + 'USDT')), btc_eth: new Set(['BTCUSDT', 'ETHUSDT']) }; // tp = ganancia sobre el margen total
+function run(b, j0, d, lev, cap, ex, G) { const e0 = b[j0].c; let marg = 200, qty = 200 * lev / e0, cost = qty * e0, fees = cost * FEE, adds = 0, peak = -1e9, mx = 200, fund = 0, t0 = b[j0].t;
   for (let j = j0 + 1; j < b.length; j++) { const x = b[j], adv = d > 0 ? x.l : x.h, fav = d > 0 ? x.h : x.l, a0 = adds;
     fund += qty * x.c * FUND * H4;
+    if (G && G.close && dirF(fase(x.t)) !== d) { const u = d * (qty * x.o - cost) - fees - fund - qty * x.o * FEE; return { usd: u, adds, mx, dias: (x.t - t0) / DAY, fase: 1, liq: u <= -marg ? 1 : 0, end: x.t }; }
     const pnl = p => d * (qty * p - cost) - fees - fund;
     /* en contra: suma margen cada vez que la pérdida llega al 50 % del total; si ya no puede sumar y pierde todo, se liquida */
     let guard = 0;
@@ -66,23 +74,28 @@ function run(b, j0, d, lev, cap, ex) { const e0 = b[j0].c; let marg = 200, qty =
     OUT.monedas.push(s.replace('USDT', '') + ' desde ' + new Date(b4[0].t).toISOString().slice(0, 7)); console.log(s, b4.length); }
   const BT = D.BTCUSDT;
   const R = {};
-  for (const en in ENTRIES) for (const lev of LEVS) for (const cap of CAPS) for (const exn in EXITS) {
-    const key = [en, lev, cap, exn].join('|'), L = [];
+  for (const en of ENTS) for (const lev of LEVS) for (const cap of CAPS) for (const exn in EXITS) for (const gn in GUARDS) {
+    const key = [en, lev, cap, exn, gn].join('|'), L = [], G = GUARDS[gn];
     for (const s in D) { const { b4, b1, X } = D[s]; let free = 0;
       for (let i = 60; i < b4.length - 1; i++) { const t = b4[i].t + H4; if (t < free) continue; const k = lastClosed(b1, DAY, t); if (k < 200 || X.d50[k] == null) continue;
-        const f = fase(t), d = f === 'caida' ? -1 : 1;
+        const f = fase(t), d = f === 'caida' ? -1 : 1; if (G.last && faseEnd(t) - t < G.last * DAY) continue;
         let B = null; if (BT) { const kb = lastClosed(BT.b1, DAY, t); if (kb >= 20) B = { dr: BT.X.dr[kb] }; }
         if (!ENTRIES[en](X, i, k, d, B)) continue;
-        const r = run(b4, i, d, lev, cap, EXITS[exn]); L.push({ s, t, d, f, ...r }); free = r.end + H4; if (r.open) break; } }
+        const r = run(b4, i, d, lev, cap, EXITS[exn], G); L.push({ s, t, d, f, ...r }); free = r.end + H4; if (r.open) break; } }
     R[key] = L; }
   const sum = L => { const C = L.filter(x => !x.open); if (!C.length) return { n: 0 }; const u = C.map(x => x.usd), m = C.map(x => x.mx); const tot = u.reduce((a, v) => a + v, 0);
     return { n: C.length, gan: +(100 * u.filter(v => v > 0).length / C.length).toFixed(1), usd_op: +(tot / C.length).toFixed(1), total: Math.round(tot), peor: Math.round(Math.min(...u)), liq: C.filter(x => x.liq).length,
       margen_prom: Math.round(m.reduce((a, v) => a + v, 0) / C.length), margen_max: Math.max(...m), dias: +(C.reduce((a, x) => a + x.dias, 0) / C.length).toFixed(1), abiertas: L.length - C.length,
       long: C.filter(x => x.d > 0).length, short: C.filter(x => x.d < 0).length }; };
-  for (const k in R) { const L = R[k]; OUT.res[k] = { apr: sum(L.filter(x => x.t < SPLIT)), prueba: sum(L.filter(x => x.t >= SPLIT)), todo: sum(L) }; }
+  /* capital necesario: la suma del margen máximo de todas las operaciones abiertas a la vez (cota alta) */
+  const capital = L => { const ev = []; for (const x of L) { ev.push([x.t, x.mx]); ev.push([x.end, -x.mx]); } ev.sort((a, b) => a[0] - b[0] || a[1] - b[1]); let c = 0, m = 0; for (const [, v] of ev) { c += v; m = Math.max(m, c); } return m; };
+  const anio = L => { const o = {}; for (const x of L) if (!x.open) { const y = new Date(x.t).getUTCFullYear(); (o[y] = o[y] || { n: 0, usd: 0, liq: 0 }); o[y].n++; o[y].usd += x.usd; o[y].liq += x.liq || 0; } for (const y in o) o[y].usd = Math.round(o[y].usd); return o; };
+  for (const k in R) for (const un in UNIS) { const U = UNIS[un], L = U ? R[k].filter(x => U.has(x.s)) : R[k]; const kk = k + '|' + un;
+    OUT.res[kk] = { apr: sum(L.filter(x => x.t < SPLIT)), prueba: sum(L.filter(x => x.t >= SPLIT)), todo: sum(L), capital: capital(L), anios: anio(L) }; R[kk] = L; }
   /* las mejores según lo que pidió el usuario: ≥ 90 % ganadas en aprendizaje, ordenadas por ganancia por operación y peor operación */
-  const ok = Object.entries(OUT.res).filter(([, v]) => v.apr.n >= 20 && v.apr.gan >= 90).sort((a, b) => b[1].apr.usd_op - a[1].apr.usd_op);
-  OUT.mejores = ok.slice(0, 40).map(([k, v]) => ({ k, ...v }));
-  const top = OUT.mejores.slice(0, 5).map(x => x.k); OUT.detalle = {}; for (const k of top) OUT.detalle[k] = R[k].map(x => ({ s: x.s.replace('USDT', ''), t: new Date(x.t).toISOString().slice(0, 10), d: x.d, f: x.f, usd: Math.round(x.usd), adds: x.adds, dias: +x.dias.toFixed(1), liq: x.liq || 0, open: x.open || 0 }));
+  const ok = Object.entries(OUT.res).filter(([, v]) => v.apr.n >= 15 && v.apr.gan >= 90).sort((a, b) => b[1].apr.usd_op - a[1].apr.usd_op);
+  OUT.mejores = ok.slice(0, 80).map(([k, v]) => ({ k, ...v }));
+  const top = OUT.mejores.slice(0, 5).map(x => x.k).concat((process.env.DET || '').split(',').filter(k => R[k]));
+  OUT.res_lista = Object.entries(OUT.res).map(([k, v]) => [k, v.apr.n, v.apr.gan, v.apr.usd_op, v.apr.peor, v.apr.liq, v.prueba.n, v.prueba.gan, v.prueba.usd_op, v.prueba.peor, v.prueba.liq, v.capital]); delete OUT.res; OUT.detalle = {}; for (const k of top) OUT.detalle[k] = R[k].map(x => ({ s: x.s.replace('USDT', ''), t: new Date(x.t).toISOString().slice(0, 10), d: x.d, f: x.f, usd: Math.round(x.usd), adds: x.adds, dias: +x.dias.toFixed(1), liq: x.liq || 0, open: x.open || 0 }));
   fs.writeFileSync('investigacion-ciclo.json', JSON.stringify(OUT, null, 1));
   for (const x of OUT.mejores.slice(0, 15)) console.log(x.k, JSON.stringify(x.apr), '→ prueba', JSON.stringify(x.prueba)); })();
