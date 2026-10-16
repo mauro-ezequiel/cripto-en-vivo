@@ -213,8 +213,8 @@ async function semanal(now) { const d = new Date(now), wk = Math.floor((now - 4 
   lines.push(`🔄 Trade del ciclo: ${co.length ? co.map(o => `${o.sym.replace('USDT', '')} ${o.dir > 0 ? 'LONG' : 'SHORT'} abierta, ${o.adds} sumas, margen ${o.marg} USD`).join(' · ') : 'sin operación abierta'}${cc.length ? ` · cerró ${cc.length} (${cc.reduce((a, o) => a + o.pnl, 0).toFixed(0)} USD)` : ''}`);
   const I = (S.ia && S.ia.ops || []).filter(o => o.st !== 'open' && o.closeT >= t0), ir = st(I.filter(o => !o.pr).map(o => ({ pct: o.pnl / o.mg * 100 }))), ip = st(I.filter(o => o.pr).map(o => ({ pct: o.pnl / o.mg * 100 })));
   lines.push(`🧠 IA: reales ${ir ? `${ir.n} · ${ir.w} % ganadas · ${pc(ir.avg)}` : 'ninguna'} · práctica ${ip ? `${ip.n} · ${ip.w} % ganadas · ${pc(ip.avg)}` : 'ninguna'}`);
-  const W = walletSim(B.concat(I.filter(o => !o.pr).map(o => ({ pct: o.pnl / o.mg * 100, end: o.closeT }))));
-  lines.push('', `💼 Billetera simulada (1.000 USD, 10 % del capital por operación, todas las señales actuales): ${W.c.toFixed(0)} USD (${pc((W.c / 1000 - 1) * 100)}) · peor caída ${pc(W.dd * 100)}`, `${PAGE}`, 'ℹ️ Solo informativo, no es consejo financiero.');
+  const usd = B.reduce((a, x) => a + x.pct * (x.m === 'medio' ? 350 : 50) / 100, 0) + I.filter(o => !o.pr).reduce((a, o) => a + o.pnl, 0) + cc.reduce((a, o) => a + o.pnl, 0);
+  lines.push('', `💼 Billetera (11.000 USD con los márgenes de siempre, bots + IA + Trade del ciclo, sin ACCIONES): ${usd >= 0 ? '+' : '−'}${Math.abs(usd).toFixed(2)} USD esta semana (${pc(usd / 11000 * 100)}). En la página la ves en vivo con tus casillas y márgenes.`, `${PAGE}`, 'ℹ️ Solo informativo, no es consejo financiero.');
   await tg(lines.join('\n'), false); }
 
 let calT = 0;
