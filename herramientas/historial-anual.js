@@ -354,12 +354,22 @@ async function main() { const t0 = Date.now();
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
 
   const ops = pick(), cal = { medio: {}, x: {} };
+  /* CORR=1 (investigación de la cláusula del halving): correlación de los retornos diarios con BTC en los 90 días anteriores a cada operación */
+  if (process.env.CORR) { const D1 = {}, get = async s => { if (!D1[s]) { try { const b = await klRange(s, '1d', DAY, FROM - 120 * DAY, NOW); D1[s] = new Map(b.map(x => [x.t, x.close])); } catch (e) { D1[s] = new Map(); } } return D1[s]; };
+    const B = await get('BTCUSDT');
+    for (const o of ops) { const C = await get(o.s), d0 = Math.floor(o.t / DAY) * DAY, x = [], y = [];
+      for (let k = 90; k >= 1; k--) { const a1 = C.get(d0 - k * DAY), a0 = C.get(d0 - (k + 1) * DAY), b1 = B.get(d0 - k * DAY), b0 = B.get(d0 - (k + 1) * DAY); if (a1 && a0 && b1 && b0) { x.push(Math.log(a1 / a0)); y.push(Math.log(b1 / b0)); } }
+      if (x.length >= 60) { const n = x.length, mx = x.reduce((a, v) => a + v, 0) / n, my = y.reduce((a, v) => a + v, 0) / n; let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; }
+        o.corr = +(sxy / Math.sqrt(sxx * syy || 1)).toFixed(2); } else o.corr = o.s === 'BTCUSDT' ? 1 : null; } }
   for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
   const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
     cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
-    /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin] */
-    ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd]) };
+    /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin,
+       entrada, stop (fracción), objetivos × stop, apalancamiento] (octubre 2026: con entrada y stop la página muestra el resultado en vivo de las que siguen en curso)
+       con CORR=1 además: correlación diaria con BTC de los 90 días anteriores */
+    ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd,
+      +(+o.entry).toPrecision(8), +(+o.sl).toFixed(5), o.r, o.L, ...(o.corr != null ? [o.corr] : [])]) };
   if (RECUP) { const done = ops.filter(o => !o.open && o.alt && o.setup !== 'tp-x'); out.recup = { variantes: RV };
     const sumr = L => { const n = L.length; if (!n) return { n: 0 }; const lo = L.filter(v => v < 0), w = L.filter(v => v > 0).reduce((a, v) => a + v, 0), l = -lo.reduce((a, v) => a + v, 0);
       return { n, pct: +(L.reduce((a, v) => a + v, 0) / n).toFixed(2), gana: +((n - lo.length) / n * 100).toFixed(1), perd_media: lo.length ? +(l / lo.length).toFixed(1) : 0, peor: +Math.min(...L).toFixed(1), pf: l ? +(w / l).toFixed(2) : null }; };
