@@ -1,0 +1,27 @@
+name: ACCIONES 24 h
+on:
+  schedule:
+    - cron: '7,37 * * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: acciones
+  cancel-in-progress: false
+jobs:
+  revisar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Instalar el control del navegador
+        run: npm i --no-save --no-package-lock playwright-core@1.47.2
+      - name: Buscar señales de ACCIONES con la página
+        run: node herramientas/acciones-bot.js
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT: ${{ secrets.TELEGRAM_CHAT }}
+          GH_TOKEN: ${{ github.token }}
