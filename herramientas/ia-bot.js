@@ -39,7 +39,7 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
   if (M && M.tr && M.sh) { A.last = A.last || {};
     for (const f of ['tr', 'sh']) { const C = CFG[f], E = M[f] && M[f].entry; if (!E || !E.model || E.thr == null) continue;
       const real = gates(E, f), thr = Math.max(E.thr, (M.vivo && M.vivo[f] && M.vivo[f].thr) || 0), thrP = E.thr * PRACT;
-      for (const tf of C.tfs) { const ms = TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last[f + tf] === bar || now - bar < 60e3) continue; A.last[f + tf] = bar; ch = true;
+      for (const tf of C.tfs) { const ms = TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last[f + tf] === bar || now - bar < 60e3) continue; A.last[f + tf] = bar; ch = true; if (now - bar > 20 * 6e4) continue; // solo velas recién cerradas: precio de entrada real
         let bs = 0; try { const b = (await kl('BTCUSDT', tf, 80)).slice(0, -1), e = IA._.ema(b.map(x => x.close), 50); bs = b[b.length - 1].close > e[e.length - 1] ? 1 : -1; } catch (e) {}
         const out = [];
         for (const s of U[f]) { try { const b = (await kl(s, tf, 300)).slice(0, -1); if (b.length < 220) continue; const P = IA.prep(b), j = b.length - 1, c = b[j].close; let d = 0;
