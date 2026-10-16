@@ -2292,6 +2292,9 @@ function buildSignalV2(m,sym,e,fd){
   const S=SIM[m],T=TGTS[setup]||(m==='p'?TGTS['t-pb']:null);let tp0,tp1,tp2,sl;
   if(setup==='tp-x'&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING+ solo a favor de BTC
   if(m==='medio'&&NEWG_SET[setup]&&(!window.__btcDir||window.__btcDir!==dir))return null; // TRADING solo a favor de BTC
+  /* octubre 2026 · TRADING v6: solo si la tendencia de BTC tiene fuerza (ADX de 4 h ≥ 24). 4 años con costos reales, elegido con la 1ª mitad y medido en la 2ª:
+     1ª mitad −0,9 → +7,5 % del margen por operación; 2ª mitad +14,8 → +20,9 % y 75,7 → 80,2 % ganadas, con el 80 % de las señales */
+  if(m==='medio'&&NEWG_SET[setup]&&window.__btcAdx!=null&&window.__btcAdx<24)return null;
   if(setup==='c-reb'||setup==='c-rup'||setup==='c-rsi2'||setup==='c-mom'||setup==='c-pb'){const slD=Math.min(STKG.max,Math.max(.004,STKG.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*STKG.r*slD));sl=c*(1-dir*slD);}
   else if(setup==='tp-x'){const slD=Math.min(PLUSG.max,PLUSG.a*atrP);[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*PLUSG.r*slD));sl=c*(1-dir*slD);}
   else if(NEWG[m]&&NEWG_SET[setup]){const G=NEWG[m],slD=Math.min(G.max,Math.max(.004,G.a*atrP));[tp0,tp1,tp2]=[1,2,3].map(k=>c*(1+dir*k*G.r*slD));sl=c*(1-dir*slD);}
@@ -2317,7 +2320,7 @@ async function scanSignals(mm){
     const fresh=[],U=universe(m),fd=m==='a'?null:await safe(futData(m,U));
     if(m==='a'){try{const j=await getJ(`${D912}/historical/usa_stocks/SPY`,20000),c=j.prices.map(Number).filter(x=>x>0).slice(-200),e=emaArr(c,50);window.__spyUp=c.at(-1)>e.at(-1)?1:-1;const c2=j.prices.map(Number).filter(x=>x>0);if(c2.length>=200){const m2=c2.slice(-200).reduce((a,x)=>a+x,0)/200;window.__spy200=c2.at(-1)>m2?1:-1;}}catch(e){}}
     if(m==='x'){try{await sh7Load();}catch(e){}const bk=await safe(kl('BTCUSDT','1h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir1h=cl.at(-1)>e.at(-1)?1:-1;}}
-    if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',80));if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;}}
+    if(m==='medio'||m==='p'){const bk=await safe(kl('BTCUSDT','4h',300));if(bk&&bk.length>60){const cc=bk.slice(0,-1),cl=cc.map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;try{window.__btcAdx=withCandles(cc,()=>calcADX(14).adx).at(-1);}catch(_){}}}
     for(const s of U){
       if(m==='a'&&OPS.some(o=>o.m==='a'&&o.sym===s&&Date.now()-o.t<15*864e5))continue; // ACCIONES: una señal por acción cada 15 días (como en la prueba)
       try{let cs,hc,e,tf30=false;
@@ -3865,7 +3868,7 @@ function ledHTML(){const m=mode;if(VERSEL&&HSRC==='live'&&VERD){const h=verDetai
    60 % o más ganadas · amarillo = ganó plata con menos acierto · rojo = perdió plata · gris = sin operaciones cerradas. */
 const VERS={
   medio:[['v1','2026-10-07T12:53:00+02:00','tendencia alineada y retroceso; stop 3 ATR, objetivos 0,5 × stop'],['v2','2026-10-07T14:45:00+02:00','+ solo a favor de BTC'],['v3','2026-10-08T14:57:00+02:00','+ el retroceso frena antes de la EMA 50'],
-    ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo']],
+    ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo'],['v6','2026-10-17T00:30:00+02:00','+ solo si la tendencia de BTC tiene fuerza (ADX 4 h ≥ 24)']],
   x:[['v1','2026-10-07T12:53:00+02:00','5 min: Bollinger ±2 y RSI 7, LONG y SHORT'],['v2','2026-10-07T15:16:00+02:00','+ RSI 7 extremo y a favor de BTC'],['v3','2026-10-08T15:08:00+02:00','3 min: rebote tras caer 3 % en 1 h'],['v4','2026-10-08T17:02:00+02:00','15 y 30 min, las 30 con más volumen'],
     ['v5','2026-10-12T19:57:00+02:00','+ sobre la EMA 200, stop 4 ATR, objetivos 0,25 × stop'],['v6','2026-10-14T16:29:00+02:00','+ lista de 7 días y sin caídas de más de 10 % en 24 h']],
   a:[['v1','2026-10-07T15:30:00+02:00','primera versión calibrada'],['v2','2026-10-07T20:18:00+02:00','solo impulso, stop 3 ATR'],['v3','2026-10-08T14:49:00+02:00','rebote tras caída moderada'],['v4','2026-10-12T07:20:00+02:00','tres reglas en diario, hasta × 8'],['v5','2026-10-12T17:42:00+02:00','menor riesgo: rebote y ruptura con el S&P 500 sobre su media de 200']],
@@ -3963,7 +3966,7 @@ function mgChanged(){mgApply();try{localStorage.setItem('cv_ops',JSON.stringify(
    de cada señal, qué observación le suma más y cuál le arruina las señales (para quedarse con lo bueno y sacar lo malo). */
 var VERD=null,verT=0,VEROPEN=new Set(),VERBOX=false,VERSEL=null,VEROPS=new Set();
 async function verLoad(){if(Date.now()-verT<5*6e4)return;verT=Date.now();try{const j=await getJ('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/versiones.json?t='+Math.floor(Date.now()/6e4));if(j&&Array.isArray(j.ops)){VERD=j;if(HSRC==='live')renderRes(true);}}catch(e){}}
-const VER_F={rsi14:'RSI 14',adx:'ADX (fuerza de la tendencia)',ema200_dist:'distancia a la EMA 200 (%)',ema50_atr:'distancia a la EMA 50 (en ATR)',volumen:'volumen relativo',atr_pct:'volatilidad (ATR %)',btc_a_favor:'BTC a favor',ciclo_a_favor:'fase del ciclo a favor',
+const VER_F={adx_btc:'fuerza de la tendencia de BTC (ADX 4 h)',rsi14:'RSI 14',adx:'ADX (fuerza de la tendencia)',ema200_dist:'distancia a la EMA 200 (%)',ema50_atr:'distancia a la EMA 50 (en ATR)',volumen:'volumen relativo',atr_pct:'volatilidad (ATR %)',btc_a_favor:'BTC a favor',ciclo_a_favor:'fase del ciclo a favor',
   tendencia_diaria:'tendencia diaria a favor',hora:'hora (UTC)',rsi7:'RSI 7',bollinger_z:'distancia a la banda de Bollinger',caida_1h:'caída de la última hora (%)',tendencia_1h:'tendencia de 1 h a favor',cambio_24h:'cambio en 24 h (%)'};
 function verGroups(C){const keys=new Set();C.forEach(o=>Object.keys(o.f||{}).forEach(k=>keys.add(k)));const G=[];
   for(const k of keys){const V=C.filter(o=>o.f&&o.f[k]!=null);if(V.length<10)continue;const vals=[...new Set(V.map(o=>o.f[k]))];
@@ -4744,7 +4747,7 @@ evalTradingPlus=function(cs,hc,rank){const cc=cs.slice(0,-1);
 scanPlus=async function(){if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
   try{const cfg=SIGCFG.medio,now=Date.now();
     /* TRADING+ solo opera a favor de BTC (4h sobre/bajo su EMA 50): se actualiza acá por si TRADING no escaneó todavía */
-    try{const bk=await kl('BTCUSDT','4h',80);if(bk&&bk.length>60){const cl=bk.slice(0,-1).map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;window.__btcT=now;}}catch(e){}
+    try{const bk=await kl('BTCUSDT','4h',300);if(bk&&bk.length>60){const cc=bk.slice(0,-1),cl=cc.map(b=>b.close),e=emaArr(cl,50);window.__btcDir=cl.at(-1)>e.at(-1)?1:-1;window.__btcT=now;try{window.__btcAdx=withCandles(cc,()=>calcADX(14).adx).at(-1);}catch(_){}}}catch(e){}
     const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>UNI_MINVOL&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).map(t=>t.s);
     const fresh=[];
     for(let r=0;r<U.length;r++){const s=U[r];

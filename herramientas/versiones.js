@@ -10,7 +10,8 @@ const VERS = {
     { v: 2, desde: '2026-10-07T14:45:00+02:00', txt: '+ solo a favor de BTC', btc: 1, brake: 0, d200: 0, ciclo: 0, r: .5 },
     { v: 3, desde: '2026-10-08T14:57:00+02:00', txt: '+ el retroceso tiene que frenar antes de la EMA 50', btc: 1, brake: 1, d200: 0, ciclo: 0, r: .5 },
     { v: 4, desde: '2026-10-12T19:57:00+02:00', txt: '+ precio a menos de 8 % de la EMA 200, objetivos 0,75 × stop', btc: 1, brake: 1, d200: 1, ciclo: 0, r: .75 },
-    { v: 5, desde: '2026-10-13T23:57:00+02:00', txt: '+ shorts solo en la fase de caída del ciclo del halving', btc: 1, brake: 1, d200: 1, ciclo: 1, r: .75 }],
+    { v: 5, desde: '2026-10-13T23:57:00+02:00', txt: '+ shorts solo en la fase de caída del ciclo del halving', btc: 1, brake: 1, d200: 1, ciclo: 1, r: .75 },
+    { v: 6, desde: '2026-10-17T00:30:00+02:00', txt: '+ solo si la tendencia de BTC tiene fuerza (ADX de 4 h ≥ 24)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, r: .75 }],
   x: [
     { v: 1, desde: '2026-10-07T12:53:00+02:00', txt: 'Velas de 5 min: cierre fuera de la banda de Bollinger (±2) con RSI 7 ≤ 35 / ≥ 65 y la tendencia de 15 min a favor (LONG y SHORT)', k: 'bb', tfs: ['5m'], htf: '15m', r7: 35, btc: 0, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
     { v: 2, desde: '2026-10-07T15:16:00+02:00', txt: '+ RSI 7 extremo (≤ 25 / ≥ 75) y solo a favor de BTC', k: 'bb', tfs: ['5m'], htf: '15m', r7: 25, btc: 1, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
@@ -23,7 +24,7 @@ const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d 
 const r2 = v => v == null || !isFinite(v) ? null : +(+v).toFixed(2);
 
 /* D: funciones del bot (withCandles, closes, emaArr, calcRSI, calcADX, calcST, smaStd, wilder, trArr, htfTrend, lastBarStats, kl, getJ, API, ghPut, sleep) */
-function trAll(D, cs, hc, rank, btcDir, now) { const cc = cs.slice(0, -1);
+function trAll(D, cs, hc, rank, btcDir, now, btcAdx) { const cc = cs.slice(0, -1);
   return D.withCandles(cc, () => { const i = cc.length - 1, cl = D.closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = D.wilder(D.trArr(), 14)[i], atrP = atr / cb;
     const st = D.calcST(10, 3).dir[i], e21 = D.emaArr(cl, 21)[i], e50 = D.emaArr(cl, 50)[i], e200 = D.emaArr(cl, 200)[i], r14 = D.calcRSI(14)[i], L = D.lastBarStats(cc, i);
     if (e200 == null || r14 == null) return [];
@@ -33,9 +34,9 @@ function trAll(D, cs, hc, rank, btcDir, now) { const cc = cs.slice(0, -1);
     let setup = null; if (pull) setup = rank < 40 ? 't-pb' : 'tp-u80'; else if (rank < 40 && soft && adx != null && adx >= 25) setup = 'tp-r55'; if (!setup) return [];
     const brakeOk = !(pull && dir * (cb - e50) / atr < .5), d200 = dir * (cb / e200 - 1) * 100, fall = cycFall(now);
     const f = { rsi14: r2(r14), adx: r2(adx), ema200_dist: r2(d200), ema50_atr: r2(dir * (cb - e50) / atr), volumen: r2(L.vr), atr_pct: r2(atrP * 100), btc_a_favor: btcDir === dir ? 1 : 0,
-      ciclo_a_favor: (dir < 0) === fall ? 1 : 0, tendencia_diaria: Math.sign(D.htfTrend(hc)) === dir ? 1 : 0, hora: new Date(now).getUTCHours() };
+      ciclo_a_favor: (dir < 0) === fall ? 1 : 0, adx_btc: r2(btcAdx), tendencia_diaria: Math.sign(D.htfTrend(hc)) === dir ? 1 : 0, hora: new Date(now).getUTCHours() };
     const out = [];
-    for (const V of VERS.medio) { if (V.btc && btcDir !== dir) continue; if (V.brake && !brakeOk) continue; if (V.d200 && d200 > 8) continue; if (V.ciclo && dir < 0 && !fall) continue;
+    for (const V of VERS.medio) { if (V.btc && btcDir !== dir) continue; if (V.brake && !brakeOk) continue; if (V.d200 && d200 > 8) continue; if (V.ciclo && dir < 0 && !fall) continue; if (V.adxb && !(btcAdx >= 24)) continue;
       out.push({ v: V.v, dir, c, atrP, r: V.r, setup, f }); }
     return out; }); }
 function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1), mins = TFMS[tf] / 6e4, back = Math.round(60 / mins);
@@ -68,8 +69,9 @@ async function run(now, base, U7, D) { const S = D.S;
   /* TRADING (4 h): todas las versiones con cada vela de 4 h recién cerrada */
   const b4 = Math.floor(now / (4 * H)) * 4 * H;
   if (A.last.tr !== b4 && now - b4 >= 6e4 && now - b4 < 30 * 6e4) { A.last.tr = b4; ch = true; const bd = await btc('4h'); const rank = {}; base.forEach((t, k) => rank[t.symbol] = k);
+    let ba = null; try { const bb = (await D.kl('BTCUSDT', '4h', 300)).slice(0, -1); ba = D.withCandles(bb, () => D.calcADX(14).adx)[bb.length - 1]; } catch (e) {}
     for (const t of base) { const s = t.symbol; try { const [cs, hc] = await Promise.all([D.kl(s, '4h', 300), D.kl(s, '1d', 120)]); if (cs.length < 150 || hc.length < 30) continue;
-        for (const x of trAll(D, cs, hc, rank[s], bd, now)) add('medio', s, x, '4h'); A.diag.tr = (A.diag.tr || 0) + 1; } catch (e) { A.diag.err = 'tr ' + s + ': ' + e.message; } await D.sleep(40); } }
+        for (const x of trAll(D, cs, hc, rank[s], bd, now, ba)) add('medio', s, x, '4h'); A.diag.tr = (A.diag.tr || 0) + 1; } catch (e) { A.diag.err = 'tr ' + s + ': ' + e.message; } await D.sleep(40); } }
   /* SHOOTER: cada temporalidad cuando cierra su vela */
   const groups = [['5m', '15m', base.slice(0, 45)], ['3m', '1h', base.slice(0, 30)], ['15m', '1h', base.slice(0, 30)], ['30m', '1h', base.slice(0, 30)]];
   if (U7) for (const g of groups.slice(2)) for (const t of base) if (U7.has(t.symbol) && !g[2].includes(t)) g[2].push(t);
