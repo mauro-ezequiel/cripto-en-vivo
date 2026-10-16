@@ -59,7 +59,7 @@ function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.
 async function run(now, base, U7, D) { const S = D.S;
   if (!S.ver) { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/versiones.json?t=' + now);
       if (r.ok) { const j = await r.json(); S.ver = { ops: Array.isArray(j.ops) ? j.ops : [], last: {} }; } else if (r.status === 404) S.ver = { ops: [], last: {} }; else return; } catch (e) { return; } }
-  const A = S.ver; A.last = A.last || {}; let ch = false; const K = {}, get = (s, tf, n) => { const k = s + tf; return K[k] || (K[k] = D.kl(s, tf, n).catch(() => null)); };
+  const A = S.ver; A.last = A.last || {}; A.diag = A.diag || {}; let ch = false; const K = {}, get = (s, tf, n) => { const k = s + tf; return K[k] || (K[k] = D.kl(s, tf, n).catch(() => null)); };
   const btc = async tf => { const b = await get('BTCUSDT', tf, 80); if (!b) return 0; const cl = b.slice(0, -1).map(x => x.close), e = D.emaArr(cl, 50); return cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; };
   const add = (m, s, x, tf) => { const V = VERS[m].find(y => y.v === x.v), G = m === 'medio' ? TR : V, cool = G.cool;
     if (A.ops.some(o => o.m === m && o.v === x.v && o.sym === s && (!o.out || now - o.t < cool))) return;
@@ -69,14 +69,14 @@ async function run(now, base, U7, D) { const S = D.S;
   const b4 = Math.floor(now / (4 * H)) * 4 * H;
   if (A.last.tr !== b4 && now - b4 >= 6e4 && now - b4 < 30 * 6e4) { A.last.tr = b4; ch = true; const bd = await btc('4h'); const rank = {}; base.forEach((t, k) => rank[t.symbol] = k);
     for (const t of base) { const s = t.symbol; try { const [cs, hc] = await Promise.all([D.kl(s, '4h', 300), D.kl(s, '1d', 120)]); if (cs.length < 150 || hc.length < 30) continue;
-        for (const x of trAll(D, cs, hc, rank[s], bd, now)) add('medio', s, x, '4h'); } catch (e) {} await D.sleep(40); } }
+        for (const x of trAll(D, cs, hc, rank[s], bd, now)) add('medio', s, x, '4h'); A.diag.tr = (A.diag.tr || 0) + 1; } catch (e) { A.diag.err = 'tr ' + s + ': ' + e.message; } await D.sleep(40); } }
   /* SHOOTER: cada temporalidad cuando cierra su vela */
   const groups = [['5m', '15m', base.slice(0, 45)], ['3m', '1h', base.slice(0, 30)], ['15m', '1h', base.slice(0, 30)], ['30m', '1h', base.slice(0, 30)]];
   if (U7) for (const g of groups.slice(2)) for (const t of base) if (U7.has(t.symbol) && !g[2].includes(t)) g[2].push(t);
   for (const [tf, htf, L] of groups) { const ms = TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last['x' + tf] === bar || now - bar > Math.max(ms, 5 * 6e4) + 6e4) continue; A.last['x' + tf] = bar; ch = true;
     const bd = await btc(tf === '5m' || tf === '3m' ? '1h' : '1h');
     for (const t of L) { const s = t.symbol; try { const [cs, hc] = await Promise.all([get(s, tf, 300), get(s, htf, 200)]); if (!cs || !hc || cs.length < 220 || hc.length < 60) continue;
-        for (const x of shAll(D, cs, hc, tf, bd, s, U7, +t.priceChangePercent)) add('x', s, x, tf); } catch (e) {} await D.sleep(30); } }
+        for (const x of shAll(D, cs, hc, tf, bd, s, U7, +t.priceChangePercent)) add('x', s, x, tf); A.diag[tf] = (A.diag[tf] || 0) + 1; } catch (e) { A.diag.err = tf + ' ' + s + ': ' + e.message; } await D.sleep(30); } }
   /* seguimiento con velas de 5 min */
   for (const o of A.ops.filter(x => !x.out)) { try { const k = await D.getJ(`${D.API}/klines?symbol=${o.sym}&interval=5m&startTime=${o.chk || o.t}&limit=1000`);
       for (const r of k || []) { const b = { t: +r[0], h: +r[2], l: +r[3], c: +r[4] }; if (b.t + 3e5 > now) break; if (b.t + 3e5 <= o.t) continue; step(o, b); o.chk = b.t + 3e5; ch = true; if (o.out) break; } } catch (e) {} await D.sleep(30); }
@@ -84,5 +84,5 @@ async function run(now, base, U7, D) { const S = D.S;
   if (ch) A.dirty = true;
   if (A.dirty && (!A.pubT || now - A.pubT >= 15 * 6e4) && process.env.GH_TOKEN) {
     const meta = { medio: VERS.medio.map(({ v, desde, txt }) => ({ v, desde, txt })), x: VERS.x.map(({ v, desde, txt }) => ({ v, desde, txt })) };
-    if (await D.ghPut('versiones.json', JSON.stringify({ upd: now, desde: A.since || (A.since = now), nota: 'Todas las versiones de TRADING (medio) y SHOOTER (x) en práctica 24 h. out.pct = % del margen con comisión. f = indicadores al momento de la señal.', versiones: meta, ops: A.ops }), 'verSha', 'Versiones en paralelo', A.ops.length + ' señales')) { A.dirty = false; A.pubT = now; } } }
+    if (await D.ghPut('versiones.json', JSON.stringify({ upd: now, desde: A.since || (A.since = now), revisadas: A.diag, nota: 'Todas las versiones de TRADING (medio) y SHOOTER (x) en práctica 24 h. out.pct = % del margen con comisión. f = indicadores al momento de la señal.', versiones: meta, ops: A.ops }), 'verSha', 'Versiones en paralelo', A.ops.length + ' señales')) { A.dirty = false; A.pubT = now; } } }
 module.exports = { run, VERS };
