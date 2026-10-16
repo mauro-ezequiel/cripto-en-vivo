@@ -391,6 +391,10 @@ body.fs-on .fsbar{display:flex}
 .wal-rs{background:none;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;margin-top:4px}
 .wal-c{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12px;margin:6px 0}.wal-c input[type=text]{width:80px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px 6px}.wal-c select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px}.wal-ck{display:flex;gap:4px;align-items:center}
 .wal-g{width:100%;height:130px;background:var(--bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}.wal-l{font-size:11px;display:flex;flex-direction:column;gap:2px;font-variant-numeric:tabular-nums}
+.ver-det{display:flex;flex-direction:column;gap:6px}.ver-back{align-self:flex-start;background:#2962ff;color:#fff;border:0;border-radius:8px;padding:9px 14px;font-weight:800;font-size:13px;cursor:pointer;min-height:38px}
+.ver-dh{display:flex;flex-direction:column;gap:2px;border-left:4px solid #4a4f59;padding:4px 10px;border-radius:6px}.ver-dh b{font-size:17px}.ver-dh.g{border-left-color:#1e8e3e}.ver-dh.y{border-left-color:#b38f00}.ver-dh.r{border-left-color:#c62828}
+.ver-ind{border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:12px}.ver-ir{display:flex;justify-content:space-between;gap:10px;padding:3px 0;border-bottom:1px solid #1d222c}.ver-ir span:last-child{white-space:nowrap;font-variant-numeric:tabular-nums}
+.ver-ir.up span:first-child{color:#cfe9d6}.ver-ir.dn span:first-child{color:#f3c9c9}.ver-ot{margin-top:6px;font-size:12.5px}
 .ver-r{border:1px solid var(--line);border-left:4px solid #4a4f59;border-radius:8px;padding:6px 9px;margin:5px 0;cursor:pointer;font-size:12px}.ver-r.g{border-left-color:#1e8e3e;background:rgba(30,142,62,.08)}.ver-r.y{border-left-color:#b38f00}.ver-r.r{border-left-color:#c62828;background:rgba(198,40,40,.08)}.ver-r.cur{box-shadow:0 0 0 1px #26c6da inset}
 .ver-h{display:flex;flex-wrap:wrap;gap:4px 10px;align-items:baseline}.ver-d{color:var(--mut);font-size:11px}.ver-s{margin-left:auto;font-variant-numeric:tabular-nums}.ver-t{color:var(--mut);font-size:11px;margin-top:2px}.ver-an{margin-top:4px;font-size:11.5px;display:flex;flex-direction:column;gap:2px}.ver-l{margin-top:5px;font-size:11px;display:flex;flex-direction:column;gap:2px;font-variant-numeric:tabular-nums}
 .vcal{margin:8px 0;border:1px solid var(--line);border-radius:8px;padding:6px 8px}.vcal>summary{cursor:pointer;font-size:12.5px;font-weight:700}.vcal>summary .mut{font-weight:400;font-size:11px}
@@ -1548,7 +1552,7 @@ $('fsInd').onclick=e=>$('inds').onclick(e);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
-function applyMode(m){setTimeout(()=>{try{rsiRender();}catch(e){}},80);
+function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   const wasA=mode==='a';mode=m;const M=MODES[m];if(typeof pilRender==='function')setTimeout(pilRender,0);
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
   setNames();
@@ -3818,7 +3822,7 @@ function ledStats(m,days){const t0=days?Date.now()-days*864e5:0,a=ledOps(m).filt
   const g=cl.filter(o=>o.pnl>0).reduce((s,o)=>s+o.pnl,0),l=cl.filter(o=>o.pnl<=0).reduce((s,o)=>s+o.pnl,0);
   return {all:a.length,open:a.length-n,n,o1:n?cl.filter(o=>o.hit>=1).length/n*100:null,o3:n?cl.filter(o=>o.hit>=3).length/n*100:null,win:n?cl.filter(o=>o.pnl>0).length/n*100:null,
     liq:cl.filter(o=>o.state==='fail').length,ll:a.filter(o=>o.ll).length,llOk:cl.filter(o=>o.ll&&o.state!=='fail').length,g,l,net:g+l,pf:l<0?g/-l:null,avg:n?(g+l)/n:null,cl};}
-function ledHTML(){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-reb']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
+function ledHTML(){const m=mode;if(VERSEL&&HSRC==='live'&&VERD){const h=verDetailHTML();if(h)return h;}if(HSRC==='sim'&&!LEDP)LEDP=365;if(HSRC!=='sim'&&LEDP===365)LEDP=0;const S=ledStats(m,LEDP),cal=m==='a'?CAL.a['c-reb']:m==='medio'&&HSUB==='plus'?CAL.medio['tp-x']:Object.values(CAL[m]||{})[0],az=m==='a'?null:AZAR[m];
   const per=(HSRC==='sim'?[[7,'7 días'],[30,'30 días'],[90,'90 días'],[365,'1 año']]:[[7,'7 días'],[30,'30 días'],[90,'90 días'],[0,'Todo']]).map(([d,t])=>`<button data-p="${d}" class="${LEDP===d?'on':''}">${t}</button>`).join('');
   const srcRow=`<div class="int-p"><button data-src="sim" class="${HSRC==='sim'?'on':''}">📅 Último año simulado</button><button data-src="live" class="${HSRC==='live'?'on':''}">📡 Mis señales en vivo</button></div>`;
   const lvRow='';
@@ -3929,7 +3933,7 @@ function mgChanged(){mgApply();try{localStorage.setItem('cv_ops',JSON.stringify(
 /* ---------- 🧪 versiones en paralelo (datos/versiones.json, del bot 24 h) ----------
    Cada versión de TRADING y SHOOTER sigue dando señales en práctica las 24 h. Acá: cómo le va a cada una y, con la foto de los indicadores
    de cada señal, qué observación le suma más y cuál le arruina las señales (para quedarse con lo bueno y sacar lo malo). */
-var VERD=null,verT=0,VEROPEN=new Set();
+var VERD=null,verT=0,VEROPEN=new Set(),VERBOX=false,VERSEL=null,VEROPS=new Set();
 async function verLoad(){if(Date.now()-verT<5*6e4)return;verT=Date.now();try{const j=await getJ('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/versiones.json?t='+Math.floor(Date.now()/6e4));if(j&&Array.isArray(j.ops)){VERD=j;if(HSRC==='live')renderRes(true);}}catch(e){}}
 const VER_F={rsi14:'RSI 14',adx:'ADX (fuerza de la tendencia)',ema200_dist:'distancia a la EMA 200 (%)',ema50_atr:'distancia a la EMA 50 (en ATR)',volumen:'volumen relativo',atr_pct:'volatilidad (ATR %)',btc_a_favor:'BTC a favor',ciclo_a_favor:'fase del ciclo a favor',
   tendencia_diaria:'tendencia diaria a favor',hora:'hora (UTC)',rsi7:'RSI 7',bollinger_z:'distancia a la banda de Bollinger',caida_1h:'caída de la última hora (%)',tendencia_1h:'tendencia de 1 h a favor',cambio_24h:'cambio en 24 h (%)'};
@@ -3948,8 +3952,31 @@ function verHTML(m){if(!(m==='medio'||m==='x'))return '';if(!VERD){verLoad();ret
     return `<div class="ver-r ${cls}${V.v===last?' cur':''}" data-ver="${m+V.v}"><div class="ver-h"><b>v${V.v}${V.v===last?' actual':''}</b><span class="ver-d">desde ${new Date(V.desde).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})}</span>
       <span class="ver-s">${n?`${n} cerradas${open?' · '+open+' en curso':''} · <b>${Math.round(w)} %</b> ganadas · <b class="${avg>=0?'up':'dn'}">${hxPct(avg)}</b> por op. · <span class="${usd>=0?'up':'dn'}">${fusd2(usd)}</span>`:open?open+' en curso':'sin señales todavía'}</span></div>
       <div class="ver-t">${esc(V.txt)}</div>${an}${op?`<div class="ver-l">${L.slice().reverse().slice(0,15).map(o=>`<div>${new Date(o.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · <span class="${o.dir>0?'up':'dn'}">${o.dir>0?'▲':'▼'}</span> ${o.sym.replace('USDT','')} ${o.tf||''} · ${o.out?`<span class="${o.out.pct>=0?'up':'dn'}">${hxPct(o.out.pct)}</span> · ${o.out.hit}/3`:'<span class="live">EN CURSO</span>'}</div>`).join('')}</div>`:''}</div>`;}).join('');
-  return `<details class="vcal ver" open><summary>🧪 ${m==='medio'?'TRADING':'SHOOTER'}: todas las versiones en práctica 24 h <span class="mut">desde ${fdate(VERD.desde||VERD.upd)}</span></summary>
-    <div class="mut" style="font-size:11px;margin:4px 0 6px">Mismo mercado y mismo margen para todas, sin salvavidas. A Telegram solo llegan las de la versión actual. Verde: gana plata con 60 % o más · amarillo: gana con menos acierto · rojo: pierde plata. Tocá una versión para ver sus señales.</div>${rows}</details>`;}
+  return `<details class="vcal ver"${VERBOX?' open':''}><summary>🧪 ${m==='medio'?'TRADING':'SHOOTER'}: todas las versiones en práctica 24 h <span class="mut">desde ${fdate(VERD.desde||VERD.upd)}</span></summary>
+    <div class="mut" style="font-size:11px;margin:4px 0 6px">Mismo mercado y mismo margen para todas, sin salvavidas. A Telegram solo llegan las de la versión actual. Verde: gana plata con 60 % o más · amarillo: gana con menos acierto · rojo: pierde plata. Tocá una versión para ver su cuadro completo y sus operaciones.</div>${rows}</details>`;}
+/* pantalla de una versión: cuadro de datos completo, qué indicador le suma o le resta (todos) y todas sus operaciones */
+function verDetailHTML(){const [m,vs]=[VERSEL.slice(0,VERSEL.search(/\d/)),+VERSEL.replace(/^\D+/,'')],meta=((VERD&&VERD.versiones||{})[m]||[]).find(x=>x.v===vs);if(!meta){VERSEL=null;return null;}
+  const last=Math.max(...VERD.versiones[m].map(x=>x.v)),mg=SIM[m]?SIM[m].margin:(m==='medio'?350:50),L=VERD.ops.filter(o=>o.m===m&&o.v===vs).sort((a,b)=>(a.out?1:0)-(b.out?1:0)||b.t-a.t),C=L.filter(o=>o.out),n=C.length,open=L.length-n;
+  const u=o=>o.out.pct*mg/100,w=C.filter(o=>o.out.pct>0).length,g=C.filter(o=>o.out.pct>0).reduce((a,o)=>a+u(o),0),l=C.filter(o=>o.out.pct<=0).reduce((a,o)=>a+u(o),0),avg=n?C.reduce((a,o)=>a+o.out.pct,0)/n:0,o1=C.filter(o=>o.out.hit>=1).length,o3=C.filter(o=>o.out.hit>=3).length,st=C.filter(o=>o.out.c===1).length;
+  const cls=!n?'n':avg>0&&w/n>=.6?'g':avg>0?'y':'r',nm=m==='medio'?'TRADING':'SHOOTER',G=n>=10?verGroups(C).sort((a,b)=>b.avg-a.avg):[];
+  const why={1:'tocó el stop',3:'volvió a la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
+  const rows=L.map(o=>{const oid=o.id||(o.m+o.v+o.sym+o.t),op=VEROPS.has(oid),d=new Date(o.t),pc=o.out?o.out.pct:null;
+    return `<div class="hrow h2" data-vop="${oid}"><span class="hdt"><span class="ht">${d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})}</span></span><span class="hm"><span class="hh">${d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b><span class="hk">${o.tf||''}</span>${o.out?(o.out.c===1?'<span class="hs dn">✕ stop</span>':`<span class="hk">${o.out.hit}/3</span>`):'<span class="hs"><span class="live">EN CURSO</span></span>'}</span><span class="hpu ${(pc||0)>=0?'up':'dn'}">${pc==null?'—':`<b>${hxPct(pc)}</b><small>${hxUsd(u(o))}</small>`}</span><span class="hia"></span></div>
+    ${op?`<div class="hx"><div class="hx-box"><div class="hx-g">${o.entry?`<span>Entrada</span><b>${fp(o.entry)}</b>`:''}${o.tp?`<span>Objetivos</span><b>${o.tp.map(fp).join(' · ')}</b>`:''}${o.sl?`<span>Stop</span><b class="dn">${fp(o.sl)}</b>`:''}
+      ${o.out?`<span>Cierre</span><b>${fdate(o.out.t)}${o.out.p?' en '+fp(o.out.p):''} · ${why[o.out.c]||''}</b>`:''}<span>Indicadores al entrar</span><b>${Object.entries(o.f||{}).filter(([,v])=>v!=null).map(([k,v])=>`${VER_F[k]||k}: ${v===1&&/a_favor|tendencia/.test(k)?'sí':v===0&&/a_favor|tendencia/.test(k)?'no':(+v).toLocaleString('es-ES',{maximumFractionDigits:2})}`).join(' · ')}</b></div>
+      <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${o.tf||''}" data-m="${m}">Ver en el gráfico</button></div></div>`:''}`;}).join('');
+  return `<div class="ver-det"><button type="button" class="ver-back" data-vback="1">← Volver a Resultados</button>
+    <div class="ver-dh ${cls}"><b>${nm} v${vs}${vs===last?' · actual':''}</b><span class="mut">desde ${new Date(meta.desde).toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'})} · en práctica 24 h${vs===last?' · también manda las señales a Telegram':''}</span></div>
+    <div class="int-v mut" style="font-size:12px">${esc(meta.txt)}</div>
+    <div class="int-g"><div>Señales<b>${L.length}</b><small>${n} cerradas · ${open} en curso</small></div>
+      <div>Ganadas<b class="${w/n>=.6?'up':''}">${n?Math.round(w/n*100)+' %':'—'}</b><small>${n?w+' de '+n:'todavía ninguna cerrada'}</small></div>
+      <div>Llegó al objetivo 1<b>${n?Math.round(o1/n*100)+' %':'—'}</b><small>a los 3: ${n?Math.round(o3/n*100)+' %':'—'}</small></div>
+      <div>Tocaron el stop<b class="dn">${st}</b><small>${n?Math.round(st/n*100)+' % de las cerradas':'—'}</small></div>
+      <div>Ganado / perdido<b><span class="up">${fusd2(g)}</span></b><small class="dn">${fusd2(l)}</small></div>
+      <div>Resultado neto<b class="${g+l>=0?'up':'dn'}">${fusd2(g+l)}</b><small>${n?hxPct(avg)+' del margen por operación':'—'}</small></div>
+      <div>Factor de ganancia<b>${l<0?(g/-l).toFixed(2):'—'}</b><small>ganado ÷ perdido · más de 1 = gana</small></div></div>
+    <div class="ver-ind"><b>Qué le suma y qué le resta</b>${G.length?`<div class="mut" style="font-size:11px;margin:2px 0 6px">Cada indicador partido en dos (alto / bajo, sí / no). Promedio de esta versión: ${hxPct(avg)} por operación.</div>${G.map(x=>`<div class="ver-ir ${x.avg>avg?'up':x.avg<avg?'dn':''}"><span>${x.avg>avg?'✅':'❌'} ${esc(x.nm)}</span><span>${Math.round(x.w)} % · ${hxPct(x.avg)} · ${x.n} señ.</span></div>`).join('')}`:`<div class="mut" style="font-size:12px">Aparece con 10 señales cerradas (lleva ${n}).</div>`}</div>
+    <div class="ver-ot"><b>Operaciones</b> <span class="mut">tocá una para ver entrada, objetivos, stop e indicadores</span></div>${rows||'<div class="mut">Todavía no dio señales.</div>'}</div>`;}
 function vcalStats(L){const n=L.length;if(!n)return {n:0};const net=L.reduce((a,o)=>a+(o.pnl||0),0),mg=L.reduce((a,o)=>a+(o.mg||hxMg(o)),0);return {n,win:L.filter(o=>(o.pnl||0)>0).length/n*100,avg:net/n,pct:mg?net/mg*100:0};}
 const vcalCls=S=>!S.n?'n':S.avg>0&&S.win>=60?'g':S.avg>0?'y':'r';
 function vcalHTML(){try{const now=Date.now(),rows=[['medio','TRADING'],['x','SHOOTER'],['a','ACCIONES'],['ia','IA']],T0=Math.min(...Object.values(VERS).map(v=>Date.parse(v[0][1]))),D0=new Date(T0);D0.setHours(0,0,0,0);
@@ -4148,7 +4175,7 @@ function renderRes(force){const m=mode;if(HSRC==='sim'&&!LEDP)LEDP=365;const S=l
   const row=hxRow;
   const isP=o=>PINS.has(String(o.id)),srt=(a,b)=>(a.state==='open'?0:1)-(b.state==='open'?0:1)||b.t-a.t;
   const L=mine.filter(isP).sort(srt).concat(mine.filter(o=>!isP(o)).sort(srt).slice(0,HSRC==='sim'?100:40));
-  $('histList').innerHTML=L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';
+  $('histList').innerHTML=VERSEL&&HSRC==='live'&&VERD?'':L.length?L.map(row).join(''):'<div class="mut">Todavía no hay señales en este período.</div>';
   for(const o of L)if(HOPEN.has(o.id))hxFill(o);}
 /* fila y detalle de cada señal en Resultados (octubre 2026) */
 const hxMg=o=>o.mg||(SIM[o.m]?SIM[o.m].margin:100)+(o.ll?o.ll.margin:0);
@@ -4206,8 +4233,11 @@ async function hxFill(o){const c=HXC[o.id]=HXC[o.id]||{};if(c.busy)return;const 
     catch(e){put('ent','<div class="mut">No se pudo revisar la entrada.</div>');}
     c.t=Date.now();}finally{c.busy=false;}}
 setInterval(()=>{try{if(!$('histList')||!HOPEN.size)return;for(const id of HOPEN){const el=$('hxl-'+id);if(!el)continue;const o=ledOps(mode).find(x=>String(x.id)===String(id));if(o&&o.state==='open'){HXC[id]&&(HXC[id].t=0);hxFill(o);}}}catch(e){}},30e3);
-$('resStats').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('vcal'))VCOPEN=e.target.open;},true);
-$('resStats').onclick=e=>{const vr=e.target.closest('[data-ver]');if(vr&&!e.target.closest('summary')){const k=vr.dataset.ver;if(VEROPEN.has(k))VEROPEN.delete(k);else VEROPEN.add(k);renderRes(true);return;}const lv=e.target.closest('[data-lv]');if(lv){LIVEV=lv.dataset.lv;try{localStorage.setItem('cv_livev',LIVEV)}catch(_){}renderRes(true);return;}const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
+$('resStats').addEventListener('toggle',e=>{if(e.target.classList&&e.target.classList.contains('ver'))VERBOX=e.target.open;if(e.target.classList&&e.target.classList.contains('vcal'))VCOPEN=e.target.open;},true);
+$('resStats').onclick=e=>{if(e.target.closest('[data-vback]')){VERSEL=null;renderRes(true);$('histBox').scrollIntoView({block:'start'});return;}
+  const vo=e.target.closest('[data-vop]');if(vo){const k=vo.dataset.vop;if(VEROPS.has(k))VEROPS.delete(k);else VEROPS.add(k);renderRes(true);return;}
+  const vg=e.target.closest('.ver-det [data-go]');if(vg){const g=vg.dataset;if(g.m&&g.m!==mode)applyMode(g.m);if(g.tf&&TF_MODE[mode].includes(g.tf)&&tf!==g.tf){tf=g.tf;try{tfMark();}catch(_){}}select(g.go);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const vr=e.target.closest('[data-ver]');if(vr&&!e.target.closest('summary')){VERSEL=vr.dataset.ver;VEROPS.clear();renderRes(true);$('histBox').scrollIntoView({block:'start'});return;}const lv=e.target.closest('[data-lv]');if(lv){LIVEV=lv.dataset.lv;try{localStorage.setItem('cv_livev',LIVEV)}catch(_){}renderRes(true);return;}const sr=e.target.closest('[data-src]');if(sr){HSRC=sr.dataset.src;try{localStorage.setItem('cv_hsrc',HSRC)}catch(_){}LEDP=HSRC==='sim'?365:30;renderRes(true);return;}
   const sb=e.target.closest('[data-sub]');if(sb){HSUB=sb.dataset.sub;try{localStorage.setItem('cv_hsub',HSUB)}catch(_){}renderRes(true);return;}
   const p=e.target.closest('[data-p]');if(p){LEDP=+p.dataset.p;renderRes(true);return;}const x=e.target.closest('[data-x]');if(x)ledExport(x.dataset.x);};
 $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)n.closest('section').scrollIntoView({block:'start'});},280);};
