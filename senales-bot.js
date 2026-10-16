@@ -198,6 +198,25 @@ async function calYear() { try { const r = await fetch('https://raw.githubuserco
 
 /* 🧠 IA 24 h: piensa y practica todo el tiempo (herramientas/ia-bot.js) */
 const IAB = require('./herramientas/ia-bot.js'), IAD = { getJ, kl, API, cycFall, tg, fp, ghPut, sleep, M: null };
+/* 🧪 todas las versiones de TRADING y SHOOTER en práctica 24 h (herramientas/versiones.js); a Telegram solo llegan las de la versión actual */
+const VERM = require('./herramientas/versiones.js'), VD = { withCandles, closes, emaArr, calcRSI, calcADX, calcST, smaStd, wilder, trArr, htfTrend, lastBarStats, kl, getJ, API, ghPut, sleep };
+/* 📬 resumen semanal por Telegram (los lunes desde las 9 de España): bots, versiones, Trade del ciclo, IA y la billetera simulada */
+function walletSim(L, cap0 = 1000, frac = .1) { let c = cap0, peak = cap0, dd = 0; for (const x of L.sort((a, b) => a.end - b.end)) { c += c * frac * x.pct / 100; peak = Math.max(peak, c); dd = Math.min(dd, c / peak - 1); } return { c, dd }; }
+async function semanal(now) { const d = new Date(now), wk = Math.floor((now - 4 * 864e5) / (7 * 864e5)); if (d.getUTCDay() !== 1 || d.getUTCHours() < 7 || S.semW === wk) return; S.semW = wk;
+  const t0 = now - 7 * 864e5, pc = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1).replace('.', ',') + ' %', st = L => { const n = L.length; if (!n) return null; const w = L.filter(x => x.pct > 0).length; return { n, w: Math.round(w / n * 100), avg: L.reduce((a, x) => a + x.pct, 0) / n }; };
+  const B = (S.bit || []).filter(r => r.out && r.out.t >= t0).map(r => ({ m: r.m, pct: r.out.pct, end: r.out.t })), lines = ['📬 RESUMEN SEMANAL · CRIPTO-LIVE', ''];
+  for (const [m, nm] of [['medio', 'TRADING'], ['x', 'SHOOTER']]) { const s2 = st(B.filter(x => x.m === m)); lines.push(`${m === 'medio' ? '📈' : '⚡'} ${nm} (versión actual): ${s2 ? `${s2.n} cerradas · ${s2.w} % ganadas · ${pc(s2.avg)} del margen por operación` : 'sin operaciones cerradas'}`); }
+  const V = (S.ver && S.ver.ops || []).filter(o => o.out && o.out.t >= t0);
+  for (const [m, nm] of [['medio', 'TRADING'], ['x', 'SHOOTER']]) { const R = VERM.VERS[m].map(v => ({ v: v.v, s: st(V.filter(o => o.m === m && o.v === v.v).map(o => ({ pct: o.out.pct }))) })).filter(x => x.s && x.s.n >= 3).sort((a, b) => b.s.avg - a.s.avg);
+    if (R.length) lines.push(`🧪 ${nm} por versión (práctica): ` + R.map(x => `v${x.v}${x.v === VERM.VERS[m].length ? ' actual' : ''} ${x.s.w} % / ${pc(x.s.avg)}`).join(' · ')); }
+  const C = (S.cic && S.cic.ops) || [], co = C.filter(o => o.state === 'open'), cc = C.filter(o => o.state !== 'open' && o.closeAt >= t0);
+  lines.push(`🔄 Trade del ciclo: ${co.length ? co.map(o => `${o.sym.replace('USDT', '')} ${o.dir > 0 ? 'LONG' : 'SHORT'} abierta, ${o.adds} sumas, margen ${o.marg} USD`).join(' · ') : 'sin operación abierta'}${cc.length ? ` · cerró ${cc.length} (${cc.reduce((a, o) => a + o.pnl, 0).toFixed(0)} USD)` : ''}`);
+  const I = (S.ia && S.ia.ops || []).filter(o => o.st !== 'open' && o.closeT >= t0), ir = st(I.filter(o => !o.pr).map(o => ({ pct: o.pnl / o.mg * 100 }))), ip = st(I.filter(o => o.pr).map(o => ({ pct: o.pnl / o.mg * 100 })));
+  lines.push(`🧠 IA: reales ${ir ? `${ir.n} · ${ir.w} % ganadas · ${pc(ir.avg)}` : 'ninguna'} · práctica ${ip ? `${ip.n} · ${ip.w} % ganadas · ${pc(ip.avg)}` : 'ninguna'}`);
+  const W = walletSim(B.concat(I.filter(o => !o.pr).map(o => ({ pct: o.pnl / o.mg * 100, end: o.closeT }))));
+  lines.push('', `💼 Billetera simulada (1.000 USD, 10 % del capital por operación, todas las señales actuales): ${W.c.toFixed(0)} USD (${pc((W.c / 1000 - 1) * 100)}) · peor caída ${pc(W.dd * 100)}`, `${PAGE}`, 'ℹ️ Solo informativo, no es consejo financiero.');
+  await tg(lines.join('\n'), false); }
+
 let calT = 0;
 async function main() {
   const now = Date.now();
@@ -273,6 +292,8 @@ async function main() {
     }
     console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
   }
+  try { VD.S = S; await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
+  try { await semanal(now); } catch (e) { console.log('semanal', e.message); }
   try { IAD.S = S; await IAB.run(now, { tr: base.map(t => t.symbol), sh: (S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, 30).map(t => t.symbol) }, IAD); } catch (e) { console.log('IA', e.message); }
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
   S.hist = (S.hist || []).filter(x => now - x.t < 10 * 864e5).slice(-150);
