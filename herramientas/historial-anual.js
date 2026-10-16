@@ -263,7 +263,7 @@ function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
   for (let j = 0; j < rb.length; j++) { if (rb[j].t < FROM || (ok && !ok(j)) || rnd() > 1 / every) continue;
     const dir = rnd() < .5 ? 1 : -1, sl = slPool[Math.floor(rnd() * slPool.length)], t = rb[j].t + resMs;
     const res = sim(rb, resMs, maxAge, j + 1, rb[j].close, dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
-    RAND[m].push({ ...res, margin: g.margin }); } }
+    RAND[m].push({ ...res, margin: g.margin, s, t, L: g.L }); } }
 
 /* una operación por moneda a la vez y espera entre señales (como el bot y la página).
    TRADING y TRADING+ son carteras separadas: una operación abierta de TRADING+ no frena una de TRADING en la misma moneda (y al revés) */
@@ -353,6 +353,12 @@ async function main() { const t0 = Date.now();
     randomEntries('x', s, x.rb, x.tfMs, SH.maxAge, 30, shSl.length ? shSl : [GEO.sh.cap], GEO.sh, null, x.ok); }); // al azar con el mismo stop
   console.log('SHOOTER listo', ((Date.now() - t0) / 1000).toFixed(0), 's');
 
+  /* octubre 2026 · COSTOS REALES: además de la comisión (0,05 % por lado), deslizamiento por lado según la liquidez de la moneda
+     (las 10 con más volumen 0,02 %, hasta la 30 0,04 %, el resto 0,08 %) y financiación de futuros 0,01 % cada 8 h mientras está abierta
+     (se cuenta siempre como costo). Se aplica a las señales y a las entradas al azar, así la comparación sigue siendo justa. SIN_COSTOS=1 lo apaga. */
+  const SLIP = r => r < 10 ? .0002 : r < 30 ? .0004 : .0008, FUND8 = .0001, RK = {}; trList.forEach((x, k) => RK[x] = k); shList.forEach((x, k) => { if (RK[x] == null) RK[x] = k; });
+  const cost = c => { if (process.env.SIN_COSTOS || c.t == null) return; const sz = c.ll ? 1.5 : 1, h = Math.max(0, ((c.open ? NOW : c.tEnd) - c.t) / (8 * 36e5)), k = 100 * (c.L || 1) * sz * (2 * SLIP(RK[c.s] != null ? RK[c.s] : 50) + FUND8 * h); c.pct -= k; c.costo = +k.toFixed(3); };
+  for (const c of CANDS) cost(c); for (const m in RAND) for (const c of RAND[m]) cost(c);
   const ops = pick(), cal = { medio: {}, x: {} };
   /* CORR=1 (investigación de la cláusula del halving): correlación de los retornos diarios con BTC en los 90 días anteriores a cada operación */
   if (process.env.CORR) { const D1 = {}, get = async s => { if (!D1[s]) { try { const b = await klRange(s, '1d', DAY, FROM - 120 * DAY, NOW); D1[s] = new Map(b.map(x => [x.t, x.close])); } catch (e) { D1[s] = new Map(); } } return D1[s]; };
@@ -362,9 +368,18 @@ async function main() { const t0 = Date.now();
       if (x.length >= 60) { const n = x.length, mx = x.reduce((a, v) => a + v, 0) / n, my = y.reduce((a, v) => a + v, 0) / n; let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; }
         o.corr = +(sxy / Math.sqrt(sxx * syy || 1)).toFixed(2); } else o.corr = o.s === 'BTCUSDT' ? 1 : null; } }
   for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
+  /* ¿PUEDE SER SUERTE? Para cada bot: 3.000 grupos de entradas al azar (mismo stop, objetivos y costos), del mismo tamaño que las señales del bot.
+     p = qué parte de esos grupos ganó por operación tanto o más que el bot. Bajo (< 5 %) = difícil que sea casualidad. Se mide en el año y en cada mitad
+     (cada mitad por separado, como una prueba por ventanas: si en una mitad no le gana al azar, la ventaja no es estable). */
+  const suerte = (A, R) => { const a = A.filter(o => !o.open).map(o => o.pct), r = R.filter(o => !o.open).map(o => o.pct), n = a.length; if (n < 10 || r.length < 50) return { n };
+    const avg = a.reduce((x, v) => x + v, 0) / n; let ge = 0; const N = 3000; for (let k = 0; k < N; k++) { let t = 0; for (let i = 0; i < n; i++) t += r[Math.floor(rnd() * r.length)]; if (t / n >= avg) ge++; }
+    return { n, pct_op: +avg.toFixed(2), azar_op: +(r.reduce((x, v) => x + v, 0) / r.length).toFixed(2), p: +(ge / N * 100).toFixed(1) }; };
+  const valid = {}; for (const m of ['medio', 'x']) { const A = ops.filter(o => o.m === m && o.setup !== 'tp-x'), R = RAND[m], mid = FROM + SPAN / 2;
+    valid[m] = { anio: suerte(A, R), mitad1: suerte(A.filter(o => o.t < mid), R.filter(o => o.t < mid)), mitad2: suerte(A.filter(o => o.t >= mid), R.filter(o => o.t >= mid)) }; }
+  console.log('suerte', JSON.stringify(valid));
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
-  const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
-    cal, azar, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
+  const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { costos: process.env.SIN_COSTOS ? 'solo comisión' : 'comisión 0,05 % + deslizamiento 0,02-0,08 % por lado + financiación 0,01 % cada 8 h', plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
+    cal, azar, validacion: valid, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin,
        entrada, stop (fracción), objetivos × stop, apalancamiento] (octubre 2026: con entrada y stop la página muestra el resultado en vivo de las que siguen en curso)
        con CORR=1 además: correlación diaria con BTC de los 90 días anteriores */

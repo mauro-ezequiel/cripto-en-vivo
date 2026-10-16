@@ -145,8 +145,10 @@ async function bitLoad() { if (Array.isArray(S.bit)) return true;
   for (const x of S.hist || []) if (!S.bit.some(b => b.id === bitId(x))) S.bit.push(bitRec(x)); // las de los últimos 10 días que ya estaban publicadas
   S.bit.sort((a, b) => a.t - b.t); S.bitDirty = true; return true; }
 /* resultado como % del margen (1/3 de la posición en cada objetivo, el resto al precio de salida), con 0,05 % de comisión por lado */
-function bitPct(r, hit, px) { const lev = SIM[r.m].lev, d = r.dir; let v = 0; for (let k = 0; k < hit; k++) v += d * (r.tp[k] / r.entry - 1) / 3; v += (1 - hit / 3) * d * (px / r.entry - 1); return +((v - .001) * lev * 100).toFixed(2); }
-function bitClose(id, c, hit, px, t) { const r = (S.bit || []).find(b => b.id === id); if (!r || r.out) return; r.out = { c, hit, p: px, t, pct: bitPct(r, hit, px) }; S.bitDirty = true; }
+/* costos reales (octubre 2026): comisión 0,05 % + deslizamiento 0,04 % por lado + financiación 0,01 % cada 8 h abierta */
+const COSTO = (t0, t1) => .001 + .0008 + .0001 * Math.max(0, (t1 - t0) / (8 * 36e5));
+function bitPct(r, hit, px, t1) { const lev = SIM[r.m].lev, d = r.dir; let v = 0; for (let k = 0; k < hit; k++) v += d * (r.tp[k] / r.entry - 1) / 3; v += (1 - hit / 3) * d * (px / r.entry - 1); return +((v - COSTO(r.t, t1 || Date.now())) * lev * 100).toFixed(2); }
+function bitClose(id, c, hit, px, t) { const r = (S.bit || []).find(b => b.id === id); if (!r || r.out) return; r.out = { c, hit, p: px, t, pct: bitPct(r, hit, px, t) }; S.bitDirty = true; }
 /* las que no se siguieron en vivo (por ejemplo de antes de la bitácora) se resuelven con velas de 15 min, igual que el seguimiento del bot */
 async function bitResolve(r) { const maxAge = SIGCFG[r.m].maxAge, d = r.dir; let hit = 0;
   const k = await kl15From(r.sym, r.t); if (!k) return;

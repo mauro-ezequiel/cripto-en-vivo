@@ -52,7 +52,7 @@ function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1),
     return out; }); }
 /* % del margen: 1/3 en cada objetivo, tocado el objetivo 1 el stop pasa a la entrada, plazo, comisión 0,05 % por lado */
 function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, stop = o.hit ? o.entry : o.sl;
-  const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001) * o.lev * 100).toFixed(2) }; };
+  const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (b.t - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; }; // comisión + deslizamiento + financiación
   if (d * (adv - stop) <= 0) return fin(stop, o.hit ? 3 : 1);
   while (o.hit < 3 && d * (fav - o.tp[o.hit]) >= 0) o.hit++; if (o.hit === 3) return fin(o.tp[2], 4);
   if (b.t + 3e5 - o.t >= o.age) return fin(b.c, 5); }

@@ -8,7 +8,7 @@
 const IA = require('../ia-core.js');
 const CFG = { tr: { nm: 'TRADING', mg: 350, lev: 10, age: 7 * 864e5, cool: 24 * 36e5, max: 4, maxP: 8, tfs: ['4h'], a: 3, r: .75, cap: .036, wmin: 70 },
   sh: { nm: 'SHOOTER', mg: 50, lev: 15, age: 12 * 36e5, cool: 36e5, max: 6, maxP: 12, tfs: ['15m', '30m'], a: 4, r: .25, cap: .05, wmin: 80 } };
-const FEE = .0008, TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
+const FEE = .0016, /* comisión + deslizamiento (antes solo comisión, .0008) */ TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
 function gates(E, f) { const PR = E && E.test && E.test.propias; return !!(E && E.thr != null && PR && PR.pct >= 1 && PR.pct > PR.base_pct && (PR.gana || PR.obj1 || 0) >= CFG[f].wmin); }
 function close(x, px, st, why, t) { x.real += x.dir * (px / x.entry - 1) * (3 - x.hit) / 3; x.st = st; x.why = why; x.closeT = t; x.closePx = px; x.res = x.real; x.pnl = +Math.max(-x.mg, x.mg * x.lev * (x.real - FEE)).toFixed(2); }
 function step(x, k) { if (x.st !== 'open') return null; const d = x.dir, stop = x.hit ? x.entry : x.stop;
