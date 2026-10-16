@@ -597,6 +597,44 @@ body.trn-on{overflow:hidden}
 body.fs-on .mnav,.lqx.big~.mnav{display:none!important}
 @media (orientation:landscape) and (max-height:520px){.mnav{display:none!important}body{padding-bottom:0}}
 </style>
+<style id="pulido">
+/* ---------- PULIDO DE DISEÑO (octubre 2026) · criterios de Emil Kowalski (design engineering) y tasteskill ----------
+   Respuesta al toque en todo lo que se presiona, curvas de salida fuertes y cortas, hover solo con mouse, foco visible con teclado,
+   títulos de sección legibles (sin mayúsculas chiquitas espaciadas), texto secundario con más contraste, cifras alineadas
+   y botones más fáciles de tocar en el celular. Sin animaciones en lo que se usa cientos de veces (listas, teclado). */
+:root{--ease-out:cubic-bezier(.23,1,.32,1);--ease-io:cubic-bezier(.77,0,.175,1);--mut:#8b92a3}
+body{line-height:1.45;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-variant-numeric:tabular-nums;-webkit-tap-highlight-color:transparent}
+/* títulos de sección: frase normal, tamaño legible, tinta completa */
+.dt{font-size:13.5px;font-weight:700;letter-spacing:0;text-transform:none;color:var(--txt)}
+.dt .mut{font-weight:400;font-size:12px}
+.head,.drw h4,.cu-t,.trn-h4,#iaPanel h4,.sst small,.sg-conf small,.trn-eq small,.rsi-bh b{text-transform:none;letter-spacing:0}
+.head{font-size:11.5px}.drw h4,.cu-t{font-size:12.5px;font-weight:700;color:var(--txt)}.trn-h4,#iaPanel h4{font-size:13.5px;font-weight:700}
+.sst small,.sg-conf small,.trn-eq small{font-size:11px;font-weight:500}
+/* respuesta al presionar: todo lo que es un botón se hunde apenas (100-160 ms) */
+button,.sg-go,.acu-go,.hx-go,.go,.iab,[data-cop],[data-ver],.sig,.pil-c [data-a]{transition:transform 160ms var(--ease-out),background-color 150ms ease,border-color 150ms ease,color 150ms ease,opacity 150ms ease}
+button:active,.sg-go:active,.acu-go:active,.hx-go:active,.go:active,.iab:active{transform:scale(.97)}
+.sig:active,[data-cop]:active,[data-ver]:active{transform:scale(.99)}
+button:disabled{transform:none!important}
+/* hover solo con mouse: en el celular no quedan pegados */
+@media (hover:none){.hrow:hover,.row:hover,.sg-go:hover,.acu-go:hover{background:inherit;border-color:inherit}}
+/* foco visible al usar el teclado (y nada al tocar) */
+:focus-visible{outline:2px solid #2962ff;outline-offset:2px;border-radius:6px}
+:focus:not(:focus-visible){outline:none}
+/* desplegables: el contenido aparece suave al abrir (200 ms, sale rápido) */
+details[open]>summary~*{animation:pulIn 200ms var(--ease-out)}
+@keyframes pulIn{from{opacity:0;transform:translateY(-4px)}}
+summary{cursor:pointer;-webkit-user-select:none;user-select:none}
+/* aviso de nueva versión y avisos flotantes: más cortos y con curva de salida */
+#updBtn{transition:opacity 200ms var(--ease-out),transform 200ms var(--ease-out)}
+/* celular: botones con espacio para el dedo (≥ 36 px) */
+@media (max-width:800px){
+  .int-p button,.int-a button,.ia-tabs button,.ver-r,.wal-rs,.acu-go,.pil-a button{min-height:36px}
+  .int-p button,.int-a button,.ia-tabs button{padding:7px 13px;font-size:12.5px}
+  .int-p{gap:6px}
+  .dt{font-size:14px}
+}
+@media (prefers-reduced-motion:reduce){details[open]>summary~*{animation:none}button:active,.sg-go:active,.acu-go:active,.hx-go:active,.go:active,.iab:active,.sig:active,[data-cop]:active,[data-ver]:active{transform:none}}
+</style>
 </head>
 <body>
 <div id="start" class="hide">
