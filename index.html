@@ -386,6 +386,9 @@ body.fs-on .fsbar{display:flex}
 .pil-note{font-size:10px;color:var(--mut);margin-top:6px}
 .int{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel)}.int .dt{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .int-tabs{display:flex;gap:4px;flex-wrap:wrap;margin-left:auto}.int-tabs button,.int-p button,.int-a button,.int-go{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}
+.wal-top{display:flex;flex-direction:column;gap:2px;margin:6px 0}.wal-eq{font-size:22px;font-weight:900;font-variant-numeric:tabular-nums}.wal-st{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12px;margin:8px 0}
+.wal-cfg{margin:6px 0;font-size:12px}.wal-cfg summary{cursor:pointer;color:var(--acc)}.wal-mi{display:flex;flex-direction:column;gap:2px;font-size:11px;color:var(--mut)}.wal-mi input{width:90px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px 6px}
+.wal-rs{background:none;border:1px solid var(--line);color:var(--txt);border-radius:6px;padding:2px 8px;font-size:11px;cursor:pointer;margin-top:4px}
 .wal-c{display:flex;flex-wrap:wrap;gap:6px 12px;align-items:center;font-size:12px;margin:6px 0}.wal-c input[type=text]{width:80px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px 6px}.wal-c select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:3px}.wal-ck{display:flex;gap:4px;align-items:center}
 .wal-g{width:100%;height:130px;background:var(--bg);border:1px solid var(--line);border-radius:8px;margin:6px 0}.wal-l{font-size:11px;display:flex;flex-direction:column;gap:2px;font-variant-numeric:tabular-nums}
 .ver-r{border:1px solid var(--line);border-left:4px solid #4a4f59;border-radius:8px;padding:6px 9px;margin:5px 0;cursor:pointer;font-size:12px}.ver-r.g{border-left-color:#1e8e3e;background:rgba(30,142,62,.08)}.ver-r.y{border-left-color:#b38f00}.ver-r.r{border-left-color:#c62828;background:rgba(198,40,40,.08)}.ver-r.cur{box-shadow:0 0 0 1px #26c6da inset}
@@ -3819,32 +3822,56 @@ var VCOPEN=false;
    Sigue todas las señales reales de los bots (bitácora del bot 24 h: TRADING y SHOOTER de la versión actual) y las operaciones reales de la IA,
    poniendo en cada una un % fijo del capital de ese momento como margen (interés compuesto). Muestra la curva del capital y la peor caída,
    que es lo que de verdad dice si la app gana plata. El Trade del ciclo no entra: usa su propio margen con sumas. */
-var WAL={cap:1000,frac:10,tr:1,sh:1,ia:1,per:0};try{Object.assign(WAL,JSON.parse(localStorage.getItem('cv_wal')||'{}'))}catch(e){}
-const walSave=()=>{try{localStorage.setItem('cv_wal',JSON.stringify(WAL))}catch(e){}};
-function walOps(){const L=[],t0=WAL.per?Date.now()-WAL.per*864e5:0;
-  for(const o of BITOPS||[])if(o.state!=='open'&&o.closeAt&&o.pnl!=null&&(o.m==='medio'?WAL.tr:WAL.sh))L.push({t:o.closeAt,t0:o.t,pct:o.pnl/SIM[o.m].margin*100,k:o.m==='medio'?'TRADING':'SHOOTER',sym:o.sym,dir:o.dir});
-  if(WAL.ia&&IABOT)for(const x of IABOT.ops)if(!x.pr&&x.st!=='open'&&x.pnl!=null)L.push({t:x.closeT,t0:x.t,pct:x.pnl/x.mg*100,k:'IA',sym:x.sym,dir:x.dir});
-  return L.filter(x=>x.t0>=t0).sort((a,b)=>a.t-b.t);}
+/* octubre 2026 v2: la billetera opera con su propia plata. Arranca con 11.000 USD (se puede cambiar) desde el momento en que se crea o se reinicia.
+   Cada señal real de las secciones marcadas usa su margen (editable; por defecto el de siempre) y la plata se descuenta o se suma al cerrar.
+   Mientras una operación está abierta su margen queda "en uso" y el saldo se mueve en vivo con su resultado. Si no alcanza la plata disponible, esa señal no se toma.
+   Las versiones viejas (práctica) y las prácticas de la IA no tocan la billetera. */
+const WAL_DEF={cap:11000,tr:1,sh:1,a:1,ia:1,cic:1,mg:{medio:350,x:50,a:500,iatr:350,iash:50,cic:200}};
+var WAL=JSON.parse(JSON.stringify(WAL_DEF));try{const w=JSON.parse(localStorage.getItem('cv_wal')||'null');if(w&&w.v===2)WAL=Object.assign(WAL,w,{mg:Object.assign({},WAL_DEF.mg,w.mg||{})});}catch(e){}
+if(WAL.v!==2){WAL.v=2;WAL.t0=Date.now();}
+const walSave=()=>{try{localStorage.setItem('cv_wal',JSON.stringify(WAL))}catch(e){}};walSave();
+const walPx=s=>(tickers[s]&&tickers[s].c)||(typeof STK!=='undefined'&&STK&&STK[s]&&STK[s].c)||null;
+/* todas las operaciones reales de las secciones marcadas, con su margen en la billetera, su resultado (cerradas) o su resultado en vivo (abiertas) */
+function walOps(){const L=[],t0=WAL.t0||0,M=WAL.mg;
+  if(WAL.tr||WAL.sh)for(const o of BITOPS||[]){if(o.t<t0||!(o.m==='medio'?WAL.tr:WAL.sh))continue;const mg0=SIM[o.m].margin,mg=M[o.m],k=mg/mg0,lev=SIM[o.m].lev;
+    let u=null;if(o.state!=='open')u=o.pnl==null?null:o.pnl*k;else{const p=walPx(o.sym);if(p)u=Math.max(-mg,mg*lev*o.dir*(p/o.entry-1));}
+    L.push({k:o.m==='medio'?'TRADING':'SHOOTER',sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u});}
+  if(WAL.a)for(const o of realOps('a')){if(o.t<t0)continue;const mg0=SIM.a.margin,mg=M.a,k=mg/mg0;let u=null;if(o.state!=='open')u=o.pnl==null?null:o.pnl*k;else{const p=walPx(o.sym);if(p)u=pnlAt(o,p)*k;}
+    L.push({k:'ACCIONES',sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u});}
+  if(WAL.ia&&IABOT)for(const x of IABOT.ops){if(x.pr||x.t<t0)continue;const mg=x.f==='tr'?M.iatr:M.iash,k=mg/x.mg;let u=null;if(x.st!=='open')u=x.pnl==null?null:x.pnl*k;else{const p=walPx(x.sym);if(p)u=iaOpLive(x,p)*k;}
+    L.push({k:'IA',sym:x.sym,dir:x.dir,t:x.t,end:x.st==='open'?null:x.closeT,mg,u});}
+  if(WAL.cic)for(const o of CICOPS||[]){if(o.t<t0)continue;const k=M.cic/CIC.m0,mg=o.marg*k;let u=null;if(o.state!=='open')u=(o.pnl||0)*k;else{const p=walPx(o.sym);if(p)u=(cicPnl(o,p)-o.qty*p*CIC.fee)*k;}
+    L.push({k:'TRADE DEL CICLO',sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u,cic:1});}
+  return L.sort((a,b)=>a.t-b.t);}
+/* recorrido en orden: al abrir se reserva el margen (si alcanza la plata disponible), al cerrar vuelve con su resultado */
+function walRun(){const L=walOps(),ev=[];for(const x of L){ev.push([x.t,0,x]);if(x.end)ev.push([x.end,1,x]);}ev.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
+  let cash=WAL.cap,peak=WAL.cap,dd=0;const pts=[[WAL.t0,WAL.cap]];
+  for(const [t,kind,x] of ev){if(!kind){if(cash>=x.mg){cash-=x.mg;x.in=1;}else x.skip=1;}else if(x.in){cash+=x.mg+(x.u||0);x.done=1;const eq=cash+L.filter(y=>y.in&&!y.done&&y.t<=t).reduce((a,y)=>a+y.mg,0);peak=Math.max(peak,eq);dd=Math.min(dd,eq/peak-1);pts.push([t,eq]);}}
+  const open=L.filter(x=>x.in&&!x.end),used=open.reduce((a,x)=>a+x.mg,0),live=open.reduce((a,x)=>a+(x.u||0),0),eq=cash+used+live;peak=Math.max(peak,eq);dd=Math.min(dd,eq/peak-1);pts.push([Date.now(),eq]);
+  return {L,cash,used,live,eq,dd,pts,open};}
 function walRender(){const el=$('walBody');if(!el)return;if(!BITOPS)bitPgLoad();if(el.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
-  const L=walOps(),f=WAL.frac/100;let c=WAL.cap,peak=c,dd=0,best=null,worst=null;const pts=[[L.length?L[0].t0:Date.now(),c]];
-  for(const x of L){const u=c*f*x.pct/100;c+=u;x.u=u;x.c=c;peak=Math.max(peak,c);dd=Math.min(dd,c/peak-1);pts.push([x.t,c]);if(!best||u>best.u)best=x;if(!worst||u<worst.u)worst=x;}
-  const n=L.length,w=L.filter(x=>x.pct>0).length,res=c/WAL.cap-1,up=res>=0;
-  $('walSum').textContent=n?`${fusd2(c-WAL.cap).replace(/\s?USD$/,'')} USD (${hxPct(res*100)}) · ${n} operaciones`:'todavía sin operaciones cerradas';
-  let svg='';if(pts.length>1){const W=600,Hh=130,t0=pts[0][0],t1=pts[pts.length-1][0]||t0+1,vs=pts.map(p=>p[1]),lo=Math.min(...vs,WAL.cap),hi=Math.max(...vs,WAL.cap),X=t=>(t-t0)/((t1-t0)||1)*(W-8)+4,Y=v=>Hh-6-(v-lo)/((hi-lo)||1)*(Hh-12);
-    svg=`<svg class="wal-g" viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${Y(WAL.cap)}" y2="${Y(WAL.cap)}" stroke="#4a4f59" stroke-dasharray="4 4"/><polyline fill="none" stroke="${up?'#26a69a':'#ef5350'}" stroke-width="2.2" points="${pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')}"/></svg>`;}
-  const ck=(k,t)=>`<label class="wal-ck"><input type="checkbox" data-wk="${k}" ${WAL[k]?'checked':''}> ${t}</label>`;
-  el.innerHTML=`<div class="wal-c"><label>Capital inicial <input type="text" inputmode="decimal" data-wcap value="${WAL.cap}"> USD</label><label>Margen por operación <select data-wfrac>${[5,10,20,25].map(v=>`<option value="${v}" ${WAL.frac===v?'selected':''}>${v} % del capital</option>`).join('')}</select></label>
-      ${ck('tr','TRADING')}${ck('sh','SHOOTER')}${ck('ia','IA')}</div>
-    <div class="int-p">${[[7,'7 días'],[30,'30 días'],[0,'Todo']].map(([d,t])=>`<button data-wper="${d}" class="${WAL.per===d?'on':''}">${t}</button>`).join('')}</div>
-    <div class="int-g"><div>Capital ahora<b class="${up?'up':'dn'}">${c.toLocaleString('es-ES',{maximumFractionDigits:2})} USD</b><small>${hxPct(res*100)} desde ${WAL.cap.toLocaleString('es-ES')} USD</small></div><div>Operaciones<b>${n}</b><small>${n?Math.round(w/n*100)+' % ganadas':'—'}</small></div>
-      <div>Peor caída<b class="dn">${hxPct(dd*100)}</b><small>desde el punto más alto</small></div><div>Mejor / peor<b><span class="up">${best?fusd2(best.u):'—'}</span></b><small class="dn">${worst?fusd2(worst.u):'—'}</small></div></div>
-    ${svg||'<div class="int-v">Todavía no hay operaciones cerradas de los bots en este período: la curva aparece con la primera.</div>'}
-    ${L.length?`<div class="wal-l">${L.slice().reverse().slice(0,12).map(x=>`<div>${new Date(x.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${x.k} <span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲':'▼'}</span> ${x.sym.replace('USDT','')} · <span class="${x.u>=0?'up':'dn'}">${fusd2(x.u)}</span> → ${x.c.toLocaleString('es-ES',{maximumFractionDigits:0})} USD</div>`).join('')}</div>`:''}
-    <div class="mut" style="font-size:11px;margin-top:6px">Sigue las señales reales del bot 24 h (versión actual de cada bot) y de la IA, desde que existe la bitácora. Cada operación usa el ${WAL.frac} % del capital de ese momento como margen, con las X y comisiones de cada bot. El Trade del ciclo no entra porque usa su propio margen con sumas.</div>`;}
-$('walBox').addEventListener('change',e=>{const t=e.target;if(t.dataset.wk){WAL[t.dataset.wk]=t.checked?1:0;}else if(t.dataset.wfrac!=null){WAL.frac=+t.value;}else if(t.dataset.wcap!=null){const v=+String(t.value).replace(',','.');if(v>0)WAL.cap=v;t.blur();}walSave();walRender();});
-$('walBox').addEventListener('click',e=>{const b=e.target.closest('[data-wper]');if(b){WAL.per=+b.dataset.wper;walSave();walRender();}});
-$('walBox').addEventListener('toggle',()=>{if($('walBox').open){bitPgLoad();try{iaBotLoad();}catch(_){}walRender();}});
-setInterval(()=>{if($('walBox').open)walRender();},60e3);
+  const R=walRun(),res=R.eq/WAL.cap-1,up=res>=0,C=R.L.filter(x=>x.in&&x.done),n=C.length,w=C.filter(x=>(x.u||0)>0).length,sk=R.L.filter(x=>x.skip).length;
+  $('walSum').textContent=`${R.eq.toLocaleString('es-ES',{maximumFractionDigits:0})} USD (${hxPct(res*100)})${R.open.length?' · '+R.open.length+' abiertas':''}`;
+  let svg='';if(R.pts.length>1){const W=600,Hh=130,t0=R.pts[0][0],t1=R.pts[R.pts.length-1][0],vs=R.pts.map(p=>p[1]),lo=Math.min(...vs,WAL.cap),hi=Math.max(...vs,WAL.cap),X=t=>(t-t0)/((t1-t0)||1)*(W-8)+4,Y=v=>Hh-6-(v-lo)/((hi-lo)||1)*(Hh-12);
+    svg=`<svg class="wal-g" viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${Y(WAL.cap)}" y2="${Y(WAL.cap)}" stroke="#4a4f59" stroke-dasharray="4 4"/><polyline fill="none" stroke="${up?'#26a69a':'#ef5350'}" stroke-width="2.2" points="${R.pts.map(p=>X(p[0]).toFixed(1)+','+Y(p[1]).toFixed(1)).join(' ')}"/></svg>`;}
+  const ck=(k,t)=>`<label class="wal-ck"><input type="checkbox" data-wk="${k}" ${WAL[k]?'checked':''}> ${t}</label>`,mi=(k,t)=>`<label class="wal-mi">${t}<input type="text" inputmode="decimal" data-wmg="${k}" value="${WAL.mg[k]}"></label>`,fu=v=>v.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
+  el.innerHTML=`<div class="wal-top"><div class="wal-eq ${up?'up':'dn'}">${fu(R.eq)}</div><div class="mut">${hxPct(res*100)} desde ${WAL.cap.toLocaleString('es-ES')} USD · desde ${fdate(WAL.t0)}${R.open.length?' · <span class="live">EN VIVO</span>':''}</div></div>
+    <div class="int-g"><div>Disponible<b>${fu(R.cash)}</b><small>para nuevas señales</small></div><div>En uso<b>${fu(R.used)}</b><small>margen de ${R.open.length} abiertas</small></div>
+      <div>Abiertas ahora<b class="${R.live>=0?'up':'dn'}">${fusd2(R.live)}</b><small>resultado en vivo</small></div><div>Cerradas<b>${n}</b><small>${n?Math.round(w/n*100)+' % ganadas':'—'}${sk?' · '+sk+' sin plata':''}</small></div>
+      <div>Peor caída<b class="dn">${hxPct(R.dd*100)}</b><small>desde el punto más alto</small></div></div>
+    ${svg||'<div class="int-v">Todavía no hay operaciones desde que arrancó la billetera: se mueve sola con la primera señal de las secciones marcadas.</div>'}
+    <div class="wal-st"><b>Invertir en:</b>${ck('tr','TRADING')}${ck('sh','SHOOTER')}${ck('a','ACCIONES')}${ck('ia','IA')}${ck('cic','Trade del ciclo')}</div>
+    <details class="wal-cfg"><summary>⚙ Capital y margen de cada señal</summary><div class="wal-c"><label class="wal-mi">Capital inicial<input type="text" inputmode="decimal" data-wcap value="${WAL.cap}"></label>
+      ${mi('medio','TRADING')}${mi('x','SHOOTER')}${mi('a','ACCIONES')}${mi('iatr','IA TRADING')}${mi('iash','IA SHOOTER')}${mi('cic','Trade del ciclo (inicial)')}</div>
+      <div class="mut" style="font-size:11px">Margen en USD por señal, con la X de siempre de cada bot (el resultado se escala con el margen). En el Trade del ciclo las sumas crecen en la misma proporción. <button type="button" class="wal-rs" data-wdef="1">Volver a los márgenes de siempre</button> <button type="button" class="wal-rs" data-wreset="1">Reiniciar la billetera desde hoy</button></div></details>
+    ${R.L.length?`<div class="wal-l">${R.L.slice().reverse().slice(0,15).map(x=>`<div>${new Date(x.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${x.k} <span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲':'▼'}</span> ${x.sym.replace('USDT','')} · ${x.mg.toLocaleString('es-ES',{maximumFractionDigits:0})} USD · ${x.skip?'<span class="mut">sin plata disponible, no se tomó</span>':!x.end?`<span class="live">EN VIVO</span> <span class="${(x.u||0)>=0?'up':'dn'}">${x.u==null?'—':fusd2(x.u)}</span>`:`<span class="${(x.u||0)>=0?'up':'dn'}">${fusd2(x.u||0)}</span>`}</div>`).join('')}</div>`:''}
+    <div class="mut" style="font-size:11px;margin-top:6px">Usa las señales reales de cada sección (bot 24 h, IA y Trade del ciclo del bot, ACCIONES de la página). Las versiones viejas y las prácticas de la IA no mueven la billetera.</div>`;}
+$('walBox').addEventListener('change',e=>{const t=e.target,num=v=>+String(v).replace(/\./g,'').replace(',','.');
+  if(t.dataset.wk){WAL[t.dataset.wk]=t.checked?1:0;}else if(t.dataset.wcap!=null){const v=num(t.value);if(v>0)WAL.cap=v;t.blur();}else if(t.dataset.wmg){const v=num(t.value);if(v>0)WAL.mg[t.dataset.wmg]=v;t.blur();}walSave();walRender();});
+$('walBox').addEventListener('click',e=>{if(e.target.closest('[data-wdef]')){WAL.mg=Object.assign({},WAL_DEF.mg);walSave();walRender();}else if(e.target.closest('[data-wreset]')){WAL.t0=Date.now();walSave();walRender();}});
+$('walBox').addEventListener('toggle',()=>{if($('walBox').open){bitPgLoad();try{iaBotLoad();cicLoad();}catch(_){}walRender();}});
+setInterval(()=>{if($('walBox').open)walRender();else{try{const R=walRun();$('walSum').textContent=`${R.eq.toLocaleString('es-ES',{maximumFractionDigits:0})} USD (${hxPct((R.eq/WAL.cap-1)*100)})${R.open.length?' · '+R.open.length+' abiertas':''}`;}catch(_){}}},15e3);
+setTimeout(()=>{bitPgLoad();},7000);
 /* ---------- 🧪 versiones en paralelo (datos/versiones.json, del bot 24 h) ----------
    Cada versión de TRADING y SHOOTER sigue dando señales en práctica las 24 h. Acá: cómo le va a cada una y, con la foto de los indicadores
    de cada señal, qué observación le suma más y cuál le arruina las señales (para quedarse con lo bueno y sacar lo malo). */
