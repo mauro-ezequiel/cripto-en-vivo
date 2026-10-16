@@ -280,7 +280,7 @@ body.fs-on .fsbar{display:flex}
 .sg-f{font-size:10.5px;color:var(--mut)}
 .adv{margin:7px 0;padding:7px 10px;border-radius:7px;font-size:12px;line-height:1.45;border-left:4px solid;color:var(--txt)}.adv b{font-weight:800;letter-spacing:.2px}
 .adv.ok{background:rgba(0,200,83,.14);border-color:#00c853}.adv.hold{background:rgba(41,98,255,.14);border-color:#2962ff}.adv.warn{background:rgba(255,152,0,.15);border-color:#ff9800}.adv.bad{background:rgba(239,83,80,.16);border-color:#ef5350}.adv.end{background:#222836;border-color:#6b7280}
-.sg-go{display:block;width:100%;margin:6px 0 4px;padding:7px;border:1px solid var(--line);border-radius:7px;background:#1b2130;color:var(--txt);font-weight:700;font-size:12px;cursor:pointer}.sg-go:hover{border-color:#2962ff}
+.pil-a .pil-go{background:#2962ff;color:#fff;border:0;font-weight:800;flex:1 1 100%;padding:9px 12px;border-radius:8px;font-size:13px}.pil-a .pil-go:hover{background:#1e53e5}.sg-go{display:block;width:100%;margin:6px 0 4px;padding:7px;border:1px solid var(--line);border-radius:7px;background:#1b2130;color:var(--txt);font-weight:700;font-size:12px;cursor:pointer}.sg-go:hover{border-color:#2962ff}
 #sovChip{position:absolute;left:8px;bottom:34px;z-index:6;display:flex;align-items:center;gap:6px;background:rgba(20,23,29,.92);border:1px solid var(--line);border-radius:999px;padding:3px 4px 3px 10px;font-size:11.5px;color:var(--txt);pointer-events:auto}#sovChip[hidden]{display:none}#sovChip button{border:0;background:#2a3142;color:var(--txt);border-radius:999px;width:22px;height:22px;cursor:pointer}
 .sg-lost{font-size:11.5px;color:var(--txt);background:#222836;border-radius:6px;padding:5px 8px}
 /* historial y simulación */
@@ -3566,7 +3566,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=mode==='a';const cn
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       ${pilTgHTML(a)}${pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
-      ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go">Ver en el gráfico</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
+      ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go" class="pil-go">📈 Ver en el gráfico: mi entrada y objetivos</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="del">Dejar de pilotear</button></div></div>`;}).join('');}
 /* ---------- PILOTEAR v3: costos reales y datos de Binance ----------
    Antes: liquidación con un margen de mantenimiento fijo de 0,5 % y resultado sin comisiones ni funding.
    Ahora: margen de mantenimiento según la moneda (o el precio exacto de Binance si conectás tu clave de solo lectura),
@@ -3660,7 +3660,7 @@ $('pilGo').onclick=()=>{const s=symOf($('pilSym').value),t=tickers[s],err=$('pil
   const p={id:s+'-'+Date.now(),sym:s,dir:+$('pilDir').value,entry:px,lev:X,margin:Math.max(1,+$('pilM').value||100),t:Date.now(),state:null,ll:null,closed:false};
   PIL.push(p);savePil();$('pilSym').value='';$('pilPx').value='';if(symbol!==s)select(s);pilRender();pilTick();};
 $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.pil-c').dataset.id,p=PIL.find(x=>x.id===id);if(!p)return;
-  if(b.dataset.a==='go'){if(symbol!==p.sym)select(p.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}
+  if(b.dataset.a==='go'){SFOC={pil:p.id};try{localStorage.setItem('cv_sfoc',JSON.stringify(SFOC))}catch(_){}SOV.key='';if(symbol!==p.sym)select(p.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});setTimeout(()=>sovDraw(true),700);}
   else if(b.dataset.a==='ll'){const t=tickers[p.sym];if(t){p.ll={px:t.c,margin:p.margin/2,t:Date.now()};p.state=null;savePil();pilTick();}}
   else if(b.dataset.a==='close'){p.closing=true;pilRender();const i=document.querySelector(`.pil-c[data-id="${id}"] input`);if(i)i.focus();}
   else if(b.dataset.a==='cancel'){p.closing=false;document.activeElement&&document.activeElement.blur();pilRender();}
@@ -4315,7 +4315,25 @@ var SOV={lines:[],key:''};
   c.addEventListener('click',e=>{if(!e.target.closest('button'))return;e.stopPropagation();SFOC=null;try{localStorage.removeItem('cv_sfoc')}catch(_){}sovClear();});})();
 function sovClear(){SOV.lines.forEach(l=>{try{series.removePriceLine(l)}catch(e){}});SOV.lines=[];try{series.setMarkers([])}catch(e){}SOV.key='';const c=$('sovChip');if(c)c.hidden=true;}
 function sovIdx(ts){let k=-1;for(let i=0;i<candles.length;i++){const c=candles[i],ct=c.t!=null?c.t:(c.time-TZ)*1000;if(ct<=ts)k=i;else break;}return k;}
-function sovDraw(force){
+/* PILOTEAR (octubre 2026): mi operación en el gráfico: entrada (y promedio con salvavidas), los objetivos de salida que recomienda el análisis,
+   el "salí si toca" y la liquidación estimada */
+function sovPil(force){const p=PIL.find(x=>x.id===SFOC.pil);
+  if(!p||p.sym!==symbol||!candles.length){if(SOV.key||SOV.lines.length)sovClear();return;}
+  const a=p.a||{},tg=a.tg&&a.tg.L||[],key=['pil',p.id,!!p.ll,tg.map(x=>x.px.toPrecision(6)).join(','),a.exitAt||0,a.liq||0,tf,candles.length,candles[0].time].join('|');
+  if(!force&&key===SOV.key)return;const first=!SOV.key||force;sovClear();SOV.key=key;
+  const L=p.dir>0,LS=LightweightCharts.LineStyle,add=(price,color,w,style,title)=>{if(price>0)SOV.lines.push(series.createPriceLine({price,color,lineWidth:w,lineStyle:style,axisLabelVisible:true,title}));};
+  tg.forEach((x,i)=>add(x.px,x.u>=0?'#00e676':'#ff9100',x.rec?4:2,LS.Solid,`OBJETIVO ${i+1}${x.rec?' · RECOMENDADO':''}${x.u>=0?'':' (salida en pérdida)'}`));
+  add(p.entry,'#e0e3eb',1,LS.Dashed,'Mi entrada');
+  if(p.ll)add(pilAvg(p),'#ffd600',1,LS.Dashed,'Entrada promedio');
+  if(a.exitAt)add(a.exitAt,'#ff1744',2,LS.Dashed,'Salí si toca');
+  if(a.liq)add(a.liq,'#ff1744',1,LS.Dotted,'Liquidación');
+  const mk=[],i0=sovIdx(p.t),ti=i0<0?null:candles[i0].time;
+  if(ti!=null)mk.push({time:ti,position:L?'belowBar':'aboveBar',color:L?'#00e676':'#ff1744',shape:L?'arrowUp':'arrowDown',text:`MI ENTRADA ${L?'LONG':'SHORT'} ${fp(p.entry)}`});
+  if(p.ll&&p.ll.t){const k=sovIdx(p.ll.t);if(k>=0)mk.push({time:candles[k].time,position:L?'belowBar':'aboveBar',color:'#ffd600',shape:'circle',text:'🛟 Salvavidas'});}
+  mk.sort((x,y)=>x.time-y.time);try{series.setMarkers(mk);}catch(err){}
+  const c=$('sovChip');if(c){c.innerHTML=`📍 Mi operación · ${L?'▲ LONG':'▼ SHORT'} ${p.sym.replace('USDT','')} × ${p.lev}${tg.length?'':' · <span class="mut">calculando objetivos…</span>'} <button type="button" title="Quitar del gráfico">✕</button>`;c.hidden=false;}
+  if(first){const ts=chart.timeScale(),r=ts.getVisibleLogicalRange();if(i0>=0&&r&&(i0<r.from+3||i0>r.to))ts.setVisibleLogicalRange({from:Math.max(0,i0-25),to:candles.length+8});}}
+function sovDraw(force){if(SFOC&&SFOC.pil)return sovPil(force);
   const o=SFOC&&OPS.find(x=>x.id===SFOC.id);
   if(!o||o.sym!==symbol||!candles.length){if(SOV.key||SOV.lines.length)sovClear();return;}
   const key=[o.id,o.hit,o.state,o.fail,o.ae||0,!!o.ll,tf,candles.length,candles[0].time].join('|');
@@ -5108,7 +5126,8 @@ async function iaFutRaw(s){const c=IAFX[s];if(c&&Date.now()-c.t<5*6e4)return c.v
 async function iaFutX(s,d){const v=await iaFutRaw(s);if(!v)return null;const x=[v.oi24,v.oi1,d*v.tk,d*v.top,d*v.ret,d*v.f];return x.every(isFinite)?x:null;}
 async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IAIT=Date.now();const out=[];
   try{const btcSide=async tf=>{try{const b=(await kl('BTCUSDT',tf,80)).slice(0,-1),e=IA._.ema(b.map(x=>x.close),50);return b.at(-1).close>e.at(-1)?1:-1;}catch(e){return 0;}};
-    for(const [f,tfs,U,cap,r,ka] of [['tr',['4h'],universe('medio'),NEWG.medio.max,NEWG.medio.r,NEWG.medio.a],['sh',['15m','30m'],universe('x'),NEWG.x.max,NEWG.x.r,NEWG.x.a]]){ // octubre 2026: misma geometría con la que aprende (antes usaba la vieja: el stop y los objetivos no coincidían con su entrenamiento)const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
+    for(const [f,tfs,U,cap,r,ka] of [['tr',['4h'],universe('medio'),NEWG.medio.max,NEWG.medio.r,NEWG.medio.a],['sh',['15m','30m'],universe('x'),NEWG.x.max,NEWG.x.r,NEWG.x.a]]){ // octubre 2026: misma geometría con la que aprende (antes usaba la vieja: el stop y los objetivos no coincidían con su entrenamiento)
+      const E=IAM[f]&&IAM[f].entry,PR=E&&E.test&&E.test.propias;
       /* octubre 2026: además de ganar ≥ 1 % por operación en la prueba, tiene que acertar al menos como los bots (TRADING 70 %, SHOOTER 80 % de ganadas) */
       const WMIN=f==='tr'?70:80,EF=E&&E.futuros&&E.futuros.usar&&E.futuros.test&&E.futuros.test.pct>=1&&(E.futuros.test.obj1||0)>=WMIN?E.futuros:null;
       /* octubre 2026: solo opera sola si en la prueba sus entradas ganaron al menos 1 % del margen por operación (antes alcanzaba con apenas > 0) */
