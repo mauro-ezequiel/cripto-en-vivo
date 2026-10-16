@@ -2069,7 +2069,7 @@ SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,u
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
-try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x))SIG=s;}catch(e){}
+try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x)){SIG=s;SIG.medio=SIG.medio.filter(x=>x.srv);SIG.x=SIG.x.filter(x=>x.srv);}}catch(e){} // octubre 2026: TRADING y SHOOTER solo del bot 24 h
 if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-c','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','c-rup','c-rsi2','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
@@ -2314,7 +2314,11 @@ function buildSignalV2(m,sym,e,fd){
   return {sym,m,dir,tf:cfg.tf,entry:c,zl:c-zone,zh:c+zone,tp0,tp1,tp2,sl,conf,setup,reasons,lev:setup==='tp-x'?PLUSG.lev:undefined,
     calTxt:m==='p'?'Señal con tus ajustes · sin calibrar con datos históricos · NO RECOMENDABLE':`llegó al objetivo 1 en el ${cal.p} % y a los 3 objetivos en el ${CAL[m][setup].p3??'—'} % de ${cal.n} casos${CAL[m][setup].usd!=null?` · promedio ${intMoney(CAL[m][setup].usd)} por operación`:''} (${CAL[m][setup].yr?'último año, recalculado cada día':'backtest con salvavidas y comisiones'}) · ${CAL[m][setup].txt}`,t:Date.now(),state:'live'};
 }
+/* octubre 2026: TRADING y SHOOTER salen solo del bot 24 h (senales.json). Antes cada navegador también buscaba por su cuenta, a distinta hora y con
+   su propio historial, y por eso un dispositivo mostraba 6 señales y otro 2. Ahora todas las cuentas y dispositivos ven exactamente las mismas. */
+const BOTSRC=m=>m==='medio'||m==='x';var SRVCHK=0;
 async function scanSignals(mm){
+  if(BOTSRC(mm||mode)){lastScan[mm||mode]=Date.now();try{await srvImport();}catch(e){}renderSignals();return;}
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
   const m=mm||mode,cfg=SIGCFG[m];scanBusy=true;lastScan[m]=Date.now();renderSignals();
   try{
@@ -2362,12 +2366,13 @@ function renderSignals(){try{iaSigRender();}catch(e){}
   const m=mode,cfg=SIGCFG[m],now=Date.now();
   if(SIGV!=='ia')$('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales probadas con 6 años de velas diarias de 356 acciones de EE. UU. (elegidas con los primeros 4 años y medidas en los últimos 2). El % es cuántas operaciones terminaron ganando: los objetivos están lejos (1, 2 y 3 veces el stop), así que el objetivo 1 se toca menos seguido, pero cada acierto paga más. Ninguna es segura: usá siempre el stop.':sw.dataset.def;}}
+  if(BOTSRC(m)){$('sigScan').textContent=SRVCHK?`· bot 24 h · revisado ${new Date(SRVCHK).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`:'· conectando con el bot 24 h…';}else
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
   const pinned=[];
   /* cada tarjeta se ve 1 hora desde que salió la señal (o hasta que la cierres con la X); la operación se sigue igual en Resultados */
   const vis=SIG[m].filter(s=>!SIGHIDE.has(s.op)&&now-(s.t||now)<SIGCARD_MS);
   const list=pinned.concat(vis.slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,Math.max(0,MAXSIG+4-pinned.length)));
-  if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.</div>`;return;}
+  if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} ${BOTSRC(m)?'Las busca el bot 24 h en cada vela y son las mismas en todas tus cuentas y dispositivos.':`Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.`}</div>`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
     const pin=false;
     return `<div class="sig ${L?'long':'short'}${pin?' pin':''}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll&&!LLHIDE.has(op.id)?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
@@ -3802,7 +3807,12 @@ async function bitPgLoad(){if(Date.now()-bitPgT<10*6e4)return;bitPgT=Date.now();
       hit:o?o.hit:0,state:!o?'open':o.c===1?'fail':o.hit>0?'win':'exp',pnl:o?Math.round(o.pct*mg)/100:null,closeAt:o?o.t:null,lite:o?0:1,
       why:o?(o.c===3?'llegó al objetivo '+o.hit+' y el resto se cerró en la entrada':o.c===5&&o.hit?'llegó al objetivo '+o.hit+' y venció el plazo':BIT_WHY[o.c]||''):''};});
     if(HSRC==='live')renderRes(true);try{walRender();}catch(_){}}catch(e){}}
-function realOps(m){const L=[],seen=new Set(),inOps=new Set(OPS.map(o=>o.id)),orig=new Map();
+/* octubre 2026: TRADING y SHOOTER en vivo = la bitácora del bot (igual en todas las cuentas). Las que siguen abiertas usan el seguimiento de esta página
+   (objetivos tocados y resultado en vivo) y, si no está, entrada, stop y apalancamiento de la bitácora para mostrar el resultado en vivo. */
+function realOps(m){if(BOTSRC(m)&&Array.isArray(BITOPS)){const byId=new Map(OPS.map(o=>[o.id,o]));
+    return BITOPS.filter(o=>o.m===m&&o.setup!=='tp-x').map(b=>{if(b.state!=='open')return b;const l=byId.get(b.id);if(l&&!l.lite)return l;
+      const lev=SIM[m].lev,not=SIM[m].margin*lev,liqD=b.fail&&b.entry?Math.abs(b.fail/b.entry-1):SIM[m].maxLoss/not;return Object.assign({},b,{lev,not,liqD,loss:+(not*liqD).toFixed(2),lite:0,real:0});}).sort((a,b)=>a.t-b.t);}
+  const L=[],seen=new Set(),inOps=new Set(OPS.map(o=>o.id)),orig=new Map();
   for(const a of OPS_ARCH)if(a.arch==='v7'&&inOps.has(a.id)&&a.state!=='open'&&!orig.has(a.id))orig.set(a.id,a);
   const add=o=>{if(!o||o.m!==m||o.setup==='tp-x')return;const k=o.sym+o.dir+Math.round(o.t/6e5);if(seen.has(o.id)||seen.has(k))return;seen.add(o.id);seen.add(k);L.push(o);};
   for(const o of OPS)add(orig.get(o.id)||o);
@@ -4462,12 +4472,12 @@ async function histYrLoad(){try{const j=await (await fetch(HIST_URL+'?t='+Date.n
 setTimeout(histYrLoad,2500);setInterval(histYrLoad,6*36e5);
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
 const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
-async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;
-  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||OPS.some(o=>o.id===id))continue;
-    const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
+async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
       calTxt:`📡 señal del servidor 24 h (también llegó por Telegram)${c?` · llegó al objetivo 1 en el ${c.p} % de ${c.n} casos · ${c.txt}`:''}`,t:x.t,state:'live',srv:true};
+    if(OPS.some(o=>o.id===id)){if(Date.now()-x.t<SIGCARD_MS){f.op=id;SIG[x.m].push(f);ch=true;}continue;} // la operación ya llegó por la cuenta: igual se muestra la tarjeta
     window.__importing=true;try{addSig(x.m,f);}finally{window.__importing=false;}
     if(Date.now()-x.t>cfg.maxAge)lose(f,'pasó el tiempo para entrar (llegó con la página cerrada)');
     ch=true;}
@@ -4634,12 +4644,12 @@ const SRV_API='https://api.github.com/repos/mauro-ezequiel/cripto-en-vivo/conten
 let srvSeen=null,srvApiOff=0;
 async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await r.json();if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
   return await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();}
-srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;const fresh=[];
-  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||OPS.some(o=>o.id===id))continue;
-    const cool=x.m==='medio'?24*36e5:1.5*36e5;if(OPS.some(o=>o.m===x.m&&o.sym===x.sym&&o.dir===x.dir&&Math.abs(o.t-x.t)<cool))continue;
+srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();const fresh=[];
+  for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
       calTxt:`📡 señal del servidor 24 h (también llegó por Telegram)${c?` · llegó al objetivo 1 en el ${c.p} % de ${c.n} casos · ${c.txt}`:''}`,t:x.t,state:'live',srv:true};
+    if(OPS.some(o=>o.id===id)){if(Date.now()-x.t<SIGCARD_MS){f.op=id;SIG[x.m].push(f);ch=true;}continue;} // la operación ya llegó por la cuenta: igual se muestra la tarjeta
     window.__importing=true;try{addSig(x.m,f);}finally{window.__importing=false;}
     if(Date.now()-x.t>cfg.maxAge)lose(f,'pasó el tiempo para entrar (llegó con la página cerrada)');
     else if(srvSeen!==null&&Date.now()-x.t<30*6e4)fresh.push(f);
@@ -4680,7 +4690,8 @@ function evalTradingPlus(cs,hc,rank){const cc=cs.slice(0,-1);
     out.dir=dir;out.score=dir;if(Math.sign(htf)===dir)out.reasons.push('tendencia diaria a favor');
     return out;});}
 let plusBusy=false,plusLast=0;
-async function scanPlus(){if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
+async function scanPlus(){return; // octubre 2026: apagado, las señales de TRADING salen solo del bot 24 h (TRADING+ no dio ninguna en el último año simulado)
+  if(plusBusy||!Object.keys(tickers).length)return;plusBusy=true;plusLast=Date.now();
   try{const cfg=SIGCFG.medio,now=Date.now();
     const U=Object.values(tickers).filter(t=>!t.kind&&/USDT$/.test(t.s)&&!STABLE.test(t.s)&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.s)&&t.q>1e7&&Math.abs(t.p||0)<25).sort((a,b)=>b.q-a.q).slice(0,80).map(t=>t.s);
     const fresh=[];
@@ -5237,9 +5248,12 @@ function iaAcelHTML(){const E=IAM&&IAM.estimado,M=IAM&&IAM.memoria,V=f=>IAM&&IAM
    🟢 3 o más: conviene seguir sus consejos · 🟡 1 o 2: ni bien ni mal · 🔴 0 o menos: todavía no conviene. Con menos de 20 comparaciones queda en amarillo como máximo. */
 function iaFamEff(f){const now=Date.now(),R=iaRecs().filter(r=>r[3]>=now-90*864e5&&(f==='sh'?r[0]==='x':r[0]!=='x'));let sb=R.reduce((a,r)=>a+r[4],0),si=R.reduce((a,r)=>a+r[6],0),n=R.length;
   const seen=new Set(R.map(r=>r[2]+'|'+Math.round(r[3]/36e5)));
-  if(typeof iaplOps==='function')for(const o of iaplOps()){if((o.m==='x')!==(f==='sh'))continue;const x=IAPL.c[o.id];if(!x||!x.done||seen.has(o.sym.replace('USDT','')+'|'+Math.round(o.t/36e5)))continue;sb+=x.bot;si+=x.ia;n++;}
+  /* octubre 2026: ya no suma las comparaciones hechas en este dispositivo: el semáforo tiene que ser igual en todas las cuentas */
   return {eff:sb>0?100*si/sb:(si>0?999:null),n,sb:n?sb/n:0,si:n?si/n:0};}
-function iaSemaforo(f){const E=iaFamEff(f),en=IAM&&IAM[f]&&IAM[f].entry,P=en&&en.test&&en.test.propias,F=en&&en.futuros,why=[];let sc=0;
+function iaSemaforo(f){const B=IABOT&&IABOT.sem&&IABOT.sem[f];
+  if(B&&B.c)return {c:B.c,sc:B.sc,why:B.why||[],E:iaFamEff(f),bot:1,lab:{g:'Conviene seguir sus consejos: sus operaciones cuentan',y:'Ni bien ni mal: solo practica, no usa la billetera',r:'Todavía no conviene: solo practica, no usa la billetera'}[B.c]};
+  return iaSemaforoLocal(f);}
+function iaSemaforoLocal(f){const E=iaFamEff(f),en=IAM&&IAM[f]&&IAM[f].entry,P=en&&en.test&&en.test.propias,F=en&&en.futuros,why=[];let sc=0;
   if(E.eff!=null){if(E.eff>=100){sc+=2;why.push(`le gana a los bots (${iaD(Math.min(E.eff,999))} %)`);}else if(E.eff>=80){sc+=1;why.push(`casi iguala a los bots (${iaD(E.eff)} %)`);}else why.push(`saca menos que los bots (${iaD(E.eff)} %)`);}
   const WM=f==='tr'?70:80,okP=(P&&P.pct>=1&&P.pct>P.base_pct&&(P.gana||P.obj1||0)>=WM)||(F&&F.usar&&F.test&&F.test.pct>=1&&(F.test.obj1||0)>=WM);if(okP){sc+=1;why.push('sus entradas propias ganaron en la prueba');}else why.push('sus entradas propias todavía no ganan en la prueba');
   const C=IAOPS.filter(x=>x.f===f&&x.st!=='open');if(C.length>=5){const net=C.reduce((a,x)=>a+(x.pnl||0),0);if(net>0){sc+=1;why.push(`en vivo va ganando (${fusd2(net)})`);}else{sc-=1;why.push(`en vivo va perdiendo (${fusd2(net)})`);}}
@@ -5303,7 +5317,9 @@ try{IAOPS=JSON.parse(localStorage.getItem('cv_ia_ops')||'null');if(!Array.isArra
 var IABOT=null;const IABOT_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia-ops.json';
 async function iaBotLoad(){try{const j=await getJ(IABOT_URL+'?t='+Math.floor(Date.now()/6e4));if(!j||!Array.isArray(j.ops))return;IABOT=j;
     const real=j.ops.filter(x=>!x.pr).map(x=>iaMgFix(iaOpFix(Object.assign({},x,{bot:1})))),ids=new Set(real.map(x=>x.id));
-    IAOPS=IAOPS.filter(x=>!x.bot&&!ids.has(x.id)).concat(real).sort((a,b)=>a.t-b.t);saveIAOPS();if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}catch(e){}}
+    try{const loc=IAOPS.filter(x=>!x.bot&&!ids.has(x.id));if(loc.length){const old=JSON.parse(localStorage.getItem('cv_ia_ops_local')||'[]'),k=new Set(old.map(x=>x.id));localStorage.setItem('cv_ia_ops_local',JSON.stringify(old.concat(loc.filter(x=>!k.has(x.id)))));}}catch(_){}
+    /* octubre 2026: solo las del bot 24 h (las mismas en todas las cuentas); las que abría este dispositivo quedan guardadas en cv_ia_ops_local */
+    IAOPS=real.sort((a,b)=>a.t-b.t);saveIAOPS();if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}catch(e){}}
 function iaPractica(){if(!IABOT)return '';const P=IABOT.ops.filter(x=>x.pr),R=IABOT.ops.filter(x=>!x.pr),f=L=>{const C=L.filter(x=>x.st!=='open'),n=C.length;return {n,open:L.length-n,w:n?C.filter(x=>x.pnl>0).length/n*100:null,avg:n?C.reduce((a,x)=>a+(x.pnl/x.mg*100),0)/n:null};};
   const p=f(P),r=f(R);
   return `<div class="ia-mut">🏋️ <b>Practica 24 h en el bot</b> (aunque la página esté cerrada): ${p.n} prácticas cerradas${p.open?` y ${p.open} en curso`:''}${p.n?` · ganó el ${Math.round(p.w)} % · ${iaPct2(p.avg)} del margen por operación`:''}. Operaciones reales del bot: ${r.n} cerradas${r.open?`, ${r.open} en curso`:''}${r.n?` · ${Math.round(r.w)} % ganadas`:''}. Cada día el estudio mide su acierto real y ajusta el umbral de entrada.</div>`;}
@@ -5356,7 +5372,7 @@ async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IA
             const sl=Math.min(cap,Math.max(.004,ka*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
           await new Promise(z=>setTimeout(z,80));}}}
     IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
-    if(IABOT&&Date.now()-IABOT.upd<3*36e5){saveIAOPS();return;} // el bot 24 h ya opera por la IA: la página solo muestra las ideas
+    saveIAOPS();return; // octubre 2026: solo el bot 24 h abre operaciones de la IA (así son iguales en todas las cuentas y dispositivos); la página muestra las ideas
     for(const x of IAIDEAS){const C=IAOP_CFG[x.f];if(Date.now()-x.t>TF_MS[x.tf])continue; // solo velas recién cerradas: precio de entrada real
       if(IAOPS.some(y=>y.sym===x.sym&&y.f===x.f&&(y.st==='open'||x.t-y.t<C.cool)))continue;
       if(IAOPS.filter(y=>y.f===x.f&&y.st==='open').length>=C.max)continue;

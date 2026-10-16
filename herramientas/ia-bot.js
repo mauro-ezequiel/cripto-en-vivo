@@ -10,6 +10,21 @@ const CFG = { tr: { nm: 'TRADING', mg: 350, lev: 10, age: 7 * 864e5, cool: 24 * 
   sh: { nm: 'SHOOTER', mg: 50, lev: 15, age: 12 * 36e5, cool: 36e5, max: 6, maxP: 12, tfs: ['15m', '30m'], a: 4, r: .25, cap: .05, wmin: 80 } };
 const FEE = .0016, /* comisión + deslizamiento (antes solo comisión, .0008) */ TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
 function gates(E, f) { const PR = E && E.test && E.test.propias; return !!(E && E.thr != null && PR && PR.pct >= 1 && PR.pct > PR.base_pct && (PR.gana || PR.obj1 || 0) >= CFG[f].wmin); }
+/* semáforo (octubre 2026): el mismo de la página, calculado acá con datos compartidos para que sea igual en todas las cuentas y dispositivos.
+   Las operaciones de la IA solo cuentan (billetera y Telegram) con el semáforo en VERDE; en amarillo o rojo sigue practicando y estudiando todo.
+   · últimos 90 días contra los bots (estudio diario): gana más que ellos +2 · ≥ 80 % de lo que sacan ellos +1
+   · sus entradas propias ganaron en la prueba (≥ 1 % por operación y acierto como los bots) +1
+   · en vivo (5 o más cerradas con puntaje de operación real, reales o de práctica): ganando +1, perdiendo −1
+   verde con 3 o más y al menos 20 comparaciones; amarillo con 1 o 2; rojo con 0 o menos */
+function sem(f, M, ops, now) { const why = []; let sc = 0;
+  const R = [...((M.tr && M.tr.exit && M.tr.exit.ops) || []), ...((M.sh && M.sh.exit && M.sh.exit.ops) || [])].filter(r => r[3] >= now - 90 * 864e5 && (f === 'sh' ? r[0] === 'x' : r[0] !== 'x'));
+  const sb = R.reduce((a, r) => a + r[4], 0), si = R.reduce((a, r) => a + r[6], 0), n = R.length, eff = sb > 0 ? 100 * si / sb : (si > 0 ? 999 : null);
+  if (eff != null) { if (eff >= 100) { sc += 2; why.push('le gana a los bots (' + Math.round(Math.min(eff, 999)) + ' %)'); } else if (eff >= 80) { sc += 1; why.push('casi iguala a los bots (' + Math.round(eff) + ' %)'); } else why.push('saca menos que los bots (' + Math.round(eff) + ' %)'); }
+  if (gates(M[f] && M[f].entry, f)) { sc += 1; why.push('sus entradas propias ganaron en la prueba'); } else why.push('sus entradas propias todavía no ganan en la prueba');
+  const C = ops.filter(o => o.f === f && o.st !== 'open' && o.thr != null && o.p >= o.thr), net = +C.reduce((a, o) => a + (o.pnl || 0), 0).toFixed(2);
+  if (C.length >= 5) { if (net > 0) { sc += 1; why.push('en vivo va ganando (+' + net + ' USD en ' + C.length + ')'); } else { sc -= 1; why.push('en vivo va perdiendo (' + net + ' USD en ' + C.length + ')'); } }
+  let c = sc >= 3 ? 'g' : sc >= 1 ? 'y' : 'r'; if (n < 20 && c === 'g') { c = 'y'; why.push('pocas comparaciones todavía'); }
+  return { c, sc, why, n, eff: eff == null ? null : Math.round(eff), vivo: { n: C.length, usd: net }, t: now }; }
 function close(x, px, st, why, t) { x.real += x.dir * (px / x.entry - 1) * (3 - x.hit) / 3; x.st = st; x.why = why; x.closeT = t; x.closePx = px; x.res = x.real; x.pnl = +Math.max(-x.mg, x.mg * x.lev * (x.real - FEE)).toFixed(2); }
 function step(x, k) { if (x.st !== 'open') return null; const d = x.dir, stop = x.hit ? x.entry : x.stop;
   if (d > 0 ? k.low <= stop : k.high >= stop) { close(x, stop, x.hit ? 'win' : 'fail', x.hit ? `Tocó ${x.hit}/3 objetivos y salió en la entrada` : 'Tocó el stop', k.t + 6e4); return 'close'; }
@@ -36,9 +51,11 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
     if (x.st !== 'open' && !x.pr && !x.sent) { x.sent = 1; await tg(`🧠 IA · ${x.pnl >= 0 ? '✓' : '✕'} cerró ${nm(x)}: ${x.why} · ${x.pnl >= 0 ? '+' : ''}${x.pnl.toFixed(2)} USD (${x.mg} USD × ${x.lev})`, false); }
     await sleep(60); }
   /* 2) búsqueda en cada vela recién cerrada */
-  if (M && M.tr && M.sh) { A.last = A.last || {};
+  if (M && M.tr && M.sh) { A.last = A.last || {}; A.sem = A.sem || {};
+    for (const f of ['tr', 'sh']) { const o = A.sem[f], z = sem(f, M, A.ops, now); A.sem[f] = z; if (!o || o.c !== z.c || o.sc !== z.sc) ch = true;
+      if (o && o.c !== z.c && (o.c === 'g' || z.c === 'g')) await tg(`🧠 IA · ${CFG[f].nm}: semáforo ${({ g: '🟢', y: '🟡', r: '🔴' })[o.c]} → ${({ g: '🟢', y: '🟡', r: '🔴' })[z.c]}. ${z.c === 'g' ? 'Desde ahora sus operaciones cuentan (billetera y avisos).' : 'Sus operaciones dejan de contar: sigue practicando y estudiando.'}\n${z.why.join(' · ')}`, false); }
     for (const f of ['tr', 'sh']) { const C = CFG[f], E = M[f] && M[f].entry; if (!E || !E.model || E.thr == null) continue;
-      const real = gates(E, f), thr = Math.max(E.thr, (M.vivo && M.vivo[f] && M.vivo[f].thr) || 0), thrP = E.thr * PRACT;
+      const real = A.sem[f] && A.sem[f].c === 'g', thr = Math.max(E.thr, (M.vivo && M.vivo[f] && M.vivo[f].thr) || 0), thrP = E.thr * PRACT;
       for (const tf of C.tfs) { const ms = TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last[f + tf] === bar || now - bar < 60e3) continue; A.last[f + tf] = bar; ch = true; if (now - bar > 20 * 6e4) continue; // solo velas recién cerradas: precio de entrada real
         let bs = 0; try { const b = (await kl('BTCUSDT', tf, 80)).slice(0, -1), e = IA._.ema(b.map(x => x.close), 50); bs = b[b.length - 1].close > e[e.length - 1] ? 1 : -1; } catch (e) {}
         const out = [];
@@ -57,5 +74,5 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
   if (A.ops.length > 3000) A.ops = A.ops.slice(-3000);
   if (ch) A.dirty = true;
   if (A.dirty && (!A.pubT || now - A.pubT >= 10 * 6e4) && process.env.GH_TOKEN) { const cl = A.ops.filter(o => o.st !== 'open');
-    if (await D.ghPut('ia-ops.json', JSON.stringify({ upd: now, nota: 'Operaciones de la IA en el bot 24 h. pr = 1: práctica (no se avisa). st: open / win / fail / exp. pnl en USD con comisión.', ops: A.ops }), 'iaSha', 'IA 24 h', A.ops.length + ' operaciones, ' + cl.length + ' cerradas')) { A.dirty = false; A.pubT = now; } } }
-module.exports = { run, CFG, step, gates };
+    if (await D.ghPut('ia-ops.json', JSON.stringify({ upd: now, nota: 'Operaciones de la IA en el bot 24 h. pr = 1: práctica (no se avisa ni usa la billetera). Solo son reales con el semáforo en verde (sem). st: open / win / fail / exp. pnl en USD con comisión.', sem: A.sem || {}, ops: A.ops }), 'iaSha', 'IA 24 h', A.ops.length + ' operaciones, ' + cl.length + ' cerradas')) { A.dirty = false; A.pubT = now; } } }
+module.exports = { run, CFG, step, gates, sem };
