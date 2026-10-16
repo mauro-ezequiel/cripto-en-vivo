@@ -158,6 +158,36 @@ async function bitResolve(r) { const maxAge = SIGCFG[r.m].maxAge, d = r.dir; let
     if (b.t - r.t > maxAge) return bitClose(r.id, 5, hit, b.close, b.t); } }
 const kl15From = (s, t) => getJ(`${API}/klines?symbol=${s}&interval=15m&startTime=${t - 9e5}&limit=1000`).then(d => d.map(toBar)).catch(() => null);
 
+/* ---------- 🔄 TRADE DEL CICLO (octubre 2026): el bot opera BTC y ETH a favor de la fase del halving y suma margen si va en contra ---------- */
+const CL = require('./herramientas/ciclo-lib.js');
+async function cicState() { if (S.cic && Array.isArray(S.cic.ops)) return true;
+  try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ciclo.json?t=' + Date.now());
+    if (r.ok) { const j = await r.json(); S.cic = { ops: Array.isArray(j.ops) ? j.ops : [] }; } else if (r.status === 404) S.cic = { ops: [] }; else return false; } catch (e) { return false; } // si falla la lectura no se pisa nada
+  return true; }
+const cicName = s => s.replace('USDT', '');
+async function ciclo(now, px) { if (!(await cicState())) return; const C = S.cic, Q = CL.CIC; let ch = false;
+  /* 1) seguimiento vela a vela (1 h cerrada) de las abiertas: sumas, objetivo, cambio de fase */
+  for (const o of C.ops.filter(x => x.state === 'open')) { let k = null; try { k = await getJ(`${API}/klines?symbol=${o.sym}&interval=1h&startTime=${o.last}&limit=1000`); } catch (e) {}
+    for (const r of k || []) { const b = { t: +r[0], o: +r[1], h: +r[2], l: +r[3], c: +r[4] }; if (b.t < o.last || b.t + 36e5 > now) continue; const ev = CL.step(o, b); o.last = b.t + 36e5; ch = true;
+      const sm = ev.filter(e => e.k === 'suma'); if (sm.length) { const avg = o.cost / o.qty;
+        await tg(`➕ TRADE DEL CICLO ${cicName(o.sym)}: ${sm.length > 1 ? sm.length + ' sumas' : 'suma'} de 100 USD (${o.adds}/${Q.cap}) en ${fp(sm[sm.length - 1].px)}
+Margen total ${o.marg} USD · entrada promedio ${fp(avg)}
+Nuevo objetivo ${fp(CL.tgtPx(o))}${o.adds < Q.cap ? ` · próxima suma en ${fp(CL.addPx(o))}` : ' · ya no quedan sumas'}`); }
+      if (o.state !== 'open') { await tg(o.state === 'win' ? `✅ TRADE DEL CICLO ${cicName(o.sym)}: llegó al objetivo en ${fp(o.px)}. Ganancia ${o.pnl.toFixed(2)} USD (+150 % del margen total de ${o.marg} USD) 🎯`
+          : o.state === 'fase' ? `🔄 TRADE DEL CICLO ${cicName(o.sym)}: cambió la fase del ciclo, se cierra en ${fp(o.px)}. Resultado ${o.pnl >= 0 ? '+' : ''}${o.pnl.toFixed(2)} USD.`
+          : `🛑 TRADE DEL CICLO ${cicName(o.sym)}: se usaron las ${Q.cap} sumas y llegó a la liquidación (${fp(o.px)}). Pérdida ${o.pnl.toFixed(2)} USD.`); break; } } }
+  /* 2) RSI diario (velas cerradas) una vez por hora */
+  if (!C.rsiT || now - C.rsiT >= 36e5) { const R = {}; for (const s of Q.syms) { try { const d = (await kl(s, '1d', 400)).filter(b => b.t + 864e5 <= now); R[s] = +CL.rsi(d.map(b => b.close)).toFixed(1); } catch (e) {} }
+    if (Object.keys(R).length) { C.rsi = R; C.rsiT = now; ch = true; } }
+  /* 3) entradas: a favor de la fase, no en sus últimos 90 días, con el RSI diario en extremo */
+  const F = CL.fase(now);
+  if (F.fin - now >= Q.last * 864e5) for (const s of Q.syms) { const r = C.rsi && C.rsi[s], p = px[s]; if (r == null || !p || C.ops.some(o => o.sym === s && o.state === 'open')) continue;
+    if (F.dir > 0 ? r < Q.L : r > Q.S) { const o = CL.open(s, F.dir, p, now, r); C.ops.push(o); ch = true;
+      await tg(`🔄 TRADE DEL CICLO: ${F.dir > 0 ? '🟢 ▲ LONG' : '🔴 ▼ SHORT'} ${cicName(s)}\nEntrada ${fp(p)} · 200 USD × ${Q.lev}\nObjetivo ${fp(CL.tgtPx(o))} (+150 % del margen total, se recalcula con cada suma)\nSi va en contra: suma 100 USD en ${fp(CL.addPx(o))} (hasta ${Q.cap} sumas, reserva de hasta 3.200 USD)\nFase ${F.f === 'caida' ? 'caída' : F.f === 'acumulacion' ? 'acumulación' : 'subida'} del ciclo · RSI diario ${r.toFixed(0)}\n${PAGE}?sym=${s}&tf=1d\nℹ️ Solo informativo, no es consejo financiero.`); } }
+  /* 4) publica para la página (en cada cambio y cada 6 h) */
+  if ((ch || !C.pubT || now - C.pubT >= 6 * 36e5) && process.env.GH_TOKEN) {
+    if (await ghPut('ciclo.json', JSON.stringify({ upd: now, rsi: C.rsi || {}, reglas: 'BTC y ETH · × 3 · RSI diario < 35 LONG / > 65 SHORT a favor de la fase del halving · suma 100 USD al −50 % del margen total (hasta 30) · sale al +150 % · cierra si cambia la fase', ops: C.ops }), 'cicSha', 'Trade del ciclo', C.ops.length + ' operaciones')) C.pubT = now; } }
+
 /* ---------- estado (para no repetir avisos) ---------- */
 let S = { last: {}, open: [], boot: 0, hist: [] };
 try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } catch (e) {}
@@ -203,6 +233,7 @@ async function main() {
         if (z === 'g' && S.acu[s] && S.acu[s] !== 'g') await tg(`🟢 ACUMULACIÓN · ${nm}\nEntró en zona de acumulación a largo plazo: ${dist < 0 ? 'bajo la media de 200 semanas' : ''}${rsi < 30 ? ' · RSI semanal ' + rsi.toFixed(0) : ''}${cr && dd <= -.5 ? ' · ' + (dd * 100).toFixed(0) + ' % desde el máximo' : ''}.\nComprá de a partes (por ejemplo una vez por semana) y sin apalancamiento: puede seguir bajando antes de volver.`);
         S.acu[s] = z; } catch (e) { console.log('acumulación', s, e.message); } } }
 
+  try { await ciclo(now, px); } catch (e) { console.log('ciclo', e.message); }
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
 /* octubre 2026 · SHOOTER v8: la lista de monedas era la del volumen del momento y una moneda que se desploma entra a "las 30 con más volumen"
