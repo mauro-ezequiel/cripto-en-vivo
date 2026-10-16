@@ -37,7 +37,7 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
       if (r.ok) { const j = await r.json(); S.ia = { ops: Array.isArray(j.ops) ? j.ops : [] }; } else if (r.status === 404) S.ia = { ops: [] }; else return; } catch (e) { return; } }
   const A = S.ia; let ch = false;
   /* modelo del estudio diario, cada 3 h */
-  if (!A.mT || now - A.mT > 3 * 36e5) { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ia.json?t=' + now); if (r.ok) { D.M = await r.json(); A.mT = now; } } catch (e) {} }
+  if (!D.M || !A.mT || now - A.mT > 3 * 36e5) { /* octubre 2026: también si el bot se reinició (el modelo vive en memoria; antes tardaba hasta 3 h en volver) */ try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ia.json?t=' + now); if (r.ok) { D.M = await r.json(); A.mT = now; } } catch (e) {} }
   const M = D.M; const nm = x => `${x.sym.replace('USDT', '')} ${x.dir > 0 ? 'LONG' : 'SHORT'} (${CFG[x.f].nm} ${x.tf})`;
   /* 1) seguimiento con velas de 1 min */
   for (const x of A.ops.filter(o => o.st === 'open')) { let from = x.chk || x.t;
