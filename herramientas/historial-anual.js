@@ -186,6 +186,8 @@ const slOf = (g, atrP) => Math.min(g.cap, Math.max(g.floor, g.a * atrP));
 /* ---------- recorrido ---------- */
 const CANDS = [], RAND = { medio: [], x: [] };
 let BTC4 = null, BTC1 = null;
+/* REG=1 (investigación del filtro de régimen): estado de BTC al momento de cada señal: ADX de 4 h, volatilidad de 1 h (ATR %) y cambio en 24 h */
+const regAt = t => { const i = lastClosed(BTC4.b, 144e5, t), j = lastClosed(BTC1.b, 36e5, t); return [i >= 0 && BTC4.adx[i] != null ? +BTC4.adx[i].toFixed(1) : null, j >= 0 && BTC1.atrP[j] != null ? +BTC1.atrP[j].toFixed(3) : null, j >= 24 ? +((BTC1.b[j].close / BTC1.b[j - 24].close - 1) * 100).toFixed(2) : null]; };
 const btcDirAt = (B, ms, t) => { const i = lastClosed(B.b, ms, t); return i >= 0 && B.e[i] != null ? Math.sign(B.b[i].close - B.e[i]) : 0; };
 
 async function run4h(s, rank) {
@@ -335,8 +337,8 @@ async function main() { const t0 = Date.now();
   let shList = base.slice(0, nS), trList = base.slice(0, n4);
   if (SH7) { const sup = base.slice(0, 70); await sh7Build(sup); const ever = new Set(); for (const set of SH7DAY.values()) for (const x of set) ever.add(x); shList = sup.filter(x => ever.has(x)); if (shList.length < 10) { SH7 = false; shList = base.slice(0, nS); console.log('SHOOTER v8: sin volumen diario, se usa la lista fija'); } console.log('SHOOTER v8: monedas que pasaron por la lista de 7 días', shList.length); }
   if (FUTON) { let F = []; try { F = await futOnlyList(new Set(T.map(t => t.symbol))); } catch (e) { console.log('no se pudo listar las de futuros:', e.message); } F.forEach(s => FUTSET.add(s)); trList = trList.concat(F); shList = shList.concat(F); console.log('se suman', F.length, F.join(' ')); }
-  { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50) }; }
-  { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; BTC1 = { b, e: emaArr(closes(), 50) }; }
+  { const b = await klRange('BTCUSDT', '4h', 144e5, FROM - 300 * 144e5, NOW); candles = b; BTC4 = { b, e: emaArr(closes(), 50), adx: calcADX(14).adx }; }
+  { const b = await klRange('BTCUSDT', '1h', 36e5, FROM - 300 * 36e5, NOW); candles = b; const at = wilder(trArr(), 14); BTC1 = { b, e: emaArr(closes(), 50), atrP: b.map((x, i) => at[i] ? at[i] / x.close * 100 : null) }; }
   const err = [], par = +(process.env.BT_PAR || 3);
   const pool = async (list, fn) => { let q = 0; await Promise.all(Array.from({ length: par }, async () => { while (q < list.length) { const r = q++; try { await fn(list[r], r); } catch (e) { err.push(list[r] + ': ' + e.message); } } })); };
   /* TRADING / TRADING+ */
@@ -384,7 +386,7 @@ async function main() { const t0 = Date.now();
        entrada, stop (fracción), objetivos × stop, apalancamiento] (octubre 2026: con entrada y stop la página muestra el resultado en vivo de las que siguen en curso)
        con CORR=1 además: correlación diaria con BTC de los 90 días anteriores */
     ops: ops.map(o => [o.m, o.setup, o.s.replace('USDT', ''), o.t, o.dir, o.hit, o.open ? 0 : o.kind, +(o.pct / 100 * o.margin).toFixed(1), o.ll ? 1 : 0, o.open ? 0 : o.tEnd,
-      +(+o.entry).toPrecision(8), +(+o.sl).toFixed(5), o.r, o.L, ...(o.corr != null ? [o.corr] : [])]) };
+      +(+o.entry).toPrecision(8), +(+o.sl).toFixed(5), o.r, o.L, ...(o.corr != null ? [o.corr] : process.env.REG ? [null] : []), ...(process.env.REG ? [regAt(o.t)] : [])]) };
   if (RECUP) { const done = ops.filter(o => !o.open && o.alt && o.setup !== 'tp-x'); out.recup = { variantes: RV };
     const sumr = L => { const n = L.length; if (!n) return { n: 0 }; const lo = L.filter(v => v < 0), w = L.filter(v => v > 0).reduce((a, v) => a + v, 0), l = -lo.reduce((a, v) => a + v, 0);
       return { n, pct: +(L.reduce((a, v) => a + v, 0) / n).toFixed(2), gana: +((n - lo.length) / n * 100).toFixed(1), perd_media: lo.length ? +(l / lo.length).toFixed(1) : 0, peor: +Math.min(...L).toFixed(1), pf: l ? +(w / l).toFixed(2) : null }; };
