@@ -196,6 +196,8 @@ try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } c
 async function calYear() { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/historial.json?t=' + Date.now()); if (!r.ok) return;
     const j = await r.json(), minN = j.minN || 20; for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
 
+/* 🧠 IA 24 h: piensa y practica todo el tiempo (herramientas/ia-bot.js) */
+const IAB = require('./herramientas/ia-bot.js'), IAD = { getJ, kl, API, cycFall, tg, fp, ghPut, sleep, M: null };
 let calT = 0;
 async function main() {
   const now = Date.now();
@@ -271,6 +273,7 @@ async function main() {
     }
     console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
   }
+  try { IAD.S = S; await IAB.run(now, { tr: base.map(t => t.symbol), sh: (S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, 30).map(t => t.symbol) }, IAD); } catch (e) { console.log('IA', e.message); }
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
   S.hist = (S.hist || []).filter(x => now - x.t < 10 * 864e5).slice(-150);
   if (S.histDirty || !S.pubOk) { if (await ghPublish()) { S.histDirty = false; S.pubOk = true; } }

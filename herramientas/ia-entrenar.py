@@ -603,6 +603,39 @@ def bitacora():
 
 
 OUT['bitacora'] = bitacora()
+
+
+def vivo():
+    """IA 24 h: lo que la IA hizo en vivo dentro del bot (datos/ia-ops.json), reales y de práctica.
+    Mide su acierto real por puntaje y elige el umbral en vivo de cada modo: el más bajo que en vivo ganó ≥ 1 % del margen por operación
+    con el acierto mínimo (TRADING 70 %, SHOOTER 80 %) y al menos 30 operaciones. El bot solo puede SUBIR su umbral con esto (nunca bajarlo)."""
+    try:
+        L = json.load(open('ia-ops.json'))['ops']
+    except Exception:
+        return {'n': 0}
+    out = {'n': len(L)}
+    for f, wmin in (('tr', 70), ('sh', 80)):
+        C = [x for x in L if x.get('f') == f and x.get('st') != 'open' and x.get('pnl') is not None and x.get('p') is not None]
+        st = lambda X: {'n': len(X), 'ganadas': round(100 * sum(1 for x in X if x['pnl'] > 0) / len(X), 1), 'pct_op': round(float(np.mean([x['pnl'] / x['mg'] * 100 for x in X])), 2)} if X else {'n': 0}
+        o = {'reales': st([x for x in C if not x.get('pr')]), 'practica': st([x for x in C if x.get('pr')]), 'todas': st(C)}
+        best = None
+        for t in sorted(set(round(x['p'], 3) for x in C)):
+            X = [x for x in C if x['p'] >= t]
+            if len(X) < 30:
+                break
+            s_ = st(X)
+            if s_['ganadas'] >= wmin and s_['pct_op'] >= 1:
+                best = {'thr': t, **s_}
+                break
+        o['umbral'] = best
+        if best:
+            o['thr'] = best['thr']
+        out[f] = o
+    return out
+
+
+OUT['vivo'] = vivo()
+print('vivo', OUT['vivo'])
 print('bitacora', OUT['bitacora'])
 print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'], 'libro', OUT['libro'])
 OUT['secs'] = round(time.time() - t0)

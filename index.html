@@ -5092,6 +5092,14 @@ function iaOpFix(x){const c=IAOP_CFG[x.f]||IAOP_CFG.sh;x.mg=x.mg||c.mg;x.lev=x.l
   if(x.real==null){x.real=0;for(let k=0;k<x.hit;k++)x.real+=x.dir*(x.tps[k]/x.entry-1)/3;}
   if(x.st!=='open'&&x.pnl==null){const r=x.res!=null?x.res:x.real;x.real=r;x.pnl=Math.max(-x.mg,x.mg*x.lev*(r-IA_FEE));x.closeT=x.closeT||x.t;}if(x.st!=='open'&&!x.why)x.why=x.st==='fail'?'Tocó el stop':x.hit>=3?'Llegó a los 3 objetivos':x.st==='exp'?'Se cumplió el tiempo máximo':`Tocó ${x.hit}/3 objetivos`;return x;}
 try{IAOPS=JSON.parse(localStorage.getItem('cv_ia_ops')||'null');if(!Array.isArray(IAOPS))IAOPS=(JSON.parse(localStorage.getItem('cv_ia_ideas')||'[]')||[]);IAOPS=IAOPS.map(iaOpFix);IANTF=localStorage.getItem('cv_ia_ntf')==='1';}catch(e){IAOPS=[];}
+/* octubre 2026 · IA 24 h: la IA opera y practica dentro del bot 24 h (datos/ia-ops.json). Sus operaciones reales se ven acá; las de práctica solo suman a la estadística */
+var IABOT=null;const IABOT_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia-ops.json';
+async function iaBotLoad(){try{const j=await getJ(IABOT_URL+'?t='+Math.floor(Date.now()/6e4));if(!j||!Array.isArray(j.ops))return;IABOT=j;
+    const real=j.ops.filter(x=>!x.pr).map(x=>iaOpFix(Object.assign({},x,{bot:1}))),ids=new Set(real.map(x=>x.id));
+    IAOPS=IAOPS.filter(x=>!x.bot&&!ids.has(x.id)).concat(real).sort((a,b)=>a.t-b.t);saveIAOPS();if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}catch(e){}}
+function iaPractica(){if(!IABOT)return '';const P=IABOT.ops.filter(x=>x.pr),R=IABOT.ops.filter(x=>!x.pr),f=L=>{const C=L.filter(x=>x.st!=='open'),n=C.length;return {n,open:L.length-n,w:n?C.filter(x=>x.pnl>0).length/n*100:null,avg:n?C.reduce((a,x)=>a+(x.pnl/x.mg*100),0)/n:null};};
+  const p=f(P),r=f(R);
+  return `<div class="ia-mut">🏋️ <b>Practica 24 h en el bot</b> (aunque la página esté cerrada): ${p.n} prácticas cerradas${p.open?` y ${p.open} en curso`:''}${p.n?` · ganó el ${Math.round(p.w)} % · ${iaPct2(p.avg)} del margen por operación`:''}. Operaciones reales del bot: ${r.n} cerradas${r.open?`, ${r.open} en curso`:''}${r.n?` · ${Math.round(r.w)} % ganadas`:''}. Cada día el estudio mide su acierto real y ajusta el umbral de entrada.</div>`;}
 const saveIAOPS=()=>{try{localStorage.setItem('cv_ia_ops',JSON.stringify(IAOPS.slice(-300)))}catch(e){}};
 const iaOpLive=(x,p)=>x.mg*x.lev*(x.real+x.dir*(p/x.entry-1)*(3-x.hit)/3-IA_FEE);
 function iaNtf(title,body,x){if(!IANTF)return;try{notify('🧠 IA · '+title,body,'ia-'+x.id,{sym:x.sym,tf:x.tf});}catch(e){}}
@@ -5107,7 +5115,7 @@ function iaOpStep(x,k){if(x.st!=='open')return false;const d=x.dir,stop=x.hit?x.
   return ch;}
 /* seguimiento con velas de 1 minuto desde que abrió (aunque la página haya estado cerrada) */
 async function iaOpsTrack(){if(IATRK)return;IATRK=true;let ch=false;
-  try{for(const x of IAOPS){if(x.st!=='open')continue;let from=x.chk||x.t;
+  try{for(const x of IAOPS){if(x.st!=='open'||x.bot)continue;let from=x.chk||x.t;
       for(let g=0;g<15&&x.st==='open';g++){let b=null;try{b=(await getJ(`${KLU(x.sym)}?symbol=${x.sym}&interval=1m&startTime=${from}&limit=1000`)).map(toBar);}catch(e){}
         if(!b){const p=tickers[x.sym]&&tickers[x.sym].c;if(p&&iaOpStep(x,{t:Date.now()-6e4,high:p,low:p,close:p}))ch=true;break;}
         const now=Date.now();let n=0;for(const k of b){if(k.t+6e4>now)break;if(k.t>=x.t+x.age)break;n++;if(iaOpStep(x,k))ch=true;from=k.t+6e4;if(x.st!=='open')break;}
@@ -5141,6 +5149,7 @@ async function iaIdeasScan(){if(IAIBUSY||!IAM||!window.IA)return;IAIBUSY=true;IA
             const sl=Math.min(cap,Math.max(.004,ka*(P.atr[j]||0)/c));out.push({id:s+'-'+f+'-'+tf+'-'+b[j].t,f,tf,sym:s,dir:d,p,entry:c,sl,tps:[1,2,3].map(k=>c*(1+d*k*r*sl)),stop:c*(1-d*sl),t:b[j].t+TF_MS[tf],fut:!!fx,why:fx?IA.explain(EF.model,xv.concat(fx),IA.ENTRY_F.concat(['oi24','oi1','taker','top','retail','funding'])).slice(0,3):IA.explain(E.model,xv,IA.ENTRY_F).slice(0,3)});}catch(e){}
           await new Promise(z=>setTimeout(z,80));}}}
     IAIDEAS=out.sort((a,b)=>b.p-a.p).slice(0,10);
+    if(IABOT&&Date.now()-IABOT.upd<3*36e5){saveIAOPS();return;} // el bot 24 h ya opera por la IA: la página solo muestra las ideas
     for(const x of IAIDEAS){const C=IAOP_CFG[x.f];if(Date.now()-x.t>TF_MS[x.tf])continue; // solo velas recién cerradas: precio de entrada real
       if(IAOPS.some(y=>y.sym===x.sym&&y.f===x.f&&(y.st==='open'||x.t-y.t<C.cool)))continue;
       if(IAOPS.filter(y=>y.f===x.f&&y.st==='open').length>=C.max)continue;
@@ -5158,7 +5167,7 @@ function iaOpsHTML(){const L=IAOPS.filter(x=>IAOF==='all'||x.f===IAOF),S=iaOpsSt
       <div>${res(x)}</div><div class="ia-mut">${iaMas(`Entrada ${fp(x.entry)} · stop ${fp(x.hit?x.entry:x.stop)}`,`Entrada ${fp(x.entry)} · objetivos ${x.tps.map(fp).join(' / ')} · stop ${fp(x.hit?x.entry:x.stop)}${x.hit&&x.st==='open'?' (en la entrada)':''}${x.why0?` · por qué entró: ${esc(x.why0)}`:''}`)}</div></div>`).join('');
   const pr=[['tr','TRADING (4 h)'],['sh','SHOOTER (15 y 30 min)']].map(([f,nm])=>{const x=T(f);if(!x||!x.n)return '';const ok=x.pct>0&&x.pct>x.base_pct;
     return `<div class="ia-mut">${iaMas(`${nm}: ${iaD(x.obj1)} % al objetivo 1, ${iaPct2(x.pct)} por op. ${ok?'<b class="up">Opera.</b>':'<b>No opera.</b>'}`,`${nm}: en los meses que no vio, sus entradas llegaron al objetivo 1 el ${iaD(x.obj1)} % (todas las posibles: ${iaD(x.base_obj1)} %), ${iaPct2(x.pct)} por operación (todas: ${iaPct2(x.base_pct)}), unas ${iaD(x.por_dia)} por día${x.peor!=null?`, peor operación ${iaPct2(x.peor)}`:''}. ${ok?'<b class="up">Opera.</b>':'<b>No opera todavía: no ganaron plata.</b>'}`)}</div>`;}).join('');
-  const ideas=IAIDEAS.length?`<div class="ia-mut">Mejores puntajes ahora: ${IAIDEAS.slice(0,5).map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'▲':'▼'} ${x.tf} (${Math.round(x.p*100)} %)`).join(' · ')}</div>`:`<div class="ia-mut">${IAIBUSY||!IAIT?'Buscando entradas…':iaMas('Sin entradas buenas ahora.','En la última búsqueda no encontró ninguna entrada con puntaje alto. Busca de nuevo cada 15 minutos.')}</div>`;
+  const ideas=iaPractica()+(IAIDEAS.length?`<div class="ia-mut">Mejores puntajes ahora: ${IAIDEAS.slice(0,5).map(x=>`${x.sym.replace('USDT','')} ${x.dir>0?'▲':'▼'} ${x.tf} (${Math.round(x.p*100)} %)`).join(' · ')}</div>`:`<div class="ia-mut">${IAIBUSY||!IAIT?'Buscando entradas…':iaMas('Sin entradas buenas ahora.','En la última búsqueda no encontró ninguna entrada con puntaje alto. Busca de nuevo cada 15 minutos.')}</div>`);
   return `<div class="ia-ops-h"><div class="ia-tabs">${[['all','Todas'],['tr','TRADING'],['sh','SHOOTER']].map(([k,t])=>`<button type="button" data-iaof="${k}" class="${IAOF===k?'on':''}">${t}</button>`).join('')}</div>
       <button type="button" class="iab ${IANTF?'on':''}" data-iantf="1">🔔 Avisos de la IA: ${IANTF?'activados':'desactivados'}</button></div>
     <div class="int-g ia-g"><div>Operaciones<b>${S.all}</b><small>${S.n} cerradas · ${S.open} en curso</small></div>
@@ -5422,7 +5431,7 @@ function iaShow(on){IAOPEN=on;$('iaPanel').hidden=!on;$('iaTab').hidden=on;docum
     IANTF=!IANTF;try{localStorage.setItem('cv_ia_ntf',IANTF?'1':'0');}catch(e){}
     if(IANTF&&!ntfAny())askNotif();else if(IANTF)notify('🧠 Avisos de la IA activados','Te aviso cuando la IA abra una operación propia, toque un objetivo o cierre.','cl-ok',null);iaRender();});
   document.addEventListener('click',e=>{const b=e.target.closest('[data-iacmp]');if(!b)return;e.preventDefault();e.stopPropagation();iaCmpOpen(b.dataset.iacmp);},true);
-  iaLoad().then(()=>{iaTick();iaSigTick();try{renderRes();renderSignals();}catch(e){}});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);setInterval(iaOpsTrack,6e4);setTimeout(iaOpsTrack,8000);setInterval(()=>{if(IAM)iaIdeasScan();},15*6e4);setTimeout(()=>{if(IAM)iaIdeasScan();},20000);})();
+  iaLoad().then(()=>{iaTick();iaSigTick();try{renderRes();renderSignals();}catch(e){}});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);setInterval(iaOpsTrack,6e4);setTimeout(iaOpsTrack,8000);setTimeout(iaBotLoad,5000);setInterval(iaBotLoad,5*6e4);setInterval(()=>{if(IAM)iaIdeasScan();},15*6e4);setTimeout(()=>{if(IAM)iaIdeasScan();},20000);})();
 </script>
 </body>
 </html>
