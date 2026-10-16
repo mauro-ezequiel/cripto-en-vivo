@@ -3687,8 +3687,12 @@ var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0
 try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===7)HIST_A=c.ops;}catch(e){}
 const HKIND={1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
-  HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd])=>({id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
-    state:kind===0?'open':kind===1?'fail':hit>0?'win':'exp',why:kind===5&&hit>0?'llegó al objetivo '+hit+' y venció el plazo':kind===3?'llegó al objetivo '+hit+' y '+HKIND[3]:HKIND[kind]||''}));
+  HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd,e,sl,r,L])=>{const o={id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{}:null,closeAt:tEnd||null,lite:1,hist:1,
+    state:kind===0?'open':kind===1?'fail':hit>0?'win':'exp',why:kind===5&&hit>0?'llegó al objetivo '+hit+' y venció el plazo':kind===3?'llegó al objetivo '+hit+' y '+HKIND[3]:HKIND[kind]||''};
+    /* octubre 2026: con la entrada y el stop de la simulación, las que siguen en curso muestran su resultado en vivo y el detalle trae entrada y stop */
+    if(e>0&&sl>0&&r&&L&&SIM[m]){const nt=SIM[m].margin*L;Object.assign(o,{entry:e,tp0:e*(1+dir*r*sl),tp1:e*(1+dir*2*r*sl),tp2:e*(1+dir*3*r*sl),fail:e*(1-dir*sl),not:nt,lev:L,liqD:sl,loss:+(nt*sl).toFixed(2),lite:0});
+      if(o.state==='open')o.pnl=null;}
+    return o;});
   HIST_OPS_U=j.upd;return HIST_OPS;}
 /* seguimiento igual que stepOp, con salvavidas, aviso de salida y comisión */
 function histFollow(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o.tp2];let ae=o.entry,sz=1,fail=o.fail,loss=o.loss,real=0,hit=0,llNo=!o.llAt;const now=Date.now();
