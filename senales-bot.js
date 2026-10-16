@@ -195,8 +195,19 @@ let S = { last: {}, open: [], boot: 0, hist: [] };
 try { S = Object.assign(S, JSON.parse(fs.readFileSync(STATE_FILE, 'utf8'))); } catch (e) {}
 
 /* % de acierto del último año (los recalcula herramientas/historial-anual.js cada día) */
+var SIMAVG = {};
+/* 🛑 FRENO (octubre 2026): si las últimas 10 operaciones en vivo de la versión actual de un bot pierden plata y rinden 5 puntos del margen
+   por operación menos que su simulación del último año, avisa por Telegram (una vez cada 3 días) y la página lo marca en rojo. */
+async function freno(now) { S.freno = S.freno || {}; const out = {};
+  for (const m of ['medio', 'x']) { const L = (S.bit || []).filter(r => r.m === m && r.out && r.v === VER[m]).sort((a, b) => a.out.t - b.out.t).slice(-10);
+    if (L.length < 10 || SIMAVG[m] == null) continue; const live = L.reduce((a, r) => a + r.out.pct, 0) / L.length, sim = SIMAVG[m];
+    if (live < 0 && live < sim - 5) { out[m] = { live: +live.toFixed(2), sim: +sim.toFixed(2), n: L.length, t: now };
+      if (!S.freno[m] || now - S.freno[m] > 3 * 864e5) { S.freno[m] = now; await tg(`🛑 FRENO · ${SIGCFG[m].name} ${VER[m]}\nSus últimas ${L.length} operaciones en vivo dan ${live.toFixed(1)} % del margen por operación; la simulación del último año da ${sim >= 0 ? '+' : ''}${sim.toFixed(1)} %.\nEn vivo está rindiendo bastante peor que lo simulado: conviene bajar el margen o pausar este modo hasta ver qué cambió.`, false); } } }
+  S.frenoAct = out; }
 async function calYear() { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/historial.json?t=' + Date.now()); if (!r.ok) return;
-    const j = await r.json(), minN = j.minN || 20; for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
+    const j = await r.json(), minN = j.minN || 20;
+    for (const m of ['medio', 'x']) { const L = (j.ops || []).filter(o => o[0] === m && o[1] !== 'tp-x' && o[6] !== 0); if (L.length) SIMAVG[m] = L.reduce((a, o) => a + o[7] / (m === 'medio' ? 350 : 50) * 100, 0) / L.length; }
+    for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
 
 /* 🧠 IA 24 h: piensa y practica todo el tiempo (herramientas/ia-bot.js) */
 const IAB = require('./herramientas/ia-bot.js'), IAD = { getJ, kl, API, cycFall, tg, fp, ghPut, sleep, M: null };
@@ -257,6 +268,10 @@ async function main() {
         S.acu[s] = z; } catch (e) { console.log('acumulación', s, e.message); } } }
 
   try { await ciclo(now, px); } catch (e) { console.log('ciclo', e.message); }
+  /* 😨 índice de miedo y codicia (alternative.me, gratis, desde 2018): cada 12 h se guarda con toda su historia para la página y la IA */
+  if ((!S.fygT || now - S.fygT > 12 * 36e5) && process.env.GH_TOKEN) { try { const j = await (await fetch('https://api.alternative.me/fng/?limit=0&format=json')).json();
+      const h = (j.data || []).map(x => [+x.timestamp * 1000, +x.value]).filter(x => x[1] >= 0).sort((a, b) => a[0] - b[0]);
+      if (h.length > 300 && await ghPut('fyg.json', JSON.stringify({ upd: now, fuente: 'alternative.me', actual: { v: h[h.length - 1][1], t: h[h.length - 1][0], txt: j.data[0].value_classification }, hist: h }), 'fygSha', 'Miedo y codicia', h.length + ' días')) S.fygT = now; } catch (e) { console.log('fyg', e.message); } }
   /* 2) búsqueda de señales nuevas */
   for (const m of ['medio', 'x']) {
 /* octubre 2026 · SHOOTER v8: la lista de monedas era la del volumen del momento y una moneda que se desploma entra a "las 30 con más volumen"
@@ -296,6 +311,7 @@ async function main() {
   }
   try { VD.S = S; await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
   try { await semanal(now); } catch (e) { console.log('semanal', e.message); }
+  try { if (!S.frenoT || now - S.frenoT > 36e5) { S.frenoT = now; await freno(now); S.bitDirty = true; } } catch (e) { console.log('freno', e.message); }
   try { IAD.S = S; await IAB.run(now, { tr: base.map(t => t.symbol), sh: (S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, 30).map(t => t.symbol) }, IAD); } catch (e) { console.log('IA', e.message); }
   for (const k in S.last) if (now - S.last[k] > 3 * 864e5) delete S.last[k];
   S.hist = (S.hist || []).filter(x => now - x.t < 10 * 864e5).slice(-150);
@@ -303,7 +319,7 @@ async function main() {
   if (await bitLoad()) { if (S.bitPend) { for (const r of S.bitPend) if (!S.bit.some(b => b.id === r.id)) S.bit.push(r); S.bitPend = null; S.bitDirty = true; }
     let k = 0; for (const r of S.bit) { if (r.out || S.open.some(o => o.sym + '-' + o.t === r.id) || now - r.t < 36e5 || !SIGCFG[r.m] || !Array.isArray(r.tp)) continue; if (k++ >= 6) break; try { await bitResolve(r); } catch (e) {} await sleep(100); }
     if (S.bitDirty && (!S.bitT || now - S.bitT >= 15 * 6e4) && process.env.GH_TOKEN) { const cerr = S.bit.filter(r => r.out).length;
-      if (await ghPut('bitacora.json', JSON.stringify({ upd: now, nota: 'Todas las señales del bot 24 h, nunca se borran. libro = [i05, i1, i2, spread_pb, prof1_log10, precio] en el momento de la señal. out.c: 1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; out.pct = % del margen con comisión, sin salvavidas.', ops: S.bit }), 'bitSha', 'Bitácora del bot 24 h', S.bit.length + ' señales, ' + cerr + ' cerradas')) { S.bitDirty = false; S.bitT = now; } } }
+      if (await ghPut('bitacora.json', JSON.stringify({ upd: now, freno: S.frenoAct || {}, nota: 'Todas las señales del bot 24 h, nunca se borran. libro = [i05, i1, i2, spread_pb, prof1_log10, precio] en el momento de la señal. out.c: 1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; out.pct = % del margen con comisión, sin salvavidas.', ops: S.bit }), 'bitSha', 'Bitácora del bot 24 h', S.bit.length + ' señales, ' + cerr + ' cerradas')) { S.bitDirty = false; S.bitT = now; } } }
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }

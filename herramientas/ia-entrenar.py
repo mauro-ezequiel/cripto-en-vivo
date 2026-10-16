@@ -635,6 +635,48 @@ def vivo():
 
 
 OUT['vivo'] = vivo()
+
+
+def fyg():
+    """Miedo y codicia: qué hizo BTC en los 30 y 90 días siguientes según el nivel del índice (desde 2018, velas diarias de Binance)."""
+    try:
+        H = json.load(open('fyg.json'))['hist']
+    except Exception:
+        return {'n': 0}
+    import urllib.request
+    px, st = {}, 1517443200000
+    try:
+        while True:
+            u = f'https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1d&startTime={st}&limit=1000'
+            d = json.loads(urllib.request.urlopen(u, timeout=30).read())
+            if not d:
+                break
+            for k in d:
+                px[int(k[0]) // 86400000] = float(k[4])
+            st = int(d[-1][0]) + 86400000
+            if len(d) < 1000:
+                break
+    except Exception as e:
+        return {'n': 0, 'error': str(e)[:100]}
+    B = [(0, 24, 'miedo extremo'), (25, 44, 'miedo'), (45, 55, 'neutral'), (56, 75, 'codicia'), (76, 100, 'codicia extrema')]
+    out = {'n': len(H), 'grupos': []}
+    for lo, hi, nm in B:
+        r30, r90 = [], []
+        for t, v in H:
+            if not (lo <= v <= hi):
+                continue
+            d0 = int(t) // 86400000
+            if d0 in px and d0 + 30 in px:
+                r30.append(px[d0 + 30] / px[d0] - 1)
+            if d0 in px and d0 + 90 in px:
+                r90.append(px[d0 + 90] / px[d0] - 1)
+        f = lambda r: {'n': len(r), 'mediana': round(float(np.median(r)) * 100, 1), 'positivas': round(100 * sum(1 for x in r if x > 0) / len(r), 1)} if r else {'n': 0}
+        out['grupos'].append({'nombre': nm, 'desde': lo, 'hasta': hi, 'd30': f(r30), 'd90': f(r90)})
+    return out
+
+
+OUT['fyg'] = fyg()
+print('fyg', OUT['fyg'])
 print('vivo', OUT['vivo'])
 print('bitacora', OUT['bitacora'])
 print('progreso', OUT['progreso']['valor'], OUT['progreso']['notas'], 'noticias', OUT['noticias'], 'libro', OUT['libro'])
