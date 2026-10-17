@@ -3812,15 +3812,26 @@ async function bitPgLoad(){if(Date.now()-bitPgT<10*6e4)return;bitPgT=Date.now();
     if(HSRC==='live')renderRes(true);try{walRender();}catch(_){}}catch(e){}}
 /* octubre 2026: TRADING y SHOOTER en vivo = la bitácora del bot (igual en todas las cuentas). Las que siguen abiertas usan el seguimiento de esta página
    (objetivos tocados y resultado en vivo) y, si no está, entrada, stop y apalancamiento de la bitácora para mostrar el resultado en vivo. */
-function realOps(m){if(m==='a'&&BOTSRC('a')&&ACCOPS)return OPS.filter(o=>o.m==='a').sort((a,b)=>a.t-b.t); // octubre 2026: las del bot 24 h, iguales en todas las cuentas
-  if(BOTSRC(m)&&Array.isArray(BITOPS)){const byId=new Map(OPS.map(o=>[o.id,o]));
-    return BITOPS.filter(o=>o.m===m&&o.setup!=='tp-x').map(b=>{if(b.state!=='open')return b;const l=byId.get(b.id);if(l&&!l.lite)return l;
-      const lev=SIM[m].lev,not=SIM[m].margin*lev,liqD=b.fail&&b.entry?Math.abs(b.fail/b.entry-1):SIM[m].maxLoss/not;return Object.assign({},b,{lev,not,liqD,loss:+(not*liqD).toFixed(2),lite:0,real:0});}).sort((a,b)=>a.t-b.t);}
-  const L=[],seen=new Set(),inOps=new Set(OPS.map(o=>o.id)),orig=new Map();
+/* octubre 2026: TRADING, SHOOTER y ACCIONES en vivo = lo que registra el bot 24 h (igual en todas las cuentas).
+   Además se siguen mostrando, sin borrar nada, las operaciones que esta página había anotado por su cuenta ANTES de pasar al bot compartido
+   (llevan 📱 porque son de esta cuenta o dispositivo). Desde el cambio ya no se agregan nuevas de ese tipo. */
+const SHARED_T=Date.parse('2026-10-16T23:30:00+02:00'),SHARED_TOL={medio:8*36e5,x:36e5,a:2*864e5};
+function realOps(m){let S=null;
+  if(m==='a'&&BOTSRC('a')&&ACCOPS)S=OPS.filter(o=>o.m==='a');
+  else if(m!=='a'&&BOTSRC(m)&&Array.isArray(BITOPS)){const byId=new Map(OPS.map(o=>[o.id,o]));
+    S=BITOPS.filter(o=>o.m===m&&o.setup!=='tp-x').map(b=>{if(b.state!=='open')return b;const l=byId.get(b.id);if(l&&!l.lite)return l;
+      const lev=SIM[m].lev,not=SIM[m].margin*lev,liqD=b.fail&&b.entry?Math.abs(b.fail/b.entry-1):SIM[m].maxLoss/not;return Object.assign({},b,{lev,not,liqD,loss:+(not*liqD).toFixed(2),lite:0,real:0});});}
+  if(!S)return realOpsLegacy(m);
+  let extra=[];if(m==='a'){try{extra=JSON.parse(localStorage.getItem('cv_ops_a_local')||'[]');}catch(_){}}
+  const ids=new Set(S.map(o=>o.id)),tol=SHARED_TOL[m],L=S.slice();
+  for(const o of realOpsLegacy(m,extra)){if(ids.has(o.id)||o.t>=SHARED_T)continue;if(S.some(x=>x.sym===o.sym&&x.dir===o.dir&&Math.abs(x.t-o.t)<tol))continue;L.push(Object.assign({},o,{loc:1}));}
+  return L.sort((a,b)=>a.t-b.t);}
+function realOpsLegacy(m,extra){const L=[],seen=new Set(),inOps=new Set(OPS.map(o=>o.id)),orig=new Map();
   for(const a of OPS_ARCH)if(a.arch==='v7'&&inOps.has(a.id)&&a.state!=='open'&&!orig.has(a.id))orig.set(a.id,a);
   const add=o=>{if(!o||o.m!==m||o.setup==='tp-x')return;const k=o.sym+o.dir+Math.round(o.t/6e5);if(seen.has(o.id)||seen.has(k))return;seen.add(o.id);seen.add(k);L.push(o);};
   for(const o of OPS)add(orig.get(o.id)||o);
   for(const a of OPS_ARCH)if(!(a.arch==='v7'&&inOps.has(a.id)))add(a);
+  for(const o of extra||[])add(o);
   for(const b of BITOPS||[])add(b);
   return L.sort((a,b)=>a.t-b.t);}
 const REC_TOL={medio:8*36e5,x:36e5,a:2*864e5};
@@ -4231,7 +4242,7 @@ const hxLive=(o,p)=>o.ia?iaOpLive(o.ia,p):pnlAt(o,p);
 const iaAsOp=x=>({id:'ia-'+x.id,m:x.f==='sh'?'x':'medio',sym:x.sym,dir:x.dir,t:x.t,state:x.st==='open'?'open':x.st==='fail'?'fail':x.st==='win'?'win':'exp',hit:x.hit||0,pnl:x.pnl,why:x.why,entry:x.entry,lev:x.lev,mg:x.mg,ia:x,tf:x.tf,simLab:`${x.mg} USD × ${x.lev} · operación propia de la IA`});
 function hxRow(o){const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
   const stt=o.state==='open'?`<span class="live">${o.lite?'EN CURSO':'VIVO'}</span>`:o.state==='win'?'':o.state==='fail'?'<span class="dn">✕ stop</span>':`<span class="${(o.pnl||0)>=0?'up':'dn'}">• ${esc((o.why||'cerrada').replace(/^venció el plazo$/,'plazo'))}</span>`;
-  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hm"><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b>${HSRC==='live'&&o.hist?'<span class="hrc" title="Rehecha con las reglas de hoy (simulación sobre las velas reales)">↻</span>':''}${stt?`<span class="hs">${stt}</span>`:''}${o.state==='fail'?'':`<span class="hk">${o.hit||0}/3</span>`}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span class="hia">${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
+  return `<div class="hrow h2${o.ll?' ll':''}${pn?' pin':''}" data-op="${o.id}"><span class="hdt"><span class="ht">${dd}</span><button type="button" class="hpin${pn?' on':''}" data-hpin="${o.id}" aria-pressed="${pn}" aria-label="${pn?'Desfijar':'Fijar arriba'}" title="${pn?'Desfijar':'Fijar arriba de todo'}">📌</button></span><span class="hm"><span class="hh">${hh}</span><span class="hd ${o.dir>0?'up':'dn'}">${o.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${o.sym.replace('USDT','')}</b>${HSRC==='live'&&o.hist?'<span class="hrc" title="Rehecha con las reglas de hoy (simulación sobre las velas reales)">↻</span>':''}${o.loc?'<span class="hrc" title="Anotada por esta página antes de pasar al bot compartido: solo está en esta cuenta o dispositivo">📱</span>':''}${stt?`<span class="hs">${stt}</span>`:''}${o.state==='fail'?'':`<span class="hk">${o.hit||0}/3</span>`}</span><span class="hpu ${v.usd>=0?'up':'dn'}">${v.ok?`<b>${hxPct(v.pct)}</b><small>${hxUsd(v.usd)}</small>`:'—'}</span><span class="hia">${o.ia?(()=>{try{return iaIco('ia',14)}catch(_){return ''}})():typeof iaBtn==='function'?iaBtn(o):''}</span></div>${HOPEN.has(o.id)?hxDetail(o):''}`;}
 function hxVal(o){if(o.state==='open'){if(o.lite)return {ok:false,usd:0,pct:0};const p=tickers[o.sym]?.c;if(!p)return {ok:false,usd:0,pct:0};const u=hxLive(o,p);return {ok:true,usd:u,pct:u/hxMg(o)*100};}
   const u=o.pnl||0;return {ok:o.pnl!=null,usd:u,pct:u/hxMg(o)*100};}
 const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxUsd=v=>(v>=0?'+':'−')+Math.round(Math.abs(v))+' USD';
