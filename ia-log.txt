@@ -1,0 +1,18 @@
+memoria {'ops': 1134, 'dias': 1093}
+tr salida {"n_ops": 87, "n_test": 21, "auc": 0.462, "bot": {"pct": -0.65, "gana": 66.7, "peor": -59.1}, "ia": {"pct": -0.68, "gana": 61.9, "peor": -37.0}, "mejora_ops": 76.2, "desde_prueba": 1780617600000, "eleccion": {"tramos": 0, "puntaje": 0.0, "por_variante": {"D": 0.0}, "auc_tramos": null, "predice": false}, "curva": {"meses_ia": [[10.84, -14.37]], "bot_suma": -13.66, "n": 21}, "por_modo": {"TRADING": {"n": 21, "bot": -0.65, "ia": -0.68}}, "activa": false} 0.2 1 D
+tr importa (salida) [['fl6', 0.0043], ['di', 0.0037], ['r6', 0.0037], ['d21', 0.002], ['gR', 0.0017], ['z', 0.0014], ['st', 0.0009], ['body', 0.0006]]
+tr reglas {"TRADING": {"probadas": 160, "regla": {"noprog": null, "after3": "trail", "k": 3, "lock": true, "take": [0, 0]}, "entren": {"bot": 11.42, "ia": 16.77}, "prueba": {"bot": -0.3, "ia": -6.29, "n": 21}, "activa": false}}
+Traceback (most recent call last):
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 439, in <module>
+    e = fam_entry(part['ent'], f)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 394, in fam_entry
+    OUTE['futuros'] = {'model': export(mXF, XE), 'thr': round(float(np.quantile(pallX, qx)), 4), 'test': px, 'usar': usar,
+                                ^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 35, in export
+    assert err < 1e-3, f'exportación distinta: {err}'
+           ^^^^^^^^^^
+AssertionError: exportación distinta: 0.010637387749278249
+ls: cannot access 'ia.json': No such file or directory
+-rw-r--r-- 1 runner runner 17449606 Oct 17 10:38 ia-datos.json.gz
+-rw-r--r-- 1 runner runner     1622 Oct 17 10:42 ia-log.txt
