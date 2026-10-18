@@ -643,6 +643,34 @@ summary{cursor:pointer;-webkit-user-select:none;user-select:none}
   .dt{font-size:14px}
 }
 @media (prefers-reduced-motion:reduce){details[open]>summary~*{animation:none}button:active,.sg-go:active,.acu-go:active,.hx-go:active,.go:active,.iab:active,.sig:active,[data-cop]:active,[data-ver]:active{transform:none}}
+
+/* 👑 administración y pantalla de acceso (octubre 2026) */
+#accGate{position:fixed;inset:0;z-index:10050;background:var(--bg,#0a0c10);display:flex;align-items:center;justify-content:center;padding:20px}
+body.gate-on,body.adm-on{overflow:hidden}
+.gate-c{max-width:360px;text-align:center;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:16px;padding:28px 22px}
+.gate-c h2{margin:6px 0 8px;font-size:19px}.gate-c p{color:var(--mut);font-size:14px;line-height:1.5;margin:0 0 16px}.gate-i{font-size:38px}
+.gate-c button{display:inline-flex;align-items:center;gap:8px;background:#fff;color:#111;border:0;border-radius:999px;padding:10px 18px;font-weight:700;font-size:14px;cursor:pointer}
+.adm-btn{padding:4px 8px}
+#admBox{position:fixed;inset:0;z-index:10040;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.adm-in{max-width:760px;margin:0 auto;padding:12px 16px 40px}
+.adm-hd{display:flex;align-items:center;justify-content:space-between;gap:8px;position:sticky;top:0;background:var(--bg);padding:8px 0;z-index:1}
+.adm-hd b{font-size:16px}.adm-hd button,.adm-r button,.adm-warn button{background:var(--panel,#151a22);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;min-height:36px}
+.adm-r button.r{background:#5a1d1d;border-color:#ef5350;color:#fff}
+.adm-k{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin:10px 0}.adm-k div{background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:10px;text-align:center}
+.adm-k b{display:block;font-size:20px}.adm-k small{color:var(--mut);font-size:11.5px}
+.adm-sw{display:flex;gap:10px;align-items:flex-start;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:12px;margin-bottom:10px;cursor:pointer}
+.adm-sw input{width:20px;height:20px;margin-top:2px}.adm-sw small{display:block;color:var(--mut);font-size:12px;margin-top:2px}
+.adm-t{margin:6px 0 8px}
+.adm-r{display:flex;align-items:center;gap:10px;padding:10px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px}.adm-r.bl{border-color:#ef5350;background:rgba(239,83,80,.07)}
+.adm-r img,.adm-av{width:36px;height:36px;border-radius:50%;flex:0 0 36px;display:flex;align-items:center;justify-content:center;background:var(--panel,#151a22)}
+.adm-who{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.adm-who small{color:var(--mut);font-size:12px;overflow-wrap:anywhere}
+.adm-tag{font-size:10.5px;border:1px solid var(--line);border-radius:999px;padding:1px 6px;font-weight:600;color:var(--mut)}.adm-tag.r{border-color:#ef5350;color:#ef5350}
+.adm-e{display:grid;grid-template-columns:118px 1fr;gap:2px 10px;padding:8px 4px;border-bottom:1px solid var(--line);font-size:13px}.adm-e span{color:var(--mut)}.adm-e small{grid-column:2;color:var(--mut)}
+.adm-sub{margin:14px 0 8px;color:var(--mut);font-size:12.5px;font-weight:600}
+.adm-warn{border:1px solid #ffb74d;background:rgba(255,183,77,.08);border-radius:12px;padding:12px;margin:8px 0 12px;font-size:13px;line-height:1.5}
+.adm-warn a{color:#64b5f6}.adm-warn pre{white-space:pre-wrap;font-size:11px;background:rgba(0,0,0,.3);border-radius:8px;padding:10px;margin:10px 0 0;max-height:240px;overflow:auto;user-select:all}
+.adm-note{font-size:12px;margin-top:14px;line-height:1.5}
+@media (max-width:520px){.adm-k{grid-template-columns:repeat(2,1fr)}.adm-r{flex-wrap:wrap}.adm-r>button{width:100%}}
 </style>
 </head>
 <body>
@@ -1951,10 +1979,90 @@ function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
   fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
+/* ---------- 👑 administración (octubre 2026): solo la cuenta dueña ve el panel ----------
+   cuentas/{uid}: perfil y últimos ingresos (lo escribe cada usuario al entrar) · bloqueos/{uid}: cuentas sin acceso (solo el dueño)
+   config/acceso: {soloCuentas} si la página exige entrar con Google. Las reglas de Firestore (ADM_RULES) hacen que esto valga de verdad. */
+const ADMIN_EMAIL='mauroezequiel3171@gmail.com',ACC_BOT=/[?&]bot=/.test(location.search);
+const isAdmin=()=>!!(fbUser&&fbUser.email===ADMIN_EMAIL&&fbUser.emailVerified);
+var ACC_CFG={soloCuentas:false},ACC_AUTH=false,ADM={open:false,L:null,U:null,B:new Map(),err:null,ask:null,tab:'c'};
+const ADM_RULES=`rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function admin() { return request.auth != null && request.auth.token.email == '${ADMIN_EMAIL}' && request.auth.token.email_verified == true; }
+    function bloqueado() { return request.auth != null && exists(/databases/$(database)/documents/bloqueos/$(request.auth.uid)); }
+    match /users/{uid} {
+      allow read: if admin() || (request.auth != null && request.auth.uid == uid && !bloqueado());
+      allow write: if request.auth != null && request.auth.uid == uid && !bloqueado();
+    }
+    match /cuentas/{uid} {
+      allow read: if admin() || (request.auth != null && request.auth.uid == uid);
+      allow write: if request.auth != null && request.auth.uid == uid;
+    }
+    match /bloqueos/{uid} {
+      allow read: if admin() || (request.auth != null && request.auth.uid == uid);
+      allow write: if admin();
+    }
+    match /config/{doc} {
+      allow read: if true;
+      allow write: if admin();
+    }
+  }
+}`;
+function accDisp(){const u=navigator.userAgent;return (/iPhone|iPad/.test(u)?'iPhone/iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS/.test(u)?'Mac':/Linux/.test(u)?'Linux':'otro')+' · '+(/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Chrome\//.test(u)?'Chrome':/Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'navegador');}
+/* al entrar: si la cuenta está bloqueada devuelve true; si no, anota el ingreso (uno nuevo cada 30 min como mínimo) */
+async function accLogin(u){
+  try{const b=await fbDb.collection('bloqueos').doc(u.uid).get();if(b.exists){try{localStorage.setItem('cv_bloq',u.email||'1')}catch(_){}accGate();return true;}}catch(e){}
+  try{localStorage.removeItem('cv_bloq')}catch(_){}
+  try{const ref=fbDb.collection('cuentas').doc(u.uid),s=await ref.get(),d=s.exists?s.data():{},now=Date.now(),ing=Array.isArray(d.ingresos)?d.ingresos:[],nw=!ing.length||now-ing[ing.length-1]>30*6e4;
+    await ref.set({uid:u.uid,email:u.email||'',nombre:u.displayName||'',foto:u.photoURL||'',alta:d.alta||now,ultimo:now,visitas:(d.visitas||0)+(nw?1:0),ingresos:nw?ing.concat(now).slice(-40):ing,disp:accDisp()},{merge:true});}catch(e){}
+  return false;}
+/* pantalla que tapa la página: cuenta bloqueada, o la página exige cuenta y no hay sesión */
+function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=localStorage.getItem('cv_bloq')}catch(_){}
+  const need=bl||(ACC_AUTH&&ACC_CFG.soloCuentas&&!fbUser);
+  if(!need){if(el)el.remove();document.body.classList.remove('gate-on');return;}
+  if(!el){el=document.createElement('div');el.id='accGate';document.body.appendChild(el);el.onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;if(b.dataset.g==='out')firebase.auth().signOut();else{const a=$('acctBtn');if(a)a.click();}};}
+  document.body.classList.add('gate-on');
+  el.innerHTML=bl?`<div class="gate-c"><div class="gate-i">🔒</div><h2>Tu cuenta no tiene acceso</h2><p>El dueño de la página bloqueó el acceso${bl!=='1'?` de <b>${esc(bl)}</b>`:''}. Si creés que es un error, hablá con él.</p>${fbUser?'<button type="button" data-g="out">Salir de la cuenta</button>':''}</div>`
+    :`<div class="gate-c"><div class="gate-i">🔐</div><h2>Entrá con tu cuenta</h2><p>Para ver CRIPTO-LIVE tenés que entrar con tu cuenta de Google.</p><button type="button" data-g="in">${GICON} Entrar con Google</button></div>`;}
+const admAgo=t=>{if(!t)return '—';const m=(Date.now()-t)/6e4;return m<2?'recién':m<60?`hace ${Math.round(m)} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`;};
+const admDate=t=>t?new Date(t).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
+async function admLoad(){ADM.err=null;admRender();
+  try{const [c,b]=await Promise.all([fbDb.collection('cuentas').get(),fbDb.collection('bloqueos').get()]);ADM.L=c.docs.map(d=>d.data());ADM.B=new Map(b.docs.map(d=>[d.id,d.data()]));}catch(e){ADM.err=e.code||e.message;}
+  try{const u=await fbDb.collection('users').get();ADM.U=u.docs.map(d=>({uid:d.id,updated:(d.data()||{}).updated||0}));}catch(e){ADM.U=null;}
+  admRender();}
+function admOpen(){if(!isAdmin())return;ADM.open=true;document.body.classList.add('adm-on');admLoad();}
+function admClose(){ADM.open=false;document.body.classList.remove('adm-on');admRender();}
+function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
+  if(!el){el=document.createElement('div');el.id='admBox';document.body.appendChild(el);el.onclick=admClick;}
+  const now=Date.now(),L=(ADM.L||[]).slice().sort((a,b)=>(b.ultimo||0)-(a.ultimo||0)),known=new Set(L.map(x=>x.uid));
+  const old=(ADM.U||[]).filter(x=>!known.has(x.uid)).sort((a,b)=>b.updated-a.updated);
+  const n24=L.filter(x=>now-(x.ultimo||0)<864e5).length,n7=L.filter(x=>now-(x.ultimo||0)<7*864e5).length;
+  const row=x=>{const bl=ADM.B.has(x.uid),me=x.email===ADMIN_EMAIL,ask=ADM.ask===x.uid;
+    return `<div class="adm-r${bl?' bl':''}">${x.foto?`<img src="${esc(x.foto)}" alt="" referrerpolicy="no-referrer">`:'<span class="adm-av">👤</span>'}<div class="adm-who"><b>${esc(x.nombre||x.email||'Sin nombre')}${me?' <span class="adm-tag">vos</span>':''}${bl?' <span class="adm-tag r">bloqueada</span>':''}</b><small>${esc(x.email||x.uid)}</small>
+      <small>Último ingreso <b>${admAgo(x.ultimo)}</b> (${admDate(x.ultimo)}) · ${x.visitas||0} ingresos · alta ${admDate(x.alta)}${x.disp?' · '+esc(x.disp):''}</small></div>
+      ${me?'':bl?`<button type="button" data-ub="${esc(x.uid)}">Desbloquear</button>`:ask?`<button type="button" class="r" data-bk="${esc(x.uid)}">¿Seguro? Bloquear</button>`:`<button type="button" data-ask="${esc(x.uid)}">Bloquear</button>`}</div>`;};
+  const ev=[];for(const x of L)for(const t of (x.ingresos||[]))ev.push([t,x]);ev.sort((a,b)=>b[0]-a[0]);
+  const bad=ADM.err?`<div class="adm-warn"><b>Falta activar las reglas de seguridad en Firebase</b> (${esc(ADM.err)}). Sin ellas no se puede ver la lista ni bloquear de verdad.<ol><li>Entrá a <a href="https://console.firebase.google.com/project/cripto-live/firestore/rules" target="_blank" rel="noopener">console.firebase.google.com → cripto-live → Firestore → Reglas</a>.</li><li>Borrá lo que hay, pegá estas reglas y tocá <b>Publicar</b>.</li><li>Volvé acá y tocá Actualizar.</li></ol><button type="button" data-copy="1">📋 Copiar las reglas</button><pre>${esc(ADM_RULES)}</pre></div>`:'';
+  el.innerHTML=`<div class="adm-in"><div class="adm-hd"><button type="button" class="adm-x" data-x="1">← Volver</button><b>👑 Administración</b><button type="button" data-ref="1">↻ Actualizar</button></div>
+    ${bad}
+    <div class="adm-k"><div><b>${L.length}</b><small>cuentas</small></div><div><b>${n24}</b><small>entraron hoy</small></div><div><b>${n7}</b><small>últimos 7 días</small></div><div><b>${ADM.B.size}</b><small>bloqueadas</small></div></div>
+    <label class="adm-sw"><input type="checkbox" data-solo="1" ${ACC_CFG.soloCuentas?'checked':''}> <span><b>Solo con cuenta</b><small>Si está activado, nadie puede ver la página sin entrar con Google (así las cuentas bloqueadas no pueden mirarla sin sesión).</small></span></label>
+    <div class="int-p adm-t"><button type="button" data-tab="c" class="${ADM.tab==='c'?'on':''}">👥 Cuentas</button><button type="button" data-tab="i" class="${ADM.tab==='i'?'on':''}">🕓 Ingresos</button></div>
+    ${ADM.L==null&&!ADM.err?'<div class="mut">Cargando…</div>':ADM.tab==='c'?(L.map(row).join('')||'<div class="mut">Todavía no entró nadie desde que existe el registro.</div>')
+      +(old.length?`<div class="adm-sub">Cuentas anteriores al registro (${old.length}): aparecen con nombre cuando vuelvan a entrar</div>`+old.map(x=>row({uid:x.uid,email:'',nombre:'Cuenta sin perfil todavía',ultimo:x.updated,visitas:0})).join(''):'')
+      :(ev.slice(0,80).map(([t,x])=>`<div class="adm-e"><span>${admDate(t)}</span><b>${esc(x.nombre||x.email)}</b><small>${esc(x.email||'')}</small></div>`).join('')||'<div class="mut">Sin ingresos todavía.</div>')}
+    <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Las cuentas anteriores al registro se ven sin nombre hasta que vuelvan a entrar. Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos.</div></div>`;}
+async function admClick(e){const b=e.target.closest('button,input');if(!b)return;const d=b.dataset;
+  if(d.x){admClose();return;}if(d.ref){admLoad();return;}if(d.tab){ADM.tab=d.tab;admRender();return;}
+  if(d.copy){try{await navigator.clipboard.writeText(ADM_RULES);b.textContent='✓ Copiadas';}catch(_){b.textContent='Seleccioná el texto de abajo y copialo';}return;}
+  if(d.ask){ADM.ask=d.ask;admRender();return;}
+  if(d.bk){const x=(ADM.L||[]).find(y=>y.uid===d.bk)||{};try{await fbDb.collection('bloqueos').doc(d.bk).set({email:x.email||'',nombre:x.nombre||'',t:Date.now()});ADM.B.set(d.bk,{});}catch(er){ADM.err=er.code||er.message;}ADM.ask=null;admRender();return;}
+  if(d.ub){try{await fbDb.collection('bloqueos').doc(d.ub).delete();ADM.B.delete(d.ub);}catch(er){ADM.err=er.code||er.message;}admRender();return;}
+  if(d.solo){try{await fbDb.collection('config').doc('acceso').set({soloCuentas:b.checked,t:Date.now()},{merge:true});}catch(er){b.checked=!b.checked;ADM.err=er.code||er.message;admRender();}}}
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
-  if(fbUser){el.innerHTML=`<button class="acct-btn" id="acctBtn" title="${(fbUser.email||'').replace(/[<>"]/g,'')} · tocar para salir">${fbUser.photoURL?`<img src="${fbUser.photoURL}" alt="" referrerpolicy="no-referrer">`:''}Salir</button>`;
-    $('acctBtn').onclick=()=>firebase.auth().signOut();}
+  if(fbUser){el.innerHTML=`${isAdmin()?'<button class="acct-btn adm-btn" id="admBtn" title="Panel de administración (solo tu cuenta)">👑</button>':''}<button class="acct-btn" id="acctBtn" title="${(fbUser.email||'').replace(/[<>"]/g,'')} · tocar para salir">${fbUser.photoURL?`<img src="${fbUser.photoURL}" alt="" referrerpolicy="no-referrer">`:''}Salir</button>`;
+    $('acctBtn').onclick=()=>firebase.auth().signOut();if($('admBtn'))$('admBtn').onclick=admOpen;}
   else{el.innerHTML=`<button class="acct-btn" id="acctBtn" title="${msg||'Guarda tus líneas y favoritas en tu cuenta'}">${GICON}Entrar</button>`;
     $('acctBtn').onclick=async()=>{const pr=new firebase.auth.GoogleAuthProvider();
       try{await firebase.auth().signInWithPopup(pr);}
@@ -1964,7 +2072,10 @@ function renderAcct(msg){const el=$('acct');
 function initCloud(){
   if(!FIREBASE_CONFIG||!window.firebase){renderAcct();return;}
   try{firebase.initializeApp(FIREBASE_CONFIG);fbDb=firebase.firestore();}catch(e){console.warn(e);return;}
-  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;renderAcct();if(!u){if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
+  try{fbDb.collection('config').doc('acceso').onSnapshot(s=>{ACC_CFG=Object.assign({soloCuentas:false},s.data()||{});accGate();if(ADM.open)admRender();},()=>{});}catch(e){}
+  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;ACC_AUTH=true;renderAcct();if(!u){if(ADM.open)admClose();accGate();if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
+    if(await accLogin(u))return; // cuenta bloqueada: no se cargan sus datos
+    accGate();
     try{const snap=await fbDb.collection('users').doc(u.uid).get(),d=snap.exists?snap.data():{};
       const local=readLocalLines(),lt=+(localStorage.getItem('cv_lines_t')||0);let merged;
       if(!d.linesT){merged={...local};for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];}else merged=lt>d.linesT?local:(d.lines||{});
