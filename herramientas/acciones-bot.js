@@ -11,7 +11,10 @@ const H = { Authorization: 'Bearer ' + TOK, Accept: 'application/vnd.github+json
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 const fp = p => (+p).toLocaleString('es-ES', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 async function sendTo(chat, text) { try { const r = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', body: new URLSearchParams({ chat_id: chat, text, disable_web_page_preview: 'true' }) }); const j = await r.json(); if (!j.ok) console.log('Telegram', chat, j.description); } catch (e) { console.log('Telegram', e.message); } }
-async function tg(text) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; } await sendTo(CHAT, text); if (CANAL) await sendTo(CANAL, text); }
+let CANAL_ID = null; // número del canal (sirve aunque el canal pase a privado); lo guarda el bot 24 h en datos/canal.json
+async function tg(text) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; } await sendTo(CHAT, text);
+  if (CANAL_ID === null) { CANAL_ID = CANAL; try { const r = await fetch(API + '/contents/canal.json?ref=datos', { headers: H }); if (r.ok) { const g = await r.json(); CANAL_ID = JSON.parse(Buffer.from(g.content, 'base64').toString('utf8')).id || CANAL; } } catch (e) {} }
+  if (CANAL_ID) await sendTo(CANAL_ID, text); }
 async function leer() { const r = await fetch(API + '/contents/acciones.json?ref=datos', { headers: H });
   if (r.status === 404) return { sha: null, j: { ops: [], senales: [] } };
   if (!r.ok) throw new Error('no pude leer acciones.json: ' + r.status);

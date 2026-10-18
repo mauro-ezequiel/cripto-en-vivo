@@ -671,6 +671,37 @@ body.gate-on,body.adm-on{overflow:hidden}
 .adm-warn a{color:#64b5f6}.adm-warn pre{white-space:pre-wrap;font-size:11px;background:rgba(0,0,0,.3);border-radius:8px;padding:10px;margin:10px 0 0;max-height:240px;overflow:auto;user-select:all}
 .adm-note{font-size:12px;margin-top:14px;line-height:1.5}
 @media (max-width:520px){.adm-k{grid-template-columns:repeat(2,1fr)}.adm-r{flex-wrap:wrap}.adm-r>button{width:100%}}
+
+/* ⭐ entrada, prueba gratis y planes (octubre 2026) */
+#accGate{align-items:flex-start;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.lp{max-width:560px;width:100%;margin:0 auto;padding:28px 4px 40px;text-align:center}
+.lp-brand{display:inline-flex;align-items:center;gap:8px;font-weight:800;letter-spacing:.06em;font-size:14px;color:var(--mut)}.lp-brand .dot{width:9px;height:9px;border-radius:50%;background:#26a69a;box-shadow:0 0 0 4px rgba(38,166,154,.18)}
+.lp h1{font-size:26px;line-height:1.2;margin:14px 0 10px;text-wrap:balance}.lp-sub{color:var(--mut);font-size:15px;line-height:1.5;margin:0 0 18px}
+.g-btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;background:#fff;color:#111;border:0;border-radius:999px;padding:11px 18px;font-weight:700;font-size:14px;cursor:pointer;min-height:44px}.g-btn.big{width:100%;max-width:380px;font-size:15px}
+.lp-f{list-style:none;padding:0;margin:22px 0;display:grid;gap:8px;text-align:left}.lp-f li{background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:11px 13px;display:flex;flex-direction:column;gap:2px}.lp-f span{color:var(--mut);font-size:13px}
+.lp-pl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0}
+.lp-p{position:relative;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:14px;padding:16px 8px 12px;display:flex;flex-direction:column;align-items:center;gap:4px;color:var(--txt);font:inherit;cursor:default}
+button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rgba(38,166,154,.35)}.lp-p.pop{border-color:#ffb74d}
+.lp-p i{position:absolute;top:-9px;font-style:normal;font-size:10.5px;font-weight:700;background:#ffb74d;color:#111;border-radius:999px;padding:2px 8px}
+.lp-usd{font-size:24px;font-weight:800}.lp-usd small{font-size:12px;color:var(--mut)}.lp-p>small{color:var(--mut);font-size:11.5px;line-height:1.3}
+.lp-note{color:var(--mut);font-size:12px;line-height:1.55;margin:14px 0 0}.lp-out{margin-top:16px}.lnk{background:none;border:0;color:var(--mut);text-decoration:underline;font:inherit;font-size:13px;cursor:pointer}
+.pay{text-align:left}.pay-st{font-weight:700;font-size:14px;margin:18px 0 8px}
+.pay-r{display:grid;gap:8px}.pay-r button{text-align:left;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:11px 13px;color:var(--txt);font:inherit;display:flex;flex-direction:column;gap:2px;cursor:pointer}.pay-r button.on{border-color:#26a69a;box-shadow:0 0 0 2px rgba(38,166,154,.35)}.pay-r small{color:var(--mut);font-size:12px}
+.pay-d{background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:12px}
+.pay-row{display:grid;grid-template-columns:auto 1fr auto;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--line);font-size:13px}.pay-row span{color:var(--mut)}.pay-row b{overflow-wrap:anywhere}
+.pay-row button,.pay-ex a{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:7px 10px;font-size:12.5px;font-weight:600;cursor:pointer;text-decoration:none;min-height:34px;display:inline-flex;align-items:center}
+.mono{font-family:ui-monospace,Menlo,monospace;font-size:12px}.pay-w{font-size:12.5px;line-height:1.5;color:#ffcc80;margin:10px 0}.pay-ex{display:flex;flex-wrap:wrap;gap:6px}
+.pay-tx{display:flex;gap:8px}.pay-tx input{flex:1;min-width:0;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:13px;font-family:ui-monospace,Menlo,monospace}.pay-tx .g-btn{min-height:40px}
+.pay-m{font-size:13px;margin:8px 0}.pay-h{display:grid;grid-template-columns:auto 1fr auto;gap:8px;font-size:12.5px;padding:8px 0;border-bottom:1px solid var(--line)}.pay-h span{color:var(--mut)}.pay-h.ok span:last-child{color:#26a69a}.pay-h.rechazado span:last-child{color:#ef5350}
+#payBox{position:fixed;inset:0;z-index:10045;background:var(--bg);overflow-y:auto;-webkit-overflow-scrolling:touch}
+.sub-b{white-space:nowrap}.sub-b.warn{border-color:#ffb74d;color:#ffb74d}
+.adm-k{grid-template-columns:repeat(3,1fr)}.adm-k .warn{border-color:#ffb74d}
+.adm-tag.g{border-color:#26a69a;color:#26a69a}
+.adm-g{display:flex;flex-wrap:wrap;gap:5px;align-items:center;margin-top:6px}.adm-g span{font-size:11.5px;color:var(--mut)}.adm-g button,.adm-pb button{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:5px 8px;font-size:11.5px;font-weight:600;cursor:pointer;min-height:30px}
+.adm-pb{display:flex;flex-direction:column;gap:6px}.adm-pb button.g,.adm-f button.g{background:#1e4d48;border-color:#26a69a;color:#fff}
+.adm-r.pay-a.pendiente{border-color:#ffb74d}.adm-r.pay-a.rechazado{opacity:.6}
+.adm-f{display:grid;gap:10px;margin:10px 0}.adm-f label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mut)}.adm-f input{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:13px}.adm-f button{justify-self:start;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;min-height:38px}
+@media (max-width:520px){.lp h1{font-size:22px}.lp-pl{gap:6px}.lp-usd{font-size:20px}.adm-k{grid-template-columns:repeat(2,1fr)}.pay-tx{flex-direction:column}}
 </style>
 </head>
 <body>
@@ -1979,31 +2010,52 @@ function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
   fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
-/* ---------- 👑 administración (octubre 2026): solo la cuenta dueña ve el panel ----------
-   cuentas/{uid}: perfil y últimos ingresos (lo escribe cada usuario al entrar) · bloqueos/{uid}: cuentas sin acceso (solo el dueño)
-   config/acceso: {soloCuentas} si la página exige entrar con Google. Las reglas de Firestore (ADM_RULES) hacen que esto valga de verdad. */
+/* ---------- 👑 administración, prueba gratis y planes (octubre 2026) ----------
+   cuentas/{uid}: perfil e ingresos · bloqueos/{uid}: sin acceso · subs/{uid}: {plan, desde, hasta} (14 días gratis al entrar por primera vez)
+   pagos/{red_txid}: pagos informados por los usuarios (pendiente → ok / rechazado) · config/pagos: direcciones de cobro · config/acceso: {cobro, soloCuentas}
+   privado/telegram: enlace del grupo (solo lo leen las cuentas activas). Las reglas de Firestore (ADM_RULES) hacen que todo esto valga de verdad. */
 const ADMIN_EMAIL='mauroezequiel3171@gmail.com',ACC_BOT=/[?&]bot=/.test(location.search);
 const isAdmin=()=>!!(fbUser&&fbUser.email===ADMIN_EMAIL&&fbUser.emailVerified);
-var ACC_CFG={soloCuentas:false},ACC_AUTH=false,ADM={open:false,L:null,U:null,B:new Map(),err:null,ask:null,tab:'c'};
+const PRUEBA_D=14,PLANES=[{id:'1m',nm:'Mensual',usd:5,d:30,sub:'30 días'},{id:'3m',nm:'3 meses',usd:13,d:90,sub:'90 días · ahorrás 2 USDT'},{id:'6m',nm:'6 meses',usd:24,d:180,sub:'180 días · ahorrás 6 USDT'}];
+const USDT_TRC='TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t',USDT_BEP='0x55d398326f99059ff775485246999027b3197955';
+const EXCH=[['Binance','https://www.binance.com/es/my/wallet/account/main/withdrawal/crypto/USDT'],['Bybit','https://www.bybit.com/user/assets/withdraw'],['BingX','https://bingx.com/es-es/assets/withdraw/'],['OKX','https://www.okx.com/es-es/balance/withdrawal'],['Bitget','https://www.bitget.com/es/asset/withdraw'],['KuCoin','https://www.kucoin.com/es/assets/withdraw']];
+var ACC_CFG={soloCuentas:false,cobro:true},ACC_AUTH=false,ADM={open:false,L:null,U:null,B:new Map(),S:new Map(),P:[],err:null,ask:null,tab:'c',chk:{}};
+var SUBERR=false,SUB=null,SUBOK=false,PAYCFG={},TGLINK=null,MYPAY=[],PAYUI={open:false,plan:null,red:null,msg:null},SUBUNS=null,PAYUNS=null;
 const ADM_RULES=`rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    function admin() { return request.auth != null && request.auth.token.email == '${ADMIN_EMAIL}' && request.auth.token.email_verified == true; }
-    function bloqueado() { return request.auth != null && exists(/databases/$(database)/documents/bloqueos/$(request.auth.uid)); }
+    function signed() { return request.auth != null; }
+    function admin() { return signed() && request.auth.token.email == '${ADMIN_EMAIL}' && request.auth.token.email_verified == true; }
+    function bloqueado() { return signed() && exists(/databases/$(database)/documents/bloqueos/$(request.auth.uid)); }
+    function activo() { return signed() && exists(/databases/$(database)/documents/subs/$(request.auth.uid)) && get(/databases/$(database)/documents/subs/$(request.auth.uid)).data.hasta > request.time.toMillis(); }
     match /users/{uid} {
-      allow read: if admin() || (request.auth != null && request.auth.uid == uid && !bloqueado());
-      allow write: if request.auth != null && request.auth.uid == uid && !bloqueado();
+      allow read: if admin() || (signed() && request.auth.uid == uid && !bloqueado());
+      allow write: if signed() && request.auth.uid == uid && !bloqueado();
     }
     match /cuentas/{uid} {
-      allow read: if admin() || (request.auth != null && request.auth.uid == uid);
-      allow write: if request.auth != null && request.auth.uid == uid;
+      allow read: if admin() || (signed() && request.auth.uid == uid);
+      allow write: if signed() && request.auth.uid == uid;
     }
     match /bloqueos/{uid} {
-      allow read: if admin() || (request.auth != null && request.auth.uid == uid);
+      allow read: if admin() || (signed() && request.auth.uid == uid);
       allow write: if admin();
     }
     match /config/{doc} {
       allow read: if true;
+      allow write: if admin();
+    }
+    match /subs/{uid} {
+      allow read: if admin() || (signed() && request.auth.uid == uid);
+      allow create: if admin() || (signed() && request.auth.uid == uid && request.resource.data.plan == 'prueba' && request.resource.data.hasta <= request.time.toMillis() + 1209900000);
+      allow update, delete: if admin();
+    }
+    match /pagos/{id} {
+      allow read: if admin() || (signed() && resource.data.uid == request.auth.uid);
+      allow create: if signed() && !bloqueado() && request.resource.data.uid == request.auth.uid && request.resource.data.estado == 'pendiente';
+      allow update, delete: if admin();
+    }
+    match /privado/{doc} {
+      allow read: if admin() || (activo() && !bloqueado());
       allow write: if admin();
     }
   }
@@ -2015,54 +2067,155 @@ async function accLogin(u){
   try{localStorage.removeItem('cv_bloq')}catch(_){}
   try{const ref=fbDb.collection('cuentas').doc(u.uid),s=await ref.get(),d=s.exists?s.data():{},now=Date.now(),ing=Array.isArray(d.ingresos)?d.ingresos:[],nw=!ing.length||now-ing[ing.length-1]>30*6e4;
     await ref.set({uid:u.uid,email:u.email||'',nombre:u.displayName||'',foto:u.photoURL||'',alta:d.alta||now,ultimo:now,visitas:(d.visitas||0)+(nw?1:0),ingresos:nw?ing.concat(now).slice(-40):ing,disp:accDisp()},{merge:true});}catch(e){}
-  return false;}
-/* pantalla que tapa la página: cuenta bloqueada, o la página exige cuenta y no hay sesión */
+  subWatch(u);return false;}
+/* suscripción: la primera vez arranca la prueba de 14 días; se escucha en vivo (cuando el pago se confirma, se activa sola) */
+function subWatch(u){try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();}catch(_){}SUB=null;SUBOK=false;MYPAY=[];
+  try{SUBUNS=fbDb.collection('subs').doc(u.uid).onSnapshot(async s=>{if(!s.exists){const now=Date.now();try{await fbDb.collection('subs').doc(u.uid).set({plan:'prueba',desde:now,hasta:now+PRUEBA_D*864e5,email:u.email||''});}catch(e){SUBERR=true;SUBOK=true;accGate();subBadge();}return;}
+      SUB=s.data();SUBOK=true;accGate();subBadge();tgLoad();if(PAYUI.open)payRender();},()=>{SUBERR=true;SUBOK=true;accGate();subBadge();});}catch(e){SUBERR=true;SUBOK=true;}
+  try{PAYUNS=fbDb.collection('pagos').where('uid','==',u.uid).onSnapshot(s=>{MYPAY=s.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>b.t-a.t);if(PAYUI.open)payRender();accGate();},()=>{});}catch(e){}}
+const subActive=()=>isAdmin()||SUBERR||!!(SUB&&SUB.hasta>Date.now()); // SUBERR: sin las reglas nuevas en Firebase no se puede leer la suscripción → la página sigue abierta
+const subDays=()=>SUB?Math.max(0,Math.ceil((SUB.hasta-Date.now())/864e5)):0;
+async function tgLoad(){if(!fbUser||!subActive())return;try{const d=await fbDb.collection('privado').doc('telegram').get();TGLINK=d.exists&&d.data().link||null;}catch(e){TGLINK=null;}
+  document.querySelectorAll('a.tg-ch,a.rmt-ch').forEach(a=>{if(TGLINK)a.href=TGLINK;});}
+/* insignia arriba: días de prueba o vencimiento del plan */
+function subBadge(){let b=$('subBadge');const show=fbUser&&!isAdmin()&&SUB&&ACC_CFG.cobro!==false;
+  if(!show){if(b)b.remove();return;}
+  if(!b){b=document.createElement('button');b.type='button';b.id='subBadge';b.className='acct-btn sub-b';b.onclick=()=>payOpen();const a=$('acct');if(a)a.parentNode.insertBefore(b,a);else return;}
+  const d=subDays(),pr=SUB.plan==='prueba';b.classList.toggle('warn',d<=3);
+  b.textContent=!subActive()?'⭐ Suscribirme':pr?`🎁 Prueba · ${d} d`:`⭐ Plan · ${d} d`;b.title=pr?'Prueba gratis: tocá para ver los planes':'Tu plan vence el '+new Date(SUB.hasta).toLocaleDateString('es-AR');}
+/* pantalla que tapa la página: bloqueada · hay que entrar · la prueba o el plan terminó */
 function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=localStorage.getItem('cv_bloq')}catch(_){}
-  const need=bl||(ACC_AUTH&&ACC_CFG.soloCuentas&&!fbUser);
-  if(!need){if(el)el.remove();document.body.classList.remove('gate-on');return;}
-  if(!el){el=document.createElement('div');el.id='accGate';document.body.appendChild(el);el.onclick=e=>{const b=e.target.closest('[data-g]');if(!b)return;if(b.dataset.g==='out')firebase.auth().signOut();else{const a=$('acctBtn');if(a)a.click();}};}
+  const cobro=ACC_CFG.cobro!==false,kind=bl?'bloq':(ACC_AUTH&&!fbUser&&(cobro||ACC_CFG.soloCuentas))?'login':(fbUser&&cobro&&SUBOK&&!subActive())?'pagar':null;
+  if(!kind){if(el)el.remove();document.body.classList.remove('gate-on');return;}
+  if(!el){el=document.createElement('div');el.id='accGate';document.body.appendChild(el);el.onclick=gateClick;el.oninput=gateClick;}
   document.body.classList.add('gate-on');
-  el.innerHTML=bl?`<div class="gate-c"><div class="gate-i">🔒</div><h2>Tu cuenta no tiene acceso</h2><p>El dueño de la página bloqueó el acceso${bl!=='1'?` de <b>${esc(bl)}</b>`:''}. Si creés que es un error, hablá con él.</p>${fbUser?'<button type="button" data-g="out">Salir de la cuenta</button>':''}</div>`
-    :`<div class="gate-c"><div class="gate-i">🔐</div><h2>Entrá con tu cuenta</h2><p>Para ver CRIPTO-LIVE tenés que entrar con tu cuenta de Google.</p><button type="button" data-g="in">${GICON} Entrar con Google</button></div>`;}
+  if(kind==='bloq'){el.innerHTML=`<div class="gate-c"><div class="gate-i">🔒</div><h2>Tu cuenta no tiene acceso</h2><p>El dueño de la página bloqueó el acceso${bl!=='1'?` de <b>${esc(bl)}</b>`:''}. Si creés que es un error, hablá con él.</p>${fbUser?'<button type="button" class="g-btn" data-g="out">Salir de la cuenta</button>':''}</div>`;return;}
+  const feats=`<ul class="lp-f"><li><b>📈 TRADING, 🎯 SHOOTER y 🏛 ACCIONES</b><span>Señales con entrada, objetivos y stop, buscadas las 24 h por el bot.</span></li><li><b>🧠 IA que practica sola</b><span>Te dice cuándo conviene seguirla con un semáforo.</span></li><li><b>📲 Grupo de Telegram</b><span>Las señales te llegan al celular aunque tengas la página cerrada.</span></li><li><b>🔄 Trade del ciclo y 🧭 Pilotear</b><span>El ciclo del halving y seguimiento de tus propias operaciones.</span></li></ul>`;
+  if(kind==='login'){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Señales de cripto y acciones, las 24 horas</h1><p class="lp-sub">Entrá con tu cuenta de Google y usá todo <b>gratis durante ${PRUEBA_D} días</b>. Sin tarjeta.</p>
+      <button type="button" class="g-btn big" data-g="in">${GICON} Entrar con Google · ${PRUEBA_D} días gratis</button>${feats}${planCards(false)}${payNote()}</div>`;return;}
+  if(el.dataset.k!=='pagar'||!el.querySelector('.pay')){el.dataset.k='pagar';}
+  el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>${SUB&&SUB.plan==='prueba'?'Terminó tu prueba gratis':'Tu plan venció'}</h1><p class="lp-sub">Elegí un plan para seguir usando la página, las señales y el grupo de Telegram.</p>${payInner()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`;}
+function gateClick(e){if(e.type==='input')return payInput(e);const b=e.target.closest('[data-g],[data-pp],[data-pr],[data-cp],[data-paid]');if(!b)return;const g=b.dataset.g;
+  if(g==='out'){firebase.auth().signOut();return;}if(g==='in'){const a=$('acctBtn');if(a)a.click();return;}payClick(e);}
+const planCards=sel=>`<div class="lp-pl">${PLANES.map(p=>`<${sel?'button type="button" data-pp="'+p.id+'"':'div'} class="lp-p${PAYUI.plan===p.id?' on':''}${p.id==='3m'?' pop':''}">${p.id==='3m'?'<i>Más elegido</i>':''}<b>${p.nm}</b><span class="lp-usd">${p.usd} <small>USDT</small></span><small>${p.sub}</small></${sel?'button':'div'}>`).join('')}</div>`;
+const payNote=()=>`<p class="lp-note">Los pagos son <b>solo en USDT por exchange</b> (Binance, Bybit, BingX, OKX, Bitget, KuCoin…), con transferencia directa a la cuenta de Binance del dueño. Cuando la transferencia se confirma, el plan se activa en tu cuenta. Las señales son informativas y no son consejo financiero.</p>`;
+/* ---------- pagar: plan → forma de pago → código de la transferencia ---------- */
+function payOpen(){PAYUI.open=true;payRender();}
+function payClose(){PAYUI.open=false;payRender();}
+function payRender(){let el=$('payBox');if(!PAYUI.open||!fbUser){if(el)el.remove();if(!$('accGate'))document.body.classList.remove('adm-on');return;}
+  if(!el){el=document.createElement('div');el.id='payBox';document.body.appendChild(el);el.onclick=e=>{if(e.target.closest('[data-px]'))return payClose();payClick(e);};el.oninput=payInput;}
+  document.body.classList.add('adm-on');
+  const st=SUB?(subActive()?`${SUB.plan==='prueba'?'🎁 Prueba gratis':'⭐ Plan '+((PLANES.find(p=>p.id===SUB.plan)||{}).nm||'')}: te quedan <b>${subDays()} días</b> (hasta ${new Date(SUB.hasta).toLocaleDateString('es-AR')}). Si pagás ahora, los días se suman.`:'Tu acceso venció.'):'';
+  el.innerHTML=`<div class="adm-in"><div class="adm-hd"><button type="button" data-px="1">← Volver</button><b>⭐ Planes</b><span></span></div><p class="mut" style="font-size:13px">${st}</p>${payInner()}</div>`;}
+function payInner(){const P=PLANES.find(p=>p.id===PAYUI.plan),C=PAYCFG||{},R=[];
+  if(C.payId)R.push(['BPAY','Binance Pay','Gratis e instantáneo, entre cuentas de Binance']);if(C.trc20)R.push(['TRC20','USDT · red TRON (TRC20)','Desde cualquier exchange · comisión ~1 USDT']);if(C.bep20)R.push(['BEP20','USDT · red BNB Smart Chain (BEP20)','Desde cualquier exchange · comisión baja']);
+  let h=`<div class="pay"><div class="pay-st">1 · Elegí tu plan</div>${planCards(true)}`;
+  if(P){h+=`<div class="pay-st">2 · Elegí cómo pagar</div>`;
+    if(!R.length)h+=`<div class="adm-warn">Todavía no hay formas de pago cargadas. Escribile al dueño de la página.</div>`;
+    else h+=`<div class="pay-r">${R.map(([k,n,s])=>`<button type="button" data-pr="${k}" class="${PAYUI.red===k?'on':''}"><b>${n}</b><small>${s}</small></button>`).join('')}</div>`;
+    const red=R.find(r=>r[0]===PAYUI.red);
+    if(red){const k=red[0],dest=k==='BPAY'?C.payId:k==='TRC20'?C.trc20:C.bep20;
+      h+=`<div class="pay-st">3 · Transferí exactamente <b>${P.usd} USDT</b></div><div class="pay-d">
+        <div class="pay-row"><span>Monto</span><b>${P.usd} USDT</b><button type="button" data-cp="${P.usd}">Copiar</button></div>
+        <div class="pay-row"><span>${k==='BPAY'?'Binance Pay ID':'Dirección'}</span><b class="mono">${esc(dest)}</b><button type="button" data-cp="${esc(dest)}">Copiar</button></div>
+        ${k==='BPAY'?'':`<div class="pay-row"><span>Red</span><b>${k==='TRC20'?'TRON (TRC20)':'BNB Smart Chain (BEP20)'}</b></div>`}
+        <p class="pay-w">${k==='BPAY'?'En la app de Binance: <b>Pagar → Enviar → Pay ID</b>, pegá el ID y el monto. Después copiá el <b>número de orden</b> del pago.':`⚠️ Elegí <b>la misma red</b> al retirar (${k==='TRC20'?'TRC20 / TRON':'BEP20 / BSC'}). Si usás otra red, los fondos se pierden. Si el exchange te cobra comisión, sumala para que lleguen ${P.usd} USDT.`}</p>
+        <div class="pay-ex">${(k==='BPAY'?EXCH.slice(0,1):EXCH).map(([n,u])=>`<a href="${u}" target="_blank" rel="noopener">Abrir ${n}</a>`).join('')}</div></div>
+        <div class="pay-st">4 · Pegá el ${k==='BPAY'?'número de orden de Binance Pay':'código de la transacción (TxID / hash)'}</div>
+        <div class="pay-tx"><input id="payTx" type="text" autocomplete="off" spellcheck="false" placeholder="${k==='BPAY'?'Número de orden':k==='TRC20'?'64 letras y números':'0x… (66 caracteres)'}"><button type="button" class="g-btn" data-paid="1">Ya pagué</button></div>
+        ${PAYUI.msg?`<p class="pay-m">${PAYUI.msg}</p>`:''}<p class="mut" style="font-size:12px">El TxID aparece en el historial de retiros de tu exchange. ${k==='BPAY'?'Los pagos por Binance Pay los confirma el dueño a mano (suele ser rápido).':'Se comprueba en la red y, cuando se confirma, el plan se activa solo.'}</p>`;}}
+  if(MYPAY.length)h+=`<div class="pay-st">Tus pagos</div>${MYPAY.slice(0,6).map(p=>`<div class="pay-h ${p.estado}"><span>${new Date(p.t).toLocaleDateString('es-AR')}</span><b>${(PLANES.find(x=>x.id===p.plan)||{}).nm||p.plan} · ${p.monto} USDT</b><span>${p.estado==='ok'?'✓ Activado':p.estado==='rechazado'?'✕ Rechazado'+(p.nota?': '+esc(p.nota):''):'⏳ Verificando…'}</span></div>`).join('')}`;
+  return h+payNote()+'</div>';}
+function payInput(e){}
+async function payClick(e){const b=e.target.closest('[data-pp],[data-pr],[data-cp],[data-paid]');if(!b)return;const d=b.dataset;
+  if(d.pp){PAYUI.plan=d.pp;PAYUI.msg=null;}else if(d.pr){PAYUI.red=d.pr;PAYUI.msg=null;}
+  else if(d.cp!=null){try{await navigator.clipboard.writeText(d.cp);b.textContent='✓';setTimeout(()=>{b.textContent='Copiar';},1500);}catch(_){}return;}
+  else if(d.paid){const inp=(b.closest('.pay')||document).querySelector('#payTx'),tx=(inp&&inp.value||'').trim(),P=PLANES.find(p=>p.id===PAYUI.plan),k=PAYUI.red;
+    const ok=k==='BPAY'?/^[0-9A-Za-z]{6,40}$/.test(tx):k==='TRC20'?/^[0-9a-fA-F]{64}$/.test(tx):/^0x[0-9a-fA-F]{64}$/.test(tx);
+    if(!P||!k)return;if(!ok){PAYUI.msg='⚠️ Ese código no tiene el formato esperado. Revisalo y pegalo completo.';}
+    else{const id=(k+'_'+tx).toLowerCase();try{await fbDb.collection('pagos').doc(id).set({uid:fbUser.uid,email:fbUser.email||'',plan:P.id,monto:P.usd,dias:P.d,red:k,txid:tx,t:Date.now(),estado:'pendiente'});PAYUI.msg='✓ Recibido. Estamos verificando la transferencia: cuando se confirme, tu plan se activa solo.';}
+      catch(er){PAYUI.msg=er&&er.code==='permission-denied'?'⚠️ Ese código ya fue informado antes. Si es un error, escribile al dueño.':'⚠️ No se pudo enviar ('+esc(er.code||er.message)+'). Probá de nuevo.';}}}
+  if(PAYUI.open)payRender();if($('accGate'))accGate();}
+/* ---------- comprobación en la red (la usan el panel y el bot de pagos) ---------- */
+async function chainCheck(p){try{
+  if(p.red==='TRC20'){const j=await (await fetch('https://apilist.tronscanapi.com/api/transaction-info?hash='+encodeURIComponent(p.txid))).json();
+    if(!j||!j.hash)return {ok:false,msg:'No se encontró en la red TRON'};if(j.contractRet!=='SUCCESS')return {ok:false,msg:'La transacción falló'};
+    const tr=(j.trc20TransferInfo||[]).find(x=>x.contract_address===USDT_TRC&&x.to_address===PAYCFG.trc20);if(!tr)return {ok:false,msg:'No es un envío de USDT a tu dirección'};
+    const m=+tr.amount_str/Math.pow(10,+tr.decimals||6);return {ok:m>=p.monto*.98,monto:m,conf:!!j.confirmed,msg:`${m} USDT${j.confirmed?'':' (todavía sin confirmar)'}`};}
+  if(p.red==='BEP20'){const r=await (await fetch('https://bsc-dataseed.binance.org/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({jsonrpc:'2.0',id:1,method:'eth_getTransactionReceipt',params:[p.txid]})})).json(),x=r&&r.result;
+    if(!x)return {ok:false,msg:'No se encontró en BNB Smart Chain'};if(x.status!=='0x1')return {ok:false,msg:'La transacción falló'};
+    const to='0x'+String(PAYCFG.bep20||'').toLowerCase().replace(/^0x/,'').padStart(64,'0'),lg=(x.logs||[]).find(l=>l.address.toLowerCase()===USDT_BEP&&l.topics[0]==='0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef'&&l.topics[2].toLowerCase()===to);
+    if(!lg)return {ok:false,msg:'No es un envío de USDT a tu dirección'};const m=Number(BigInt(lg.data))/1e18;return {ok:m>=p.monto*.98,monto:m,conf:true,msg:m+' USDT'};}
+  return {ok:null,msg:'Binance Pay: revisalo en tu app de Binance (Pagar → Historial)'};}catch(e){return {ok:null,msg:'No se pudo consultar la red: '+e.message};}}
+async function subGrant(uid,dias,plan,email){const ref=fbDb.collection('subs').doc(uid),s=await ref.get(),d=s.exists?s.data():{},base=Math.max(Date.now(),d.hasta||0);
+  await ref.set({plan,desde:d.desde||Date.now(),hasta:base+dias*864e5,email:email||d.email||'',upd:Date.now()},{merge:true});}
+/* ---------- panel de administración ---------- */
 const admAgo=t=>{if(!t)return '—';const m=(Date.now()-t)/6e4;return m<2?'recién':m<60?`hace ${Math.round(m)} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`;};
 const admDate=t=>t?new Date(t).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
 async function admLoad(){ADM.err=null;admRender();
-  try{const [c,b]=await Promise.all([fbDb.collection('cuentas').get(),fbDb.collection('bloqueos').get()]);ADM.L=c.docs.map(d=>d.data());ADM.B=new Map(b.docs.map(d=>[d.id,d.data()]));}catch(e){ADM.err=e.code||e.message;}
+  try{const [c,b,s,p]=await Promise.all([fbDb.collection('cuentas').get(),fbDb.collection('bloqueos').get(),fbDb.collection('subs').get(),fbDb.collection('pagos').get()]);
+    ADM.L=c.docs.map(d=>d.data());ADM.B=new Map(b.docs.map(d=>[d.id,d.data()]));ADM.S=new Map(s.docs.map(d=>[d.id,d.data()]));ADM.P=p.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>b.t-a.t);}catch(e){ADM.err=e.code||e.message;}
   try{const u=await fbDb.collection('users').get();ADM.U=u.docs.map(d=>({uid:d.id,updated:(d.data()||{}).updated||0}));}catch(e){ADM.U=null;}
+  try{const t=await fbDb.collection('privado').doc('telegram').get();TGLINK=t.exists&&t.data().link||'';}catch(e){}
   admRender();}
 function admOpen(){if(!isAdmin())return;ADM.open=true;document.body.classList.add('adm-on');admLoad();}
 function admClose(){ADM.open=false;document.body.classList.remove('adm-on');admRender();}
 function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
-  if(!el){el=document.createElement('div');el.id='admBox';document.body.appendChild(el);el.onclick=admClick;}
+  if(!el){el=document.createElement('div');el.id='admBox';document.body.appendChild(el);el.onclick=admClick;el.onchange=admClick;}
   const now=Date.now(),L=(ADM.L||[]).slice().sort((a,b)=>(b.ultimo||0)-(a.ultimo||0)),known=new Set(L.map(x=>x.uid));
   const old=(ADM.U||[]).filter(x=>!known.has(x.uid)).sort((a,b)=>b.updated-a.updated);
-  const n24=L.filter(x=>now-(x.ultimo||0)<864e5).length,n7=L.filter(x=>now-(x.ultimo||0)<7*864e5).length;
+  const n24=L.filter(x=>now-(x.ultimo||0)<864e5).length,pend=ADM.P.filter(p=>p.estado==='pendiente'),pagos=[...ADM.S.values()].filter(s=>s.plan!=='prueba'&&s.hasta>now).length,prue=[...ADM.S.values()].filter(s=>s.plan==='prueba'&&s.hasta>now).length;
+  const subTxt=uid=>{const s=ADM.S.get(uid);if(!s)return '<span class="adm-tag">sin plan</span>';const d=Math.ceil((s.hasta-now)/864e5);return s.hasta<=now?`<span class="adm-tag r">${s.plan==='prueba'?'prueba vencida':'plan vencido'}</span>`:`<span class="adm-tag ${s.plan==='prueba'?'':'g'}">${s.plan==='prueba'?'prueba':'plan '+((PLANES.find(p=>p.id===s.plan)||{}).nm||s.plan)} · ${d} d</span>`;};
   const row=x=>{const bl=ADM.B.has(x.uid),me=x.email===ADMIN_EMAIL,ask=ADM.ask===x.uid;
-    return `<div class="adm-r${bl?' bl':''}">${x.foto?`<img src="${esc(x.foto)}" alt="" referrerpolicy="no-referrer">`:'<span class="adm-av">👤</span>'}<div class="adm-who"><b>${esc(x.nombre||x.email||'Sin nombre')}${me?' <span class="adm-tag">vos</span>':''}${bl?' <span class="adm-tag r">bloqueada</span>':''}</b><small>${esc(x.email||x.uid)}</small>
-      <small>Último ingreso <b>${admAgo(x.ultimo)}</b> (${admDate(x.ultimo)}) · ${x.visitas||0} ingresos · alta ${admDate(x.alta)}${x.disp?' · '+esc(x.disp):''}</small></div>
+    return `<div class="adm-r${bl?' bl':''}">${x.foto?`<img src="${esc(x.foto)}" alt="" referrerpolicy="no-referrer">`:'<span class="adm-av">👤</span>'}<div class="adm-who"><b>${esc(x.nombre||x.email||'Sin nombre')}${me?' <span class="adm-tag">vos</span>':' '+subTxt(x.uid)}${bl?' <span class="adm-tag r">bloqueada</span>':''}</b><small>${esc(x.email||x.uid)}</small>
+      <small>Último ingreso <b>${admAgo(x.ultimo)}</b> (${admDate(x.ultimo)}) · ${x.visitas||0} ingresos · alta ${admDate(x.alta)}${x.disp?' · '+esc(x.disp):''}</small>
+      ${me?'':`<div class="adm-g"><span>Dar acceso:</span>${PLANES.map(p=>`<button type="button" data-gr="${esc(x.uid)}" data-gd="${p.d}" data-gp="${p.id}">+${p.nm.toLowerCase()}</button>`).join('')}<button type="button" data-gr="${esc(x.uid)}" data-gd="0" data-gp="fin">Quitar</button></div>`}</div>
       ${me?'':bl?`<button type="button" data-ub="${esc(x.uid)}">Desbloquear</button>`:ask?`<button type="button" class="r" data-bk="${esc(x.uid)}">¿Seguro? Bloquear</button>`:`<button type="button" data-ask="${esc(x.uid)}">Bloquear</button>`}</div>`;};
+  const prow=p=>{const c=ADM.chk[p.id];return `<div class="adm-r pay-a ${p.estado}"><div class="adm-who"><b>${esc(p.email||p.uid)} · ${(PLANES.find(x=>x.id===p.plan)||{}).nm||p.plan} · ${p.monto} USDT</b><small>${admDate(p.t)} · ${p.red==='BPAY'?'Binance Pay':p.red} · <span class="mono">${esc(p.txid)}</span></small>
+      <small>${p.estado==='ok'?'✓ Activado'+(p.auto?' automáticamente':''):p.estado==='rechazado'?'✕ Rechazado'+(p.nota?': '+esc(p.nota):''):'⏳ Pendiente'}${c?` · Red: <b class="${c.ok?'up':c.ok===false?'dn':''}">${esc(c.msg)}</b>`:''}</small></div>
+      ${p.estado==='pendiente'?`<div class="adm-pb">${p.red!=='BPAY'?`<button type="button" data-ck="${esc(p.id)}">Verificar en la red</button>`:''}<button type="button" class="g" data-ok="${esc(p.id)}">Activar</button><button type="button" data-no="${esc(p.id)}">Rechazar</button></div>`:''}</div>`;};
   const ev=[];for(const x of L)for(const t of (x.ingresos||[]))ev.push([t,x]);ev.sort((a,b)=>b[0]-a[0]);
-  const bad=ADM.err?`<div class="adm-warn"><b>Falta activar las reglas de seguridad en Firebase</b> (${esc(ADM.err)}). Sin ellas no se puede ver la lista ni bloquear de verdad.<ol><li>Entrá a <a href="https://console.firebase.google.com/project/cripto-live/firestore/rules" target="_blank" rel="noopener">console.firebase.google.com → cripto-live → Firestore → Reglas</a>.</li><li>Borrá lo que hay, pegá estas reglas y tocá <b>Publicar</b>.</li><li>Volvé acá y tocá Actualizar.</li></ol><button type="button" data-copy="1">📋 Copiar las reglas</button><pre>${esc(ADM_RULES)}</pre></div>`:'';
+  const bad=ADM.err?`<div class="adm-warn"><b>Hay que actualizar las reglas de seguridad en Firebase</b> (${esc(ADM.err)}). Las reglas nuevas suman las suscripciones y los pagos.<ol><li>Entrá a Firebase → cripto-live → Firestore → <b>Reglas</b>.</li><li>Borrá lo que hay, pegá estas reglas y tocá <b>Publicar</b>.</li><li>Volvé acá y tocá Actualizar.</li></ol><button type="button" data-copy="1">📋 Copiar las reglas</button><pre>${esc(ADM_RULES)}</pre></div>`:'';
+  const C=PAYCFG||{};
+  const cfg=`<div class="adm-cfg"><label class="adm-sw"><input type="checkbox" data-cobro="1" ${ACC_CFG.cobro!==false?'checked':''}> <span><b>Cobrar por la página</b><small>Activado: cada cuenta nueva tiene ${PRUEBA_D} días gratis y después tiene que pagar un plan. Desactivado: la página es gratis para todos.</small></span></label>
+    <label class="adm-sw"><input type="checkbox" data-solo="1" ${ACC_CFG.soloCuentas?'checked':''}> <span><b>Solo con cuenta</b><small>Nadie puede ver la página sin entrar con Google (con el cobro activado ya es así).</small></span></label>
+    <div class="adm-f"><label>Binance Pay ID<input data-cf="payId" value="${esc(C.payId||'')}" placeholder="Ej. 123456789" inputmode="numeric"></label>
+    <label>Dirección USDT · TRON (TRC20)<input data-cf="trc20" value="${esc(C.trc20||'')}" placeholder="T…" spellcheck="false"></label>
+    <label>Dirección USDT · BNB Smart Chain (BEP20)<input data-cf="bep20" value="${esc(C.bep20||'')}" placeholder="0x…" spellcheck="false"></label>
+    <label>Enlace del grupo de Telegram (solo lo ven las cuentas activas)<input data-tg="1" value="${esc(TGLINK||'')}" placeholder="https://t.me/+…" spellcheck="false"></label>
+    <button type="button" class="g" data-save="1">Guardar</button>${ADM.saved?'<span class="up"> ✓ Guardado</span>':''}</div>
+    <p class="mut" style="font-size:12px;line-height:1.5">Las direcciones las sacás de tu Binance: <b>Billetera → Depositar → USDT</b>, eligiendo la red TRC20 o BEP20. El Pay ID está en <b>Pagar → tu perfil</b>. Los pagos por red se pueden verificar solos (ver "Verificar en la red"); los de Binance Pay los confirmás vos mirando el historial de Binance Pay.</p></div>`;
   el.innerHTML=`<div class="adm-in"><div class="adm-hd"><button type="button" class="adm-x" data-x="1">← Volver</button><b>👑 Administración</b><button type="button" data-ref="1">↻ Actualizar</button></div>
     ${bad}
-    <div class="adm-k"><div><b>${L.length}</b><small>cuentas</small></div><div><b>${n24}</b><small>entraron hoy</small></div><div><b>${n7}</b><small>últimos 7 días</small></div><div><b>${ADM.B.size}</b><small>bloqueadas</small></div></div>
-    <label class="adm-sw"><input type="checkbox" data-solo="1" ${ACC_CFG.soloCuentas?'checked':''}> <span><b>Solo con cuenta</b><small>Si está activado, nadie puede ver la página sin entrar con Google (así las cuentas bloqueadas no pueden mirarla sin sesión).</small></span></label>
-    <div class="int-p adm-t"><button type="button" data-tab="c" class="${ADM.tab==='c'?'on':''}">👥 Cuentas</button><button type="button" data-tab="i" class="${ADM.tab==='i'?'on':''}">🕓 Ingresos</button></div>
+    <div class="adm-k"><div><b>${L.length}</b><small>cuentas</small></div><div><b>${n24}</b><small>entraron hoy</small></div><div><b>${pagos}</b><small>con plan pago</small></div><div><b>${prue}</b><small>en prueba</small></div><div class="${pend.length?'warn':''}"><b>${pend.length}</b><small>pagos pendientes</small></div><div><b>${ADM.B.size}</b><small>bloqueadas</small></div></div>
+    <div class="int-p adm-t"><button type="button" data-tab="c" class="${ADM.tab==='c'?'on':''}">👥 Cuentas</button><button type="button" data-tab="p" class="${ADM.tab==='p'?'on':''}">💳 Pagos${pend.length?' ('+pend.length+')':''}</button><button type="button" data-tab="i" class="${ADM.tab==='i'?'on':''}">🕓 Ingresos</button><button type="button" data-tab="k" class="${ADM.tab==='k'?'on':''}">⚙️ Cobros</button></div>
     ${ADM.L==null&&!ADM.err?'<div class="mut">Cargando…</div>':ADM.tab==='c'?(L.map(row).join('')||'<div class="mut">Todavía no entró nadie desde que existe el registro.</div>')
       +(old.length?`<div class="adm-sub">Cuentas anteriores al registro (${old.length}): aparecen con nombre cuando vuelvan a entrar</div>`+old.map(x=>row({uid:x.uid,email:'',nombre:'Cuenta sin perfil todavía',ultimo:x.updated,visitas:0})).join(''):'')
+      :ADM.tab==='p'?(ADM.P.map(prow).join('')||'<div class="mut">Todavía no hay pagos informados.</div>')
+      :ADM.tab==='k'?cfg
       :(ev.slice(0,80).map(([t,x])=>`<div class="adm-e"><span>${admDate(t)}</span><b>${esc(x.nombre||x.email)}</b><small>${esc(x.email||'')}</small></div>`).join('')||'<div class="mut">Sin ingresos todavía.</div>')}
-    <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Las cuentas anteriores al registro se ven sin nombre hasta que vuelvan a entrar. Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos.</div></div>`;}
-async function admClick(e){const b=e.target.closest('button,input');if(!b)return;const d=b.dataset;
-  if(d.x){admClose();return;}if(d.ref){admLoad();return;}if(d.tab){ADM.tab=d.tab;admRender();return;}
+    <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos. "Dar acceso" suma días al plan de esa cuenta sin cobrar (regalos o pagos que confirmaste a mano).</div></div>`;}
+async function admClick(e){const b=e.target.closest('button,input');if(!b)return;const d=b.dataset;if(e.type==='change'&&!(d.cobro||d.solo))return;if(e.type==='click'&&(d.cobro||d.solo)&&b.tagName==='INPUT')return;
+  if(d.x){admClose();return;}if(d.ref){admLoad();return;}if(d.tab){ADM.tab=d.tab;ADM.saved=false;admRender();return;}
   if(d.copy){try{await navigator.clipboard.writeText(ADM_RULES);b.textContent='✓ Copiadas';}catch(_){b.textContent='Seleccioná el texto de abajo y copialo';}return;}
   if(d.ask){ADM.ask=d.ask;admRender();return;}
-  if(d.bk){const x=(ADM.L||[]).find(y=>y.uid===d.bk)||{};try{await fbDb.collection('bloqueos').doc(d.bk).set({email:x.email||'',nombre:x.nombre||'',t:Date.now()});ADM.B.set(d.bk,{});}catch(er){ADM.err=er.code||er.message;}ADM.ask=null;admRender();return;}
-  if(d.ub){try{await fbDb.collection('bloqueos').doc(d.ub).delete();ADM.B.delete(d.ub);}catch(er){ADM.err=er.code||er.message;}admRender();return;}
-  if(d.solo){try{await fbDb.collection('config').doc('acceso').set({soloCuentas:b.checked,t:Date.now()},{merge:true});}catch(er){b.checked=!b.checked;ADM.err=er.code||er.message;admRender();}}}
+  try{
+    if(d.bk){const x=(ADM.L||[]).find(y=>y.uid===d.bk)||{};await fbDb.collection('bloqueos').doc(d.bk).set({email:x.email||'',nombre:x.nombre||'',t:Date.now()});ADM.B.set(d.bk,{});ADM.ask=null;}
+    else if(d.ub){await fbDb.collection('bloqueos').doc(d.ub).delete();ADM.B.delete(d.ub);}
+    else if(d.solo){await fbDb.collection('config').doc('acceso').set({soloCuentas:b.checked,t:Date.now()},{merge:true});return;}
+    else if(d.cobro){await fbDb.collection('config').doc('acceso').set({cobro:b.checked,t:Date.now()},{merge:true});return;}
+    else if(d.save){const el=$('admBox'),v=k=>(el.querySelector(`[data-cf="${k}"]`).value||'').trim(),tg=(el.querySelector('[data-tg]').value||'').trim();
+      await fbDb.collection('config').doc('pagos').set({payId:v('payId'),trc20:v('trc20'),bep20:v('bep20'),t:Date.now()},{merge:true});await fbDb.collection('privado').doc('telegram').set({link:tg,t:Date.now()});TGLINK=tg;ADM.saved=true;}
+    else if(d.gr){const x=(ADM.L||[]).find(y=>y.uid===d.gr)||{};if(d.gp==='fin')await fbDb.collection('subs').doc(d.gr).set({hasta:Date.now()-1000,plan:(ADM.S.get(d.gr)||{}).plan||'prueba',upd:Date.now()},{merge:true});else await subGrant(d.gr,+d.gd,d.gp,x.email);await admLoad();return;}
+    else if(d.ck){const p=ADM.P.find(x=>x.id===d.ck);ADM.chk[d.ck]={msg:'consultando…'};admRender();ADM.chk[d.ck]=await chainCheck(p);}
+    else if(d.ok){const p=ADM.P.find(x=>x.id===d.ok);await subGrant(p.uid,p.dias||(PLANES.find(x=>x.id===p.plan)||{}).d||30,p.plan,p.email);await fbDb.collection('pagos').doc(p.id).set({estado:'ok',okT:Date.now()},{merge:true});await admLoad();return;}
+    else if(d.no){await fbDb.collection('pagos').doc(d.no).set({estado:'rechazado',nota:'no se encontró el pago',okT:Date.now()},{merge:true});await admLoad();return;}
+  }catch(er){ADM.err=er.code||er.message;}
+  admRender();}
 function renderAcct(msg){const el=$('acct');
   if(!FIREBASE_CONFIG||!window.firebase){el.innerHTML='';return;}
   if(fbUser){el.innerHTML=`${isAdmin()?'<button class="acct-btn adm-btn" id="admBtn" title="Panel de administración (solo tu cuenta)">👑</button>':''}<button class="acct-btn" id="acctBtn" title="${(fbUser.email||'').replace(/[<>"]/g,'')} · tocar para salir">${fbUser.photoURL?`<img src="${fbUser.photoURL}" alt="" referrerpolicy="no-referrer">`:''}Salir</button>`;
-    $('acctBtn').onclick=()=>firebase.auth().signOut();if($('admBtn'))$('admBtn').onclick=admOpen;}
+    $('acctBtn').onclick=()=>firebase.auth().signOut();if($('admBtn'))$('admBtn').onclick=admOpen;subBadge();}
   else{el.innerHTML=`<button class="acct-btn" id="acctBtn" title="${msg||'Guarda tus líneas y favoritas en tu cuenta'}">${GICON}Entrar</button>`;
     $('acctBtn').onclick=async()=>{const pr=new firebase.auth.GoogleAuthProvider();
       try{await firebase.auth().signInWithPopup(pr);}
@@ -2072,8 +2225,9 @@ function renderAcct(msg){const el=$('acct');
 function initCloud(){
   if(!FIREBASE_CONFIG||!window.firebase){renderAcct();return;}
   try{firebase.initializeApp(FIREBASE_CONFIG);fbDb=firebase.firestore();}catch(e){console.warn(e);return;}
-  try{fbDb.collection('config').doc('acceso').onSnapshot(s=>{ACC_CFG=Object.assign({soloCuentas:false},s.data()||{});accGate();if(ADM.open)admRender();},()=>{});}catch(e){}
-  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;ACC_AUTH=true;renderAcct();if(!u){if(ADM.open)admClose();accGate();if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
+  try{fbDb.collection('config').doc('acceso').onSnapshot(s=>{ACC_CFG=Object.assign({soloCuentas:false,cobro:true},s.data()||{});accGate();subBadge();if(ADM.open)admRender();},()=>{});}catch(e){}
+  try{fbDb.collection('config').doc('pagos').onSnapshot(s=>{PAYCFG=s.data()||{};if(PAYUI.open)payRender();if($('accGate'))accGate();if(ADM.open)admRender();},()=>{});}catch(e){}
+  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;ACC_AUTH=true;renderAcct();if(!u){if(ADM.open)admClose();try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();}catch(_){}SUB=null;SUBOK=false;MYPAY=[];TGLINK=null;PAYUI.open=false;payRender();subBadge();accGate();if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
     if(await accLogin(u))return; // cuenta bloqueada: no se cargan sus datos
     accGate();
     try{const snap=await fbDb.collection('users').doc(u.uid).get(),d=snap.exists?snap.data():{};

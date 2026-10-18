@@ -116,8 +116,14 @@ const fp = p => (+p).toLocaleString('es-ES', { minimumFractionDigits: dec(p), ma
 const pct = (v, e) => { const x = (v / e - 1) * 100; return (x >= 0 ? '+' : '') + x.toFixed(2) + ' %'; };
 const CANAL = process.env.TELEGRAM_CANAL || '@criptolive_senales';
 async function sendTo(chat, text) { try { const r = await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, { method: 'POST', body: new URLSearchParams({ chat_id: chat, text, disable_web_page_preview: 'true' }) }); const j = await r.json(); if (!j.ok) console.log('Telegram', chat, ':', j.description); return j.ok; } catch (e) { console.log('Telegram error', chat, e.message); return false; } }
+/* octubre 2026: el canal puede pasar a privado (solo para cuentas con plan). Un canal privado no tiene @nombre, así que se guarda su número
+   mientras todavía es público y se publica en datos/canal.json para que lo usen los otros bots. */
+const canalId = () => (typeof S !== 'undefined' && S.canalId) || CANAL;
+async function canalResolve() { if (!TOKEN || !CANAL || (S.canalId && S.canalPub)) return;
+  try { if (!S.canalId) { const j = await (await fetch(`https://api.telegram.org/bot${TOKEN}/getChat?chat_id=${encodeURIComponent(CANAL)}`)).json(); if (j.ok && j.result && j.result.id) S.canalId = String(j.result.id); }
+    if (S.canalId && !S.canalPub && process.env.GH_TOKEN && await ghPut('canal.json', JSON.stringify({ id: S.canalId, upd: Date.now() }), 'canalSha', 'Canal de Telegram', S.canalId)) S.canalPub = true; } catch (e) { console.log('canal', e.message); } }
 async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', text); return; }
-  await sendTo(CHAT, text); if (canal && CANAL) await sendTo(CANAL, text); }
+  await sendTo(CHAT, text); if (canal && CANAL) await sendTo(canalId(), text); }
 
 /* ---------- publica las señales en la rama "datos" para que la página las muestre ---------- */
 async function ghPublish() { return ghPut('senales.json', JSON.stringify({ upd: Date.now(), senales: S.hist || [] }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
@@ -235,7 +241,8 @@ async function main() {
   const now = Date.now();
   if (now - calT > 6 * 36e5) { await calYear(); calT = now; }
   if (!S.boot && TOKEN && CHAT) { S.boot = now; await tg('✅ CRIPTO-LIVE 24 h activo\nDesde ahora reviso TRADING y SHOOTER cada 5 minutos aunque la página esté cerrada, y te aviso por acá.', false); }
-  if (!S.canal && TOKEN && CHAT && CANAL) { if (await sendTo(CANAL, '📈 CRIPTO-LIVE · Señales en vivo\nAcá se publican las señales de TRADING (4 h) y SHOOTER (5 min) apenas aparecen, con entrada, objetivos, stop y salvavidas, y después cuando tocan cada objetivo o el stop.\nGráfico y detalles: ' + PAGE + '\nℹ️ Solo informativo: no es consejo financiero. Operar con apalancamiento puede hacerte perder todo el margen.')) S.canal = now; }
+  await canalResolve();
+  if (!S.canal && TOKEN && CHAT && CANAL) { if (await sendTo(canalId(), '📈 CRIPTO-LIVE · Señales en vivo\nAcá se publican las señales de TRADING (4 h) y SHOOTER (5 min) apenas aparecen, con entrada, objetivos, stop y salvavidas, y después cuando tocan cada objetivo o el stop.\nGráfico y detalles: ' + PAGE + '\nℹ️ Solo informativo: no es consejo financiero. Operar con apalancamiento puede hacerte perder todo el margen.')) S.canal = now; }
   if (!(S.hist && S.hist.length) && S.open.length) { S.hist = S.open.map(o => ({ m: o.m, sym: o.sym, dir: o.dir, entry: o.entry, zl: o.entry, zh: o.entry, tp: o.tp, sl: o.sl, ll: o.ll, conf: CAL[o.m].p, setup: o.m === 'medio' ? 't-pb' : 'sh-r', reasons: [], t: o.t })); S.histDirty = true; }
   const T = await getJ(`${API}/ticker/24hr`), px = {};
   for (const t of T) px[t.symbol] = +t.lastPrice;
