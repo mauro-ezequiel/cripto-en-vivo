@@ -709,6 +709,11 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
 #subTip.on{opacity:1;transform:none;pointer-events:auto}
 .pay-r.ref label{display:flex;gap:8px;align-items:center;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:13.5px;cursor:pointer}
 .adm-r.pay-a.devolver{border-color:#ce93d8;flex-wrap:wrap}
+
+/* dibujos: barra del elegido y botón imán (octubre 2026) */
+#drwBar{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:6px;background:rgba(21,26,34,.95);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+#drwBar[hidden]{display:none}#drwBar button{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
+.rbtn[data-mag].on{color:#ffb74d}
 </style>
 </head>
 <body>
@@ -751,8 +756,8 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
         <button class="i-btn" data-i="chart" type="button" aria-label="Cómo usar el gráfico" aria-expanded="false">ⓘ</button>
       </div><div class="i-box" data-i="chart" hidden><b>Cómo usar el gráfico</b><ul><li><b>₿ Halving</b> (indicador aparte, solo cripto): pasa a velas semanales y marca cada halving de Bitcoin (y el próximo, estimado para ~abril 2028), con zonas verdes de subida (del halving al máximo del ciclo y del piso al siguiente halving) y rojas de caída (del máximo al piso). Lo que viene está proyectado con el promedio de los ciclos anteriores (máximo ≈ 18 meses después del halving, piso ≈ 1 año después del máximo) y se ve más tenue. En otras monedas se muestran las mismas zonas solo si copian a BTC (correlación semanal 0,6 o más). Son solo 4 ciclos de historia: es una guía, no una garantía.</li><li><b>Indicadores ▾</b>: muestra u oculta la barra de indicadores (y sus textos sobre el gráfico). <b>Al costado del gráfico</b>: temporalidad (tocala para ver las demás), cursor, regla, línea, borrar, alerta, reset, LOG y pantalla completa. En pantalla completa, abajo están el buscador de activos, la temporalidad y las herramientas.</li><li><b>TRADING / SHOOTER / ACCIONES</b>: cambia el modo. Cada uno tiene sus propias señales, apalancamiento y simulación.</li><li><b>Temporalidad</b> (1m … 1Mes): cuánto tiempo representa cada vela.</li><li><b>Cursor</b>: arrastrá para moverte; rueda o pellizco para zoom. <b>Regla</b>: medí distancia y % entre dos puntos. <b>Línea</b>: marcá un precio (doble clic sobre ella para borrarla). <b>Borrar</b>: tocá el botón y después la línea que querés borrar (aparece también "Borrar todas"). Tus líneas se guardan por moneda; si entraste con Google quedan en tu cuenta y se ven en todos tus dispositivos.</li><li><b>Zonas de liquidación</b> (indicador): bandas sobre las velas donde se liquidarían longs (verde) y shorts (rojo); el precio suele ir a buscarlas. Debajo de los indicadores elegís cómo verlas: cajas o mapa de calor, solo longs o shorts, y la sensibilidad.</li><li><b>LOG</b>: escala logarítmica (activada). Una suba del 10 % ocupa lo mismo en cualquier precio; tocalo para volver a la escala normal.</li><li><b>MACD Konkorde</b> (en Indicadores): dos líneas como un MACD. <b>Azul</b> = tendencia (combina RSI, flujo de dinero, Bollinger y estocástico); <b>roja</b> = su media. Azul cruzando arriba de la roja = giro alcista; abajo = giro bajista. Arriba del panel dice si las manos fuertes compran o venden. También vota en el termómetro.</li><li><b>Alerta</b>: te manda una notificación cuando el precio llega al nivel que elijas.</li><li><b>Reset</b>: vuelve al zoom inicial. <b>Pantalla completa</b>: agranda el gráfico (tecla F).</li><li class="mut">Gráficos hechos con <a href="https://www.tradingview.com/lightweight-charts/" target="_blank" rel="noopener">TradingView Lightweight Charts™</a>.</li></ul></div>
       <div class="inds hide" id="inds"></div>
-<div class="chrow"><div class="rail" id="rail"><div class="rtf"><button class="rbtn tfb" id="tfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop" id="tfPop" hidden><span id="tfs"></span></div></div><span class="rsep"></span><button class="rbtn on" data-tool="cursor" title="Mover / zoom (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla de medición (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea horizontal (H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" id="clear" data-tool="erase" title="Borrar una línea: tocá este botón y después la línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn" id="alertBtn" title="Crear una alerta de precio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><span class="rsep"></span><button class="rbtn" id="fit" title="Restablecer zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button><button class="rbtn txt on" id="logBtn" title="Escala logarítmica en el gráfico principal (los indicadores de abajo quedan en escala normal)">LOG</button><button class="rbtn" id="fs" title="Pantalla completa (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
-      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><div class="fsrow"><button class="btn" id="fsIndBtn">Indicadores ▾</button><button class="btn halv-btn" id="fsHalvBtn" type="button">₿ Halving</button></div><div class="fsohlc" id="fsOhlc"></div></div><button id="fsLive" class="fs-live" hidden title="Ir a la última vela">»</button><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Achicar (salir de pantalla completa)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div></div><div class="fsbot" id="fsBot"><div class="fsq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="fsQ" placeholder="Buscar activo" autocomplete="off"><div class="fsqr" id="fsQr" hidden></div></div><div class="rtf"><button class="rbtn tfb" id="fsTfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop up" id="fsTfPop" hidden><div class="fstf" id="fsTfs"></div></div></div><button class="rbtn on" data-tool="cursor" title="Cursor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" id="fsClear" data-tool="erase" title="Borrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn txt" id="fsLog" title="Escala logarítmica">LOG</button><button class="rbtn" id="fsFit" title="Ajustar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button></div>
+<div class="chrow"><div class="rail" id="rail"><div class="rtf"><button class="rbtn tfb" id="tfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop" id="tfPop" hidden><span id="tfs"></span></div></div><span class="rsep"></span><button class="rbtn on" data-tool="cursor" title="Mover / zoom (Esc)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla de medición (R)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea horizontal (H)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" data-tool="tline" title="Línea de tendencia (T)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19L20 5"/><circle cx="4" cy="19" r="2" fill="currentColor"/><circle cx="20" cy="5" r="2" fill="currentColor"/></svg></button><button class="rbtn" data-mag="1" title="Imán"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v8a6 6 0 0 0 12 0V3"/><path d="M6 7h4M14 7h4"/></svg></button><button class="rbtn" id="clear" data-tool="erase" title="Borrar una línea: tocá este botón y después la línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn" id="alertBtn" title="Crear una alerta de precio"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 8a6 6 0 1 1 12 0c0 7 3 9 3 9H3s3-2 3-9M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg></button><span class="rsep"></span><button class="rbtn" id="fit" title="Restablecer zoom"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button><button class="rbtn txt on" id="logBtn" title="Escala logarítmica en el gráfico principal (los indicadores de abajo quedan en escala normal)">LOG</button><button class="rbtn" id="fs" title="Pantalla completa (F)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg></button></div>
+      <div id="chart"><div class="legend" id="legend"></div><div class="fsbar" id="fsBar"><div class="fsrow"><button class="btn" id="fsIndBtn">Indicadores ▾</button><button class="btn halv-btn" id="fsHalvBtn" type="button">₿ Halving</button></div><div class="fsohlc" id="fsOhlc"></div></div><button id="fsLive" class="fs-live" hidden title="Ir a la última vela">»</button><div class="fsind" id="fsInd" hidden></div><button id="fsExit" class="fs-exit" hidden title="Achicar (salir de pantalla completa)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 4v5H4M15 4v5h5M9 20v-5H4M15 20v-5h5"/></svg></button><div class="ers-tip" id="ersTip" hidden><span>🧽 Tocá la línea que querés borrar</span><button type="button" id="ersAll">Borrar todas</button><button type="button" id="ersX">Cancelar</button></div><canvas id="overlay"></canvas><div class="loading" id="loading">Cargando…</div></div></div><div class="fsbot" id="fsBot"><div class="fsq"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg><input id="fsQ" placeholder="Buscar activo" autocomplete="off"><div class="fsqr" id="fsQr" hidden></div></div><div class="rtf"><button class="rbtn tfb" id="fsTfBtn" type="button" title="Temporalidad">4H</button><div class="tfpop up" id="fsTfPop" hidden><div class="fstf" id="fsTfs"></div></div></div><button class="rbtn on" data-tool="cursor" title="Cursor"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2v20M2 12h20"/></svg></button><button class="rbtn" data-tool="ruler" title="Regla"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="10" rx="1" transform="rotate(-45 12 12)"/><path d="m8.5 11.5 1.5 1.5M11 9l2 2M13.5 6.5 15 8"/></svg></button><button class="rbtn" data-tool="hline" title="Línea"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 12h20"/><circle cx="12" cy="12" r="2" fill="currentColor"/></svg></button><button class="rbtn" data-tool="tline" title="Tendencia"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19L20 5"/><circle cx="4" cy="19" r="2" fill="currentColor"/><circle cx="20" cy="5" r="2" fill="currentColor"/></svg></button><button class="rbtn" data-mag="1" title="Imán"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 3v8a6 6 0 0 0 12 0V3"/><path d="M6 7h4M14 7h4"/></svg></button><button class="rbtn" id="fsClear" data-tool="erase" title="Borrar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></svg></button><button class="rbtn txt" id="fsLog" title="Escala logarítmica">LOG</button><button class="rbtn" id="fsFit" title="Ajustar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 12a9 9 0 1 0 3-6.7L3 8M3 3v5h5"/></svg></button></div>
     </div>
     <section class="dash hide" id="dash">
       <div class="dcard gauge">
@@ -1756,16 +1761,19 @@ $('tfs').onclick=$('fsTfs').onclick=e=>{const b=e.target.closest('[data-tf]');if
 /* ---------- herramientas ---------- */
 const hints={cursor:'Rueda: zoom · Arrastrar: mover · Doble clic en una línea: borrarla',
   ruler:'Toca un punto y arrastra para medir · Esc para salir',
-  hline:'Clic en el gráfico para colocar una línea horizontal',
+  hline:'Clic en el gráfico para colocar una línea horizontal (después tocala y arrastrala para moverla)',
+  tline:'Línea de tendencia: tocá el inicio, arrastrá y soltá en el final (o tocá dos puntos)',
   erase:'Tocá la línea que querés borrar · Esc para cancelar'};
 function setTool(t){
   tool=t;
   document.querySelectorAll('[data-tool]').forEach(b=>b.classList.toggle('on',b.dataset.tool===t));
-  $('hint').textContent=hints[t];if($('ersTip')){$('ersTip').hidden=t!=='erase';$('ersTip').firstChild.textContent='🧽 Tocá la línea que querés borrar';$('ersAll').hidden=(hlines[symbol]||[]).length<2;}
+  if($('hint'))$('hint').textContent=hints[t]; // el aviso ya no está en la página: antes esto cortaba setTool y el gráfico no se trababa al dibujarif($('ersTip')){$('ersTip').hidden=t!=='erase';$('ersTip').firstChild.textContent='🧽 Tocá la línea que querés borrar';$('ersAll').hidden=(hlines[symbol]||[]).length+((typeof TLN!=='undefined'&&TLN[symbol])||[]).length<2;}
   chart.applyOptions({handleScroll:{pressedMouseMove:t==='cursor',horzTouchDrag:t==='cursor',vertTouchDrag:t==='cursor'}});
   $('chart').style.touchAction=t==='cursor'?'':'none';
   $('chart').style.cursor=t==='cursor'?'':'crosshair';
   if(t!=='ruler'&&ruler&&ruler.phase===1) ruler=null;
+  if(t!=='tline'&&typeof TLnew!=='undefined'&&TLnew){TLnew=null;ovReq();}
+  if(t!=='cursor'&&typeof SEL!=='undefined'&&SEL)selSet(null);
 }
 document.querySelectorAll('[data-tool]').forEach(b=>b.onclick=()=>setTool(b.dataset.tool));
 /* regla: tocar y arrastrar (como TradingView); también funciona con dos toques */
@@ -1806,8 +1814,9 @@ chart.subscribeClick(p=>{
   const price=series.coordinateToPrice(p.point.y);
   const l=chart.timeScale().coordinateToLogical(p.point.x);
   if(price==null||l==null) return;
-  if(tool==='erase'){ eraseAt(p.point.y); return; }
-  if(tool==='hline'){ addLine(price); setTool('cursor'); }
+  if(tool==='erase'){ eraseAt(p.point.y,p.point.x); return; }
+  if(tool==='hline'){ const q=snapAt(p.point.x,p.point.y); addLine(q?q.p:price); setTool('cursor'); selSet({k:'h',i:(hlines[symbol]||[]).length-1}); }
+  else if(tool==='cursor'&&SEL&&!hitAt(p.point.x,p.point.y)) selSet(null);
   else if(tool==='ruler'){}
   else if(ruler&&ruler.phase===2) ruler=null;
 });
@@ -1834,19 +1843,103 @@ function saveLines(){try{const o={};for(const s in hlines)o[s]=hlines[s].map(h=>
 function restoreLines(){
   for(const s in hlines) hlines[s].forEach(h=>{try{series.removePriceLine(h.line)}catch(e){}});
   let saved={};try{saved=JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){}
-  hlines={};(saved[symbol]||[]).forEach(p=>addLine(p,false));
+  hlines={};(saved[symbol]||[]).forEach(p=>addLine(p,false));try{SEL=null;DRG=null;const b=$('drwBar');if(b)b.hidden=true;}catch(_){}
   for(const s in saved) if(s!==symbol) hlines[s]=saved[s].map(p=>({price:p,line:null}));
 }
 $('clear').onclick=()=>setTool(tool==='erase'?'cursor':'erase');
-function eraseAt(y){const arr=hlines[symbol]||[];let bi=-1,bd=1e9;
+function eraseAt(y,x){if(x!=null){const h=hitAt(x,y);if(h&&h.k==='t'){tls().splice(h.i,1);saveTL();selSet(null);setTool('cursor');ovReq();return;}}
+  const arr=hlines[symbol]||[];let bi=-1,bd=1e9;
   arr.forEach((h,i)=>{const yy=series.priceToCoordinate(h.price);if(yy!=null&&Math.abs(yy-y)<bd){bd=Math.abs(yy-y);bi=i;}});
   const tol=matchMedia('(pointer:coarse)').matches?24:12;
   if(bi>-1&&bd<=tol){try{series.removePriceLine(arr[bi].line)}catch(e){}arr.splice(bi,1);saveLines();setTool('cursor');return;}
   if(ruler){ruler=null;setTool('cursor');return;}
   $('ersTip').firstChild.textContent=arr.length?'No hay una línea ahí: tocá justo sobre la línea':'No hay líneas en esta moneda';}
 $('ersX').onclick=e=>{e.stopPropagation();setTool('cursor');};
-$('ersAll').onclick=e=>{e.stopPropagation();(hlines[symbol]||[]).forEach(h=>h.line&&series.removePriceLine(h.line));hlines[symbol]=[];ruler=null;saveLines();setTool('cursor');};
+$('ersAll').onclick=e=>{e.stopPropagation();(hlines[symbol]||[]).forEach(h=>h.line&&series.removePriceLine(h.line));hlines[symbol]=[];TLN[symbol]=[];saveTL();selSet(null);ruler=null;saveLines();setTool('cursor');};
 $('fit').onclick=fitView;
+/* ---------- dibujos (octubre 2026, como TradingView): línea de tendencia, mover líneas tocándolas, imán a las velas y precios en el eje ----------
+   · Tendencia: tocá el inicio, arrastrá y soltá en el final (o dos toques). Se guarda por moneda con fecha y precio de cada punta.
+   · Tocá una línea (horizontal o de tendencia) y arrastrala: se mueve. En la de tendencia, si agarrás una punta se mueve esa punta.
+   · Imán 🧲: al mover o colocar, se pega al máximo, mínimo, apertura o cierre de la vela más cercana.
+   · Cada punta marca su precio en el eje derecho (y la regla, además, la fecha de cada punta abajo). */
+let TLN={},SEL=null,DRG=null,TLnew=null,MAG=true;
+try{TLN=JSON.parse(localStorage.getItem('cv_tl')||'{}')||{};MAG=localStorage.getItem('cv_mag')!=='0';}catch(e){}
+const coarse=()=>matchMedia('(pointer:coarse)').matches,dTol=()=>coarse()?22:9;
+function tToL(t){const n=candles.length;if(!n)return null;const s=tfSeconds();if(t<=candles[0].time)return (t-candles[0].time)/s;if(t>=candles[n-1].time)return n-1+(t-candles[n-1].time)/s;
+  let lo=0,hi=n-1;while(hi-lo>1){const m=(lo+hi)>>1;if(candles[m].time<=t)lo=m;else hi=m;}return lo+(t-candles[lo].time)/((candles[hi].time-candles[lo].time)||1);}
+function lToT(l){const n=candles.length,s=tfSeconds();if(!n)return 0;if(l<=0)return candles[0].time+l*s;if(l>=n-1)return candles[n-1].time+(l-(n-1))*s;const i=Math.floor(l);return candles[i].time+(l-i)*(candles[i+1].time-candles[i].time);}
+const ptXY=q=>{const l=tToL(q.t);if(l==null)return null;const x=chart.timeScale().logicalToCoordinate(l),y=series.priceToCoordinate(q.p);return x==null||y==null?null:{x,y};};
+/* imán: precio (y vela) más cercano entre máximo, mínimo, apertura y cierre */
+function snapAt(x,y,mag=MAG){const ts=chart.timeScale();let l=ts.coordinateToLogical(x),p=series.coordinateToPrice(y);if(l==null||p==null)return null;
+  if(mag){const i=Math.round(l),b=candles[i];if(b){let best=null,bd=1e9;for(const v of [b.high,b.low,b.open,b.close]){const yy=series.priceToCoordinate(v);if(yy==null)continue;const d=Math.abs(yy-y);if(d<bd){bd=d;best=v;}}
+    if(bd<=(coarse()?30:16)){p=best;l=i;}}}
+  return {t:lToT(l),p,l,x:ts.logicalToCoordinate(l),y:series.priceToCoordinate(p)};}
+const tls=()=>TLN[symbol]||(TLN[symbol]=[]);
+function saveTL(){try{localStorage.setItem('cv_tl',JSON.stringify(TLN));localStorage.setItem('cv_lines_t',String(Date.now()));}catch(e){}try{cloudSave(true);}catch(_){}}
+const segD=(px,py,a,b)=>{const dx=b.x-a.x,dy=b.y-a.y,L=dx*dx+dy*dy;let k=L?((px-a.x)*dx+(py-a.y)*dy)/L:0;k=Math.max(0,Math.min(1,k));return Math.hypot(px-(a.x+k*dx),py-(a.y+k*dy));};
+/* qué dibujo hay bajo el dedo o el mouse */
+function hitAt(x,y){const tol=dTol();let best=null,bd=1e9;
+  tls().forEach((L,i)=>{const a=ptXY(L.a),b=ptXY(L.b);if(!a||!b)return;const da=Math.hypot(x-a.x,y-a.y),db=Math.hypot(x-b.x,y-b.y),ds=segD(x,y,a,b);
+    if(da<=tol&&da<bd){bd=da-1;best={k:'t',i,part:'a'};}if(db<=tol&&db<bd){bd=db-1;best={k:'t',i,part:'b'};}if(ds<=tol&&ds<bd){bd=ds;best={k:'t',i,part:'all'};}});
+  (hlines[symbol]||[]).forEach((h,i)=>{const yy=series.priceToCoordinate(h.price);if(yy==null)return;const d=Math.abs(yy-y);if(d<=tol&&d<bd){bd=d;best={k:'h',i};}});
+  return best;}
+function hlStyle(){(hlines[symbol]||[]).forEach((h,i)=>{try{h.line&&h.line.applyOptions({lineWidth:SEL&&SEL.k==='h'&&SEL.i===i?2:1,color:SEL&&SEL.k==='h'&&SEL.i===i?'#64b5f6':'#2962ff'});}catch(_){}});}
+function selSet(s){SEL=s;hlStyle();const b=$('drwBar');if(b)b.hidden=!SEL;ovReq();}
+function selDel(){if(!SEL)return;if(SEL.k==='t'){tls().splice(SEL.i,1);saveTL();}else{const arr=hlines[symbol]||[],h=arr[SEL.i];if(h){try{series.removePriceLine(h.line)}catch(_){}arr.splice(SEL.i,1);saveLines();}}selSet(null);}
+const scrollLock=on=>{try{chart.applyOptions({handleScroll:on?false:{mouseWheel:true,pressedMouseMove:tool==='cursor',horzTouchDrag:tool==='cursor',vertTouchDrag:tool==='cursor'},handleScale:on?false:true});}catch(_){}};
+/* arrastre: empieza, se mueve, termina */
+function drgStart(h,x,y){const p0=snapAt(x,y,false);if(!p0)return false;DRG={h,x0:x,y0:y,l0:p0.l,p0:p0.p,moved:false};
+  if(h.k==='t'){const L=tls()[h.i];DRG.o={a:{...L.a},b:{...L.b}};}else DRG.o=(hlines[symbol]||[])[h.i].price;
+  selSet({k:h.k,i:h.i});scrollLock(true);return true;}
+function drgMove(x,y){if(!DRG)return;if(Math.hypot(x-DRG.x0,y-DRG.y0)>3)DRG.moved=true;const h=DRG.h;
+  if(h.k==='h'){const q=snapAt(x,y);if(!q)return;const H=(hlines[symbol]||[])[h.i];if(!H)return;H.price=q.p;try{H.line.applyOptions({price:q.p});}catch(_){}}
+  else{const L=tls()[h.i];if(!L)return;if(h.part==='all'){const q=snapAt(x,y,false);if(!q)return;const dl=q.l-DRG.l0,dp=q.p-DRG.p0;
+      L.a={t:lToT(tToL(DRG.o.a.t)+dl),p:DRG.o.a.p+dp};L.b={t:lToT(tToL(DRG.o.b.t)+dl),p:DRG.o.b.p+dp};}
+    else{const q=snapAt(x,y);if(q)L[h.part]={t:q.t,p:q.p};}}
+  ovReq();}
+function drgEnd(){if(!DRG)return;const h=DRG.h;DRG=null;scrollLock(false);if(h.k==='h')saveLines();else saveTL();noClick=performance.now()+400;ovReq();}
+/* crear una línea de tendencia */
+function tlStart(x,y){const q=snapAt(x,y);if(!q)return;if(TLnew&&TLnew.wait){TLnew.b={t:q.t,p:q.p};tlDone();return;}TLnew={a:{t:q.t,p:q.p},b:{t:q.t,p:q.p},x0:x,y0:y,moved:false};scrollLock(true);ovReq();}
+function tlMove(x,y){if(!TLnew)return;if(Math.hypot(x-TLnew.x0,y-TLnew.y0)>6)TLnew.moved=true;const q=snapAt(x,y);if(q)TLnew.b={t:q.t,p:q.p};ovReq();}
+function tlUp(){if(!TLnew)return;if(TLnew.moved||TLnew.wait)tlDone();else{TLnew.wait=true;scrollLock(false);}}
+function tlDone(){const L={a:TLnew.a,b:TLnew.b};TLnew=null;scrollLock(false);noClick=performance.now()+500;if(Math.abs(L.a.t-L.b.t)<1&&Math.abs(L.a.p-L.b.p)<1e-12){ovReq();return;}
+  tls().push(L);saveTL();setTool('cursor');selSet({k:'t',i:tls().length-1});}
+/* eventos: mouse (pointer) y dedo (touch), antes que el gráfico */
+const evXY=e=>{const r=chartEl.getBoundingClientRect();return {x:e.clientX-r.left,y:e.clientY-r.top};};
+const offChart=e=>e.target.closest('.fsbar,.fsind,.fs-exit,#drwBar,.legend button');
+chartEl.addEventListener('pointerdown',e=>{if(e.pointerType==='touch'||e.button>0||offChart(e))return;const {x,y}=evXY(e);
+  if(tool==='tline'){e.preventDefault();e.stopPropagation();tlStart(x,y);try{chartEl.setPointerCapture(e.pointerId)}catch(_){}return;}
+  if(tool!=='cursor')return;const h=hitAt(x,y);if(!h){if(SEL)selSet(null);return;}e.preventDefault();e.stopPropagation();if(drgStart(h,x,y))try{chartEl.setPointerCapture(e.pointerId)}catch(_){}},true);
+chartEl.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;const {x,y}=evXY(e);
+  if(DRG){e.preventDefault();e.stopPropagation();drgMove(x,y);return;}if(TLnew){tlMove(x,y);return;}
+  if(tool==='cursor'){const h=hitAt(x,y);chartEl.style.cursor=h?(h.k==='h'?'ns-resize':h.part==='all'?'move':'pointer'):'';}},true);
+const pUp=e=>{if(e.pointerType==='touch')return;try{chartEl.releasePointerCapture(e.pointerId)}catch(_){}if(DRG){e.stopPropagation();drgEnd();}else if(TLnew)tlUp();};
+chartEl.addEventListener('pointerup',pUp,true);chartEl.addEventListener('pointercancel',pUp,true);
+chartEl.addEventListener('touchstart',e=>{if(e.touches.length!==1||offChart(e))return;const {x,y}=evXY(e.touches[0]);
+  if(tool==='tline'){e.preventDefault();e.stopPropagation();tlStart(x,y);return;}
+  if(tool!=='cursor')return;const h=hitAt(x,y);if(!h){if(SEL)selSet(null);return;}e.preventDefault();e.stopPropagation();drgStart(h,x,y);},{capture:true,passive:false});
+chartEl.addEventListener('touchmove',e=>{if(!DRG&&!TLnew)return;e.preventDefault();e.stopPropagation();const {x,y}=evXY(e.touches[0]);if(DRG)drgMove(x,y);else tlMove(x,y);},{capture:true,passive:false});
+const tUp=e=>{if(DRG){e.preventDefault();e.stopPropagation();drgEnd();}else if(TLnew){e.preventDefault();e.stopPropagation();tlUp();}};
+chartEl.addEventListener('touchend',tUp,{capture:true,passive:false});chartEl.addEventListener('touchcancel',tUp,{capture:true,passive:false});
+chart.subscribeCrosshairMove(p=>{if(TLnew&&TLnew.wait&&p.point){const q=snapAt(p.point.x,p.point.y);if(q){TLnew.b={t:q.t,p:q.p};ovReq();}}});
+/* barra del dibujo elegido: borrar o soltar */
+{const b=document.createElement('div');b.id='drwBar';b.hidden=true;b.innerHTML='<button type="button" data-d="del" title="Borrar este dibujo">🗑 Borrar</button><button type="button" data-d="x" title="Soltar">✕</button>';
+  chartEl.appendChild(b);b.onclick=e=>{e.stopPropagation();const d=e.target.closest('[data-d]');if(!d)return;if(d.dataset.d==='del')selDel();else selSet(null);};
+  ['pointerdown','touchstart'].forEach(ev=>b.addEventListener(ev,e=>e.stopPropagation(),{passive:true}));}
+function magRender(){document.querySelectorAll('[data-mag]').forEach(b=>{b.classList.toggle('on',MAG);b.title=MAG?'Imán activado: las líneas se pegan a las velas':'Imán desactivado';});}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-mag]');if(!b)return;MAG=!MAG;try{localStorage.setItem('cv_mag',MAG?'1':'0')}catch(_){}magRender();});
+/* etiquetas en los ejes */
+function tagP(c,y,p,bg){const ps=chart.priceScale('right').width();if(!ps||y==null)return;const W=chartEl.clientWidth,H=chartEl.clientHeight-chart.timeScale().height();if(y<0||y>H)return;
+  c.font='600 11px system-ui,sans-serif';c.fillStyle=bg;c.fillRect(W-ps,y-9,ps,18);c.fillStyle='#fff';c.textAlign='left';c.textBaseline='middle';c.fillText(fp(p),W-ps+4,y);}
+function tagT(c,x,t,bg){const th=chart.timeScale().height();if(!th||x==null)return;const W=chartEl.clientWidth-chart.priceScale('right').width(),H=chartEl.clientHeight;if(x<0||x>W)return;
+  const s=new Date(t*1000).toLocaleString('es-AR',{timeZone:'UTC',weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
+  c.font='600 11px system-ui,sans-serif';const tw=c.measureText(s).width+12,bx=Math.max(0,Math.min(W-tw,x-tw/2));c.fillStyle=bg;c.fillRect(bx,H-th,tw,th);c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(s,bx+tw/2,H-th/2);}
+function drawDrawings(c){const all=tls().map((L,i)=>[L,i]);if(TLnew)all.push([TLnew,-1]);
+  for(const [L,i] of all){const a=ptXY(L.a),b=ptXY(L.b);if(!a||!b)continue;const sel=(SEL&&SEL.k==='t'&&SEL.i===i)||i<0,col=sel?'#64b5f6':'#2962ff';
+    c.strokeStyle=col;c.lineWidth=sel?2.5:1.6;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();
+    for(const q of [a,b]){c.beginPath();c.arc(q.x,q.y,sel?(coarse()?7:5):3,0,Math.PI*2);c.fillStyle=sel?'#0b1220':col;c.fill();c.lineWidth=2;c.strokeStyle=col;c.stroke();}
+    tagP(c,a.y,L.a.p,col);tagP(c,b.y,L.b.p,col);if(sel){tagT(c,a.x,L.a.t,col);tagT(c,b.x,L.b.t,col);}}
+  if(SEL&&SEL.k==='h'){const H=(hlines[symbol]||[])[SEL.i];if(H){const y=series.priceToCoordinate(H.price),W=chartEl.clientWidth-chart.priceScale('right').width();if(y!=null){c.beginPath();c.arc(W/2,y,coarse()?7:5,0,Math.PI*2);c.fillStyle='#0b1220';c.fill();c.lineWidth=2;c.strokeStyle='#64b5f6';c.stroke();}}}}
 
 /* pantalla completa */
 function setFs(on){document.body.classList.toggle('fs-on',on);$('fsExit').hidden=!on;if(!on)$('fsInd').hidden=true;if(on){tfMark();$('fsLog').classList.toggle('on',$('logBtn').classList.contains('on'));fsOhlcLast();const t=$('fsTfs').querySelector('.on');if(t)t.scrollIntoView({inline:'center',block:'nearest'});}}
@@ -1878,9 +1971,11 @@ document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement
 document.addEventListener('keydown',e=>{
   if(e.target.tagName==='INPUT') return;
   const k=e.key.toLowerCase();
-  if(k==='escape'){ruler=null;setTool('cursor');}
+  if(k==='escape'){ruler=null;TLnew=null;selSet(null);setTool('cursor');}
   else if(k==='r') setTool('ruler');
   else if(k==='h') setTool('hline');
+  else if(k==='t') setTool('tline');
+  else if((k==='delete'||k==='backspace')&&SEL) selDel();
   else if(k==='f') $('fs').click();
 });
 
@@ -1898,6 +1993,7 @@ function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||docume
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
   try{drawInd(ctx,w,h);}catch(e){console.error(e);}
   try{if(HALV)drawHalving(ctx,w,h);}catch(e){}
+  try{drawDrawings(ctx);}catch(e){}
   if(ruler){
     const ts=chart.timeScale();
     const x1=ts.logicalToCoordinate(ruler.a.l),x2=ts.logicalToCoordinate(ruler.b.l);
@@ -1909,7 +2005,7 @@ function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||docume
       const mx=(x1+x2)/2,my=(y1+y2)/2;
       arrow(mx,y1,mx,y2);arrow(x1,my,x2,my);
       const dp=ruler.b.p-ruler.a.p,pct=dp/ruler.a.p*100,bars=Math.round(ruler.b.l-ruler.a.l);
-      const lines=[`${dp>=0?'+':''}${fp(dp)} (${fpct(pct)})`,`${bars} velas, ${dur(Math.abs(bars)*tfSeconds())}`];
+      const lines=[`${dp>=0?'+':'−'}${fp(Math.abs(dp))} (${fpct(pct)})`,`${bars} velas, ${dur(Math.abs(bars)*tfSeconds())}`];
       ctx.font='600 12px system-ui,sans-serif';
       const bw=Math.max(...lines.map(s=>ctx.measureText(s).width))+20,bh=44;
       let bx=mx-bw/2,by=up?Math.min(y1,y2)-bh-8:Math.max(y1,y2)+8;
@@ -1917,6 +2013,9 @@ function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||docume
       ctx.fillStyle=`rgb(${col})`;rr(bx,by,bw,bh,6);ctx.fill();
       ctx.fillStyle='#fff';ctx.textAlign='center';ctx.textBaseline='middle';
       ctx.fillText(lines[0],bx+bw/2,by+14);ctx.font='12px system-ui,sans-serif';ctx.fillText(lines[1],bx+bw/2,by+31);
+      /* octubre 2026: cada punta de la regla marca su precio en el eje derecho y su fecha abajo (como TradingView) */
+      for(const [x,y] of [[x1,y1],[x2,y2]]){ctx.beginPath();ctx.arc(x,y,3.5,0,Math.PI*2);ctx.fillStyle=`rgb(${col})`;ctx.fill();}
+      tagP(ctx,y1,ruler.a.p,'#2962ff');tagP(ctx,y2,ruler.b.p,'#2962ff');tagT(ctx,x1,lToT(ruler.a.l),'#2962ff');tagT(ctx,x2,lToT(ruler.b.l),'#2962ff');
     }
   }
   requestAnimationFrame(draw);
@@ -1930,6 +2029,7 @@ function arrow(x1,y1,x2,y2){
 try{chart.timeScale().subscribeVisibleLogicalRangeChange(ovReq);chart.subscribeCrosshairMove(ovReq);chart.timeScale().subscribeSizeChange&&chart.timeScale().subscribeSizeChange(ovReq);}catch(e){}
 ['pointerdown','pointermove','wheel','touchmove'].forEach(ev=>$('chart').addEventListener(ev,ovReq,{passive:true}));addEventListener('resize',ovReq);
 function rr(x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.arcTo(x+w,y,x+w,y+h,r);ctx.arcTo(x+w,y+h,x,y+h,r);ctx.arcTo(x,y+h,x,y,r);ctx.arcTo(x,y,x+w,y,r);ctx.closePath();}
+try{magRender();}catch(_){}
 requestAnimationFrame(draw);
 
 /* ---------- lista y buscador ---------- */
@@ -2024,7 +2124,7 @@ try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;if(!fbUser||!cloudReady)return; // salió de la cuenta mientras esperaba
-  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
+  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),tl:(typeof TLN!=='undefined'?TLN:{}),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 /* ---------- 👑 administración, prueba gratis y planes (octubre 2026) ----------
    cuentas/{uid}: perfil e ingresos · bloqueos/{uid}: sin acceso · subs/{uid}: {plan, desde, hasta} (14 días gratis al entrar por primera vez)
@@ -2305,7 +2405,7 @@ function initCloud(){
     }catch(e){console.warn('No se pudo leer la nube',e);}
     cloudReady=true;restoreLines();renderList();cloudSave();
     try{if(window.__unsubLines)window.__unsubLines();window.__unsubLines=fbDb.collection('users').doc(u.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.data()||{},lt=+(localStorage.getItem('cv_lines_t')||0);
-      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,false);}catch(e){}});}catch(e){}});
+      if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));if(d.tl){TLN=d.tl;localStorage.setItem('cv_tl',JSON.stringify(TLN));}}catch(e){}restoreLines();ovReq();}try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,false);}catch(e){}});}catch(e){}});
 }
 loadTickers();window.__viewHold=true;{let v=null;try{v=JSON.parse(localStorage.getItem('cv_view')||'null')}catch(e){}
   if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}initCloud();setInterval(()=>{if(chartVis())renderLegend();},1500); // la leyenda solo se redibuja si el gráfico se ve
