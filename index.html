@@ -702,6 +702,13 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
 .adm-r.pay-a.pendiente{border-color:#ffb74d}.adm-r.pay-a.rechazado{opacity:.6}
 .adm-f{display:grid;gap:10px;margin:10px 0}.adm-f label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--mut)}.adm-f input{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:10px;padding:10px;font-size:13px}.adm-f button{justify-self:start;border-radius:10px;padding:9px 16px;font-weight:700;cursor:pointer;min-height:38px}
 @media (max-width:520px){.lp h1{font-size:22px}.lp-pl{gap:6px}.lp-usd{font-size:20px}.adm-k{grid-template-columns:repeat(2,1fr)}.pay-tx{flex-direction:column}}
+
+/* cuenta regresiva y aviso de renovación (octubre 2026) */
+.sub-b.last{border-color:#ef5350;color:#ef5350;font-variant-numeric:tabular-nums}
+#subTip{position:fixed;z-index:10030;max-width:260px;text-align:left;background:#2a2113;border:1px solid #ffb74d;color:#ffe0b2;border-radius:12px;padding:10px 12px;font:inherit;font-size:13px;line-height:1.4;box-shadow:0 8px 24px rgba(0,0,0,.45);cursor:pointer;opacity:0;transform:translateY(-6px) scale(.97);pointer-events:none;transition:opacity .25s var(--ease-out,ease),transform .25s var(--ease-out,ease)}
+#subTip.on{opacity:1;transform:none;pointer-events:auto}
+.pay-r.ref label{display:flex;gap:8px;align-items:center;background:var(--panel,#151a22);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:13.5px;cursor:pointer}
+.adm-r.pay-a.devolver{border-color:#ce93d8;flex-wrap:wrap}
 </style>
 </head>
 <body>
@@ -2067,6 +2074,7 @@ async function accLogin(u){
   try{localStorage.removeItem('cv_bloq')}catch(_){}
   try{const ref=fbDb.collection('cuentas').doc(u.uid),s=await ref.get(),d=s.exists?s.data():{},now=Date.now(),ing=Array.isArray(d.ingresos)?d.ingresos:[],nw=!ing.length||now-ing[ing.length-1]>30*6e4;
     await ref.set({uid:u.uid,email:u.email||'',nombre:u.displayName||'',foto:u.photoURL||'',alta:d.alta||now,ultimo:now,visitas:(d.visitas||0)+(nw?1:0),ingresos:nw?ing.concat(now).slice(-40):ing,disp:accDisp()},{merge:true});}catch(e){}
+  try{const c=await fbDb.collection('cuentas').doc(u.uid).get();MYREF=c.exists&&c.data().reembolso||null;}catch(_){}
   subWatch(u);return false;}
 /* suscripción: la primera vez arranca la prueba de 14 días; se escucha en vivo (cuando el pago se confirma, se activa sola) */
 function subWatch(u){try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();}catch(_){}SUB=null;SUBOK=false;MYPAY=[];
@@ -2078,11 +2086,25 @@ const subDays=()=>SUB?Math.max(0,Math.ceil((SUB.hasta-Date.now())/864e5)):0;
 async function tgLoad(){if(!fbUser||!subActive())return;try{const d=await fbDb.collection('privado').doc('telegram').get();TGLINK=d.exists&&d.data().link||null;}catch(e){TGLINK=null;}
   document.querySelectorAll('a.tg-ch,a.rmt-ch').forEach(a=>{if(TGLINK)a.href=TGLINK;});}
 /* insignia arriba: días de prueba o vencimiento del plan */
-function subBadge(){let b=$('subBadge');const show=fbUser&&!isAdmin()&&SUB&&ACC_CFG.cobro!==false;
-  if(!show){if(b)b.remove();return;}
+/* arriba, al lado de la cuenta: cuenta regresiva en días; el último día, reloj HH:MM:SS. Faltando 2 días, un aviso de 5 s para renovar (cada 3 h) */
+var SUBTICK=null,SUBTICKMS=0,SUBREMT=0;
+function subBadge(){let b=$('subBadge');const show=fbUser&&!isAdmin()&&SUB&&ACC_CFG.cobro!==false&&!SUBERR&&!SUB.devolver;
+  const tick=ms=>{if(SUBTICKMS===ms)return;clearInterval(SUBTICK);SUBTICK=ms?setInterval(subBadge,ms):null;SUBTICKMS=ms;};
+  if(!show){if(b)b.remove();tick(0);return;}
   if(!b){b=document.createElement('button');b.type='button';b.id='subBadge';b.className='acct-btn sub-b';b.onclick=()=>payOpen();const a=$('acct');if(a)a.parentNode.insertBefore(b,a);else return;}
-  const d=subDays(),pr=SUB.plan==='prueba';b.classList.toggle('warn',d<=3);
-  b.textContent=!subActive()?'⭐ Suscribirme':pr?`🎁 Prueba · ${d} d`:`⭐ Plan · ${d} d`;b.title=pr?'Prueba gratis: tocá para ver los planes':'Tu plan vence el '+new Date(SUB.hasta).toLocaleDateString('es-AR');}
+  const ms=SUB.hasta-Date.now(),pr=SUB.plan==='prueba',act=ms>0,last=act&&ms<=864e5;
+  b.classList.toggle('warn',act&&ms<=2*864e5);b.classList.toggle('last',last);
+  if(!act)b.textContent='⭐ Suscribirme';
+  else if(!last){const d=Math.ceil(ms/864e5);b.textContent=`${pr?'🎁':'⭐'} ${d} ${d===1?'día':'días'}`;}
+  else{const t=Math.floor(ms/1000),z=n=>String(n).padStart(2,'0');b.textContent=`⏳ ${z(Math.floor(t/3600))}:${z(Math.floor(t%3600/60))}:${z(t%60)}`;}
+  b.title=!act?'Tu acceso venció: tocá para elegir un plan':(pr?'Prueba gratis':'Tu plan')+' vence el '+new Date(SUB.hasta).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+' · tocá para ver los planes';
+  tick(act?(last?1000:30000):0);subRemind(b,ms,pr);}
+function subRemind(b,ms,pr){if(!(ms>0&&ms<=2*864e5)||Date.now()-SUBREMT<3*36e5||document.hidden)return;SUBREMT=Date.now();
+  let t=$('subTip');if(!t){t=document.createElement('button');t.type='button';t.id='subTip';document.body.appendChild(t);t.onclick=()=>{t.classList.remove('on');payOpen();};}
+  const r=b.getBoundingClientRect(),q=ms>864e5?'2 días':ms>36e5?'menos de 24 h':'menos de 1 hora';
+  t.style.top=Math.round(r.bottom+8)+'px';t.style.right=Math.max(8,Math.round(innerWidth-r.right))+'px';
+  t.innerHTML=pr?`⏰ Tu prueba gratis termina en <b>${q}</b>. Tocá acá para elegir un plan y seguir.`:`⏰ Tu plan vence en <b>${q}</b>. ¿Querés renovar o pasar a otro plan? Tocá acá.`;
+  t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),5000);}
 /* pantalla que tapa la página: bloqueada · hay que entrar · la prueba o el plan terminó */
 function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=localStorage.getItem('cv_bloq')}catch(_){}
   const cobro=ACC_CFG.cobro!==false,kind=bl?'bloq':(ACC_AUTH&&!fbUser&&(cobro||ACC_CFG.soloCuentas))?'login':(fbUser&&cobro&&SUBOK&&!subActive())?'pagar':null;
@@ -2094,8 +2116,19 @@ function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=loca
   if(kind==='login'){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Señales de cripto y acciones, las 24 horas</h1><p class="lp-sub">Entrá con tu cuenta de Google y usá todo <b>gratis durante ${PRUEBA_D} días</b>. Sin tarjeta.</p>
       <button type="button" class="g-btn big" data-g="in">${GICON} Entrar con Google · ${PRUEBA_D} días gratis</button>${feats}${planCards(false)}${payNote()}</div>`;return;}
   if(el.dataset.k!=='pagar'||!el.querySelector('.pay')){el.dataset.k='pagar';}
+  if(SUB&&SUB.devolver){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Tu acceso fue cancelado</h1>${refundHTML()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`;return;}
   el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>${SUB&&SUB.plan==='prueba'?'Terminó tu prueba gratis':'Tu plan venció'}</h1><p class="lp-sub">Elegí un plan para seguir usando la página, las señales y el grupo de Telegram.</p>${payInner()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`;}
-function gateClick(e){if(e.type==='input')return payInput(e);const b=e.target.closest('[data-g],[data-pp],[data-pr],[data-cp],[data-paid]');if(!b)return;const g=b.dataset.g;
+var MYREF=null;
+function refundHTML(){const v=SUB.devolver,r=MYREF;
+  if(v.listo)return `<p class="lp-sub">El dueño de la página te devolvió <b>${v.usd} USDT</b>${v.tx?` (comprobante: <span class="mono">${esc(v.tx)}</span>)`:''}. Gracias por haber usado CRIPTO-LIVE.</p>`;
+  return `<p class="lp-sub">El dueño de la página canceló tu plan y te va a <b>devolver ${v.usd} USDT</b>. Indicá dónde querés recibirlos:</p>
+    <div class="pay"><div class="pay-r ref">${[['BPAY','Binance Pay ID'],['TRC20','Dirección USDT · TRON (TRC20)'],['BEP20','Dirección USDT · BNB Smart Chain (BEP20)']].map(([k,n])=>`<label><input type="radio" name="refRed" value="${k}" ${(r&&r.red||'BPAY')===k?'checked':''}> ${n}</label>`).join('')}</div>
+    <div class="pay-tx"><input id="refDir" type="text" autocomplete="off" spellcheck="false" placeholder="Tu Pay ID o tu dirección de depósito" value="${esc(r&&r.dir||'')}"><button type="button" class="g-btn" data-ref="1">Guardar</button></div>
+    ${r&&r.dir?`<p class="pay-m">✓ Guardado: ${r.red==='BPAY'?'Binance Pay ID':r.red} <span class="mono">${esc(r.dir)}</span>. Te avisamos acá cuando se envíe.</p>`:''}
+    <p class="pay-w">⚠️ Usá la dirección de <b>depósito</b> de tu exchange para USDT en esa misma red (no la dirección desde la que pagaste).</p></div>`;}
+function gateClick(e){if(e.type==='input')return payInput(e);const rb=e.target.closest('[data-ref]');if(rb){const red=(document.querySelector('input[name="refRed"]:checked')||{}).value||'BPAY',dir=(($('refDir')||{}).value||'').trim();
+    if(dir.length>=5){MYREF={red,dir,t:Date.now()};fbDb.collection('cuentas').doc(fbUser.uid).set({reembolso:MYREF},{merge:true}).then(()=>accGate()).catch(()=>{});}return;}
+  const b=e.target.closest('[data-g],[data-pp],[data-pr],[data-cp],[data-paid]');if(!b)return;const g=b.dataset.g;
   if(g==='out'){firebase.auth().signOut();return;}if(g==='in'){const a=$('acctBtn');if(a)a.click();return;}payClick(e);}
 const planCards=sel=>`<div class="lp-pl">${PLANES.map(p=>`<${sel?'button type="button" data-pp="'+p.id+'"':'div'} class="lp-p${PAYUI.plan===p.id?' on':''}${p.id==='3m'?' pop':''}">${p.id==='3m'?'<i>Más elegido</i>':''}<b>${p.nm}</b><span class="lp-usd">${p.usd} <small>USDT</small></span><small>${p.sub}</small></${sel?'button':'div'}>`).join('')}</div>`;
 const payNote=()=>`<p class="lp-note">Los pagos son <b>solo en USDT por exchange</b> (Binance, Bybit, BingX, OKX, Bitget, KuCoin…), con transferencia directa a la cuenta de Binance del dueño. Cuando la transferencia se confirma, el plan se activa en tu cuenta. Las señales son informativas y no son consejo financiero.</p>`;
@@ -2148,7 +2181,7 @@ async function chainCheck(p){try{
     if(!lg)return {ok:false,msg:'No es un envío de USDT a tu dirección'};const m=Number(BigInt(lg.data))/1e18;return {ok:m>=p.monto*.98,monto:m,conf:true,msg:m+' USDT'};}
   return {ok:null,msg:'Binance Pay: revisalo en tu app de Binance (Pagar → Historial)'};}catch(e){return {ok:null,msg:'No se pudo consultar la red: '+e.message};}}
 async function subGrant(uid,dias,plan,email){const ref=fbDb.collection('subs').doc(uid),s=await ref.get(),d=s.exists?s.data():{},base=Math.max(Date.now(),d.hasta||0);
-  await ref.set({plan,desde:d.desde||Date.now(),hasta:base+dias*864e5,email:email||d.email||'',upd:Date.now()},{merge:true});}
+  await ref.set({plan,desde:d.desde||Date.now(),hasta:base+dias*864e5,email:email||d.email||'',upd:Date.now(),devolver:firebase.firestore.FieldValue?firebase.firestore.FieldValue.delete():null},{merge:true});}
 /* ---------- panel de administración ---------- */
 const admAgo=t=>{if(!t)return '—';const m=(Date.now()-t)/6e4;return m<2?'recién':m<60?`hace ${Math.round(m)} min`:m<1440?`hace ${Math.round(m/60)} h`:`hace ${Math.round(m/1440)} d`;};
 const admDate=t=>t?new Date(t).toLocaleString('es-AR',{day:'2-digit',month:'2-digit',year:'2-digit',hour:'2-digit',minute:'2-digit'}):'—';
@@ -2170,9 +2203,14 @@ function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
     return `<div class="adm-r${bl?' bl':''}">${x.foto?`<img src="${esc(x.foto)}" alt="" referrerpolicy="no-referrer">`:'<span class="adm-av">👤</span>'}<div class="adm-who"><b>${esc(x.nombre||x.email||'Sin nombre')}${me?' <span class="adm-tag">vos</span>':' '+subTxt(x.uid)}${bl?' <span class="adm-tag r">bloqueada</span>':''}</b><small>${esc(x.email||x.uid)}</small>
       <small>Último ingreso <b>${admAgo(x.ultimo)}</b> (${admDate(x.ultimo)}) · ${x.visitas||0} ingresos · alta ${admDate(x.alta)}${x.disp?' · '+esc(x.disp):''}</small>
       ${me?'':`<div class="adm-g"><span>Dar acceso:</span>${PLANES.map(p=>`<button type="button" data-gr="${esc(x.uid)}" data-gd="${p.d}" data-gp="${p.id}">+${p.nm.toLowerCase()}</button>`).join('')}<button type="button" data-gr="${esc(x.uid)}" data-gd="0" data-gp="fin">Quitar</button></div>`}</div>
+      ${me||!ADM.P.some(p=>p.uid===x.uid&&p.estado==='ok')?'':ADM.ask==='dv'+x.uid?`<button type="button" class="r" data-dv="${esc(x.uid)}">¿Seguro? Sacar y devolver</button>`:`<button type="button" data-ask="dv${esc(x.uid)}">Sacar y devolver</button>`}
       ${me?'':bl?`<button type="button" data-ub="${esc(x.uid)}">Desbloquear</button>`:ask?`<button type="button" class="r" data-bk="${esc(x.uid)}">¿Seguro? Bloquear</button>`:`<button type="button" data-ask="${esc(x.uid)}">Bloquear</button>`}</div>`;};
+  const refs=[...new Set(ADM.P.filter(p=>p.estado==='devolver').map(p=>p.uid))].map(uid=>{const x=(ADM.L||[]).find(y=>y.uid===uid)||{},s=ADM.S.get(uid)||{},v=s.devolver||{},r=x.reembolso;
+    return `<div class="adm-r pay-a devolver"><div class="adm-who"><b>💸 Devolver ${v.usd||'?'} USDT a ${esc(x.email||uid)}</b><small>Pagó ${v.usd} USDT${v.prop!=null?` · proporcional a los días que le quedaban: ${v.prop} USDT`:''}. Enviáselo desde tu Binance y marcalo como devuelto.</small>
+      ${r&&r.dir?`<div class="pay-row"><span>${r.red==='BPAY'?'Binance Pay ID':'Red '+r.red}</span><b class="mono">${esc(r.dir)}</b><button type="button" data-cpy="${esc(r.dir)}">Copiar</button></div>`:'<small>⏳ Esperando que cargue dónde recibir el dinero (lo ve al entrar a la página).</small>'}
+      <div class="adm-f"><input data-rtx="${esc(uid)}" placeholder="Comprobante del envío (opcional)"></div></div><div class="adm-pb"><button type="button" class="g" data-dvok="${esc(uid)}">Marcar como devuelto</button></div></div>`;}).join('');
   const prow=p=>{const c=ADM.chk[p.id];return `<div class="adm-r pay-a ${p.estado}"><div class="adm-who"><b>${esc(p.email||p.uid)} · ${(PLANES.find(x=>x.id===p.plan)||{}).nm||p.plan} · ${p.monto} USDT</b><small>${admDate(p.t)} · ${p.red==='BPAY'?'Binance Pay':p.red} · <span class="mono">${esc(p.txid)}</span></small>
-      <small>${p.estado==='ok'?'✓ Activado'+(p.auto?' automáticamente':''):p.estado==='rechazado'?'✕ Rechazado'+(p.nota?': '+esc(p.nota):''):'⏳ Pendiente'}${c?` · Red: <b class="${c.ok?'up':c.ok===false?'dn':''}">${esc(c.msg)}</b>`:''}</small></div>
+      <small>${p.estado==='ok'?'✓ Activado'+(p.auto?' automáticamente':''):p.estado==='devolver'?'💸 A devolver':p.estado==='devuelto'?'↩️ Devuelto':p.estado==='rechazado'?'✕ Rechazado'+(p.nota?': '+esc(p.nota):''):'⏳ Pendiente'}${c?` · Red: <b class="${c.ok?'up':c.ok===false?'dn':''}">${esc(c.msg)}</b>`:''}</small></div>
       ${p.estado==='pendiente'?`<div class="adm-pb">${p.red!=='BPAY'?`<button type="button" data-ck="${esc(p.id)}">Verificar en la red</button>`:''}<button type="button" class="g" data-ok="${esc(p.id)}">Activar</button><button type="button" data-no="${esc(p.id)}">Rechazar</button></div>`:''}</div>`;};
   const ev=[];for(const x of L)for(const t of (x.ingresos||[]))ev.push([t,x]);ev.sort((a,b)=>b[0]-a[0]);
   const bad=ADM.err?`<div class="adm-warn"><b>Hay que actualizar las reglas de seguridad en Firebase</b> (${esc(ADM.err)}). Las reglas nuevas suman las suscripciones y los pagos.<ol><li>Entrá a Firebase → cripto-live → Firestore → <b>Reglas</b>.</li><li>Borrá lo que hay, pegá estas reglas y tocá <b>Publicar</b>.</li><li>Volvé acá y tocá Actualizar.</li></ol><button type="button" data-copy="1">📋 Copiar las reglas</button><pre>${esc(ADM_RULES)}</pre></div>`:'';
@@ -2191,7 +2229,7 @@ function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
     <div class="int-p adm-t"><button type="button" data-tab="c" class="${ADM.tab==='c'?'on':''}">👥 Cuentas</button><button type="button" data-tab="p" class="${ADM.tab==='p'?'on':''}">💳 Pagos${pend.length?' ('+pend.length+')':''}</button><button type="button" data-tab="i" class="${ADM.tab==='i'?'on':''}">🕓 Ingresos</button><button type="button" data-tab="k" class="${ADM.tab==='k'?'on':''}">⚙️ Cobros</button></div>
     ${ADM.L==null&&!ADM.err?'<div class="mut">Cargando…</div>':ADM.tab==='c'?(L.map(row).join('')||'<div class="mut">Todavía no entró nadie desde que existe el registro.</div>')
       +(old.length?`<div class="adm-sub">Cuentas anteriores al registro (${old.length}): aparecen con nombre cuando vuelvan a entrar</div>`+old.map(x=>row({uid:x.uid,email:'',nombre:'Cuenta sin perfil todavía',ultimo:x.updated,visitas:0})).join(''):'')
-      :ADM.tab==='p'?(ADM.P.map(prow).join('')||'<div class="mut">Todavía no hay pagos informados.</div>')
+      :ADM.tab==='p'?(refs+(ADM.P.map(prow).join('')||'<div class="mut">Todavía no hay pagos informados.</div>'))
       :ADM.tab==='k'?cfg
       :(ev.slice(0,80).map(([t,x])=>`<div class="adm-e"><span>${admDate(t)}</span><b>${esc(x.nombre||x.email)}</b><small>${esc(x.email||'')}</small></div>`).join('')||'<div class="mut">Sin ingresos todavía.</div>')}
     <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos. "Dar acceso" suma días al plan de esa cuenta sin cobrar (regalos o pagos que confirmaste a mano).</div></div>`;}
@@ -2207,6 +2245,13 @@ async function admClick(e){const b=e.target.closest('button,input');if(!b)return
     else if(d.save){const el=$('admBox'),v=k=>(el.querySelector(`[data-cf="${k}"]`).value||'').trim(),tg=(el.querySelector('[data-tg]').value||'').trim();
       await fbDb.collection('config').doc('pagos').set({payId:v('payId'),trc20:v('trc20'),bep20:v('bep20'),t:Date.now()},{merge:true});await fbDb.collection('privado').doc('telegram').set({link:tg,t:Date.now()});TGLINK=tg;ADM.saved=true;}
     else if(d.gr){const x=(ADM.L||[]).find(y=>y.uid===d.gr)||{};if(d.gp==='fin')await fbDb.collection('subs').doc(d.gr).set({hasta:Date.now()-1000,plan:(ADM.S.get(d.gr)||{}).plan||'prueba',upd:Date.now()},{merge:true});else await subGrant(d.gr,+d.gd,d.gp,x.email);await admLoad();return;}
+    else if(d.dv){const P=ADM.P.filter(p=>p.uid===d.dv&&p.estado==='ok'),s=ADM.S.get(d.dv)||{},tot=P.reduce((a,p)=>a+(+p.monto||0),0),days=P.reduce((a,p)=>a+(+p.dias||30),0),rem=Math.max(0,(s.hasta-Date.now())/864e5);
+      await fbDb.collection('subs').doc(d.dv).set({hasta:Date.now()-1000,devolver:{usd:tot,prop:+(tot*Math.min(1,rem/(days||1))).toFixed(2),t:Date.now(),listo:false},upd:Date.now()},{merge:true});
+      for(const p of P)await fbDb.collection('pagos').doc(p.id).set({estado:'devolver',okT:Date.now()},{merge:true});ADM.ask=null;ADM.tab='p';await admLoad();return;}
+    else if(d.dvok){const tx=((($('admBox')||document).querySelector(`[data-rtx="${d.dvok}"]`)||{}).value||'').trim(),s=ADM.S.get(d.dvok)||{};
+      await fbDb.collection('subs').doc(d.dvok).set({devolver:Object.assign({},s.devolver||{},{listo:true,tx,okT:Date.now()})},{merge:true});
+      for(const p of ADM.P.filter(p=>p.uid===d.dvok&&p.estado==='devolver'))await fbDb.collection('pagos').doc(p.id).set({estado:'devuelto',devTx:tx,okT:Date.now()},{merge:true});await admLoad();return;}
+    else if(d.cpy!=null){try{await navigator.clipboard.writeText(d.cpy);b.textContent='✓';}catch(_){}return;}
     else if(d.ck){const p=ADM.P.find(x=>x.id===d.ck);ADM.chk[d.ck]={msg:'consultando…'};admRender();ADM.chk[d.ck]=await chainCheck(p);}
     else if(d.ok){const p=ADM.P.find(x=>x.id===d.ok);await subGrant(p.uid,p.dias||(PLANES.find(x=>x.id===p.plan)||{}).d||30,p.plan,p.email);await fbDb.collection('pagos').doc(p.id).set({estado:'ok',okT:Date.now()},{merge:true});await admLoad();return;}
     else if(d.no){await fbDb.collection('pagos').doc(d.no).set({estado:'rechazado',nota:'no se encontró el pago',okT:Date.now()},{merge:true});await admLoad();return;}
@@ -4514,7 +4559,9 @@ const hxPct=v=>(v>=0?'+':'−')+Math.abs(v).toFixed(1).replace('.',',')+' %',hxU
 const HXC={};
 /* entrada y stop (y entrada promedio si hubo salvavidas) en el detalle de cada operación, en vivo o cerrada */
 function hxLevels(o){const e=o.entry,st=o.ia?o.ia.stop:o.fail;if(!(e>0))return '';const pc=v=>` (${hxPct((v/e-1)*100)})`,ae=o.ae&&o.ll?o.ae:null;
-  return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
+  const T=(o.ia&&o.ia.tps)||[o.tp0,o.tp1,o.tp2],h=o.hit||0; // octubre 2026: cada objetivo con su precio y su % desde la entrada
+  const tg=T.map((v,k)=>v>0?`<span>Objetivo ${k+1}</span><b class="up">${fp(v)}${pc(v)}${k<h?' · ✓ tocado':''}</b>`:'').join('');
+  return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${tg}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
 function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.simLab||(o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:''));
   return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
     <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>

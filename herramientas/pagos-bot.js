@@ -27,7 +27,7 @@ async function check(p, C) {
   const admin = require('firebase-admin'); admin.initializeApp({ credential: admin.credential.cert(JSON.parse(SA)) }); const db = admin.firestore();
   const C = (await db.doc('config/pagos').get()).data() || {};
   const P = await db.collection('pagos').where('estado', '==', 'pendiente').get(); console.log('pendientes', P.size);
-  const usados = new Set((await db.collection('pagos').where('estado', '==', 'ok').get()).docs.map(x => String(x.data().txid || '').toLowerCase())); // un mismo pago no activa dos planes
+  const usados = new Set((await db.collection('pagos').where('estado', 'in', ['ok', 'devolver', 'devuelto']).get()).docs.map(x => String(x.data().txid || '').toLowerCase())); // un mismo pago no activa dos planes
   for (const d of P.docs) { const p = d.data(); if (p.red === 'BPAY') continue;
     if (usados.has(String(p.txid || '').toLowerCase())) { await d.ref.update({ estado: 'rechazado', nota: 'ese pago ya activó otro plan', okT: Date.now() }); continue; } const plan = PLANES[p.plan]; if (!plan) continue; p.monto = plan.usd; // el precio sale de acá, no de lo que mandó el usuario
     let r; try { r = await check(p, C); } catch (e) { console.log(d.id, e.message); continue; }
