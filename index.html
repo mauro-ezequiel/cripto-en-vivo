@@ -1026,6 +1026,15 @@ function calcIchi(pt=9,pk=26,pb=52){const n=candles.length,t=Array(n).fill(null)
     if(t[i]!=null&&k[i]!=null)a[i+26]=(t[i]+k[i])/2;if(i>=pb-1)b[i+26]=hhll(i,pb);}
   return {t,k,a,b};}
 
+/* rendimiento (octubre 2026): el precio del gráfico llega varias veces por segundo y antes cada mensaje recalculaba TODOS los indicadores
+   (Kondor, canales, osciladores, ADX…) y redibujaba la leyenda, aunque el gráfico no se viera. Ahora: como mucho 1 vez por segundo si el
+   gráfico se ve, cada 5 s si está en otra pestaña, nada con la app en segundo plano; una vela nueva se calcula enseguida. */
+var indT=0,indPend=null;
+const chartVis=()=>!document.hidden&&!!($('chart')&&$('chart').offsetParent!==null);
+function calcIndSoon(nueva){if(nueva){clearTimeout(indPend);indPend=null;indT=Date.now();calcInd(false);return;}if(indPend)return;
+  if(document.hidden){indPend=setTimeout(()=>{indPend=null;calcIndSoon();},5000);return;}
+  const wait=Math.max(0,(chartVis()?1000:5000)-(Date.now()-indT));indPend=setTimeout(()=>{indPend=null;indT=Date.now();calcInd(false);},wait);}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&candles.length)calcIndSoon();});
 function calcInd(full){
   if(!candles.length) return;
   liqDirty=true;
@@ -1711,7 +1720,7 @@ async function loadChart(){
     const b={time:Math.floor(k.t/1000)+TZ,t:k.t,open:+k.o,high:+k.h,low:+k.l,close:+k.c,v:+k.v,tb:+k.V};
     const last=candles.at(-1);
     if(last&&last.time===b.time) candles[candles.length-1]=b; else if(!last||b.time>last.time) candles.push(b);
-    series.update(b); volume.update(volBar(b)); calcInd(false);
+    series.update(b); volume.update(volBar(b)); calcIndSoon(b.time!==(last&&last.time));
   };
   klineWs.onclose=()=>setTimeout(()=>{if(sym===symbol&&t===tf)loadChart();},3000);
 }
@@ -1883,7 +1892,7 @@ function dur(s){const d=Math.floor(s/86400),h=Math.floor(s%86400/3600),m=Math.fl
 /* octubre 2026 · rendimiento: el dibujo de encima del gráfico (indicadores propios, regla) ya no se rehace en cada cuadro (60 veces por
    segundo), solo cuando algo cambió: zoom o desplazamiento, cursor, datos nuevos, tamaño, o como mucho una vez por segundo. */
 let ovDirty=true,ovLast=0;const ovReq=()=>{ovDirty=true;};
-function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||document.hidden){requestAnimationFrame(draw);return;}ovDirty=false;ovLast=now;
+function draw(){const now=performance.now();if(!ovDirty&&now-ovLast<1000||document.hidden||!chartVis()){requestAnimationFrame(draw);return;} // en otra pestaña no se dibujaovDirty=false;ovLast=now;
   const w=$('chart').clientWidth,h=$('chart').clientHeight,dpr=devicePixelRatio||1;
   if(cv.width!==w*dpr||cv.height!==h*dpr){cv.width=w*dpr;cv.height=h*dpr;cv.style.width=w+'px';cv.style.height=h+'px';}
   ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,w,h);
@@ -2067,6 +2076,9 @@ service cloud.firestore {
     }
   }
 }`;
+function keepIn(el,html){const a=document.activeElement,keep={};el.querySelectorAll('input[id],input[data-cf],input[data-tg],input[data-rtx]').forEach(i=>{if(i.type!=='radio'&&i.type!=='checkbox')keep[i.id||i.dataset.cf||(i.dataset.tg?'tg':'')||'r'+i.dataset.rtx]=[i.value,i===a,i.selectionStart];});
+  el.innerHTML=html;for(const k in keep){const i=el.querySelector('#'+CSS.escape(k))||el.querySelector(`[data-cf="${k}"]`)||(k==='tg'?el.querySelector('[data-tg]'):null)||(k[0]==='r'?el.querySelector(`[data-rtx="${k.slice(1)}"]`):null);
+    if(i&&keep[k][0]&&i.value!==keep[k][0]&&document.activeElement!==i){i.value=keep[k][0];}if(i&&keep[k][1]){i.focus();try{i.setSelectionRange(keep[k][2],keep[k][2]);}catch(_){}}}}
 function accDisp(){const u=navigator.userAgent;return (/iPhone|iPad/.test(u)?'iPhone/iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS/.test(u)?'Mac':/Linux/.test(u)?'Linux':'otro')+' · '+(/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Chrome\//.test(u)?'Chrome':/Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'navegador');}
 /* al entrar: si la cuenta está bloqueada devuelve true; si no, anota el ingreso (uno nuevo cada 30 min como mínimo) */
 var BLOQUNS=null;
@@ -2124,8 +2136,8 @@ function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=loca
   if(kind==='login'){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Señales de cripto y acciones, las 24 horas</h1><p class="lp-sub">Entrá con tu cuenta de Google y usá todo <b>gratis durante ${PRUEBA_D} días</b>. Sin tarjeta.</p>
       <button type="button" class="g-btn big" data-g="in">${GICON} Entrar con Google · ${PRUEBA_D} días gratis</button>${feats}${planCards(false)}${payNote()}</div>`;return;}
   if(el.dataset.k!=='pagar'||!el.querySelector('.pay')){el.dataset.k='pagar';}
-  if(SUB&&SUB.devolver){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Tu acceso fue cancelado</h1>${refundHTML()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`;return;}
-  el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>${SUB&&SUB.plan==='prueba'?'Terminó tu prueba gratis':'Tu plan venció'}</h1><p class="lp-sub">Elegí un plan para seguir usando la página, las señales y el grupo de Telegram.</p>${payInner()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`;}
+  if(SUB&&SUB.devolver){keepIn(el,`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Tu acceso fue cancelado</h1>${refundHTML()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`);return;}
+  keepIn(el,`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>${SUB&&SUB.plan==='prueba'?'Terminó tu prueba gratis':'Tu plan venció'}</h1><p class="lp-sub">Elegí un plan para seguir usando la página, las señales y el grupo de Telegram.</p>${payInner()}<p class="lp-out"><button type="button" class="lnk" data-g="out">Salir de la cuenta (${esc(fbUser.email||'')})</button></p></div>`);}
 var MYREF=null;
 function refundHTML(){const v=SUB.devolver,r=MYREF;
   if(v.listo)return `<p class="lp-sub">El dueño de la página te devolvió <b>${v.usd} USDT</b>${v.tx?` (comprobante: <span class="mono">${esc(v.tx)}</span>)`:''}. Gracias por haber usado CRIPTO-LIVE.</p>`;
@@ -2147,7 +2159,7 @@ function payRender(){let el=$('payBox');if(!PAYUI.open||!fbUser){if(el)el.remove
   if(!el){el=document.createElement('div');el.id='payBox';document.body.appendChild(el);el.onclick=e=>{if(e.target.closest('[data-px]'))return payClose();payClick(e);};el.oninput=payInput;}
   document.body.classList.add('adm-on');
   const st=SUB?(subActive()?`${SUB.plan==='prueba'?'🎁 Prueba gratis':'⭐ Plan '+((PLANES.find(p=>p.id===SUB.plan)||{}).nm||'')}: te quedan <b>${subDays()} días</b> (hasta ${new Date(SUB.hasta).toLocaleDateString('es-AR')}). Si pagás ahora, los días se suman.`:'Tu acceso venció.'):'';
-  el.innerHTML=`<div class="adm-in"><div class="adm-hd"><button type="button" data-px="1">← Volver</button><b>⭐ Planes</b><span></span></div><p class="mut" style="font-size:13px">${st}</p>${payInner()}</div>`;}
+  keepIn(el,`<div class="adm-in"><div class="adm-hd"><button type="button" data-px="1">← Volver</button><b>⭐ Planes</b><span></span></div><p class="mut" style="font-size:13px">${st}</p>${payInner()}</div>`);}
 function payInner(){const P=PLANES.find(p=>p.id===PAYUI.plan),C=PAYCFG||{},R=[];
   if(C.payId)R.push(['BPAY','Binance Pay','Gratis e instantáneo, entre cuentas de Binance']);if(C.trc20)R.push(['TRC20','USDT · red TRON (TRC20)','Desde cualquier exchange · comisión ~1 USDT']);if(C.bep20)R.push(['BEP20','USDT · red BNB Smart Chain (BEP20)','Desde cualquier exchange · comisión baja']);
   let h=`<div class="pay"><div class="pay-st">1 · Elegí tu plan</div>${planCards(true)}`;
@@ -2231,7 +2243,7 @@ function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
     <label>Enlace del grupo de Telegram (solo lo ven las cuentas activas)<input data-tg="1" value="${esc(TGLINK||'')}" placeholder="https://t.me/+…" spellcheck="false"></label>
     <button type="button" class="g" data-save="1">Guardar</button>${ADM.saved?'<span class="up"> ✓ Guardado</span>':''}</div>
     <p class="mut" style="font-size:12px;line-height:1.5">Las direcciones las sacás de tu Binance: <b>Billetera → Depositar → USDT</b>, eligiendo la red TRC20 o BEP20. El Pay ID está en <b>Pagar → tu perfil</b>. Los pagos por red se pueden verificar solos (ver "Verificar en la red"); los de Binance Pay los confirmás vos mirando el historial de Binance Pay.</p></div>`;
-  el.innerHTML=`<div class="adm-in"><div class="adm-hd"><button type="button" class="adm-x" data-x="1">← Volver</button><b>👑 Administración</b><button type="button" data-ref="1">↻ Actualizar</button></div>
+  const H=`<div class="adm-in"><div class="adm-hd"><button type="button" class="adm-x" data-x="1">← Volver</button><b>👑 Administración</b><button type="button" data-ref="1">↻ Actualizar</button></div>
     ${bad}
     <div class="adm-k"><div><b>${L.length}</b><small>cuentas</small></div><div><b>${n24}</b><small>entraron hoy</small></div><div><b>${pagos}</b><small>con plan pago</small></div><div><b>${prue}</b><small>en prueba</small></div><div class="${pend.length?'warn':''}"><b>${pend.length}</b><small>pagos pendientes</small></div><div><b>${ADM.B.size}</b><small>bloqueadas</small></div></div>
     <div class="int-p adm-t"><button type="button" data-tab="c" class="${ADM.tab==='c'?'on':''}">👥 Cuentas</button><button type="button" data-tab="p" class="${ADM.tab==='p'?'on':''}">💳 Pagos${pend.length?' ('+pend.length+')':''}</button><button type="button" data-tab="i" class="${ADM.tab==='i'?'on':''}">🕓 Ingresos</button><button type="button" data-tab="k" class="${ADM.tab==='k'?'on':''}">⚙️ Cobros</button></div>
@@ -2240,8 +2252,9 @@ function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
       :ADM.tab==='p'?(refs+(ADM.P.map(prow).join('')||'<div class="mut">Todavía no hay pagos informados.</div>'))
       :ADM.tab==='k'?cfg
       :(ev.slice(0,80).map(([t,x])=>`<div class="adm-e"><span>${admDate(t)}</span><b>${esc(x.nombre||x.email)}</b><small>${esc(x.email||'')}</small></div>`).join('')||'<div class="mut">Sin ingresos todavía.</div>')}
-    <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos. "Dar acceso" suma días al plan de esa cuenta sin cobrar (regalos o pagos que confirmaste a mano).</div></div>`;}
-async function admClick(e){const b=e.target.closest('button,input');if(!b)return;const d=b.dataset;if(e.type==='change'&&!(d.cobro||d.solo))return;if(e.type==='click'&&(d.cobro||d.solo)&&b.tagName==='INPUT')return;
+    <div class="mut adm-note">Se anota un ingreso cada vez que alguien abre la página con su cuenta (como mucho uno cada 30 min). Al bloquear, la cuenta ve un cartel de "sin acceso" y Firebase le niega sus datos. "Dar acceso" suma días al plan de esa cuenta sin cobrar (regalos o pagos que confirmaste a mano).</div></div>`;keepIn(el,H);}
+async function admClick(e){const b=e.target.closest('button,input');if(!b)return;const d=b.dataset;
+  if(b.tagName==='INPUT'&&b.type!=='checkbox')return; // tocar una casilla de texto no redibuja el panel (antes se cerraba el teclado y no dejaba escribir)if(e.type==='change'&&!(d.cobro||d.solo))return;if(e.type==='click'&&(d.cobro||d.solo)&&b.tagName==='INPUT')return;
   if(d.x){admClose();return;}if(d.ref){admLoad();return;}if(d.tab){ADM.tab=d.tab;ADM.saved=false;admRender();return;}
   if(d.copy){try{await navigator.clipboard.writeText(ADM_RULES);b.textContent='✓ Copiadas';}catch(_){b.textContent='Seleccioná el texto de abajo y copialo';}return;}
   if(d.ask){ADM.ask=d.ask;admRender();return;}
@@ -2295,7 +2308,7 @@ function initCloud(){
       if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));}catch(e){}restoreLines();}try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,false);}catch(e){}});}catch(e){}});
 }
 loadTickers();window.__viewHold=true;{let v=null;try{v=JSON.parse(localStorage.getItem('cv_view')||'null')}catch(e){}
-  if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}initCloud();setInterval(renderLegend,1500);
+  if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}initCloud();setInterval(()=>{if(chartVis())renderLegend();},1500); // la leyenda solo se redibuja si el gráfico se ve
 
 /* ---------- noticias globales (cripto, macro, regulación, geopolítica) ---------- */
 const NEWS={items:[],fng:null,upd:0};
