@@ -2014,7 +2014,7 @@ let favs=new Set(),favOnly=false,fbUser=null,fbDb=null,cloudTimer=null,cloudRead
 try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
-function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;
+function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;if(!fbUser||!cloudReady)return; // salió de la cuenta mientras esperaba
   fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 /* ---------- 👑 administración, prueba gratis y planes (octubre 2026) ----------
@@ -2069,8 +2069,16 @@ service cloud.firestore {
 }`;
 function accDisp(){const u=navigator.userAgent;return (/iPhone|iPad/.test(u)?'iPhone/iPad':/Android/.test(u)?'Android':/Windows/.test(u)?'Windows':/Mac OS/.test(u)?'Mac':/Linux/.test(u)?'Linux':'otro')+' · '+(/Edg\//.test(u)?'Edge':/OPR\//.test(u)?'Opera':/Chrome\//.test(u)?'Chrome':/Firefox\//.test(u)?'Firefox':/Safari\//.test(u)?'Safari':'navegador');}
 /* al entrar: si la cuenta está bloqueada devuelve true; si no, anota el ingreso (uno nuevo cada 30 min como mínimo) */
-async function accLogin(u){
-  try{const b=await fbDb.collection('bloqueos').doc(u.uid).get();if(b.exists){try{localStorage.setItem('cv_bloq',u.email||'1')}catch(_){}accGate();return true;}}catch(e){}
+var BLOQUNS=null;
+/* bloqueo en vivo: si lo bloqueás con la página abierta se tapa al instante; si lo desbloqueás, se recarga y entra normal */
+function bloqWatch(u){try{if(BLOQUNS)BLOQUNS();}catch(_){}BLOQUNS=null;
+  try{BLOQUNS=fbDb.collection('bloqueos').doc(u.uid).onSnapshot(b=>{let f=null;try{f=localStorage.getItem('cv_bloq')}catch(_){}
+    if(b.exists&&!f){try{localStorage.setItem('cv_bloq',u.email||'1')}catch(_){}accGate();}
+    else if(!b.exists&&f){try{localStorage.removeItem('cv_bloq')}catch(_){}location.reload();}},()=>{});}catch(e){}}
+async function accLogin(u){let bl=false;
+  try{bl=(await fbDb.collection('bloqueos').doc(u.uid).get()).exists;}catch(e){}
+  bloqWatch(u);
+  if(bl){try{localStorage.setItem('cv_bloq',u.email||'1')}catch(_){}accGate();return true;}
   try{localStorage.removeItem('cv_bloq')}catch(_){}
   try{const ref=fbDb.collection('cuentas').doc(u.uid),s=await ref.get(),d=s.exists?s.data():{},now=Date.now(),ing=Array.isArray(d.ingresos)?d.ingresos:[],nw=!ing.length||now-ing[ing.length-1]>30*6e4;
     await ref.set({uid:u.uid,email:u.email||'',nombre:u.displayName||'',foto:u.photoURL||'',alta:d.alta||now,ultimo:now,visitas:(d.visitas||0)+(nw?1:0),ingresos:nw?ing.concat(now).slice(-40):ing,disp:accDisp()},{merge:true});}catch(e){}
@@ -2078,7 +2086,7 @@ async function accLogin(u){
   subWatch(u);return false;}
 /* suscripción: la primera vez arranca la prueba de 14 días; se escucha en vivo (cuando el pago se confirma, se activa sola) */
 function subWatch(u){try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();}catch(_){}SUB=null;SUBOK=false;MYPAY=[];
-  try{SUBUNS=fbDb.collection('subs').doc(u.uid).onSnapshot(async s=>{if(!s.exists){const now=Date.now();try{await fbDb.collection('subs').doc(u.uid).set({plan:'prueba',desde:now,hasta:now+PRUEBA_D*864e5,email:u.email||''});}catch(e){SUBERR=true;SUBOK=true;accGate();subBadge();}return;}
+  try{SUBUNS=fbDb.collection('subs').doc(u.uid).onSnapshot(async s=>{if(!s.exists){const now=Date.now();try{await fbDb.collection('subs').doc(u.uid).set({plan:'prueba',desde:now,hasta:now+PRUEBA_D*864e5-6e5,email:u.email||''});}catch(e){SUBERR=true;SUBOK=true;accGate();subBadge();}return;}
       SUB=s.data();SUBOK=true;accGate();subBadge();tgLoad();if(PAYUI.open)payRender();},()=>{SUBERR=true;SUBOK=true;accGate();subBadge();});}catch(e){SUBERR=true;SUBOK=true;}
   try{PAYUNS=fbDb.collection('pagos').where('uid','==',u.uid).onSnapshot(s=>{MYPAY=s.docs.map(d=>Object.assign({id:d.id},d.data())).sort((a,b)=>b.t-a.t);if(PAYUI.open)payRender();accGate();},()=>{});}catch(e){}}
 const subActive=()=>isAdmin()||SUBERR||!!(SUB&&SUB.hasta>Date.now()); // SUBERR: sin las reglas nuevas en Firebase no se puede leer la suscripción → la página sigue abierta
@@ -2111,7 +2119,7 @@ function accGate(){if(ACC_BOT)return;let el=$('accGate');let bl=null;try{bl=loca
   if(!kind){if(el)el.remove();document.body.classList.remove('gate-on');return;}
   if(!el){el=document.createElement('div');el.id='accGate';document.body.appendChild(el);el.onclick=gateClick;el.oninput=gateClick;}
   document.body.classList.add('gate-on');
-  if(kind==='bloq'){el.innerHTML=`<div class="gate-c"><div class="gate-i">🔒</div><h2>Tu cuenta no tiene acceso</h2><p>El dueño de la página bloqueó el acceso${bl!=='1'?` de <b>${esc(bl)}</b>`:''}. Si creés que es un error, hablá con él.</p>${fbUser?'<button type="button" class="g-btn" data-g="out">Salir de la cuenta</button>':''}</div>`;return;}
+  if(kind==='bloq'){el.innerHTML=`<div class="gate-c"><div class="gate-i">🔒</div><h2>Tu cuenta no tiene acceso</h2><p>El dueño de la página bloqueó el acceso${bl!=='1'?` de <b>${esc(bl)}</b>`:''}. Si creés que es un error, hablá con él.</p>${fbUser?'<button type="button" class="g-btn" data-g="out">Salir de la cuenta</button>':`<button type="button" class="g-btn" data-g="in">${GICON} Volver a entrar</button><p class="mut" style="font-size:12px;margin-top:10px">Si ya te habilitaron, entrá de nuevo con tu cuenta.</p>`}</div>`;return;}
   const feats=`<ul class="lp-f"><li><b>📈 TRADING, 🎯 SHOOTER y 🏛 ACCIONES</b><span>Señales con entrada, objetivos y stop, buscadas las 24 h por el bot.</span></li><li><b>🧠 IA que practica sola</b><span>Te dice cuándo conviene seguirla con un semáforo.</span></li><li><b>📲 Grupo de Telegram</b><span>Las señales te llegan al celular aunque tengas la página cerrada.</span></li><li><b>🔄 Trade del ciclo y 🧭 Pilotear</b><span>El ciclo del halving y seguimiento de tus propias operaciones.</span></li></ul>`;
   if(kind==='login'){el.innerHTML=`<div class="lp"><div class="lp-brand"><span class="dot"></span>CRIPTO-LIVE</div><h1>Señales de cripto y acciones, las 24 horas</h1><p class="lp-sub">Entrá con tu cuenta de Google y usá todo <b>gratis durante ${PRUEBA_D} días</b>. Sin tarjeta.</p>
       <button type="button" class="g-btn big" data-g="in">${GICON} Entrar con Google · ${PRUEBA_D} días gratis</button>${feats}${planCards(false)}${payNote()}</div>`;return;}
@@ -2272,7 +2280,7 @@ function initCloud(){
   try{firebase.initializeApp(FIREBASE_CONFIG);fbDb=firebase.firestore();}catch(e){console.warn(e);return;}
   try{fbDb.collection('config').doc('acceso').onSnapshot(s=>{ACC_CFG=Object.assign({soloCuentas:false,cobro:true},s.data()||{});accGate();subBadge();if(ADM.open)admRender();},()=>{});}catch(e){}
   try{fbDb.collection('config').doc('pagos').onSnapshot(s=>{PAYCFG=s.data()||{};if(PAYUI.open)payRender();if($('accGate'))accGate();if(ADM.open)admRender();},()=>{});}catch(e){}
-  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;ACC_AUTH=true;renderAcct();if(!u){if(ADM.open)admClose();try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();}catch(_){}SUB=null;SUBOK=false;MYPAY=[];TGLINK=null;PAYUI.open=false;payRender();subBadge();accGate();if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
+  firebase.auth().onAuthStateChanged(async u=>{fbUser=u;cloudReady=false;ACC_AUTH=true;renderAcct();if(!u){if(ADM.open)admClose();try{if(SUBUNS)SUBUNS();if(PAYUNS)PAYUNS();if(BLOQUNS)BLOQUNS();}catch(_){}BLOQUNS=null;SUB=null;SUBOK=false;MYPAY=[];TGLINK=null;PAYUI.open=false;payRender();subBadge();accGate();if(window.__unsubLines){window.__unsubLines();window.__unsubLines=null;}return;}
     if(await accLogin(u))return; // cuenta bloqueada: no se cargan sus datos
     accGate();
     try{const snap=await fbDb.collection('users').doc(u.uid).get(),d=snap.exists?snap.data():{};
@@ -2692,10 +2700,11 @@ function renderSignals(){try{iaSigRender();}catch(e){}
       <div class="sg-h"><span class="sg-dir">${L?'▲ LONG':'▼ SHORT'}</span><b>${s.sym.replace('USDT','')}</b><small>${s.m==='a'?' (USD)':'/USDT'} · ${TFS.find(x=>x[0]===s.tf)[1]}</small>${op&&typeof iaBtn==='function'?iaBtn(op):''}<span class="sg-conf">${s.m==='a'&&CAL.a[s.setup]&&CAL.a[s.setup].g?CAL.a[s.setup].g:s.conf} %<small>${s.m==='p'?'fuerza':s.m==='a'&&CAL.a[s.setup]&&CAL.a[s.setup].g?'ganadas hist.':'acierto hist.'}</small></span><button type="button" class="sg-x" data-sgx="${esc(s.op)}" title="Cerrar esta señal (la operación se sigue en Resultados)" aria-label="Cerrar">×</button></div>${s.plus?`<div class="sg-plus">🟨 TRADING+ · señal extra · ${esc((CAL.medio[s.setup]||{}).txt||'')}</div>`:''}${s.m==='p'?'<div class="sg-nr">⚠ NO RECOMENDABLE · señal con tus ajustes, sin calibrar</div>':''}${op&&op.ll&&!LLHIDE.has(op.id)?`<div class="sg-ll"><span>🛟 SALVAVIDAS activado: +${op.ll.margin+' USD'} (× ${SIM[op.m].lev}) en ${fp(op.ll.px)} · entrada promedio ${fp(op.ae)} · nuevo stop ${fp(op.fail)} (${pc(op.fail)}) · ${op.ll.why}</span><button type="button" class="ll-x" data-llx="${op.id}" aria-label="Cerrar aviso" title="Cerrar aviso">×</button></div>`:''}
       ${lost?`<div class="sg-lost">${s.win?'✓':'✕'} Oportunidad terminada: ${s.why}. ${pin?'Queda fijada hasta que la desfijes.':'Se quita en '+Math.max(0,Math.ceil((30e3-(now-s.lostAt))/1000))+' s.'}</div>`:''}
       ${opAdvice(op,s)}<div class="sg-g"><span>Entrar en ${L?'LONG':'SHORT'}</span><b>${fp(s.zl)} – ${fp(s.zh)}</b>
+        <span>Precio actual</span><b>${p?`${fp(p)} (${pc(p)})`:'—'}</b>
         ${s.tp0?`<span>Objetivo 1</span><b class="tgt">${fp(s.tp0)} (${pc(s.tp0)})</b>`:''}<span>Objetivo 2</span><b class="tgt">${fp(s.tp1)} (${pc(s.tp1)})</b>
         <span>Objetivo 3</span><b class="tgt">${fp(s.tp2)} (${pc(s.tp2)})</b>
         <span>${op&&op.ll?'Nuevo stop':'Stop'}</span><b class="stp">${fp(op&&op.ll?op.fail:s.sl)} (${pc(op&&op.ll?op.fail:s.sl)})</b>${llInfo(op,pc)}
-        <span>Precio ahora</span><b>${p?fp(p):'—'}</b><span>Simulación</span><b class="sl2">${s.setup==='tp-x'?PLUSG.label:SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
+        <span>Simulación</span><b class="sl2">${s.setup==='tp-x'?PLUSG.label:SIM[s.m].label}</b><span>Resultado ahora</span><b>${liveRes(s,p)}</b></div>
       <div class="sg-r">${s.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>
       <button type="button" class="sg-go">📈 Ver en el gráfico: entrada y objetivos</button><div class="sg-f">${ago(s.t)} · ${s.calTxt||'sigue activa mientras el precio esté cerca de la entrada'}${(window.AZAR||{})[s.m]?` · <b>al azar con el mismo stop y objetivos: ${AZAR[s.m].p} %</b>`:''}</div></div>`;}).join('');
 }
@@ -2876,9 +2885,8 @@ function opDetail(o){
     ${o.conf?`<span>${o.m==='p'?'Fuerza (sin calibrar)':'Acierto hist.'}</span><b>${o.conf} %</b>`:''}
     <span>Abierta</span><b>${fdate(o.t)}</b>${open?'':`<span>Cerrada</span><b>${fdate(o.closeAt)}</b>`}
     <span>Duración</span><b>${fdur((open?Date.now():o.closeAt)-o.t)}</b>
-    <span>Entrada</span><b>${fp(o.entry)}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
+    <span>Entrada</span><b>${fp(o.entry)}</b><span>${open?'Precio actual':'Precio de cierre'}</span><b>${px?`${fp(px)} (${fpct((px/o.entry-1)*100)})`:'—'}</b>${tg(0,'Objetivo 1')}${tg(1,'Objetivo 2')}${tg(2,'Objetivo 3')}${o.ll?`<span>🛟 Salvavidas</span><b class="llb">+${o.ll.margin+' USD'} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)} · ${fdate(o.ll.t)}</b><span>Entrada promedio</span><b>${fp(o.ae)}</b>`:''}
     <span>${o.ll?'Nuevo stop':'Stop / liquidación'}</span><b class="dn">${fp(o.fail)} (${fpct((o.fail/o.entry-1)*100)})</b>${llInfo(o,v=>fpct((v/o.entry-1)*100))}
-    <span>${open?'Precio ahora':'Precio de cierre'}</span><b>${px?fp(px):'—'}</b>
     <span>Resultado</span><b class="${pnl>=0?'up':'dn'}">${fusd2(pnl)} (${fpct(pct)})</b>
     <span>Simulación</span><b>${o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:SIM[o.m].label}</b>${!open&&o.why?`<span>Motivo</span><b>${esc(o.why)}</b>`:''}
   </div>${o.reasons&&o.reasons.length?`<div class="rs">${o.reasons.map(r=>`<i>${esc(r)}</i>`).join('')}</div>`:''}
@@ -4561,7 +4569,8 @@ const HXC={};
 function hxLevels(o){const e=o.entry,st=o.ia?o.ia.stop:o.fail;if(!(e>0))return '';const pc=v=>` (${hxPct((v/e-1)*100)})`,ae=o.ae&&o.ll?o.ae:null;
   const T=(o.ia&&o.ia.tps)||[o.tp0,o.tp1,o.tp2],h=o.hit||0; // octubre 2026: cada objetivo con su precio y su % desde la entrada
   const tg=T.map((v,k)=>v>0?`<span>Objetivo ${k+1}</span><b class="up">${fp(v)}${pc(v)}${k<h?' · ✓ tocado':''}</b>`:'').join('');
-  return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${tg}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
+  const now=o.state==='open'?((tickers[o.sym]&&tickers[o.sym].c)||null):null;
+  return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${now?`<span>Precio actual</span><b>${fp(now)}${pc(now)}</b>`:''}${tg}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
 function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.simLab||(o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:''));
   return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
     <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>
@@ -5603,8 +5612,8 @@ function iaSigHTML(){if(!IAM)return '<div class="mut">Cargando la IA…</div>';
   return ft+[['sh','SHOOTER','15 y 30 min'],['tr','TRADING','4 h']].filter(([f])=>f===IAF).map(([f,nm,tf])=>{const S=iaSemaforo(f),L=IAOPS.filter(x=>x.f===f),st=iaOpsStats(L),open=L.filter(x=>x.st==='open').sort((a,b)=>b.t-a.t),done=L.filter(x=>x.st!=='open').sort((a,b)=>(b.closeT||b.t)-(a.closeT||a.t)).slice(0,5);
     const card=x=>{const p=tickers[x.sym]&&tickers[x.sym].c,v=p?iaOpLive(x,p):0,pc=t=>fpct((t/x.entry-1)*100);
       return `<div class="sig ${x.dir>0?'long':'short'} ia-own" data-sym="${x.sym}" data-tf="${x.tf}"><div class="sg-h"><span class="sg-dir">${x.dir>0?'▲ LONG':'▼ SHORT'}</span><b>${x.sym.replace('USDT','')}</b><small>/USDT · ${x.tf} · ${iaIco('ia',14)} propia de la IA</small><span class="sg-conf">${Math.round(x.p*100)} %<small>puntaje IA</small></span></div>
-        <div class="sg-g"><span>Entrada</span><b>${fp(x.entry)}</b><span>Objetivo 1</span><b class="tgt">${fp(x.tps[0])} (${pc(x.tps[0])})</b><span>Objetivo 2</span><b class="tgt">${fp(x.tps[1])} (${pc(x.tps[1])})</b><span>Objetivo 3</span><b class="tgt">${fp(x.tps[2])} (${pc(x.tps[2])})</b>
-          <span>Stop</span><b class="dn">${fp(x.hit?x.entry:x.stop)}${x.hit?' (en la entrada)':` (${pc(x.stop)})`}</b>${p?`<span>Precio ahora</span><b>${fp(p)}</b>`:''}<span>Simulación</span><b>${x.mg} USD × ${x.lev}</b><span>Resultado ahora</span><b class="${v>=0?'up':'dn'}">${fusd2(v)} · ${x.hit}/3 objetivos</b></div>
+        <div class="sg-g"><span>Entrada</span><b>${fp(x.entry)}</b><span>Precio actual</span><b>${p?`${fp(p)} (${pc(p)})`:'—'}</b><span>Objetivo 1</span><b class="tgt">${fp(x.tps[0])} (${pc(x.tps[0])})</b><span>Objetivo 2</span><b class="tgt">${fp(x.tps[1])} (${pc(x.tps[1])})</b><span>Objetivo 3</span><b class="tgt">${fp(x.tps[2])} (${pc(x.tps[2])})</b>
+          <span>Stop</span><b class="dn">${fp(x.hit?x.entry:x.stop)}${x.hit?' (en la entrada)':` (${pc(x.stop)})`}</b><span>Simulación</span><b>${x.mg} USD × ${x.lev}</b><span>Resultado ahora</span><b class="${v>=0?'up':'dn'}">${fusd2(v)} · ${x.hit}/3 objetivos</b></div>
         ${x.why0?`<div class="mut">Por qué entró: ${esc(x.why0)}</div>`:''}</div>`;};
     const rows=done.map(x=>`<div class="ia-sr"><span class="mut">${new Date(x.closeT||x.t).toLocaleString('es-AR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})}</span><b>${x.sym.replace('USDT','')}${x.loc?' <span title="Abierta por esta página antes del bot compartido: solo está en esta cuenta o dispositivo">📱</span>':''}</b><span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲':'▼'}</span><span class="mut">${esc(x.why||'')}</span><b class="${x.pnl>=0?'up':'dn'}">${fusd2(x.pnl||0)}</b></div>`).join('');
     const why=S.why.join(' · ');
