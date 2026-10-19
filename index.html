@@ -1920,11 +1920,22 @@ chartEl.addEventListener('pointermove',e=>{if(e.pointerType==='touch')return;con
   if(tool==='cursor'){const h=hitAt(x,y);chartEl.style.cursor=h?(h.k==='h'?'ns-resize':h.part==='all'?'move':'pointer'):'';}},true);
 const pUp=e=>{if(e.pointerType==='touch')return;try{chartEl.releasePointerCapture(e.pointerId)}catch(_){}if(DRG){e.stopPropagation();drgEnd();}else if(TLnew)tlUp();};
 chartEl.addEventListener('pointerup',pUp,true);chartEl.addEventListener('pointercancel',pUp,true);
-chartEl.addEventListener('touchstart',e=>{if(e.touches.length!==1||offChart(e))return;const {x,y}=evXY(e.touches[0]);
+/* en el celular (octubre 2026): una línea solo se arrastra si antes la tocaste para elegirla. Pasar el dedo mueve el gráfico como siempre,
+   aunque pase por encima de una línea; un toque corto la elige (o suelta la elegida si tocás en otro lado). */
+let tapC=null;
+const hitSel=(x,y)=>{if(!SEL)return null;const h=hitAt(x,y);if(h&&h.k===SEL.k&&h.i===SEL.i)return h;
+  if(SEL.k==='t'){const L=tls()[SEL.i];if(!L)return null;const a=ptXY(L.a),b=ptXY(L.b),tol=dTol()+6;if(!a||!b)return null;
+    if(Math.hypot(x-a.x,y-a.y)<=tol)return {k:'t',i:SEL.i,part:'a'};if(Math.hypot(x-b.x,y-b.y)<=tol)return {k:'t',i:SEL.i,part:'b'};if(segD(x,y,a,b)<=tol)return {k:'t',i:SEL.i,part:'all'};}
+  else{const H=(hlines[symbol]||[])[SEL.i],yy=H&&series.priceToCoordinate(H.price);if(yy!=null&&Math.abs(yy-y)<=dTol()+6)return {k:'h',i:SEL.i};}return null;};
+chartEl.addEventListener('touchstart',e=>{tapC=null;if(e.touches.length!==1||offChart(e))return;const {x,y}=evXY(e.touches[0]);
   if(tool==='tline'){e.preventDefault();e.stopPropagation();tlStart(x,y);return;}
-  if(tool!=='cursor')return;const h=hitAt(x,y);if(!h){if(SEL)selSet(null);return;}e.preventDefault();e.stopPropagation();drgStart(h,x,y);},{capture:true,passive:false});
-chartEl.addEventListener('touchmove',e=>{if(!DRG&&!TLnew)return;e.preventDefault();e.stopPropagation();const {x,y}=evXY(e.touches[0]);if(DRG)drgMove(x,y);else tlMove(x,y);},{capture:true,passive:false});
-const tUp=e=>{if(DRG){e.preventDefault();e.stopPropagation();drgEnd();}else if(TLnew){e.preventDefault();e.stopPropagation();tlUp();}};
+  if(tool!=='cursor')return;const hs=hitSel(x,y);if(hs){e.preventDefault();e.stopPropagation();drgStart(hs,x,y);return;}
+  tapC={x,y,t:performance.now()};},{capture:true,passive:false});
+chartEl.addEventListener('touchmove',e=>{if(tapC&&e.touches[0]){const {x,y}=evXY(e.touches[0]);if(Math.hypot(x-tapC.x,y-tapC.y)>8)tapC=null;}
+  if(!DRG&&!TLnew)return;e.preventDefault();e.stopPropagation();const {x,y}=evXY(e.touches[0]);if(DRG)drgMove(x,y);else tlMove(x,y);},{capture:true,passive:false});
+const tUp=e=>{if(DRG){e.preventDefault();e.stopPropagation();drgEnd();return;}if(TLnew){e.preventDefault();e.stopPropagation();tlUp();return;}
+  const c=tapC;tapC=null;if(!c||tool!=='cursor'||performance.now()-c.t>450)return;const h=hitAt(c.x,c.y);
+  if(h){selSet({k:h.k,i:h.i});noClick=performance.now()+400;}else if(SEL)selSet(null);};
 chartEl.addEventListener('touchend',tUp,{capture:true,passive:false});chartEl.addEventListener('touchcancel',tUp,{capture:true,passive:false});
 chart.subscribeCrosshairMove(p=>{if(TLnew&&TLnew.wait&&p.point){const q=snapAt(p.point.x,p.point.y);if(q){TLnew.b={t:q.t,p:q.p};ovReq();}}});
 /* barra del dibujo elegido: borrar o soltar */
