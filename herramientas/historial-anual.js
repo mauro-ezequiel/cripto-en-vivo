@@ -164,7 +164,25 @@ function trendOf(rb) { let o = TRC.get(rb); if (o) return o; const keep = candle
   const sp = wilder(pdm, 14), sm = wilder(mdm, 14); candles = keep; o = { st, e21, di: sp.map((v, i) => v == null || sm[i] == null ? null : v - sm[i]) }; TRC.set(rb, o); return o; }
 function against(rb, j, dir, T) { const o = trendOf(rb), c = rb[j].close, a21 = o.e21[j] != null && dir * (c - o.e21[j]) < 0, ast = o.st[j] != null && o.st[j] !== dir, adi = o.di[j] != null && dir * o.di[j] < 0;
   return T === 'd21' ? a21 : T === 'st' ? ast : T === 'di' ? adi : ast && a21; }
-function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V) { let minR = 0;
+/* SALIDA=1 (investigación octubre 2026, no cambia las señales): salir antes si, con la operación en ganancia, al menos N de 8 señales se dan
+   vuelta en contra: Supertrend, precio vs EMA 21, EMA 9 vs 21, RSI 14 vs 50, histograma MACD, DMI (+DI vs −DI), flujo comprador de las últimas
+   3 velas y una figura chartista confirmada en contra en las últimas 6 velas. Se mira al cierre de cada vela de 1 h (o con las de 4 h). */
+const SALIDA = !!process.env.SALIDA, SV = [], FIGL = SALIDA ? require('./figuras-lib.js') : null, AGC = new WeakMap();
+if (SALIDA) for (const tf of ['1h', '4h']) for (const P of [0, .25, .5]) for (const N of [2, 3, 4, 5, 6, 7]) SV.push({ N, P, tf });
+function agArr(bars) { let o = AGC.get(bars); if (o) return o; const keep = candles; candles = bars; const n = bars.length, cl = closes();
+  const st = calcST(10, 3).dir, e9 = emaArr(cl, 9), e21 = emaArr(cl, 21), rsi = calcRSI(14), e12 = emaArr(cl, 12), e26 = emaArr(cl, 26);
+  const mac = cl.map((_, i) => e12[i] != null && e26[i] != null ? e12[i] - e26[i] : null), sig = emaArr(mac.map(v => v == null ? 0 : v), 9), pdm = [0], mdm = [0];
+  for (let i = 1; i < n; i++) { const up = bars[i].high - bars[i - 1].high, dn = bars[i - 1].low - bars[i].low; pdm.push(up > dn && up > 0 ? up : 0); mdm.push(dn > up && dn > 0 ? dn : 0); }
+  const sp = wilder(pdm, 14), sm = wilder(mdm, 14); candles = keep;
+  const fig = Array(n).fill(0); try { for (const f of FIGL.scan(bars)) if (f.conf) for (let k = f.i1; k < Math.min(n, f.i1 + 6); k++) fig[k] = f.dir; } catch (e) {}
+  /* a[j] = cuántas de las 8 dicen "baja" (para un LONG en contra); b[j] = cuántas dicen "sube" (para un SHORT en contra) */
+  const a = new Int8Array(n), b = new Int8Array(n);
+  for (let j = 30; j < n; j++) { const c = cl[j], h = mac[j] != null ? mac[j] - sig[j] : 0; let fl = 0; for (let k = Math.max(0, j - 2); k <= j; k++) fl += 2 * (bars[k].tb || 0) - (bars[k].v || 0);
+    const dn = [st[j] === -1, e21[j] != null && c < e21[j], e9[j] != null && e21[j] != null && e9[j] < e21[j], rsi[j] != null && rsi[j] < 50, h < 0, sp[j] != null && sm[j] != null && sm[j] > sp[j], fl < 0, fig[j] === -1];
+    const up = [st[j] === 1, e21[j] != null && c > e21[j], e9[j] != null && e21[j] != null && e9[j] > e21[j], rsi[j] != null && rsi[j] > 50, h > 0, sp[j] != null && sm[j] != null && sp[j] > sm[j], fl > 0, fig[j] === 1];
+    a[j] = dn.filter(Boolean).length; b[j] = up.filter(Boolean).length; }
+  o = { a, b }; AGC.set(bars, o); return o; }
+function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V, SX) { let minR = 0;
   let hit = 0, real = 0, j = j0, kind = 5, ae = entry, sz = 1, ll = 0, llNo = !llConf, pnl = null;
   const tps = [1, 2, 3].map(k => entry * (1 + dir * k * r * sl)); let fail = entry * (1 - dir * sl); const llAt = entry * (1 - dir * sl * .65);
   const val = px => real + (1 - hit / 3) * sz * dir * (px / ae - 1);
@@ -176,7 +194,9 @@ function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V) { l
     while (hit < 3 && dir * (fav - tps[hit]) >= 0) { real += sz * dir * (tps[hit] / ae - 1) / 3; hit++; }
     if (hit >= 3) { pnl = real; kind = 4; break; }
     if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; }
-    if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } } }
+    if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } }
+    if (SX && dir * (b.close / ae - 1) / sl >= SX.P && dir * (b.close / ae - 1) > 0) { let cnt; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, 144e5, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
+      if (cnt >= SX.N) { pnl = val(b.close); kind = 7; break; } } }
   const open = pnl == null && (j >= rb.length || !rb.length) && rb.length && rb[rb.length - 1].t - t0 <= maxAge;
   if (pnl == null) { const jj = Math.min(Math.max(j, j0), rb.length - 1), px = rb[jj] ? rb[jj].close : entry; pnl = Math.max(-sz * sl, val(px)); j = jj; }
   const end = rb[Math.min(Math.max(j, 0), rb.length - 1)];
@@ -206,6 +226,7 @@ async function run4h(s, rank) {
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
     const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
     if (RECUP) res.alt = RV.map(V => { const o = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
+    if (SALIDA) res.sal = SV.map(X => sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, Object.assign({ tb }, X)));
     CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, ...res,
       ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
   return { rb, tb, llConf }; }
@@ -361,7 +382,7 @@ async function main() { const t0 = Date.now();
      (se cuenta siempre como costo). Se aplica a las señales y a las entradas al azar, así la comparación sigue siendo justa. SIN_COSTOS=1 lo apaga. */
   const SLIP = r => r < 10 ? .0002 : r < 30 ? .0004 : .0008, FUND8 = .0001, RK = {}; trList.forEach((x, k) => RK[x] = k); shList.forEach((x, k) => { if (RK[x] == null) RK[x] = k; });
   const cost = c => { if (process.env.SIN_COSTOS || c.t == null) return; const sz = c.ll ? 1.5 : 1, h = Math.max(0, ((c.open ? NOW : c.tEnd) - c.t) / (8 * 36e5)), k = 100 * (c.L || 1) * sz * (2 * SLIP(RK[c.s] != null ? RK[c.s] : 50) + FUND8 * h); c.pct -= k; c.costo = +k.toFixed(3); };
-  for (const c of CANDS) cost(c); for (const m in RAND) for (const c of RAND[m]) cost(c);
+  for (const c of CANDS) { if (c.sal) for (const o of c.sal) cost(Object.assign(o, { t: c.t, s: c.s, L: c.L })); cost(c); } for (const m in RAND) for (const c of RAND[m]) cost(c);
   const ops = pick(), cal = { medio: {}, x: {} };
   /* CORR=1 (investigación de la cláusula del halving): correlación de los retornos diarios con BTC en los 90 días anteriores a cada operación */
   if (process.env.CORR) { const D1 = {}, get = async s => { if (!D1[s]) { try { const b = await klRange(s, '1d', DAY, FROM - 120 * DAY, NOW); D1[s] = new Map(b.map(x => [x.t, x.close])); } catch (e) { D1[s] = new Map(); } } return D1[s]; };
@@ -395,6 +416,16 @@ async function main() { const t0 = Date.now();
       out.recup[m] = { desde_prueba: cut, sin: { aprendizaje: sumr(A.map(o => o.pct)), prueba: sumr(P.map(o => o.pct)) },
         con: RV.map((V, k) => ({ v: V, aprendizaje: sumr(A.map(o => o.alt[k][0])), prueba: sumr(P.map(o => o.alt[k][0])), salen_prueba: P.filter(o => o.alt[k][1]).length })) }; }
     console.log('recup', JSON.stringify(out.recup).slice(0, 3000)); }
+  if (SALIDA) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === 'medio' && c.setup !== 'tp-x' && c.sal);
+    const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
+      for (const s in by) { let free = 0; for (const c of by[s].sort((a, b) => a.t - b.t)) { if (c.t < free) continue; const o = k < 0 ? c : Object.assign({}, c, c.sal[k]); out2.push(o); free = Math.max(c.t + c.cool, o.tEnd); } } return out2.filter(o => !o.open); };
+    const st2 = L => { const n = L.length; if (!n) return { n: 0 }; const usd = L.reduce((a, o) => a + o.pct / 100 * o.margin, 0), lo = L.filter(o => o.pct < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), pct_op: +(L.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd: +usd.toFixed(0), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.pct, 0) / lo.length).toFixed(1) : 0, salidas: L.filter(o => o.kind === 7).length }; };
+    const res = k => { const L = choose(k); return { v: k < 0 ? 'actual' : SV[k], año: st2(L), mitad1: st2(L.filter(o => o.t < mid)), mitad2: st2(L.filter(o => o.t >= mid)) }; };
+    /* para las que salieron antes: ¿qué hubiera pasado si seguía? (toca el stop, llega a más objetivos o vence) */
+    const contra = k => { const S = MED.filter(c => c.sal[k].kind === 7 && !c.open); return { salieron: S.length, despues_hubiera_ganado_mas: S.filter(c => c.pct > c.sal[k].pct).length, hubiera_tocado_stop: S.filter(c => c.kind === 1 || (c.kind === 3 && c.sal[k].pct > c.pct)).length }; };
+    out.salida = { nota: 'pct_op = % del margen por operación con costos; usd con el margen de la simulación; salidas = cerradas antes por la regla', actual: res(-1), variantes: SV.map((_, k) => Object.assign(res(k), { contra: contra(k) })) };
+    console.log('salida actual', JSON.stringify(out.salida.actual)); }
   const body = JSON.stringify(out);
   fs.writeFileSync('historial.json', body);
   if (IAON) { const zlib = require('zlib');
