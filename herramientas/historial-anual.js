@@ -224,7 +224,7 @@ async function run4h(s, rank) {
     if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf, rank, MX);
     const c = classify4h(tb.slice(i - 298, i + 1), rank); if (!c) continue;
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) continue; // solo a favor de BTC (4h vs EMA 50), como la página
-    if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= 24)) continue; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
+    if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) continue; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
     if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
     const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
