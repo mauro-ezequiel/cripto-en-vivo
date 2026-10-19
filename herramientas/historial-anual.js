@@ -168,7 +168,9 @@ function against(rb, j, dir, T) { const o = trendOf(rb), c = rb[j].close, a21 = 
    vuelta en contra: Supertrend, precio vs EMA 21, EMA 9 vs 21, RSI 14 vs 50, histograma MACD, DMI (+DI vs −DI), flujo comprador de las últimas
    3 velas y una figura chartista confirmada en contra en las últimas 6 velas. Se mira al cierre de cada vela de 1 h (o con las de 4 h). */
 const SALIDA = !!process.env.SALIDA, SV = [], FIGL = SALIDA ? require('./figuras-lib.js') : null, AGC = new WeakMap();
-if (SALIDA) for (const tf of ['1h', '4h']) for (const P of [0, .25, .5]) for (const N of [2, 3, 4, 5, 6, 7]) SV.push({ N, P, tf });
+/* N0: señales en contra para salir ANTES del objetivo 1 (con ganancia ≥ medio stop) · N1: DESPUÉS del objetivo 1 (camino al 2 o al 3)
+   cerca=1: después del objetivo 1 solo sale si el precio ya hizo al menos la mitad del camino al objetivo siguiente (salir cerca del máximo). 9 = nunca */
+if (SALIDA) for (const tf of ['4h', '1h']) for (const N0 of [5, 9]) for (const N1 of [3, 4, 5, 6, 9]) for (const cerca of [0, 1]) { if (N0 === 9 && N1 === 9) continue; if (N1 === 9 && cerca) continue; SV.push({ N0, N1, P: .5, tf, cerca }); }
 function agArr(bars) { let o = AGC.get(bars); if (o) return o; const keep = candles; candles = bars; const n = bars.length, cl = closes();
   const st = calcST(10, 3).dir, e9 = emaArr(cl, 9), e21 = emaArr(cl, 21), rsi = calcRSI(14), e12 = emaArr(cl, 12), e26 = emaArr(cl, 26);
   const mac = cl.map((_, i) => e12[i] != null && e26[i] != null ? e12[i] - e26[i] : null), sig = emaArr(mac.map(v => v == null ? 0 : v), 9), pdm = [0], mdm = [0];
@@ -195,7 +197,8 @@ function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V, SX)
     if (hit >= 3) { pnl = real; kind = 4; break; }
     if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; }
     if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } }
-    if (SX && dir * (b.close / ae - 1) / sl >= SX.P && dir * (b.close / ae - 1) > 0) { let cnt; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, 144e5, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
+    const sxOk = SX && (hit === 0 ? SX.N0 < 9 && dir * (b.close / ae - 1) / sl >= SX.P : SX.N1 < 9 && dir * (b.close / ae - 1) > 0 && (!SX.cerca || hit >= 3 || dir * (b.close - tps[hit - 1]) >= .5 * dir * (tps[hit] - tps[hit - 1])));
+    if (sxOk) { let cnt; SX.N = hit === 0 ? SX.N0 : SX.N1; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, 144e5, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
       if (cnt >= SX.N) { pnl = val(b.close); kind = 7; break; } } }
   const open = pnl == null && (j >= rb.length || !rb.length) && rb.length && rb[rb.length - 1].t - t0 <= maxAge;
   if (pnl == null) { const jj = Math.min(Math.max(j, j0), rb.length - 1), px = rb[jj] ? rb[jj].close : entry; pnl = Math.max(-sz * sl, val(px)); j = jj; }
@@ -423,7 +426,7 @@ async function main() { const t0 = Date.now();
       return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), pct_op: +(L.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd: +usd.toFixed(0), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.pct, 0) / lo.length).toFixed(1) : 0, salidas: L.filter(o => o.kind === 7).length }; };
     const res = k => { const L = choose(k); return { v: k < 0 ? 'actual' : SV[k], año: st2(L), mitad1: st2(L.filter(o => o.t < mid)), mitad2: st2(L.filter(o => o.t >= mid)) }; };
     /* para las que salieron antes: ¿qué hubiera pasado si seguía? (toca el stop, llega a más objetivos o vence) */
-    const contra = k => { const S = MED.filter(c => c.sal[k].kind === 7 && !c.open); return { salieron: S.length, despues_hubiera_ganado_mas: S.filter(c => c.pct > c.sal[k].pct).length, hubiera_tocado_stop: S.filter(c => c.kind === 1 || (c.kind === 3 && c.sal[k].pct > c.pct)).length }; };
+    const contra = k => { const S = MED.filter(c => c.sal[k].kind === 7 && !c.open); return { salieron: S.length, tras_obj1: S.filter(c => c.sal[k].hit >= 1).length, tras_obj2: S.filter(c => c.sal[k].hit >= 2).length, despues_hubiera_ganado_mas: S.filter(c => c.pct > c.sal[k].pct).length, hubiera_tocado_stop: S.filter(c => c.kind === 1 || (c.kind === 3 && c.sal[k].pct > c.pct)).length }; };
     out.salida = { nota: 'pct_op = % del margen por operación con costos; usd con el margen de la simulación; salidas = cerradas antes por la regla', actual: res(-1), variantes: SV.map((_, k) => Object.assign(res(k), { contra: contra(k) })) };
     console.log('salida actual', JSON.stringify(out.salida.actual)); }
   const body = JSON.stringify(out);
