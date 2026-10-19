@@ -4459,8 +4459,8 @@ var VCOPEN=false;
 const WAL_DEF={cap:11000,tr:1,sh:1,a:1,ia:1,cic:1,mg:{medio:350,x:50,a:500,iatr:350,iash:50,cic:200},lim:{dir:6,uso:60,dia:5}};
 var WAL=JSON.parse(JSON.stringify(WAL_DEF));try{const w=JSON.parse(localStorage.getItem('cv_wal')||'null');if(w&&w.v===2)WAL=Object.assign(WAL,w,{mg:Object.assign({},WAL_DEF.mg,w.mg||{}),lim:Object.assign({},WAL_DEF.lim,w.lim||{})});}catch(e){}
 if(WAL.v!==2){WAL.v=2;WAL.t0=Date.now();}
-/* octubre 2026: que cuente también lo de los últimos días (una sola vez: arranca 4 días atrás si había arrancado después). Se puede cambiar en «Contar desde». */
-if(!WAL.d4){WAL.d4=1;const d=new Date();d.setHours(0,0,0,0);const t4=d.getTime()-4*864e5;if(!(WAL.t0<=t4))WAL.t0=t4;}
+/* octubre 2026: que cuente también lo de los últimos días (una sola vez: arranca 11 días atrás si había arrancado después). Se puede cambiar en «Contar desde». */
+if(!WAL.d11){WAL.d11=1;const d=new Date();d.setHours(0,0,0,0);const t11=d.getTime()-11*864e5;if(!(WAL.t0<=t11))WAL.t0=t11;}
 const walSave=()=>{try{localStorage.setItem('cv_wal',JSON.stringify(WAL))}catch(e){}};walSave();
 const walPx=s=>(tickers[s]&&tickers[s].c)||(typeof STK!=='undefined'&&STK&&STK[s]&&STK[s].c)||null;
 /* todas las operaciones reales de las secciones marcadas, con su margen en la billetera, su resultado (cerradas) o su resultado en vivo (abiertas) */
