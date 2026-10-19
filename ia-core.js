@@ -2,7 +2,9 @@
    Calcula los indicadores de cada vela, el estado de una operación abierta y evalúa los modelos (árboles) que aprende la IA.
    Todo lo que la IA "mira" sale de acá, así lo que aprende y lo que usa en vivo es exactamente lo mismo. */
 (function (root) {
-  const IA = { ver: 1 };
+  const IA = { ver: 2 };
+  /* octubre 2026 (v2): figuras chartistas y el conteo de 8 señales de los bots (las mismas de la salida anticipada) como datos nuevos */
+  let FIGX = null; const figLib = () => { if (FIGX) return FIGX; try { FIGX = typeof module !== 'undefined' && module.exports && typeof require === 'function' ? require('./herramientas/figuras-lib.js') : root.FIG; } catch (e) { FIGX = root.FIG; } return FIGX; };
   const N = x => (x == null || !isFinite(x) ? 0 : x);
   function ema(v, p) { const o = Array(v.length).fill(null), k = 2 / (p + 1); let prev = null, cnt = 0, sum = 0;
     for (let i = 0; i < v.length; i++) { const x = v[i]; if (x == null) continue;
@@ -40,22 +42,36 @@
   IA.prep = function (bars) {
     const cl = bars.map(x => x.close), A = adx(bars, 14), [bm, bs] = smaStd(cl, 20);
     return { bars, cl, atr: wilder(trs(bars), 14), r14: rsi(cl, 14), r7: rsi(cl, 7), adx: A.adx, pdi: A.pdi, mdi: A.mdi, st: supertrend(bars, 10, 3),
-      e21: ema(cl, 21), e50: ema(cl, 50), e200: ema(cl, 200), bm, bs, f6: flow(bars, 6), vr: volRatio(bars) };
+      e21: ema(cl, 21), e50: ema(cl, 50), e200: ema(cl, 200), bm, bs, f6: flow(bars, 6), vr: volRatio(bars), ...extra(bars, cl, A) };
   };
+  /* v2: MACD, EMA 9, figura confirmada (dirección, vale 6 velas), conteo de las 8 señales (cuántas dicen "sube" y cuántas "baja")
+     y posición en el rango de las últimas 20 velas */
+  function extra(bars, cl, A) { const n = bars.length, e9 = ema(cl, 9), e21 = ema(cl, 21), e12 = ema(cl, 12), e26 = ema(cl, 26), st = supertrend(bars, 10, 3), r = rsi(cl, 14);
+    const mac = cl.map((_, i) => e12[i] != null && e26[i] != null ? e12[i] - e26[i] : null), sig = ema(mac.map(v => v == null ? 0 : v), 9), mh = mac.map((v, i) => v == null ? 0 : v - sig[i]);
+    const fig = Array(n).fill(0); try { const F = figLib(); if (F) for (const f of F.scan(bars)) if (f.conf) for (let k = f.i1; k < Math.min(n, f.i1 + 6); k++) fig[k] = f.dir; } catch (e) {}
+    const up = new Int8Array(n), dn = new Int8Array(n), hl = Array(n).fill(.5);
+    for (let j = 0; j < n; j++) { const c = cl[j]; let fl = 0; for (let k = Math.max(0, j - 2); k <= j; k++) fl += delta(bars[k]);
+      const pd = A.pdi[j], md = A.mdi[j];
+      up[j] = (st[j] === 1) + (e21[j] != null && c > e21[j]) + (e9[j] != null && e21[j] != null && e9[j] > e21[j]) + (r[j] != null && r[j] > 50) + (mh[j] > 0) + (pd != null && md != null && pd > md) + (fl > 0) + (fig[j] === 1);
+      dn[j] = (st[j] === -1) + (e21[j] != null && c < e21[j]) + (e9[j] != null && e21[j] != null && e9[j] < e21[j]) + (r[j] != null && r[j] < 50) + (mh[j] < 0) + (pd != null && md != null && md > pd) + (fl < 0) + (fig[j] === -1);
+      let h = -1e18, l = 1e18; for (let k = Math.max(0, j - 19); k <= j; k++) { h = Math.max(h, bars[k].high); l = Math.min(l, bars[k].low); } hl[j] = h > l ? (c - l) / (h - l) : .5; }
+    return { e9, mh, fig, agU: up, agD: dn, hl20: hl }; }
   /* lo que ve la IA de la vela j, todo "a favor de la operación" (dir = 1 long, −1 short) */
   function mkt(P, j, d) { const b = P.bars[j], c = b.close, at = P.atr[j] || c * .01;
     return { r14: P.r14[j] == null ? 50 : d > 0 ? P.r14[j] : 100 - P.r14[j], r7: P.r7[j] == null ? 50 : d > 0 ? P.r7[j] : 100 - P.r7[j],
       adx: N(P.adx[j]), di: P.pdi[j] == null ? 0 : d * (P.pdi[j] - P.mdi[j]) / ((P.pdi[j] + P.mdi[j]) || 1),
       d21: P.e21[j] == null ? 0 : d * (c - P.e21[j]) / at, d50: P.e50[j] == null ? 0 : d * (c - P.e50[j]) / at, d200: P.e200[j] == null ? 0 : d * (c / P.e200[j] - 1) * 100,
       st: (P.st[j] || 0) * d, fl6: d * N(P.f6[j]), r6: j >= 6 ? d * (c / P.cl[j - 6] - 1) / (at / c) : 0, vr: N(P.vr[j]),
-      z: P.bs[j] ? d * (c - P.bm[j]) / P.bs[j] : 0, body: d * (b.close - b.open) / ((b.high - b.low) || 1), atrP: at / c * 100 }; }
+      z: P.bs[j] ? d * (c - P.bm[j]) / P.bs[j] : 0, body: d * (b.close - b.open) / ((b.high - b.low) || 1), atrP: at / c * 100,
+      agF: P.agU ? (d > 0 ? P.agU[j] : P.agD[j]) : 0, agC: P.agU ? (d > 0 ? P.agD[j] : P.agU[j]) : 0, fig: P.fig ? d * P.fig[j] : 0,
+      mh: P.mh ? d * N(P.mh[j]) / at : 0, e921: P.e9 && P.e9[j] != null && P.e21[j] != null ? d * (P.e9[j] - P.e21[j]) / at : 0, hl20: P.hl20 ? (d > 0 ? P.hl20[j] : 1 - P.hl20[j]) : .5 }; }
 
   /* ENTRADA: ¿esta señal va a llegar al objetivo 1? */
-  IA.ENTRY_F = ['r14', 'r7', 'adx', 'di', 'd21', 'd50', 'd200', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc'];
+  IA.ENTRY_F = ['r14', 'r7', 'adx', 'di', 'd21', 'd50', 'd200', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20'];
   IA.entryX = function (P, j, d, btc) { const m = mkt(P, j, d); m.btc = N(btc) * d; return IA.ENTRY_F.map(k => m[k]); };
 
   /* SALIDA: estado de la operación + mercado. pos = {dir, entry, sl (fracción), peak (mejor precio desde la entrada), hits, age (0–1+)} */
-  IA.EXIT_F = ['gR', 'peakR', 'ddR', 'hits', 'age', 'r14', 'r7', 'adx', 'di', 'd21', 'd50', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc'];
+  IA.EXIT_F = ['gR', 'peakR', 'ddR', 'hits', 'age', 'r14', 'r7', 'adx', 'di', 'd21', 'd50', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20'];
   IA.exitX = function (P, j, pos, btc) { const d = pos.dir, c = P.bars[j].close, sd = pos.sl * pos.entry, m = mkt(P, j, d);
     m.gR = d * (c - pos.entry) / sd; m.peakR = d * (pos.peak - pos.entry) / sd; m.ddR = m.peakR - m.gR; m.hits = pos.hits; m.age = pos.age; m.btc = N(btc) * d;
     return IA.EXIT_F.map(k => m[k]); };
@@ -70,7 +86,8 @@
     return out.sort((a, b) => Math.abs(b[1]) - Math.abs(a[1])); };
   IA.NAMES = { oi24: 'interés abierto 24 h', oi1: 'interés abierto 1 h', taker: 'flujo comprador/vendedor', top: 'traders grandes', retail: 'minoristas', funding: 'funding', gR: 'ganancia actual', peakR: 'máximo alcanzado', ddR: 'retroceso desde el máximo', hits: 'objetivos tocados', age: 'tiempo en la operación',
     r14: 'RSI 14', r7: 'RSI 7', adx: 'ADX (fuerza)', di: 'DMI (quién empuja)', d21: 'distancia a la EMA 21', d50: 'distancia a la EMA 50', d200: 'distancia a la EMA 200',
-    st: 'Supertrend', fl6: 'CVD (flujo de órdenes)', r6: 'impulso reciente', vr: 'volumen', z: 'Bollinger', body: 'última vela', atrP: 'volatilidad', btc: 'BTC' };
+    st: 'Supertrend', fl6: 'CVD (flujo de órdenes)', r6: 'impulso reciente', vr: 'volumen', z: 'Bollinger', body: 'última vela', atrP: 'volatilidad', btc: 'BTC',
+    agF: 'señales a favor (de 8)', agC: 'señales en contra (de 8)', fig: 'figura chartista', mh: 'MACD', e921: 'EMA 9 / 21', hl20: 'posición en el rango de 20 velas' };
   /* la IA "en práctica" sobre una operación: recorre las velas cerradas desde la entrada y decide igual que en el estudio diario
      (stop del bot; al tocar el objetivo 1 el stop pasa a la entrada y después al objetivo anterior; sale si la probabilidad de seguir
      a favor cae bajo el umbral). pos = {dir, entry, sl, r, maxAge, t0, resMs}; btcAt(t) = lado de BTC (1 / −1) en ese momento.

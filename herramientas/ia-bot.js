@@ -9,7 +9,10 @@ const IA = require('../ia-core.js');
 const CFG = { tr: { nm: 'TRADING', mg: 350, lev: 10, age: 7 * 864e5, cool: 24 * 36e5, max: 4, maxP: 8, tfs: ['4h'], a: 3, r: .75, cap: .036, wmin: 70 },
   sh: { nm: 'SHOOTER', mg: 50, lev: 15, age: 12 * 36e5, cool: 36e5, max: 6, maxP: 12, tfs: ['15m', '30m'], a: 4, r: .25, cap: .05, wmin: 80 } };
 const FEE = .0016, /* comisión + deslizamiento (antes solo comisión, .0008) */ TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
-function gates(E, f) { const PR = E && E.test && E.test.propias; return !!(E && E.thr != null && PR && PR.pct >= 1 && PR.pct > PR.base_pct && (PR.gana || PR.obj1 || 0) >= CFG[f].wmin); }
+/* octubre 2026 · más estricta: además tiene que ganar en las dos mitades de la prueba, que su umbral haya pasado la validación estricta
+   y ganar por operación al menos lo que ganaron las señales de los bots en esos mismos meses */
+function gates(E, f) { const PR = E && E.test && E.test.propias; if (!(E && E.thr != null && PR && PR.pct >= 1 && PR.pct > PR.base_pct && (PR.gana || PR.obj1 || 0) >= CFG[f].wmin)) return false;
+  if (PR.apta === false) return false; if (Array.isArray(PR.mitades) && !PR.mitades.every(x => x != null && x > 0)) return false; if (PR.bot_pct != null && PR.pct < PR.bot_pct) return false; return true; }
 /* semáforo (octubre 2026): el mismo de la página, calculado acá con datos compartidos para que sea igual en todas las cuentas y dispositivos.
    Las operaciones de la IA solo cuentan (billetera y Telegram) con el semáforo en VERDE; en amarillo o rojo sigue practicando y estudiando todo.
    · últimos 90 días contra los bots (estudio diario): gana más que ellos +2 · ≥ 80 % de lo que sacan ellos +1
@@ -18,7 +21,7 @@ function gates(E, f) { const PR = E && E.test && E.test.propias; return !!(E && 
    verde con 3 o más y al menos 20 comparaciones; amarillo con 1 o 2; rojo con 0 o menos */
 function sem(f, M, ops, now) { const why = []; let sc = 0;
   const R = [...((M.tr && M.tr.exit && M.tr.exit.ops) || []), ...((M.sh && M.sh.exit && M.sh.exit.ops) || [])].filter(r => r[3] >= now - 90 * 864e5 && (f === 'sh' ? r[0] === 'x' : r[0] !== 'x'));
-  const sb = R.reduce((a, r) => a + r[4], 0), si = R.reduce((a, r) => a + r[6], 0), n = R.length, eff = sb > 0 ? 100 * si / sb : (si > 0 ? 999 : null);
+  const sb = R.reduce((a, r) => a + r[4], 0), si = R.reduce((a, r) => a + r[6], 0), n = R.length, eff = n ? 100 * si / Math.max(sb, n) : null; // los bots cuentan como mínimo +1 % por operación (antes con ganancias chicas se disparaba)
   if (eff != null) { if (eff >= 100) { sc += 2; why.push('le gana a los bots (' + Math.round(Math.min(eff, 999)) + ' %)'); } else if (eff >= 80) { sc += 1; why.push('casi iguala a los bots (' + Math.round(eff) + ' %)'); } else why.push('saca menos que los bots (' + Math.round(eff) + ' %)'); }
   if (gates(M[f] && M[f].entry, f)) { sc += 1; why.push('sus entradas propias ganaron en la prueba'); } else why.push('sus entradas propias todavía no ganan en la prueba');
   const C = ops.filter(o => o.f === f && o.st !== 'open' && o.thr != null && o.p >= o.thr), net = +C.reduce((a, o) => a + (o.pnl || 0), 0).toFixed(2);

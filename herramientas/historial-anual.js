@@ -9,7 +9,14 @@
    Prueba local sin internet: BT_MOCK=1 node herramientas/historial-anual.js */
 const fs = require('fs');
 const IA = require('../ia-core.js'), IAON = !!process.env.IA; // con IA=1 también guarda el recorrido de cada señal para que la IA estudie
-const IAD = { tr: { ent: [], ops: [] }, sh: { ent: [], ops: [] } };
+const IAD = { tr: { ent: [], ops: [], old: [] }, sh: { ent: [], ops: [], old: [] } };
+/* octubre 2026 · la IA estudia también las VERSIONES VIEJAS de los bots: las señales que las reglas de antes hubieran tomado y que un filtro
+   nuevo saca (BTC en contra, BTC sin fuerza, moneda impredecible, SHOOTER bajo la EMA 200 o fuera de la lista de 7 días), con la gestión de
+   antes (sin salida anticipada). Así ve los errores que corrigió cada versión y si alguna sacó señales buenas. Una por moneda y filtro cada pausa. */
+const OLDLAST = {};
+function iaVieja(fam, filtro, o) { const k = fam + filtro + o.s; if (OLDLAST[k] && o.t - OLDLAST[k] < o.cool) return; OLDLAST[k] = o.t;
+  const res = sim(o.rb, o.resMs, o.maxAge, o.j0, o.entry, o.dir, o.sl, o.g.r, o.g.L, o.g.ex, o.llConf, o.t); if (res.open) return; const ia = iaPath(o.P, o.j0, o.entry, o.dir, o.sl, o.g.r, o.maxAge, o.t, o.resMs);
+  IAD[fam].old.push({ m: fam === 'sh' ? 'x' : 'medio', setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.g.r, L: o.g.L, tf: o.tf, maxAge: o.maxAge, botPct: +res.pct.toFixed(3), botHit: res.hit, kind: res.kind, filtro, X: ia.X, B: ia.B }); }
 const API = process.env.BT_API || 'https://data-api.binance.vision/api/v3';
 const MOCK = !!process.env.BT_MOCK;
 const DAY = 864e5, NOW = +(process.env.BT_NOW || Date.now()), SPAN = +(process.env.BT_DAYS || 365) * DAY, FROM = NOW - SPAN, FEE = .0005;
@@ -228,9 +235,11 @@ async function run4h(s, rank) {
   for (let i = 299; i < tb.length; i++) { const t = tb[i].t + T4.tfMs; if (t < FROM) continue;
     if (IAON) iaEntry4h(P4, P1, rb, i, t, llConf, rank, MX);
     const c = classify4h(tb.slice(i - 298, i + 1), rank); if (!c) continue;
-    if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) continue; // solo a favor de BTC (4h vs EMA 50), como la página
-    if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) continue; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
-    if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
+    let viejo = null;
+    if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) viejo = 'contra_btc'; // solo a favor de BTC (4h vs EMA 50), como la página
+    else if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) viejo = 'btc_sin_fuerza'; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
+    if (!viejo && tooWild(rb, W1, t)) viejo = 'impredecible'; // moneda impredecible esa semana
+    if (viejo) { if (IAON) { const g = GEO[c.k]; iaVieja('tr', viejo, { s, t, dir: c.dir, setup: c.setup, entry: tb[i].close, sl: slOf(g, c.atrP), g, rb, P: P1, j0: idxAfter(rb, t), resMs: T4.resMs, maxAge: T4.maxAge, llConf: g.ll ? llConf : null, cool: T4.cool, tf: '4h' }); } continue; }
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
     const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7));
     if (RECUP) res.alt = RV.map(V => { const o = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
@@ -260,10 +269,12 @@ async function runShooter(s, rank = 0) {
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
         if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
-      if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) continue; // v7: solo con el precio sobre la EMA 200
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
-      if (tooWild(hb, W1, t)) continue;
-      if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) continue; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
+      let viejo = null;
+      if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) viejo = 'bajo_ema200'; // v7: solo con el precio sobre la EMA 200
+      else if (tooWild(hb, W1, t)) viejo = 'impredecible';
+      else if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) viejo = 'fuera_lista_7d'; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
+      if (viejo) { if (IAON) { const g = GEO.sh; iaVieja('sh', viejo, { s, t, dir: 1, setup: 'sh-c', entry: cb, sl: slOf(g, atrP), g, rb: tb, P: P3, j0: i + 1, resMs: tfMs, maxAge: SH.maxAge, llConf: null, cool: SH.cool, tf }); } continue; }
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
       const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, process.env.SIN_V9X ? null : Object.assign({}, SXV9X));
       if (SALIDA) res.sal = SVX.map(X => sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, X)));
@@ -442,7 +453,7 @@ async function main() { const t0 = Date.now();
     for (const o of ops) if (o.ia && !o.open) (o.m === 'x' ? IAD.sh : IAD.tr).ops.push({ m: o.m, setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.r, L: o.L,
       tf: o.tf || '4h', maxAge: o.m === 'x' ? SH.maxAge : T4.maxAge, botPct: +o.pct.toFixed(3), botHit: o.hit, kind: o.kind, X: o.ia.X, B: o.ia.B });
     fs.writeFileSync('ia-datos.json.gz', zlib.gzipSync(JSON.stringify({ upd: NOW, fee: FEE, exitF: IA.EXIT_F, entryF: IA.ENTRY_F, syms: base.slice(0, Math.max(n4, nS)).map(x => x.replace('USDT', '')), ...IAD })));
-    console.log('IA: operaciones', IAD.tr.ops.length, IAD.sh.ops.length, 'entradas', IAD.tr.ent.length, IAD.sh.ent.length); }
+    console.log('IA: operaciones', IAD.tr.ops.length, IAD.sh.ops.length, 'entradas', IAD.tr.ent.length, IAD.sh.ent.length, 'de versiones viejas', IAD.tr.old.length, IAD.sh.old.length); }
   console.log(JSON.stringify({ cal, azar, ops: ops.length, errores: err.length, secs: out.secs }, null, 1));
   console.log('suplementos', JSON.stringify(out.suplementos));
   if (MOCK || process.env.NO_PUBLISH) return;

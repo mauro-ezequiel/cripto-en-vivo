@@ -5752,7 +5752,7 @@ function iaProg(){const P=IAM&&IAM.progreso;if(!P)return '';const v=P.valor,h=(P
     <div class="ia-bar2"><i id="iaPB" style="width:${w}%;background:${col}"></i></div>
     <div class="ia-bar-l"><span>${prev} %</span><span id="iaPC">${v!=null?iaD(v)+' %':''}</span><span>${next?next+' %':'🏆'}</span></div>
     <div class="ia-metas">${IA_META.map((g,i)=>`<span class="${i<lv?'ok':i===lv?'cur':''}">${i<lv?'✓ ':''}${g} %</span>`).join('')}</div>
-    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes.':iaMas(`En el último estudio diario: ${iaD(v)} %. El número grande se mueve en vivo.`,`En los últimos 3 meses la IA saca el ${iaD(v)} % de la ganancia que sacan los bots con las mismas señales. Objetivo actual: ${nxt}. Cuando llega a un objetivo no se detiene: pasa al siguiente.`)}</div>
+    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes.':iaMas(`En el último estudio diario: ${iaD(v)} %. El número grande se mueve en vivo.`,`En los últimos 3 meses la IA saca el ${iaD(v)} % de la ganancia que sacan los bots con las mismas señales (si los bots ganan menos de +1 % por operación, se compara contra ese +1 %, para que el número no se dispare). Objetivo actual: ${nxt}. Cuando llega a un objetivo no se detiene: pasa al siguiente.`)}</div>
     ${pts?`<svg class="ia-spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#6f8fc4" stroke-width="1.5"/></svg><div class="ia-mut">Últimos ${h.length} estudios diarios.</div>`:''}
     ${G.length?`<div class="ia-goals"><div class="ia-prog-t"><b>Objetivos de calidad</b><span style="font-size:14px">${ok} de ${G.length}</span></div>${G.map(g=>`<div class="ia-goal ${g[1]?'ok':''}"><i>${g[1]?'✓':'✗'}</i><div>${esc(g[0])}<small>${g[2]}</small></div></div>`).join('')}
       <div class="ia-mut">${iaMas('Prioridad: eficiencia, pocas pérdidas, más señales.','Siempre en este orden: que cada operación sea eficiente, perder lo mínimo y, sin perder eso, dar la mayor cantidad de señales.')}</div></div>`:''}
@@ -5770,7 +5770,7 @@ function iaplCalc(){const now=Date.now(),R=iaRecs().filter(r=>r[3]>=now-90*864e5
   const seen=new Set(R.map(r=>r[2]+'|'+Math.round(r[3]/36e5)));let ob=0,oi=0,no=0,nn=0;
   for(const o of iaplOps()){const x=IAPL.c[o.id];if(!x)continue;if(seen.has(o.sym.replace('USDT','')+'|'+Math.round(o.t/36e5)))continue;
     if(x.done){sb+=x.bot;si+=x.ia;n++;nn++;}else{ob+=x.bot;oi+=x.ia;no++;}}
-  return {v:sb>0?100*si/sb:null,vo:sb+ob>0?100*(si+oi)/(sb+ob):null,n,nn,no,sb,si};}
+  return {v:n?100*si/Math.max(sb,n):null,vo:n+no?100*(si+oi)/Math.max(sb+ob,n+no):null,n,nn,no,sb,si};} /* octubre 2026: los bots cuentan como mínimo +1 % por operación (si ganan casi nada el número ya no se dispara) */
 async function iaplTick(){if(IAPL.busy||!IAM||!window.IA)return;IAPL.busy=true;let ch=false;
   try{const before=iaplCalc().v,todo=iaplOps().filter(o=>{const x=IAPL.c[o.id];return !x||(!x.done&&Date.now()-x.t>2*6e4)||(x.done===false&&o.state!=='open');}).slice(0,4);
     for(const o of todo){let sh=null;try{sh=await iaShadowOp(o);}catch(e){}if(!sh||sh.wait)continue;const closed=o.state!=='open',p=tickers[o.sym]&&tickers[o.sym].c;
