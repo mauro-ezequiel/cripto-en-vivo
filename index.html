@@ -1747,7 +1747,7 @@ function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{tr
   try{if(saved&&!saved.includes('trend')&&!localStorage.getItem('cv_tr_'+m)){saved.push('trend');localStorage.setItem('cv_tr_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('canal')&&!localStorage.getItem('cv_cn_'+m)){saved.push('canal');localStorage.setItem('cv_cn_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('kon')&&!localStorage.getItem('cv_kon_'+m)){saved.push('kon');localStorage.setItem('cv_kon_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
-  active=new Set((indUser()||saved||M.def||M.inds).filter(k=>M.inds.includes(k)));
+  active=new Set((indUser()||saved||(M.def||M.inds).filter(k=>k!=='fig')).filter(k=>M.inds.includes(k))); // las figuras arrancan apagadas: se prenden desde Indicadores
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
   tf=(window.__bootTf&&TF_MS[window.__bootTf]&&TF_MODE[m].includes(window.__bootTf))?window.__bootTf:M.tf;window.__bootTf=null;
