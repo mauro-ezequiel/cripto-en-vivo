@@ -501,6 +501,7 @@ body.trn-on{overflow:hidden}
 .ia-plog{margin-top:4px;line-height:1.5}.ia-plog small{color:#56688a}
 .ia-lvl{font-size:12px;margin:0 0 6px;color:#9fb2cf}.ia-lvl span{color:#6f8fc4}.ia-bar-l{display:flex;justify-content:space-between;font-size:10.5px;color:#6e819f;margin-top:2px}
 .ia-metas{display:flex;flex-wrap:wrap;gap:4px;margin:6px 0}.ia-metas span{font-size:10.5px;padding:2px 6px;border-radius:9px;background:#16243b;color:#5d6f8c}.ia-metas .ok{background:rgba(46,157,106,.18);color:#5fc495}.ia-metas .cur{background:#2b4a7a;color:#c2d0e6;font-weight:700}
+.ia-parts{margin:8px 0 2px;display:grid;gap:5px}.ia-part{display:grid;grid-template-columns:1fr auto;gap:2px 8px;font-size:12.5px;align-items:center}.ia-part small{grid-column:1/-1;color:#6e819f;font-size:11.5px}.ia-part b{font-variant-numeric:tabular-nums}.ia-part b.up{color:#2e9d6a}.ia-part b.dn{color:#c96a6a}.ia-part .pb{grid-column:1/-1;position:relative;height:5px;background:#16243b;border-radius:3px;overflow:hidden}.ia-part .pb i{position:absolute;left:0;top:0;bottom:0;border-radius:3px}.ia-part .pb em{position:absolute;left:33.3%;top:-1px;bottom:-1px;width:1px;background:#c2d0e6;opacity:.6}
 .ia-goals{margin-top:8px;border-top:1px solid #16243b;padding-top:6px}.ia-goal{display:flex;gap:8px;align-items:flex-start;padding:3px 0;font-size:12.5px}.ia-goal i{font-style:normal;width:16px;color:#b04040;font-weight:800}.ia-goal.ok i{color:#2e9d6a}.ia-goal small{display:block;color:#6e819f;font-size:11px}
 .ia-ops-h{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:6px}.ia-tabs{display:flex;gap:4px}.ia-tabs button{background:#0f1a2d;color:#9fb2cf;border:1px solid #1c2c47;border-radius:14px;font-size:12px;padding:4px 10px;cursor:pointer}.ia-tabs button.on{background:#2b4a7a;color:#e3ebf7}
 .iab.on{background:#1f5a44;border-color:#2e9d6a;color:#d6f5e6}.ia-g>div{background:#0f1a2d;border-color:#1c2c47;color:#6e819f}.ia-g b{color:#c2d0e6}.ia-g b.up,.ia-g .up{color:#4fbf8a}.ia-g b.dn,.ia-g .dn{color:#d26a6a}
@@ -5747,12 +5748,13 @@ function iaProg(){const P=IAM&&IAM.progreso;if(!P)return '';const v=P.valor,h=(P
   const top=Math.max(150,...h.map(x=>x[1]),next||0);
   const pts=h.length>1?h.map((x,i)=>`${(i/(h.length-1)*100).toFixed(1)},${(28-Math.min(top,x[1])/top*26).toFixed(1)}`).join(' '):'';
   const G=iaGoals(),ok=G.filter(g=>g[1]).length,nxt=next===100?'igualar a los bots (100 %)':next?`sacar ${iaN(next/100,next%100?2:0)} veces la ganancia de los bots (${next} %)`:'superó todos los objetivos';
-  return `<div class="ia-prog"><div class="ia-prog-t"><b>Aprendizaje de la IA contra los bots</b><span><em id="iaPD" class="ia-pd"></em><b id="iaPN">${v==null?'sin datos':iaD(IAPL.shown!=null?IAPL.shown:v)+' %'}</b></span></div><div id="iaPL" class="ia-pl"></div>
+  return `<div class="ia-prog"><div class="ia-prog-t"><b>Progreso general de la IA</b><span><em id="iaPD" class="ia-pd"></em><b id="iaPN">${v==null?'sin datos':iaD(IAPL.shown!=null?IAPL.shown:v)+' %'}</b></span></div><div id="iaPL" class="ia-pl"></div>
     <div class="ia-lvl"><b>Nivel ${lv}</b> · <span>próximo objetivo: ${next?next+' %':'—'}</span>${v!=null&&next?` · faltan ${iaD(next-v)} puntos`:''}</div>
     <div class="ia-bar2"><i id="iaPB" style="width:${w}%;background:${col}"></i></div>
     <div class="ia-bar-l"><span>${prev} %</span><span id="iaPC">${v!=null?iaD(v)+' %':''}</span><span>${next?next+' %':'🏆'}</span></div>
+    <div id="iaParts">${iaPartsHTML(P.partes)}</div>
     <div class="ia-metas">${IA_META.map((g,i)=>`<span class="${i<lv?'ok':i===lv?'cur':''}">${i<lv?'✓ ':''}${g} %</span>`).join('')}</div>
-    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes.':iaMas(`En el último estudio diario: ${iaD(v)} %. El número grande se mueve en vivo.`,`En los últimos 3 meses la IA saca el ${iaD(v)} % de la ganancia que sacan los bots con las mismas señales (si los bots ganan menos de +1 % por operación, se compara contra ese +1 %, para que el número no se dispare). Objetivo actual: ${nxt}. Cuando llega a un objetivo no se detiene: pasa al siguiente.`)}</div>
+    <div class="ia-mut">${v==null?'Todavía no hay operaciones suficientes.':iaMas(`100 % = el nivel actual de los bots. En el último estudio diario: ${iaD(v)} %. Se mueve en vivo.`,`Compara la IA con los bots en todo, con las mismas señales de los últimos 3 meses: ganancia por operación (peso 35), cuánto pierde cuando pierde (25), su peor operación (10), cuántas gana (15) y cuántas señales buenas propias da por día (15). Cada parte es IA ÷ bots: 100 % = igual que los bots. La ganancia de los bots cuenta como mínimo +1 % por operación para que el número no se dispare. Objetivo actual: ${nxt}. Cuando llega a un objetivo no se detiene: pasa al siguiente.`)}</div>
     ${pts?`<svg class="ia-spark" viewBox="0 0 100 30" preserveAspectRatio="none"><polyline points="${pts}" fill="none" stroke="#6f8fc4" stroke-width="1.5"/></svg><div class="ia-mut">Últimos ${h.length} estudios diarios.</div>`:''}
     ${G.length?`<div class="ia-goals"><div class="ia-prog-t"><b>Objetivos de calidad</b><span style="font-size:14px">${ok} de ${G.length}</span></div>${G.map(g=>`<div class="ia-goal ${g[1]?'ok':''}"><i>${g[1]?'✓':'✗'}</i><div>${esc(g[0])}<small>${g[2]}</small></div></div>`).join('')}
       <div class="ia-mut">${iaMas('Prioridad: eficiencia, pocas pérdidas, más señales.','Siempre en este orden: que cada operación sea eficiente, perder lo mínimo y, sin perder eso, dar la mayor cantidad de señales.')}</div></div>`:''}
@@ -5766,11 +5768,25 @@ try{const x=JSON.parse(localStorage.getItem('cv_ia_live')||'null');if(x){IAPL.c=
 const iaplSave=()=>{try{const keep={};for(const [k,v] of Object.entries(IAPL.c))if(Date.now()-v.t<100*864e5)keep[k]=v;IAPL.c=keep;localStorage.setItem('cv_ia_live',JSON.stringify({c:keep,log:IAPL.log.slice(-40)}));}catch(e){}};
 const iaplMg=o=>(SIM[o.m]&&SIM[o.m].margin)||350;
 function iaplOps(){const up=IAM&&IAM.upd||0;return OPS.filter(o=>(o.m==='medio'||o.m==='x')&&!o.lite&&o.entry&&(o.state==='open'||(o.closeAt||o.t)>up));}
-function iaplCalc(){const now=Date.now(),R=iaRecs().filter(r=>r[3]>=now-90*864e5);let sb=R.reduce((a,r)=>a+r[4],0),si=R.reduce((a,r)=>a+r[6],0),n=R.length;
+/* PROGRESO GENERAL (octubre 2026): 100 % = el nivel actual de los bots. Igual que puntaje() del estudio diario: cada parte es IA ÷ bots × 100
+   (tope 300) con las mismas señales y se promedian con pesos: ganancia por operación 35, pierde menos 25, peor operación 10, % ganadas 15
+   y señales buenas propias 15 (esta última viene del estudio diario). La ganancia de los bots cuenta como mínimo +1 % y las pérdidas como mínimo 1 %. */
+const IA_PESOS=[['ganancia','Ganancia por operación',35],['perdida','Pierde menos cuando pierde',25],['peor','Peor operación',10],['gana','Operaciones ganadas',15],['senales','Señales buenas propias',15]];
+function iaScore(B,I){if(B.length<5)return null;const cl=v=>Math.max(0,Math.min(300,v)),avg=a=>a.reduce((s,x)=>s+x,0)/a.length,lb=B.filter(x=>x<0),li=I.filter(x=>x<0),w=a=>a.filter(x=>x>0).length/a.length,mB=Math.min(...B),mI=Math.min(...I);
+  const P={ganancia:[cl(100*avg(I)/Math.max(avg(B),1)),avg(I),avg(B)],perdida:[cl(100*Math.max(lb.length?-avg(lb):0,1)/Math.max(li.length?-avg(li):0,1)),li.length?avg(li):0,lb.length?avg(lb):0],
+    peor:[cl(100*Math.max(-mB,1)/Math.max(-mI,1)),mI,mB],gana:[cl(100*w(I)/Math.max(w(B),.01)),w(I)*100,w(B)*100]};
+  const sg=(IAM&&IAM.progreso&&IAM.progreso.partes||[]).find(x=>x.k==='senales');if(sg)P.senales=[sg.pct,sg.ia,sg.bot];
+  let tw=0,sm=0;const partes=[];for(const [k,nombre,peso] of IA_PESOS)if(P[k]){tw+=peso;sm+=P[k][0]*peso;partes.push({k,nombre,peso,pct:P[k][0],ia:P[k][1],bot:P[k][2]});}
+  return {valor:sm/tw,partes};}
+function iaPartsHTML(partes){if(!partes||!partes.length)return '';const u=(k,v)=>k==='gana'?iaD(v)+' %':k==='senales'?iaD(v)+' por día':iaPct2(v);
+  return `<div class="ia-parts">${partes.map(x=>`<div class="ia-part"><span>${esc(x.nombre)} <small style="display:inline;grid-column:auto">· peso ${x.peso}</small></span><b class="${x.pct>=100?'up':'dn'}">${iaD(x.pct)} %</b>
+    <div class="pb"><i style="width:${Math.min(100,x.pct/3)}%;background:${x.pct>=100?'#2e9d6a':'#8a5a2b'}"></i><em></em></div><small>IA ${u(x.k,x.ia)} · bots ${u(x.k,x.bot)}</small></div>`).join('')}</div>`;}
+function iaplCalc(){const now=Date.now(),R=iaRecs().filter(r=>r[3]>=now-90*864e5);let sb=R.reduce((a,r)=>a+r[4],0),si=R.reduce((a,r)=>a+r[6],0),n=R.length;const B=R.map(r=>r[4]),I=R.map(r=>r[6]),Bo=[],Io=[];
   const seen=new Set(R.map(r=>r[2]+'|'+Math.round(r[3]/36e5)));let ob=0,oi=0,no=0,nn=0;
   for(const o of iaplOps()){const x=IAPL.c[o.id];if(!x)continue;if(seen.has(o.sym.replace('USDT','')+'|'+Math.round(o.t/36e5)))continue;
-    if(x.done){sb+=x.bot;si+=x.ia;n++;nn++;}else{ob+=x.bot;oi+=x.ia;no++;}}
-  return {v:n?100*si/Math.max(sb,n):null,vo:n+no?100*(si+oi)/Math.max(sb+ob,n+no):null,n,nn,no,sb,si};} /* octubre 2026: los bots cuentan como mínimo +1 % por operación (si ganan casi nada el número ya no se dispara) */
+    if(x.done){sb+=x.bot;si+=x.ia;n++;nn++;B.push(x.bot);I.push(x.ia);}else{ob+=x.bot;oi+=x.ia;no++;Bo.push(x.bot);Io.push(x.ia);}}
+  const sc=iaScore(B,I),so=no?iaScore(B.concat(Bo),I.concat(Io)):null;
+  return {v:sc?sc.valor:null,vo:so?so.valor:null,partes:sc?sc.partes:null,n,nn,no,sb,si};} /* octubre 2026: los bots cuentan como mínimo +1 % por operación (si ganan casi nada el número ya no se dispara) */
 async function iaplTick(){if(IAPL.busy||!IAM||!window.IA)return;IAPL.busy=true;let ch=false;
   try{const before=iaplCalc().v,todo=iaplOps().filter(o=>{const x=IAPL.c[o.id];return !x||(!x.done&&Date.now()-x.t>2*6e4)||(x.done===false&&o.state!=='open');}).slice(0,4);
     for(const o of todo){let sh=null;try{sh=await iaShadowOp(o);}catch(e){}if(!sh||sh.wait)continue;const closed=o.state!=='open',p=tickers[o.sym]&&tickers[o.sym].c;
@@ -5785,7 +5801,7 @@ function iaplApply(){const el=$('iaPN');if(!el)return;const L=iaplCalc(),v=L.v!=
     const bd=$('iaPD');if(bd){bd.textContent=(d>0?'+':'−')+iaD(Math.abs(d))+' puntos';bd.className='ia-pd '+(d>0?'up':'dn')+' show';setTimeout(()=>bd.classList.remove('show'),4000);}}
   else el.textContent=iaD(v)+' %';
   const lv=IA_META.filter(g=>v>=g).length,prev=lv?IA_META[lv-1]:0,next=IA_META[lv]||null,bar=$('iaPB');if(bar)bar.style.width=(next?Math.max(2,Math.min(100,(v-prev)/(next-prev)*100)):100)+'%';
-  const cur=$('iaPC');if(cur)cur.textContent=iaD(v)+' %';
+  const cur=$('iaPC');if(cur)cur.textContent=iaD(v)+' %';const pp=$('iaParts');if(pp&&L.partes)pp.innerHTML=iaPartsHTML(L.partes);
   const lab=$('iaPL');if(lab){const lg=IAPL.log.slice(-4).reverse();lab.innerHTML=`<span class="ia-live"><i></i>EN VIVO</span> ${L.nn?`${L.nn} operación${L.nn>1?'es':''} nueva${L.nn>1?'s':''} desde el último estudio`:'esperando que cierre la próxima operación de los bots'}${L.no?` · ${L.no} en curso (con ellas: ${L.vo!=null?iaD(L.vo)+' %':'—'})`:''}
       ${lg.length?`<div class="ia-plog">${lg.map(x=>`<div><b class="${x.d>=0?'up':'dn'}">${x.d>=0?'+':'−'}${iaD(Math.abs(x.d))}</b> ${esc(x.sym)} ${esc(x.m)}: IA ${iaPct2(x.ia)} · bot ${iaPct2(x.bot)} <small>${new Date(x.t).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})}</small></div>`).join('')}</div>`:''}`;}}
 setInterval(iaplTick,6e4);setTimeout(iaplTick,15000);setInterval(()=>{if(IAOPEN)iaplApply();},2e4);
@@ -6009,7 +6025,7 @@ Reglas: usá solo los datos de abajo para hablar de resultados, no inventes núm
 CÓMO FUNCIONA: los bots dan señales con reglas fijas (TRADING 4 h: retroceso en tendencia con BTC a favor, 350 USD × 10; (TRADING+ fue eliminado en octubre 2026); SHOOTER 15 y 30 min: rebote tras caída de 3 % en 1 h con la tendencia de 1 h a favor, 50 USD × 15; ACCIONES: rebote tras caída de 6 meses o ruptura de 20 días con volumen, con el S&P 500 sobre su media de 200 días · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 veces el stop · 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen)). Cierran 1/3 en cada objetivo y pasan el stop a la entrada tras el objetivo 1. La IA usa las mismas entradas pero decide sola cuándo salir: en cada cierre de vela calcula la probabilidad de que el precio avance 1,5 ATR a favor antes de retroceder 1,5 ATR; si baja del umbral sale; si sigue alta, mantiene aunque el bot haya cerrado. Stop de seguridad: entrada tras el objetivo 1, luego el objetivo anterior. Se reentrena cada día con el último año; cada mes solo aprendió con operaciones ya terminadas.
 EFECTIVIDAD (operaciones ganadas y ganancia por operación en % del margen): ${JSON.stringify(R.resumen||{})}
 ESTIMACIÓN PARA ALCANZAR A LOS BOTS: ${iaEtaTxt()}
-AUTOEVALUACIÓN: saca el ${R.progreso&&R.progreso.valor} % de la ganancia de los bots (objetivos sucesivos: ${IA_META.join(', ')} %; cuando llega a uno sigue con el próximo). Objetivos de calidad: ${iaGoals().map(g=>(g[1]?'✓ ':'✗ ')+g[0]+' ('+g[2]+')').join('; ')}.
+AUTOEVALUACIÓN: progreso general ${R.progreso&&R.progreso.valor} % (100 % = nivel actual de los bots; junta ganancia por operación, pérdidas, peor operación, % ganadas y señales buenas propias: ${(R.progreso&&R.progreso.partes||[]).map(x=>x.nombre+' '+x.pct+' %').join(', ')}) (objetivos sucesivos: ${IA_META.join(', ')} %; cuando llega a uno sigue con el próximo). Objetivos de calidad: ${iaGoals().map(g=>(g[1]?'✓ ':'✗ ')+g[0]+' ('+g[2]+')').join('; ')}.
 OPERACIONES PROPIAS DE LA IA: ${iaOpsTxt().replace(/\n/g,' · ')}
  ${(R.progreso&&R.progreso.notas||[]).join(' ')}
 PRUEBA DE SALIDAS: TRADING/TRADING+ ${JSON.stringify(R.tr&&R.tr.exit&&R.tr.exit.test&&{bot:R.tr.exit.test.bot,ia:R.tr.exit.test.ia,auc:R.tr.exit.test.auc})} · SHOOTER ${JSON.stringify(R.sh&&R.sh.exit&&R.sh.exit.test&&{bot:R.sh.exit.test.bot,ia:R.sh.exit.test.ia,auc:R.sh.exit.test.auc})}
@@ -6053,7 +6069,7 @@ async function iaAnalyze(sym){const s=sym+'USDT',t=tickers[s];if(!t)return `No e
   out.push('Es información para que decidas vos, no un consejo de inversión.');return out.join('\n');}
 function iaResumenTxt(){const R=IAM&&IAM.resumen,P=IAM&&IAM.progreso;if(!R)return 'Todavía no tengo el resumen de la comparación.';
   const l=['TRADING','SHOOTER'].map(m=>{const x=R['3meses'][m];return x&&x.n?`${m}: bot ${iaN(x.bot_gana,0)} % ganadas y ${iaPct(x.bot_pct)} por operación · IA ${iaN(x.ia_gana,0)} % y ${iaPct(x.ia_pct)}`:'';}).filter(Boolean);
-  return `${P&&P.valor!=null?`Hoy saco el ${iaN(P.valor,0)} % de la ganancia de los bots en los últimos 3 meses (100 % = igualarlos).\n`:''}${l.join('\n')}\n${(P&&P.notas||[]).join('\n')}`;}
+  return `${P&&P.valor!=null?`Mi progreso general es ${iaN(P.valor,0)} % en los últimos 3 meses (100 % = el nivel de los bots).\n${(P.partes||[]).map(x=>'· '+x.nombre+': '+iaN(x.pct,0)+' %').join('\n')}\n`:''}${l.join('\n')}\n${(P&&P.notas||[]).join('\n')}`;}
 function iaMisResultados(){const now=Date.now(),L=OPS.filter(o=>now-o.t<7*864e5&&o.state!=='open'&&(o.m==='medio'||o.m==='x'||o.m==='a'));if(!L.length)return 'En los últimos 7 días no se cerró ninguna operación en esta página.';
   const by={};for(const o of L){const k=o.m==='x'?'SHOOTER':o.m==='a'?'ACCIONES':o.setup==='tp-x'?'TRADING+':'TRADING';const b=by[k]=by[k]||{n:0,w:0,u:0};b.n++;if((o.pnl||0)>0)b.w++;b.u+=o.pnl||0;}
   const tot=L.reduce((a,o)=>a+(o.pnl||0),0);return `Últimos 7 días (simulación de la página): ${L.length} operaciones cerradas, resultado ${tot>=0?'+':''}${tot.toFixed(2).replace('.',',')} USD.\n`+Object.entries(by).map(([k,b])=>`${k}: ${b.n} operaciones, ${b.w} ganadas (${Math.round(b.w/b.n*100)} %), ${b.u>=0?'+':''}${b.u.toFixed(2).replace('.',',')} USD`).join('\n');}

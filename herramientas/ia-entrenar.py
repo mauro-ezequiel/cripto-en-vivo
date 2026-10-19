@@ -489,17 +489,60 @@ print('resumen', json.dumps(OUT['resumen'], ensure_ascii=False))
 OUT['syms'] = D.get('syms', [])
 
 
+PESOS = [('ganancia', 'Ganancia por operación', 35), ('perdida', 'Pierde menos cuando pierde', 25), ('peor', 'Peor operación', 10),
+         ('gana', 'Operaciones ganadas', 15), ('senales', 'Señales buenas propias', 15)]
+
+
+def puntaje(B, I, sen):
+    """Cada parte es IA ÷ bots × 100 (100 = igual que los bots, tope 300). La ganancia de los bots cuenta como mínimo +1 % por operación y
+    las pérdidas como mínimo 1 %, para que un número chico no dispare el resultado. Igual que iaScore() de la página."""
+    if len(B) < 5:
+        return None
+    B, I = np.array(B, float), np.array(I, float); cl = lambda v: float(max(0, min(300, v)))
+    lb, li = B[B < 0], I[I < 0]
+    P = {'ganancia': [cl(100 * I.mean() / max(B.mean(), 1)), round(float(I.mean()), 2), round(float(B.mean()), 2)],
+         'perdida': [cl(100 * max(-lb.mean() if len(lb) else 0, 1) / max(-li.mean() if len(li) else 0, 1)), round(float(li.mean()), 2) if len(li) else 0, round(float(lb.mean()), 2) if len(lb) else 0],
+         'peor': [cl(100 * max(-B.min(), 1) / max(-I.min(), 1)), round(float(I.min()), 2), round(float(B.min()), 2)],
+         'gana': [cl(100 * (I > 0).mean() / max((B > 0).mean(), .01)), round(float((I > 0).mean() * 100), 1), round(float((B > 0).mean() * 100), 1)]}
+    if sen:
+        P['senales'] = sen
+    tw = sum(w for k, _, w in PESOS if k in P)
+    val = sum(P[k][0] * w for k, _, w in PESOS if k in P) / tw
+    return {'valor': round(val, 2), 'partes': [{'k': k, 'nombre': nm, 'peso': w, 'pct': round(P[k][0], 1), 'ia': P[k][1], 'bot': P[k][2]} for k, nm, w in PESOS if k in P]}
+
+
+def senales():
+    """Señales buenas propias por día contra las señales de los bots por día (últimos 3 meses). Cada entrada propia cuenta según su
+    calidad: (ganancia por operación de la IA ÷ la de los bots en los mismos meses)², como mucho 1, y 0 si no ganó en las dos mitades de la
+    prueba. Más señales malas no suman. Tope 200 %."""
+    ia_d = bot_d = 0.
+    for f in FAM:
+        bot_d += len([o for o in D[f]['ops'] if o['t'] >= D['upd'] - 90 * DAY]) / 90
+        p = ((OUT[f].get('entry') or {}).get('test') or {}).get('propias') or {}
+        if p.get('n') and p.get('pct') is not None:
+            q = max(0., min(1., p['pct'] / max(p.get('bot_pct') or 1, 1))) ** 2  # al cuadrado: una señal a mitad de calidad vale 1/4
+            if p.get('apta') is False or any(x is None or x <= 0 for x in (p.get('mitades') or [])):
+                q = 0.  # si no ganó en las dos mitades de la prueba no cuenta
+            ia_d += (p.get('por_dia') or 0) * q
+    if bot_d <= 0:
+        return None
+    return [float(max(0, min(200, 100 * ia_d / bot_d))), round(ia_d, 2), round(bot_d, 2)]
+
+
 def progreso(R, prev):
     """La IA se autoevalúa: cuánto de la ganancia de los bots consigue (100 % = iguala, más = los supera), en los últimos 3 meses."""
     b = sum((x.get('bot_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
     i = sum((x.get('ia_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
     n = sum(x['n'] for x in R['3meses'].values() if x.get('n'))
+    comp = None
     if ANTES:
         val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 2)
     else:
-        # octubre 2026: cuando los bots ganan casi nada la división se disparaba (2,4 ÷ 0,14 = 1.700 %). Ahora los bots cuentan como
-        # mínimo +1 % del margen por operación: para pasar el 100 % la IA tiene que ganar de verdad, no solo "menos poco".
-        val = None if not n else round(max(0, min(1000, 100 * i / max(b, n * 1.0))), 2)
+        # PROGRESO GENERAL (octubre 2026): 100 % = el nivel actual de los bots. Junta varias comparaciones con las mismas señales
+        # (últimos 3 meses): ganancia por operación, pérdida promedio, peor operación, % ganadas y cantidad de señales buenas propias.
+        L = [r for r in allrec if r[3] >= D['upd'] - 90 * DAY]
+        comp = puntaje([r[4] for r in L], [r[6] for r in L], senales())
+        val = comp['valor'] if comp else None
     hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
     notas = []
     pc = lambda v: (f'{v:+.1f}').replace('.', ',')
@@ -515,8 +558,8 @@ def progreso(R, prev):
     old = [h for h in hist[:-1] if h[1] is not None and h[0] <= D['upd'] - 6.5 * DAY]
     if old and val is not None:
         d = val - old[-1][1]
-        notas.append(f"Hace una semana sacaba el {old[-1][1]:.0f} % de lo de los bots: {'mejoró' if d > 0 else 'empeoró' if d < 0 else 'quedó igual'} {abs(d):.0f} puntos.")
-    return {'valor': val, 'hist': hist, 'notas': notas}
+        notas.append(f"Hace una semana estaba en {old[-1][1]:.0f} % (100 % = nivel de los bots): {'mejoró' if d > 0 else 'empeoró' if d < 0 else 'quedó igual'} {abs(d):.0f} puntos.")
+    return {'valor': val, 'hist': hist, 'notas': notas, **({'partes': comp['partes']} if comp else {})}
 
 
 def noticias():
