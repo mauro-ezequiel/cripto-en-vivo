@@ -1,0 +1,50 @@
+name: Comparar IA (actual contra nueva)
+# Se corre a mano: no publica nada. Recalcula los últimos años con los datos de la IA (código de la rama `ref`) y estudia dos veces
+# con los mismos datos: como la IA actual (IA_ANTES=1) y como la nueva. Guarda los dos resultados y los datos en la rama iacmp-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Rama con el código nuevo'
+        default: 'ia-v2'
+      dias:
+        description: 'Días de historia'
+        default: '1095'
+permissions:
+  contents: write
+jobs:
+  comparar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 300
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Recalcular con los datos de la IA
+        run: node --max-old-space-size=14000 herramientas/historial-anual.js | tail -8
+        env:
+          IA: '1'
+          IAX: '1'
+          IAX_N: '30'
+          BT_DAYS: ${{ inputs.dias }}
+          NO_PUBLISH: '1'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Estudiar como la IA actual y como la nueva
+        run: |
+          pip install --quiet numpy scikit-learn
+          for f in ia noticias libro bitacora ia-ops fyg; do curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/$f.json" -o $( [ $f = ia ] && echo prev-ia.json || echo $f.json ) || true; done
+          set -o pipefail
+          IA_ANTES=1 python herramientas/ia-entrenar.py ia-datos.json.gz 2>&1 | tee ia-antes-log.txt
+          mv ia.json ia-antes.json
+          python herramientas/ia-entrenar.py ia-datos.json.gz 2>&1 | tee ia-log.txt
+      - name: Guardar el resultado
+        if: always()
+        run: |
+          mkdir out && for f in ia.json ia-antes.json ia-log.txt ia-antes-log.txt ia-datos.json.gz; do cp $f out/ 2>/dev/null || true; done
+          cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Comparación de la IA"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:iacmp-${{ github.run_id }}
