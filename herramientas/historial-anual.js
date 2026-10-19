@@ -24,7 +24,7 @@ const TFMIN = { '3m': 3, '5m': 5, '15m': 15, '30m': 30 };
 /* universo (probado en octubre 2026 con 14 variantes): todas las cripto con más de 10 M USD de volumen para TRADING y TRADING+,
    y las 30 con más volumen para SHOOTER. Sumar las de menos volumen (2–10 M) o más monedas en SHOOTER empeoró todos los modos:
    esas son las "impredecibles". El filtro de rango de 1 h (BT_WILD) no mejoró nada y queda apagado. */
-const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || 1e7), WILD = +(process.env.BT_WILD || 0);
+const UNI = process.env.BT_UNI || 'all', MINVOL = +(process.env.BT_MINVOL || 5e6), /* octubre 2026: 5 millones (antes 10): TRADING suma monedas sin perder calidad */ WILD = +(process.env.BT_WILD || 0);
 function wildArr(hb) { const out = Array(hb.length).fill(null); let s = 0; for (let i = 0; i < hb.length; i++) { s += (hb[i].high - hb[i].low) / hb[i].close * 100; if (i >= 168) s -= (hb[i - 168].high - hb[i - 168].low) / hb[i - 168].close * 100; if (i >= 167) out[i] = s / 168; } return out; }
 const tooWild = (hb, W, t) => { if (!WILD) return false; const i = lastClosed(hb, 36e5, t); return i >= 0 && W[i] != null && W[i] > WILD; };
 const GEO = {
@@ -144,7 +144,7 @@ function metX(M, t, d) { const N = Array(6).fill(null); if (!M || !M.R.length) r
   let f = null; { const F = M.F; let a = 0, b = F.length; while (a < b) { const m = (a + b) >> 1; if (F[m][0] <= t) a = m + 1; else b = m; } if (a > 0) f = F[a - 1][1]; }
   return [R[i - 288][1] ? R[i][1] / R[i - 288][1] - 1 : 0, R[i - 12][1] ? R[i][1] / R[i - 12][1] - 1 : 0, d * tk, d * L(R[i][2]), d * L(R[i][3]), f == null ? null : d * f * 1e4].map(v => v == null || !isFinite(v) ? null : +v.toFixed(5)); }
 async function klRange(s, tf, tfMs, from, to) { if (FUTSET.has(s)) return klZip(s, tf, tfMs, from, to); const out = []; let st = from;
-  while (st < to) { const d = await getJ(`${API}/klines?symbol=${s}&interval=${tf}&startTime=${st}&endTime=${to}&limit=1000`); if (!d || !d.length) break;
+  while (st < to) { const d = await getJ(`${API}/klines?symbol=${s}&interval=${tf}&startTime=${st}&endTime=${to}&limit=1000`); if (d === undefined) throw new Error('Binance no respondió: ' + s + ' ' + tf); if (!d || !d.length) break; /* antes cortaba sin avisar y la moneda quedaba afuera */
     for (const k of d) out.push(toBar(k)); st = d[d.length - 1][0] + tfMs; if (d.length < 1000) break; if (!MOCK) await sleep(60); }
   return out.filter(b => b.t + tfMs <= to); }
 const idxAfter = (rb, t) => { let lo = 0, hi = rb.length; while (lo < hi) { const mid = (lo + hi) >> 1; if (rb[mid].t < t) lo = mid + 1; else hi = mid; } return lo; };
@@ -167,9 +167,12 @@ function against(rb, j, dir, T) { const o = trendOf(rb), c = rb[j].close, a21 = 
 /* SALIDA=1 (investigación octubre 2026, no cambia las señales): salir antes si, con la operación en ganancia, al menos N de 8 señales se dan
    vuelta en contra: Supertrend, precio vs EMA 21, EMA 9 vs 21, RSI 14 vs 50, histograma MACD, DMI (+DI vs −DI), flujo comprador de las últimas
    3 velas y una figura chartista confirmada en contra en las últimas 6 velas. Se mira al cierre de cada vela de 1 h (o con las de 4 h). */
-const SALIDA = !!process.env.SALIDA, SV = [], FIGL = SALIDA ? require('./figuras-lib.js') : null, AGC = new WeakMap();
+/* TRADING v7 (octubre 2026): la salida anticipada ya es parte de la regla (5 de 8 en contra, velas de 4 h). SIN_V7=1 la saca. */
+const SXV7 = { N0: 5, N1: 5, P: .5, tf: '4h', cerca: 0 };
+const SALIDA = !!process.env.SALIDA, SV = [], SVX = [], FIGL = SALIDA ? require('./figuras-lib.js') : null, AGC = new WeakMap();
 /* N0: señales en contra para salir ANTES del objetivo 1 (con ganancia ≥ medio stop) · N1: DESPUÉS del objetivo 1 (camino al 2 o al 3)
    cerca=1: después del objetivo 1 solo sale si el precio ya hizo al menos la mitad del camino al objetivo siguiente (salir cerca del máximo). 9 = nunca */
+if (SALIDA) for (const N0 of [5, 6, 9]) for (const N1 of [4, 5, 6, 9]) { if (N0 === 9 && N1 === 9) continue; SVX.push({ N0, N1, P: .5, tf: 'misma', cerca: 0 }); } // SHOOTER: con sus propias velas
 if (SALIDA) for (const tf of ['4h', '1h']) for (const N0 of [5, 9]) for (const N1 of [3, 4, 5, 6, 9]) for (const cerca of [0, 1]) { if (N0 === 9 && N1 === 9) continue; if (N1 === 9 && cerca) continue; SV.push({ N0, N1, P: .5, tf, cerca }); }
 function agArr(bars) { let o = AGC.get(bars); if (o) return o; const keep = candles; candles = bars; const n = bars.length, cl = closes();
   const st = calcST(10, 3).dir, e9 = emaArr(cl, 9), e21 = emaArr(cl, 21), rsi = calcRSI(14), e12 = emaArr(cl, 12), e26 = emaArr(cl, 26);
@@ -227,7 +230,7 @@ async function run4h(s, rank) {
     if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) continue; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
     if (tooWild(rb, W1, t)) continue; // moneda impredecible esa semana
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
-    const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t);
+    const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7));
     if (RECUP) res.alt = RV.map(V => { const o = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
     if (SALIDA) res.sal = SV.map(X => sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, Object.assign({ tb }, X)));
     CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, ...res,
@@ -236,9 +239,9 @@ async function run4h(s, rank) {
 
 /* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
    volumen PROMEDIO de los 7 días anteriores (entre las 70 con más volumen de hoy) y se descartan las que cayeron más de 10 % en 24 h. SH_ESTATICA=1 vuelve a la lista fija. */
-let SH7 = !process.env.SH_ESTATICA; const SH7DAY = new Map();
+let SH7 = !process.env.SH_ESTATICA; const SH7DAY = new Map(), SH7ERR = []; // SH7ERR: monedas sin datos diarios (antes quedaban afuera sin avisar)
 const sh7ok = (s, t, ch24) => { const d = Math.floor(t / DAY) * DAY, set = SH7DAY.get(d); return !!set && set.has(s) && ch24 > -10; };
-async function sh7Build(list) { const V = {}; for (const s of list) { try { const b = await klRange(s, '1d', DAY, FROM - 40 * DAY, NOW); V[s] = new Map(b.map(x => [x.t, x.v * x.close])); } catch (e) {} }
+async function sh7Build(list) { const V = {}; for (const s of list) { for (let k = 0; k < 4; k++) { try { const b = await klRange(s, '1d', DAY, FROM - 40 * DAY, NOW); if (b.length > 20) { V[s] = new Map(b.map(x => [x.t, x.v * x.close])); break; } } catch (e) {} await sleep(15000); } if (!V[s]) SH7ERR.push(s); }
   for (let d = Math.floor(FROM / DAY) * DAY; d <= NOW; d += DAY) { const arr = []; for (const s in V) { let a = 0, n = 0; for (let k = 1; k <= 7; k++) { const v = V[s].get(d - k * DAY); if (v) { a += v; n++; } } if (n >= 5) arr.push([s, a / n]); }
     SH7DAY.set(d, new Set(arr.sort((x, y) => y[1] - x[1]).slice(0, +(process.env.SH7N || 30)).map(x => x[0]))); } }
 async function runShooter(s, rank = 0) {
@@ -261,6 +264,7 @@ async function runShooter(s, rank = 0) {
       if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) continue; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
       const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
+      if (SALIDA) res.sal = SVX.map(X => sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, X)));
       if (RECUP) res.alt = RV.map(V => { const o = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
       CANDS.push({ m: 'x', setup: 'sh-c', tf, s, t, dir, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, ...res,
         ia: IAON ? iaPath(P3, i + 1, cb, dir, sl, g.r, SH.maxAge, t, tfMs) : null }); }
@@ -406,7 +410,7 @@ async function main() { const t0 = Date.now();
   console.log('suerte', JSON.stringify(valid));
   const azar = {}; for (const m of ['medio', 'x']) { const st = stats(RAND[m]); azar[m] = st.n ? { p: st.p, n: st.n, usd: st.usd } : null; }
   const out = { upd: NOW, desde: FROM, dias: Math.round(SPAN / DAY), minN: MIN_N, monedas: { trading: n4, shooter: nS, universo: UNI, volMin: MINVOL, impredecible: WILD }, medidas: { costos: process.env.SIN_COSTOS ? 'solo comisión' : 'comisión 0,05 % + deslizamiento 0,02-0,08 % por lado + financiación 0,01 % cada 8 h', plus: { L: GEO.plus.L, cap: GEO.plus.cap }, sh: { L: GEO.sh.L, cap: GEO.sh.cap, r: GEO.sh.r, tfs: SH.tfs } },
-    cal, azar, validacion: valid, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
+    cal, azar, validacion: valid, sh7_sin_datos: SH7ERR, secs: Math.round((Date.now() - t0) / 1000), errores: err.slice(0, 20), suplementos: (() => { try { return suplementos(ops); } catch (e) { console.log('suplementos:', e.message); return null; } })(), soloFuturos: [...FUTSET].map(x => x.replace('USDT', '')),
     /* cada operación: [modo, setup, moneda, inicio, dir, objetivos, cierre(1 stop · 2 aviso · 3 entrada · 4 completa · 5 plazo · 0 en curso), USD, salvavidas(1/0), fin,
        entrada, stop (fracción), objetivos × stop, apalancamiento] (octubre 2026: con entrada y stop la página muestra el resultado en vivo de las que siguen en curso)
        con CORR=1 además: correlación diaria con BTC de los 90 días anteriores */
@@ -419,16 +423,17 @@ async function main() { const t0 = Date.now();
       out.recup[m] = { desde_prueba: cut, sin: { aprendizaje: sumr(A.map(o => o.pct)), prueba: sumr(P.map(o => o.pct)) },
         con: RV.map((V, k) => ({ v: V, aprendizaje: sumr(A.map(o => o.alt[k][0])), prueba: sumr(P.map(o => o.alt[k][0])), salen_prueba: P.filter(o => o.alt[k][1]).length })) }; }
     console.log('recup', JSON.stringify(out.recup).slice(0, 3000)); }
-  if (SALIDA) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === 'medio' && c.setup !== 'tp-x' && c.sal);
+  if (SALIDA) out.salida_x = null;
+  if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
       for (const s in by) { let free = 0; for (const c of by[s].sort((a, b) => a.t - b.t)) { if (c.t < free) continue; const o = k < 0 ? c : Object.assign({}, c, c.sal[k]); out2.push(o); free = Math.max(c.t + c.cool, o.tEnd); } } return out2.filter(o => !o.open); };
     const st2 = L => { const n = L.length; if (!n) return { n: 0 }; const usd = L.reduce((a, o) => a + o.pct / 100 * o.margin, 0), lo = L.filter(o => o.pct < 0);
       return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), pct_op: +(L.reduce((a, o) => a + o.pct, 0) / n).toFixed(2), usd: +usd.toFixed(0), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.pct, 0) / lo.length).toFixed(1) : 0, salidas: L.filter(o => o.kind === 7).length }; };
-    const res = k => { const L = choose(k); return { v: k < 0 ? 'actual' : SV[k], año: st2(L), mitad1: st2(L.filter(o => o.t < mid)), mitad2: st2(L.filter(o => o.t >= mid)) }; };
+    const res = k => { const L = choose(k); return { v: k < 0 ? 'actual' : VL[k], año: st2(L), mitad1: st2(L.filter(o => o.t < mid)), mitad2: st2(L.filter(o => o.t >= mid)) }; };
     /* para las que salieron antes: ¿qué hubiera pasado si seguía? (toca el stop, llega a más objetivos o vence) */
     const contra = k => { const S = MED.filter(c => c.sal[k].kind === 7 && !c.open); return { salieron: S.length, tras_obj1: S.filter(c => c.sal[k].hit >= 1).length, tras_obj2: S.filter(c => c.sal[k].hit >= 2).length, despues_hubiera_ganado_mas: S.filter(c => c.pct > c.sal[k].pct).length, hubiera_tocado_stop: S.filter(c => c.kind === 1 || (c.kind === 3 && c.sal[k].pct > c.pct)).length }; };
-    out.salida = { nota: 'pct_op = % del margen por operación con costos; usd con el margen de la simulación; salidas = cerradas antes por la regla', actual: res(-1), variantes: SV.map((_, k) => Object.assign(res(k), { contra: contra(k) })) };
-    console.log('salida actual', JSON.stringify(out.salida.actual)); }
+    out[MM === 'medio' ? 'salida' : 'salida_x'] = { nota: 'pct_op = % del margen por operación con costos; usd con el margen de la simulación; salidas = cerradas antes por la regla', actual: res(-1), variantes: VL.map((_, k) => Object.assign(res(k), { contra: contra(k) })) };
+    }
   const body = JSON.stringify(out);
   fs.writeFileSync('historial.json', body);
   if (IAON) { const zlib = require('zlib');

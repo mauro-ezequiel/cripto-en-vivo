@@ -24,7 +24,7 @@ const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 } };
 const GEOM = { medio: { a: 3, r: .75, maxSl: .036 }, x: { a: 4, r: .25, maxSl: .05 } };
 /* universo (octubre 2026, 14 variantes probadas): TRADING todas con más de 10 M USD de volumen, SHOOTER las 30 con más volumen.
    Las de menos volumen eran las impredecibles. El filtro de rango de 1 h no mejoró nada: apagado (WILD_MAX = 0). */
-const MINVOL = 1e7, WILD_MAX = 0, WILDC = {};
+const MINVOL = 5e6, /* octubre 2026: 5 millones (antes 10) */ WILD_MAX = 0, WILDC = {};
 async function wildOK(s, hc) { if (!WILD_MAX) return true; const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
   try { const b = (hc && hc.length >= 169 ? hc : await kl(s, '1h', 170)).slice(0, -1).slice(-168); if (b.length < 100) return true; const v = b.reduce((a, x) => a + (x.high - x.low) / x.close, 0) / b.length * 100; WILDC[s] = { t: Date.now(), ok: v <= WILD_MAX }; return v <= WILD_MAX; } catch (e) { return true; } }
 const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
@@ -142,7 +142,8 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    en ese momento (desequilibrio ±0,5 / 1 / 2 %, diferencia compra/venta, profundidad, precio) y cómo terminó (código como el historial:
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
-const VER = { medio: 'v6', x: 'v8' }; // TRADING v6 (octubre 2026): + tendencia de BTC con fuerza (ADX 4 h ≥ 24)
+const VER = { medio: 'v7', x: 'v8' }; // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
+const SAL = require('./herramientas/salida-lib.js'); // TRADING v6 (octubre 2026): + tendencia de BTC con fuerza (ADX 4 h ≥ 24)
 const bitId = x => x.sym + '-' + x.t;
 const bitRec = x => ({ id: bitId(x), m: x.m, sym: x.sym, dir: x.dir, entry: x.entry, tp: x.tp, sl: x.sl, ll: x.ll == null ? null : x.ll, setup: x.setup || null, conf: x.conf || null, t: x.t, v: x.v || null, libro: x.libro || null, out: null });
 async function bitLoad() { if (Array.isArray(S.bit)) return true;
@@ -259,6 +260,11 @@ async function main() {
     const stop = o.hit > 0 ? o.entry : o.sl;
     if (d * (stop - p) >= 0) { o.done = true; bitClose(bid, o.hit > 0 ? 3 : 1, o.hit, stop, now); await tg(o.hit > 0 ? `↩️ ${cfg.name} ${c}: volvió a la entrada (${fp(o.entry)}) después del objetivo ${o.hit}. Se cierra sin pérdida.` : `🛑 ${cfg.name} ${c}: tocó el stop (${fp(o.sl)}, ${pct(o.sl, o.entry)}).`); continue; }
     if (o.ll != null && !o.llSent && o.hit === 0 && d * (o.ll - p) >= 0) { o.llSent = true; await tg(`🟡🛟 ${cfg.name} ${c}: llegó a la zona del salvavidas (${fp(o.ll)}). Abrí la página para ver si los datos confirman agregar la mitad del margen.`); }
+    /* TRADING v7: al cierre de cada vela de 1 h, si va ganando y 5 de 8 señales (velas de 4 h) se dieron vuelta en contra, se sale */
+    if (o.m === 'medio') { const h1 = Math.floor(now / 36e5); if (o.hChk !== h1 && now - h1 * 36e5 < 20 * 6e4) { o.hChk = h1;
+        try { const k1 = await kl(o.sym, '1h', 3), c1 = k1[k1.length - 2].close, b4 = (await kl(o.sym, '4h', 300)).slice(0, -1), r = SAL.salir(b4, o, c1);
+          if (r) { o.done = true; bitClose(bid, 6, o.hit, c1, now);
+            await tg(`💰 ${cfg.name} ${c}: SALÍ ANTES con ganancia en ${fp(c1)} (${pct(c1, o.entry)}${o.hit ? `, después del objetivo ${o.hit}` : ''}).\n${r.n} de 8 señales se dieron vuelta en contra: ${r.señales.join(', ')}.\nGanancia asegurada: cerrá lo que queda de la operación.`); continue; } } catch (e) { console.log('salida', o.sym, e.message); } } }
     if (now - o.t > cfg.maxAge) { o.done = true; bitClose(bid, 5, o.hit, p, now); await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
   }
   S.open = S.open.filter(o => !o.done);
@@ -326,7 +332,7 @@ async function main() {
   if (await bitLoad()) { if (S.bitPend) { for (const r of S.bitPend) if (!S.bit.some(b => b.id === r.id)) S.bit.push(r); S.bitPend = null; S.bitDirty = true; }
     let k = 0; for (const r of S.bit) { if (r.out || S.open.some(o => o.sym + '-' + o.t === r.id) || now - r.t < 36e5 || !SIGCFG[r.m] || !Array.isArray(r.tp)) continue; if (k++ >= 6) break; try { await bitResolve(r); } catch (e) {} await sleep(100); }
     if (S.bitDirty && (!S.bitT || now - S.bitT >= 15 * 6e4) && process.env.GH_TOKEN) { const cerr = S.bit.filter(r => r.out).length;
-      if (await ghPut('bitacora.json', JSON.stringify({ upd: now, freno: S.frenoAct || {}, nota: 'Todas las señales del bot 24 h, nunca se borran. libro = [i05, i1, i2, spread_pb, prof1_log10, precio] en el momento de la señal. out.c: 1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; out.pct = % del margen con comisión, sin salvavidas.', ops: S.bit }), 'bitSha', 'Bitácora del bot 24 h', S.bit.length + ' señales, ' + cerr + ' cerradas')) { S.bitDirty = false; S.bitT = now; } } }
+      if (await ghPut('bitacora.json', JSON.stringify({ upd: now, freno: S.frenoAct || {}, nota: 'Todas las señales del bot 24 h, nunca se borran. libro = [i05, i1, i2, spread_pb, prof1_log10, precio] en el momento de la señal. out.c: 1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo · 6 salida anticipada (v7); out.pct = % del margen con comisión, sin salvavidas.', ops: S.bit }), 'bitSha', 'Bitácora del bot 24 h', S.bit.length + ' señales, ' + cerr + ' cerradas')) { S.bitDirty = false; S.bitT = now; } } }
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }

@@ -11,7 +11,8 @@ const VERS = {
     { v: 3, desde: '2026-10-08T14:57:00+02:00', txt: '+ el retroceso tiene que frenar antes de la EMA 50', btc: 1, brake: 1, d200: 0, ciclo: 0, r: .5 },
     { v: 4, desde: '2026-10-12T19:57:00+02:00', txt: '+ precio a menos de 8 % de la EMA 200, objetivos 0,75 × stop', btc: 1, brake: 1, d200: 1, ciclo: 0, r: .75 },
     { v: 5, desde: '2026-10-13T23:57:00+02:00', txt: '+ shorts solo en la fase de caída del ciclo del halving', btc: 1, brake: 1, d200: 1, ciclo: 1, r: .75 },
-    { v: 6, desde: '2026-10-17T00:30:00+02:00', txt: '+ solo si la tendencia de BTC tiene fuerza (ADX de 4 h ≥ 24)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, r: .75 }],
+    { v: 6, desde: '2026-10-17T00:30:00+02:00', txt: '+ solo si la tendencia de BTC tiene fuerza (ADX de 4 h ≥ 24)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, r: .75 },
+    { v: 7, desde: '2026-10-19T12:00:00+02:00', txt: '+ salida anticipada: con ganancia, sale si 5 de 8 señales se dan vuelta en contra (también camino al objetivo 2 o 3)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, sal: 1, r: .75 }],
   x: [
     { v: 1, desde: '2026-10-07T12:53:00+02:00', txt: 'Velas de 5 min: cierre fuera de la banda de Bollinger (±2) con RSI 7 ≤ 35 / ≥ 65 y la tendencia de 15 min a favor (LONG y SHORT)', k: 'bb', tfs: ['5m'], htf: '15m', r7: 35, btc: 0, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
     { v: 2, desde: '2026-10-07T15:16:00+02:00', txt: '+ RSI 7 extremo (≤ 25 / ≥ 75) y solo a favor de BTC', k: 'bb', tfs: ['5m'], htf: '15m', r7: 25, btc: 1, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
@@ -52,6 +53,7 @@ function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1),
         tendencia_1h: up1h, btc_a_favor: btcDir === dir ? 1 : 0, volumen: r2(L.vr), cambio_24h: r2(ch24), hora: new Date().getUTCHours() } }); }
     return out; }); }
 /* % del margen: 1/3 en cada objetivo, tocado el objetivo 1 el stop pasa a la entrada, plazo, comisión 0,05 % por lado */
+const SAL = require('./salida-lib.js');
 function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, stop = o.hit ? o.entry : o.sl;
   const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (b.t - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; }; // comisión + deslizamiento + financiación
   if (d * (adv - stop) <= 0) return fin(stop, o.hit ? 3 : 1);
@@ -65,7 +67,7 @@ async function run(now, base, U7, D) { const S = D.S;
   const add = (m, s, x, tf) => { const V = VERS[m].find(y => y.v === x.v), G = m === 'medio' ? TR : V, cool = G.cool;
     if (A.ops.some(o => o.m === m && o.v === x.v && o.sym === s && (!o.out || now - o.t < cool))) return;
     const sl = Math.min(G.cap, Math.max(.004, G.a * x.atrP)), tp = [1, 2, 3].map(k => x.c * (1 + x.dir * k * x.r * sl));
-    A.ops.push({ id: m + x.v + '-' + s + '-' + now, m, v: x.v, sym: s, tf, dir: x.dir, entry: x.c, tp, sl: x.c * (1 - x.dir * sl), lev: G.lev, age: G.age, t: now, hit: 0, setup: x.setup, f: x.f, out: null }); ch = true; };
+    A.ops.push({ id: m + x.v + '-' + s + '-' + now, m, v: x.v, sym: s, tf, dir: x.dir, entry: x.c, tp, sl: x.c * (1 - x.dir * sl), lev: G.lev, age: G.age, t: now, hit: 0, setup: x.setup, f: x.f, out: null, ...(V && V.sal ? { sal: 1 } : {}) }); ch = true; };
   /* TRADING (4 h): todas las versiones con cada vela de 4 h recién cerrada */
   const b4 = Math.floor(now / (4 * H)) * 4 * H;
   if (A.last.tr !== b4 && now - b4 >= 6e4 && now - b4 < 30 * 6e4) { A.last.tr = b4; ch = true; const bd = await btc('4h'); const rank = {}; base.forEach((t, k) => rank[t.symbol] = k);
@@ -81,7 +83,11 @@ async function run(now, base, U7, D) { const S = D.S;
         for (const x of shAll(D, cs, hc, tf, bd, s, U7, +t.priceChangePercent)) add('x', s, x, tf); A.diag[tf] = (A.diag[tf] || 0) + 1; } catch (e) { A.diag.err = tf + ' ' + s + ': ' + e.message; } await D.sleep(30); } }
   /* seguimiento con velas de 5 min */
   for (const o of A.ops.filter(x => !x.out)) { try { const k = await D.getJ(`${D.API}/klines?symbol=${o.sym}&interval=5m&startTime=${o.chk || o.t}&limit=1000`);
-      for (const r of k || []) { const b = { t: +r[0], h: +r[2], l: +r[3], c: +r[4] }; if (b.t + 3e5 > now) break; if (b.t + 3e5 <= o.t) continue; step(o, b); o.chk = b.t + 3e5; ch = true; if (o.out) break; } } catch (e) {} await D.sleep(30); }
+      for (const r of k || []) { const b = { t: +r[0], h: +r[2], l: +r[3], c: +r[4] }; if (b.t + 3e5 > now) break; if (b.t + 3e5 <= o.t) continue; step(o, b); o.chk = b.t + 3e5; ch = true; if (o.out) break; }
+      /* v7: salida anticipada al cierre de cada vela de 1 h */
+      if (!o.out && o.sal) { const h1 = Math.floor(now / H); if (o.hChk !== h1) { o.hChk = h1; const k1 = await D.kl(o.sym, '1h', 3), c1 = k1[k1.length - 2].close, b4 = (await D.kl(o.sym, '4h', 300)).slice(0, -1);
+          const s = SAL.salir(b4, { dir: o.dir, entry: o.entry, sl: o.sl, hit: o.hit }, c1); if (s) { { const d = o.dir; let v = 0; for (let q = 0; q < o.hit; q++) v += d * (o.tp[q] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (c1 / o.entry - 1);
+              o.out = { c: 6, hit: o.hit, p: +c1.toPrecision(8), t: h1 * H, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (h1 * H - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; } ch = true; } } } } catch (e) {} await D.sleep(30); }
   if (A.ops.length > 6000) A.ops = A.ops.slice(-6000);
   if (ch) A.dirty = true;
   if (A.dirty && (!A.pubT || now - A.pubT >= 15 * 6e4) && process.env.GH_TOKEN) {
