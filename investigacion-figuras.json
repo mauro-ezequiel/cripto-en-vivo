@@ -1,0 +1,1753 @@
+{
+ "upd": 1792384607177,
+ "nota": "pct_op de los bots = % del margen por operación (con costos). En \"solas\", pct_op = % del precio por operación sin apalancar, con costos.",
+ "trading_1año": {
+  "bot": "TRADING 1 año",
+  "tf": "4h",
+  "ventana_velas": 12,
+  "n": 74,
+  "grupos": {
+   "todas": {
+    "año": {
+     "n": 74,
+     "gana": 81.1,
+     "pct_op": 20.56,
+     "total_pct": 1521.5
+    },
+    "mitad1": {
+     "n": 37,
+     "gana": 78.4,
+     "pct_op": 23.45,
+     "total_pct": 867.7
+    },
+    "mitad2": {
+     "n": 37,
+     "gana": 83.8,
+     "pct_op": 17.67,
+     "total_pct": 653.8
+    }
+   },
+   "a_favor": {
+    "año": {
+     "n": 16,
+     "gana": 93.8,
+     "pct_op": 41.45,
+     "total_pct": 663.2
+    },
+    "mitad1": {
+     "n": 12,
+     "gana": 100,
+     "pct_op": 55.91,
+     "total_pct": 670.9
+    },
+    "mitad2": {
+     "n": 4,
+     "gana": 75,
+     "pct_op": -1.94,
+     "total_pct": -7.7
+    }
+   },
+   "confirmada_a_favor": {
+    "año": {
+     "n": 16,
+     "gana": 93.8,
+     "pct_op": 41.45,
+     "total_pct": 663.2
+    },
+    "mitad1": {
+     "n": 12,
+     "gana": 100,
+     "pct_op": 55.91,
+     "total_pct": 670.9
+    },
+    "mitad2": {
+     "n": 4,
+     "gana": 75,
+     "pct_op": -1.94,
+     "total_pct": -7.7
+    }
+   },
+   "en_contra": {
+    "año": {
+     "n": 31,
+     "gana": 80.6,
+     "pct_op": 13.29,
+     "total_pct": 411.9
+    },
+    "mitad1": {
+     "n": 13,
+     "gana": 76.9,
+     "pct_op": 10.91,
+     "total_pct": 141.9
+    },
+    "mitad2": {
+     "n": 18,
+     "gana": 83.3,
+     "pct_op": 15,
+     "total_pct": 270.1
+    }
+   },
+   "confirmada_en_contra": {
+    "año": {
+     "n": 31,
+     "gana": 80.6,
+     "pct_op": 13.29,
+     "total_pct": 411.9
+    },
+    "mitad1": {
+     "n": 13,
+     "gana": 76.9,
+     "pct_op": 10.91,
+     "total_pct": 141.9
+    },
+    "mitad2": {
+     "n": 18,
+     "gana": 83.3,
+     "pct_op": 15,
+     "total_pct": 270.1
+    }
+   },
+   "sin_figura": {
+    "año": {
+     "n": 24,
+     "gana": 75,
+     "pct_op": 18.75,
+     "total_pct": 450.1
+    },
+    "mitad1": {
+     "n": 10,
+     "gana": 60,
+     "pct_op": 10.91,
+     "total_pct": 109.1
+    },
+    "mitad2": {
+     "n": 14,
+     "gana": 85.7,
+     "pct_op": 24.36,
+     "total_pct": 341
+    }
+   },
+   "formando_en_contra": {
+    "año": {
+     "n": 2,
+     "gana": 50,
+     "pct_op": -4.36,
+     "total_pct": -8.7
+    },
+    "mitad1": {
+     "n": 1,
+     "gana": 0,
+     "pct_op": -59.2,
+     "total_pct": -59.2
+    },
+    "mitad2": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 50.49,
+     "total_pct": 50.5
+    }
+   },
+   "formando_a_favor": {
+    "año": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 5,
+     "total_pct": 5
+    },
+    "mitad1": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 5,
+     "total_pct": 5
+    },
+    "mitad2": {
+     "n": 0
+    }
+   }
+  },
+  "filtros": [
+   {
+    "nombre": "sin filtro",
+    "año": {
+     "n": 74,
+     "gana": 81.1,
+     "pct_op": 20.56,
+     "total_pct": 1521.5
+    },
+    "mitad1": {
+     "n": 37,
+     "gana": 78.4,
+     "pct_op": 23.45,
+     "total_pct": 867.7
+    },
+    "mitad2": {
+     "n": 37,
+     "gana": 83.8,
+     "pct_op": 17.67,
+     "total_pct": 653.8
+    }
+   },
+   {
+    "nombre": "saca las que tienen figura confirmada en contra",
+    "año": {
+     "n": 43,
+     "gana": 81.4,
+     "pct_op": 25.8,
+     "total_pct": 1109.6
+    },
+    "mitad1": {
+     "n": 24,
+     "gana": 79.2,
+     "pct_op": 30.24,
+     "total_pct": 725.8
+    },
+    "mitad2": {
+     "n": 19,
+     "gana": 84.2,
+     "pct_op": 20.2,
+     "total_pct": 383.7
+    }
+   },
+   {
+    "nombre": "saca en contra (confirmada o formándose)",
+    "año": {
+     "n": 41,
+     "gana": 82.9,
+     "pct_op": 27.28,
+     "total_pct": 1118.3
+    },
+    "mitad1": {
+     "n": 23,
+     "gana": 82.6,
+     "pct_op": 34.13,
+     "total_pct": 785
+    },
+    "mitad2": {
+     "n": 18,
+     "gana": 83.3,
+     "pct_op": 18.51,
+     "total_pct": 333.3
+    }
+   },
+   {
+    "nombre": "solo con figura a favor (confirmada o formándose)",
+    "año": {
+     "n": 17,
+     "gana": 94.1,
+     "pct_op": 39.31,
+     "total_pct": 668.2
+    },
+    "mitad1": {
+     "n": 13,
+     "gana": 100,
+     "pct_op": 52,
+     "total_pct": 675.9
+    },
+    "mitad2": {
+     "n": 4,
+     "gana": 75,
+     "pct_op": -1.94,
+     "total_pct": -7.7
+    }
+   },
+   {
+    "nombre": "saca en contra y laterales",
+    "año": {
+     "n": 41,
+     "gana": 82.9,
+     "pct_op": 27.28,
+     "total_pct": 1118.3
+    },
+    "mitad1": {
+     "n": 23,
+     "gana": 82.6,
+     "pct_op": 34.13,
+     "total_pct": 785
+    },
+    "mitad2": {
+     "n": 18,
+     "gana": 83.3,
+     "pct_op": 18.51,
+     "total_pct": 333.3
+    }
+   }
+  ],
+  "tipos": {
+   "dt:a_favor": {
+    "n": 3,
+    "gana": 100,
+    "pct_op": 80.26,
+    "total_pct": 240.8
+   },
+   "td:en_contra": {
+    "n": 5,
+    "gana": 40,
+    "pct_op": -17.76,
+    "total_pct": -88.8
+   },
+   "dt:en_contra": {
+    "n": 1,
+    "gana": 0,
+    "pct_op": -32.34,
+    "total_pct": -32.3
+   },
+   "hchi:en_contra": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 52.03,
+    "total_pct": 52
+   },
+   "cd:a_favor": {
+    "n": 3,
+    "gana": 100,
+    "pct_op": 51.53,
+    "total_pct": 154.6
+   },
+   "ca:a_favor": {
+    "n": 4,
+    "gana": 100,
+    "pct_op": 45.31,
+    "total_pct": 181.3
+   },
+   "ca:en_contra": {
+    "n": 5,
+    "gana": 80,
+    "pct_op": 5.66,
+    "total_pct": 28.3
+   },
+   "cd:en_contra": {
+    "n": 16,
+    "gana": 93.8,
+    "pct_op": 24.27,
+    "total_pct": 388.3
+   },
+   "ts:en_contra": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 50.89,
+    "total_pct": 50.9
+   },
+   "ta:formando_en_contra": {
+    "n": 1,
+    "gana": 0,
+    "pct_op": -59.2,
+    "total_pct": -59.2
+   },
+   "td:formando_a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 5,
+    "total_pct": 5
+   },
+   "dp:a_favor": {
+    "n": 2,
+    "gana": 100,
+    "pct_op": 45.74,
+    "total_pct": 91.5
+   },
+   "ts:a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 42.29,
+    "total_pct": 42.3
+   },
+   "dp:en_contra": {
+    "n": 2,
+    "gana": 100,
+    "pct_op": 6.79,
+    "total_pct": 13.6
+   },
+   "cd:formando_en_contra": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 50.49,
+    "total_pct": 50.5
+   },
+   "td:a_favor": {
+    "n": 1,
+    "gana": 0,
+    "pct_op": -59,
+    "total_pct": -59
+   },
+   "hch:a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 5.6,
+    "total_pct": 5.6
+   },
+   "ta:a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 6.2,
+    "total_pct": 6.2
+   }
+  }
+ },
+ "trading_4años": {
+  "bot": "TRADING 4 años",
+  "tf": "4h",
+  "ventana_velas": 12,
+  "n": 180,
+  "grupos": {
+   "todas": {
+    "año": {
+     "n": 180,
+     "gana": 69.4,
+     "pct_op": 8.47,
+     "total_pct": 1524
+    },
+    "mitad1": {
+     "n": 89,
+     "gana": 62.9,
+     "pct_op": 2.06,
+     "total_pct": 183.2
+    },
+    "mitad2": {
+     "n": 91,
+     "gana": 75.8,
+     "pct_op": 14.73,
+     "total_pct": 1340.8
+    }
+   },
+   "a_favor": {
+    "año": {
+     "n": 36,
+     "gana": 75,
+     "pct_op": 16.42,
+     "total_pct": 591.1
+    },
+    "mitad1": {
+     "n": 17,
+     "gana": 58.8,
+     "pct_op": -2.18,
+     "total_pct": -37
+    },
+    "mitad2": {
+     "n": 19,
+     "gana": 89.5,
+     "pct_op": 33.06,
+     "total_pct": 628.1
+    }
+   },
+   "confirmada_a_favor": {
+    "año": {
+     "n": 36,
+     "gana": 75,
+     "pct_op": 16.42,
+     "total_pct": 591.1
+    },
+    "mitad1": {
+     "n": 17,
+     "gana": 58.8,
+     "pct_op": -2.18,
+     "total_pct": -37
+    },
+    "mitad2": {
+     "n": 19,
+     "gana": 89.5,
+     "pct_op": 33.06,
+     "total_pct": 628.1
+    }
+   },
+   "en_contra": {
+    "año": {
+     "n": 57,
+     "gana": 64.9,
+     "pct_op": 0.96,
+     "total_pct": 54.7
+    },
+    "mitad1": {
+     "n": 25,
+     "gana": 52,
+     "pct_op": -6.43,
+     "total_pct": -160.8
+    },
+    "mitad2": {
+     "n": 32,
+     "gana": 75,
+     "pct_op": 6.74,
+     "total_pct": 215.5
+    }
+   },
+   "confirmada_en_contra": {
+    "año": {
+     "n": 57,
+     "gana": 64.9,
+     "pct_op": 0.96,
+     "total_pct": 54.7
+    },
+    "mitad1": {
+     "n": 25,
+     "gana": 52,
+     "pct_op": -6.43,
+     "total_pct": -160.8
+    },
+    "mitad2": {
+     "n": 32,
+     "gana": 75,
+     "pct_op": 6.74,
+     "total_pct": 215.5
+    }
+   },
+   "sin_figura": {
+    "año": {
+     "n": 79,
+     "gana": 69.6,
+     "pct_op": 9.03,
+     "total_pct": 713.5
+    },
+    "mitad1": {
+     "n": 45,
+     "gana": 68.9,
+     "pct_op": 6.16,
+     "total_pct": 277.1
+    },
+    "mitad2": {
+     "n": 34,
+     "gana": 70.6,
+     "pct_op": 12.84,
+     "total_pct": 436.4
+    }
+   },
+   "formando_lateral": {
+    "año": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 51.86,
+     "total_pct": 51.9
+    },
+    "mitad1": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 51.86,
+     "total_pct": 51.9
+    },
+    "mitad2": {
+     "n": 0
+    }
+   },
+   "formando_en_contra": {
+    "año": {
+     "n": 5,
+     "gana": 80,
+     "pct_op": 23.81,
+     "total_pct": 119
+    },
+    "mitad1": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 52.17,
+     "total_pct": 52.2
+    },
+    "mitad2": {
+     "n": 4,
+     "gana": 75,
+     "pct_op": 16.71,
+     "total_pct": 66.9
+    }
+   },
+   "formando_a_favor": {
+    "año": {
+     "n": 2,
+     "gana": 50,
+     "pct_op": -3.09,
+     "total_pct": -6.2
+    },
+    "mitad1": {
+     "n": 0
+    },
+    "mitad2": {
+     "n": 2,
+     "gana": 50,
+     "pct_op": -3.09,
+     "total_pct": -6.2
+    }
+   }
+  },
+  "filtros": [
+   {
+    "nombre": "sin filtro",
+    "año": {
+     "n": 180,
+     "gana": 69.4,
+     "pct_op": 8.47,
+     "total_pct": 1524
+    },
+    "mitad1": {
+     "n": 89,
+     "gana": 62.9,
+     "pct_op": 2.06,
+     "total_pct": 183.2
+    },
+    "mitad2": {
+     "n": 91,
+     "gana": 75.8,
+     "pct_op": 14.73,
+     "total_pct": 1340.8
+    }
+   },
+   {
+    "nombre": "saca las que tienen figura confirmada en contra",
+    "año": {
+     "n": 123,
+     "gana": 71.5,
+     "pct_op": 11.95,
+     "total_pct": 1469.3
+    },
+    "mitad1": {
+     "n": 64,
+     "gana": 67.2,
+     "pct_op": 5.38,
+     "total_pct": 344.1
+    },
+    "mitad2": {
+     "n": 59,
+     "gana": 76.3,
+     "pct_op": 19.07,
+     "total_pct": 1125.2
+    }
+   },
+   {
+    "nombre": "saca en contra (confirmada o formándose)",
+    "año": {
+     "n": 118,
+     "gana": 71.2,
+     "pct_op": 11.44,
+     "total_pct": 1350.3
+    },
+    "mitad1": {
+     "n": 63,
+     "gana": 66.7,
+     "pct_op": 4.63,
+     "total_pct": 291.9
+    },
+    "mitad2": {
+     "n": 55,
+     "gana": 76.4,
+     "pct_op": 19.24,
+     "total_pct": 1058.4
+    }
+   },
+   {
+    "nombre": "solo con figura a favor (confirmada o formándose)",
+    "año": {
+     "n": 38,
+     "gana": 73.7,
+     "pct_op": 15.39,
+     "total_pct": 584.9
+    },
+    "mitad1": {
+     "n": 17,
+     "gana": 58.8,
+     "pct_op": -2.18,
+     "total_pct": -37
+    },
+    "mitad2": {
+     "n": 21,
+     "gana": 85.7,
+     "pct_op": 29.62,
+     "total_pct": 622
+    }
+   },
+   {
+    "nombre": "saca en contra y laterales",
+    "año": {
+     "n": 117,
+     "gana": 70.9,
+     "pct_op": 11.1,
+     "total_pct": 1298.4
+    },
+    "mitad1": {
+     "n": 62,
+     "gana": 66.1,
+     "pct_op": 3.87,
+     "total_pct": 240
+    },
+    "mitad2": {
+     "n": 55,
+     "gana": 76.4,
+     "pct_op": 19.24,
+     "total_pct": 1058.4
+    }
+   }
+  ],
+  "tipos": {
+   "dt:a_favor": {
+    "n": 4,
+    "gana": 75,
+    "pct_op": 31.69,
+    "total_pct": 126.7
+   },
+   "ts:a_favor": {
+    "n": 5,
+    "gana": 40,
+    "pct_op": -3.8,
+    "total_pct": -19
+   },
+   "rg:a_favor": {
+    "n": 2,
+    "gana": 50,
+    "pct_op": -7.94,
+    "total_pct": -15.9
+   },
+   "td:en_contra": {
+    "n": 7,
+    "gana": 42.9,
+    "pct_op": -9.55,
+    "total_pct": -66.9
+   },
+   "td:a_favor": {
+    "n": 6,
+    "gana": 33.3,
+    "pct_op": -35.7,
+    "total_pct": -214.2
+   },
+   "cd:a_favor": {
+    "n": 6,
+    "gana": 100,
+    "pct_op": 36.4,
+    "total_pct": 218.4
+   },
+   "ca:en_contra": {
+    "n": 22,
+    "gana": 63.6,
+    "pct_op": -3.83,
+    "total_pct": -84.3
+   },
+   "ta:en_contra": {
+    "n": 5,
+    "gana": 40,
+    "pct_op": -18.65,
+    "total_pct": -93.3
+   },
+   "ts:formando_lateral": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 51.86,
+    "total_pct": 51.9
+   },
+   "hch:en_contra": {
+    "n": 2,
+    "gana": 50,
+    "pct_op": 13.39,
+    "total_pct": 26.8
+   },
+   "dp:a_favor": {
+    "n": 6,
+    "gana": 100,
+    "pct_op": 49.3,
+    "total_pct": 295.8
+   },
+   "ca:a_favor": {
+    "n": 5,
+    "gana": 100,
+    "pct_op": 37.5,
+    "total_pct": 187.5
+   },
+   "ts:en_contra": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 23.94,
+    "total_pct": 23.9
+   },
+   "ca:formando_en_contra": {
+    "n": 3,
+    "gana": 66.7,
+    "pct_op": 5.9,
+    "total_pct": 17.7
+   },
+   "dt:en_contra": {
+    "n": 1,
+    "gana": 0,
+    "pct_op": -32.34,
+    "total_pct": -32.3
+   },
+   "hchi:en_contra": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 52.03,
+    "total_pct": 52
+   },
+   "cd:en_contra": {
+    "n": 15,
+    "gana": 80,
+    "pct_op": 13.54,
+    "total_pct": 203
+   },
+   "cd:formando_en_contra": {
+    "n": 2,
+    "gana": 100,
+    "pct_op": 50.67,
+    "total_pct": 101.3
+   },
+   "td:formando_a_favor": {
+    "n": 2,
+    "gana": 50,
+    "pct_op": -3.09,
+    "total_pct": -6.2
+   },
+   "dp:en_contra": {
+    "n": 3,
+    "gana": 100,
+    "pct_op": 8.56,
+    "total_pct": 25.7
+   },
+   "hch:a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 5.6,
+    "total_pct": 5.6
+   },
+   "ta:a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 6.2,
+    "total_pct": 6.2
+   }
+  }
+ },
+ "shooter_1año": {
+  "bot": "SHOOTER 1 año",
+  "tf": "15m",
+  "ventana_velas": 16,
+  "n": 411,
+  "grupos": {
+   "todas": {
+    "año": {
+     "n": 411,
+     "gana": 84.2,
+     "pct_op": 2.03,
+     "total_pct": 836.2
+    },
+    "mitad1": {
+     "n": 205,
+     "gana": 82,
+     "pct_op": -0.62,
+     "total_pct": -127.6
+    },
+    "mitad2": {
+     "n": 206,
+     "gana": 86.4,
+     "pct_op": 4.68,
+     "total_pct": 963.8
+    }
+   },
+   "en_contra": {
+    "año": {
+     "n": 240,
+     "gana": 84.2,
+     "pct_op": 1.8,
+     "total_pct": 431.6
+    },
+    "mitad1": {
+     "n": 119,
+     "gana": 82.4,
+     "pct_op": -1.6,
+     "total_pct": -190.2
+    },
+    "mitad2": {
+     "n": 121,
+     "gana": 86,
+     "pct_op": 5.14,
+     "total_pct": 621.8
+    }
+   },
+   "confirmada_en_contra": {
+    "año": {
+     "n": 240,
+     "gana": 84.2,
+     "pct_op": 1.8,
+     "total_pct": 431.6
+    },
+    "mitad1": {
+     "n": 119,
+     "gana": 82.4,
+     "pct_op": -1.6,
+     "total_pct": -190.2
+    },
+    "mitad2": {
+     "n": 121,
+     "gana": 86,
+     "pct_op": 5.14,
+     "total_pct": 621.8
+    }
+   },
+   "sin_figura": {
+    "año": {
+     "n": 113,
+     "gana": 83.2,
+     "pct_op": 0.06,
+     "total_pct": 6.8
+    },
+    "mitad1": {
+     "n": 55,
+     "gana": 78.2,
+     "pct_op": -3.02,
+     "total_pct": -166
+    },
+    "mitad2": {
+     "n": 58,
+     "gana": 87.9,
+     "pct_op": 2.98,
+     "total_pct": 172.8
+    }
+   },
+   "a_favor": {
+    "año": {
+     "n": 57,
+     "gana": 86,
+     "pct_op": 6.7,
+     "total_pct": 381.8
+    },
+    "mitad1": {
+     "n": 31,
+     "gana": 87.1,
+     "pct_op": 7.37,
+     "total_pct": 228.6
+    },
+    "mitad2": {
+     "n": 26,
+     "gana": 84.6,
+     "pct_op": 5.89,
+     "total_pct": 153.2
+    }
+   },
+   "confirmada_a_favor": {
+    "año": {
+     "n": 57,
+     "gana": 86,
+     "pct_op": 6.7,
+     "total_pct": 381.8
+    },
+    "mitad1": {
+     "n": 31,
+     "gana": 87.1,
+     "pct_op": 7.37,
+     "total_pct": 228.6
+    },
+    "mitad2": {
+     "n": 26,
+     "gana": 84.6,
+     "pct_op": 5.89,
+     "total_pct": 153.2
+    }
+   },
+   "formando_a_favor": {
+    "año": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 16,
+     "total_pct": 16
+    },
+    "mitad1": {
+     "n": 0
+    },
+    "mitad2": {
+     "n": 1,
+     "gana": 100,
+     "pct_op": 16,
+     "total_pct": 16
+    }
+   }
+  },
+  "filtros": [
+   {
+    "nombre": "sin filtro",
+    "año": {
+     "n": 411,
+     "gana": 84.2,
+     "pct_op": 2.03,
+     "total_pct": 836.2
+    },
+    "mitad1": {
+     "n": 205,
+     "gana": 82,
+     "pct_op": -0.62,
+     "total_pct": -127.6
+    },
+    "mitad2": {
+     "n": 206,
+     "gana": 86.4,
+     "pct_op": 4.68,
+     "total_pct": 963.8
+    }
+   },
+   {
+    "nombre": "saca las que tienen figura confirmada en contra",
+    "año": {
+     "n": 171,
+     "gana": 84.2,
+     "pct_op": 2.37,
+     "total_pct": 404.6
+    },
+    "mitad1": {
+     "n": 86,
+     "gana": 81.4,
+     "pct_op": 0.73,
+     "total_pct": 62.6
+    },
+    "mitad2": {
+     "n": 85,
+     "gana": 87.1,
+     "pct_op": 4.02,
+     "total_pct": 342
+    }
+   },
+   {
+    "nombre": "saca en contra (confirmada o formándose)",
+    "año": {
+     "n": 171,
+     "gana": 84.2,
+     "pct_op": 2.37,
+     "total_pct": 404.6
+    },
+    "mitad1": {
+     "n": 86,
+     "gana": 81.4,
+     "pct_op": 0.73,
+     "total_pct": 62.6
+    },
+    "mitad2": {
+     "n": 85,
+     "gana": 87.1,
+     "pct_op": 4.02,
+     "total_pct": 342
+    }
+   },
+   {
+    "nombre": "solo con figura a favor (confirmada o formándose)",
+    "año": {
+     "n": 58,
+     "gana": 86.2,
+     "pct_op": 6.86,
+     "total_pct": 397.8
+    },
+    "mitad1": {
+     "n": 31,
+     "gana": 87.1,
+     "pct_op": 7.37,
+     "total_pct": 228.6
+    },
+    "mitad2": {
+     "n": 27,
+     "gana": 85.2,
+     "pct_op": 6.27,
+     "total_pct": 169.2
+    }
+   },
+   {
+    "nombre": "saca en contra y laterales",
+    "año": {
+     "n": 171,
+     "gana": 84.2,
+     "pct_op": 2.37,
+     "total_pct": 404.6
+    },
+    "mitad1": {
+     "n": 86,
+     "gana": 81.4,
+     "pct_op": 0.73,
+     "total_pct": 62.6
+    },
+    "mitad2": {
+     "n": 85,
+     "gana": 87.1,
+     "pct_op": 4.02,
+     "total_pct": 342
+    }
+   }
+  ],
+  "tipos": {
+   "td:en_contra": {
+    "n": 17,
+    "gana": 94.1,
+    "pct_op": 7.71,
+    "total_pct": 131
+   },
+   "dt:en_contra": {
+    "n": 94,
+    "gana": 83,
+    "pct_op": -0.16,
+    "total_pct": -15.4
+   },
+   "hch:en_contra": {
+    "n": 27,
+    "gana": 88.9,
+    "pct_op": 4.3,
+    "total_pct": 116.2
+   },
+   "ca:en_contra": {
+    "n": 48,
+    "gana": 79.2,
+    "pct_op": 0,
+    "total_pct": 0.2
+   },
+   "ta:en_contra": {
+    "n": 23,
+    "gana": 91.3,
+    "pct_op": 9.76,
+    "total_pct": 224.4
+   },
+   "ba:a_favor": {
+    "n": 5,
+    "gana": 100,
+    "pct_op": 15.8,
+    "total_pct": 79
+   },
+   "ta:a_favor": {
+    "n": 4,
+    "gana": 100,
+    "pct_op": 9.55,
+    "total_pct": 38.2
+   },
+   "ts:en_contra": {
+    "n": 13,
+    "gana": 76.9,
+    "pct_op": -2.82,
+    "total_pct": -36.6
+   },
+   "td:a_favor": {
+    "n": 5,
+    "gana": 60,
+    "pct_op": -17.8,
+    "total_pct": -89
+   },
+   "ts:a_favor": {
+    "n": 5,
+    "gana": 60,
+    "pct_op": -3.44,
+    "total_pct": -17.2
+   },
+   "bb:en_contra": {
+    "n": 3,
+    "gana": 66.7,
+    "pct_op": -10.33,
+    "total_pct": -31
+   },
+   "hchi:a_favor": {
+    "n": 7,
+    "gana": 100,
+    "pct_op": 14,
+    "total_pct": 98
+   },
+   "rg:en_contra": {
+    "n": 8,
+    "gana": 87.5,
+    "pct_op": 7.65,
+    "total_pct": 61.2
+   },
+   "dp:a_favor": {
+    "n": 12,
+    "gana": 83.3,
+    "pct_op": 2.68,
+    "total_pct": 32.2
+   },
+   "cd:a_favor": {
+    "n": 6,
+    "gana": 83.3,
+    "pct_op": 16.77,
+    "total_pct": 100.6
+   },
+   "cd:en_contra": {
+    "n": 7,
+    "gana": 85.7,
+    "pct_op": -2.63,
+    "total_pct": -18.4
+   },
+   "ca:a_favor": {
+    "n": 10,
+    "gana": 100,
+    "pct_op": 16.82,
+    "total_pct": 168.2
+   },
+   "rg:a_favor": {
+    "n": 3,
+    "gana": 66.7,
+    "pct_op": -9.4,
+    "total_pct": -28.2
+   },
+   "cd:formando_a_favor": {
+    "n": 1,
+    "gana": 100,
+    "pct_op": 16,
+    "total_pct": 16
+   }
+  }
+ },
+ "solas_4h_4años": {
+  "ca": {
+   "figura": {
+    "n": 1767,
+    "gana": 41.8,
+    "pct_op": -0.05
+   },
+   "mitad1": {
+    "n": 874,
+    "gana": 39.6,
+    "pct_op": -0.19
+   },
+   "mitad2": {
+    "n": 893,
+    "gana": 44,
+    "pct_op": 0.08
+   },
+   "azar": {
+    "n": 8835,
+    "gana": 41.5,
+    "pct_op": -0.08
+   }
+  },
+  "todas": {
+   "figura": {
+    "n": 13318,
+    "gana": 44.2,
+    "pct_op": -0.03
+   },
+   "mitad1": {
+    "n": 5883,
+    "gana": 44,
+    "pct_op": -0.02
+   },
+   "mitad2": {
+    "n": 7435,
+    "gana": 44.4,
+    "pct_op": -0.04
+   },
+   "azar": {
+    "n": 66590,
+    "gana": 42.9,
+    "pct_op": -0.18
+   }
+  },
+  "ts": {
+   "figura": {
+    "n": 1474,
+    "gana": 30.5,
+    "pct_op": -0.07
+   },
+   "mitad1": {
+    "n": 661,
+    "gana": 31.9,
+    "pct_op": 0.26
+   },
+   "mitad2": {
+    "n": 813,
+    "gana": 29.3,
+    "pct_op": -0.34
+   },
+   "azar": {
+    "n": 7370,
+    "gana": 28.1,
+    "pct_op": -0.3
+   }
+  },
+  "cd": {
+   "figura": {
+    "n": 2423,
+    "gana": 40.4,
+    "pct_op": -0.13
+   },
+   "mitad1": {
+    "n": 988,
+    "gana": 42.1,
+    "pct_op": 0.27
+   },
+   "mitad2": {
+    "n": 1435,
+    "gana": 39.2,
+    "pct_op": -0.41
+   },
+   "azar": {
+    "n": 12115,
+    "gana": 39.7,
+    "pct_op": -0.09
+   }
+  },
+  "dp": {
+   "figura": {
+    "n": 1288,
+    "gana": 62.7,
+    "pct_op": -0.08
+   },
+   "mitad1": {
+    "n": 556,
+    "gana": 62.6,
+    "pct_op": 0.04
+   },
+   "mitad2": {
+    "n": 732,
+    "gana": 62.7,
+    "pct_op": -0.17
+   },
+   "azar": {
+    "n": 6440,
+    "gana": 59.6,
+    "pct_op": -0.24
+   }
+  },
+  "dt": {
+   "figura": {
+    "n": 1275,
+    "gana": 61.3,
+    "pct_op": 0.22
+   },
+   "mitad1": {
+    "n": 509,
+    "gana": 56.6,
+    "pct_op": -0.83
+   },
+   "mitad2": {
+    "n": 766,
+    "gana": 64.4,
+    "pct_op": 0.92
+   },
+   "azar": {
+    "n": 6375,
+    "gana": 59.4,
+    "pct_op": -0.11
+   }
+  },
+  "ta": {
+   "figura": {
+    "n": 1351,
+    "gana": 35.8,
+    "pct_op": 0.01
+   },
+   "mitad1": {
+    "n": 659,
+    "gana": 35.5,
+    "pct_op": -0.25
+   },
+   "mitad2": {
+    "n": 692,
+    "gana": 36.1,
+    "pct_op": 0.26
+   },
+   "azar": {
+    "n": 6755,
+    "gana": 35.6,
+    "pct_op": -0.24
+   }
+  },
+  "hch": {
+   "figura": {
+    "n": 579,
+    "gana": 53.4,
+    "pct_op": -0.15
+   },
+   "mitad1": {
+    "n": 245,
+    "gana": 52.2,
+    "pct_op": -0.5
+   },
+   "mitad2": {
+    "n": 334,
+    "gana": 54.2,
+    "pct_op": 0.11
+   },
+   "azar": {
+    "n": 2895,
+    "gana": 54.4,
+    "pct_op": -0.08
+   }
+  },
+  "ba": {
+   "figura": {
+    "n": 134,
+    "gana": 29.9,
+    "pct_op": -0.61
+   },
+   "mitad1": {
+    "n": 53,
+    "gana": 30.2,
+    "pct_op": -0.14
+   },
+   "mitad2": {
+    "n": 81,
+    "gana": 29.6,
+    "pct_op": -0.91
+   },
+   "azar": {
+    "n": 670,
+    "gana": 36.6,
+    "pct_op": 0.01
+   }
+  },
+  "td": {
+   "figura": {
+    "n": 1642,
+    "gana": 35.1,
+    "pct_op": -0.12
+   },
+   "mitad1": {
+    "n": 697,
+    "gana": 36.7,
+    "pct_op": 0.02
+   },
+   "mitad2": {
+    "n": 945,
+    "gana": 34,
+    "pct_op": -0.22
+   },
+   "azar": {
+    "n": 8210,
+    "gana": 34.2,
+    "pct_op": -0.16
+   }
+  },
+  "hchi": {
+   "figura": {
+    "n": 636,
+    "gana": 53.8,
+    "pct_op": 0.39
+   },
+   "mitad1": {
+    "n": 308,
+    "gana": 57.1,
+    "pct_op": 0.94
+   },
+   "mitad2": {
+    "n": 328,
+    "gana": 50.6,
+    "pct_op": -0.13
+   },
+   "azar": {
+    "n": 3180,
+    "gana": 50.8,
+    "pct_op": -0.38
+   }
+  },
+  "rg": {
+   "figura": {
+    "n": 624,
+    "gana": 54.5,
+    "pct_op": 0.33
+   },
+   "mitad1": {
+    "n": 274,
+    "gana": 53.6,
+    "pct_op": 0.44
+   },
+   "mitad2": {
+    "n": 350,
+    "gana": 55.1,
+    "pct_op": 0.25
+   },
+   "azar": {
+    "n": 3120,
+    "gana": 49.9,
+    "pct_op": -0.37
+   }
+  },
+  "bb": {
+   "figura": {
+    "n": 125,
+    "gana": 33.6,
+    "pct_op": -1.21
+   },
+   "mitad1": {
+    "n": 59,
+    "gana": 33.9,
+    "pct_op": -2.04
+   },
+   "mitad2": {
+    "n": 66,
+    "gana": 33.3,
+    "pct_op": -0.48
+   },
+   "azar": {
+    "n": 625,
+    "gana": 36.2,
+    "pct_op": -0.21
+   }
+  }
+ },
+ "solas_15m_1año": {
+  "rg": {
+   "figura": {
+    "n": 2307,
+    "gana": 50.4,
+    "pct_op": -0.19
+   },
+   "mitad1": {
+    "n": 1080,
+    "gana": 51.2,
+    "pct_op": -0.19
+   },
+   "mitad2": {
+    "n": 1227,
+    "gana": 49.7,
+    "pct_op": -0.19
+   },
+   "azar": {
+    "n": 11535,
+    "gana": 50,
+    "pct_op": -0.17
+   }
+  },
+  "todas": {
+   "figura": {
+    "n": 39347,
+    "gana": 42.6,
+    "pct_op": -0.18
+   },
+   "mitad1": {
+    "n": 18771,
+    "gana": 43.8,
+    "pct_op": -0.13
+   },
+   "mitad2": {
+    "n": 20576,
+    "gana": 41.6,
+    "pct_op": -0.22
+   },
+   "azar": {
+    "n": 196735,
+    "gana": 42,
+    "pct_op": -0.19
+   }
+  },
+  "hch": {
+   "figura": {
+    "n": 1762,
+    "gana": 53.5,
+    "pct_op": -0.07
+   },
+   "mitad1": {
+    "n": 871,
+    "gana": 57.6,
+    "pct_op": 0.08
+   },
+   "mitad2": {
+    "n": 891,
+    "gana": 49.5,
+    "pct_op": -0.22
+   },
+   "azar": {
+    "n": 8810,
+    "gana": 50.5,
+    "pct_op": -0.15
+   }
+  },
+  "ba": {
+   "figura": {
+    "n": 636,
+    "gana": 32.9,
+    "pct_op": -0.12
+   },
+   "mitad1": {
+    "n": 289,
+    "gana": 27.3,
+    "pct_op": -0.38
+   },
+   "mitad2": {
+    "n": 347,
+    "gana": 37.5,
+    "pct_op": 0.11
+   },
+   "azar": {
+    "n": 3180,
+    "gana": 35,
+    "pct_op": -0.21
+   }
+  },
+  "ca": {
+   "figura": {
+    "n": 5540,
+    "gana": 40.6,
+    "pct_op": -0.14
+   },
+   "mitad1": {
+    "n": 2612,
+    "gana": 42.9,
+    "pct_op": -0.04
+   },
+   "mitad2": {
+    "n": 2928,
+    "gana": 38.5,
+    "pct_op": -0.23
+   },
+   "azar": {
+    "n": 27700,
+    "gana": 40.3,
+    "pct_op": -0.17
+   }
+  },
+  "dt": {
+   "figura": {
+    "n": 4224,
+    "gana": 58.9,
+    "pct_op": -0.13
+   },
+   "mitad1": {
+    "n": 1985,
+    "gana": 61.7,
+    "pct_op": -0.04
+   },
+   "mitad2": {
+    "n": 2239,
+    "gana": 56.5,
+    "pct_op": -0.2
+   },
+   "azar": {
+    "n": 21120,
+    "gana": 55.9,
+    "pct_op": -0.16
+   }
+  },
+  "cd": {
+   "figura": {
+    "n": 6373,
+    "gana": 37.5,
+    "pct_op": -0.28
+   },
+   "mitad1": {
+    "n": 3166,
+    "gana": 37.9,
+    "pct_op": -0.26
+   },
+   "mitad2": {
+    "n": 3207,
+    "gana": 37.1,
+    "pct_op": -0.31
+   },
+   "azar": {
+    "n": 31865,
+    "gana": 38.4,
+    "pct_op": -0.22
+   }
+  },
+  "td": {
+   "figura": {
+    "n": 4274,
+    "gana": 33.9,
+    "pct_op": -0.19
+   },
+   "mitad1": {
+    "n": 2062,
+    "gana": 33.4,
+    "pct_op": -0.24
+   },
+   "mitad2": {
+    "n": 2212,
+    "gana": 34.4,
+    "pct_op": -0.15
+   },
+   "azar": {
+    "n": 21370,
+    "gana": 34.3,
+    "pct_op": -0.19
+   }
+  },
+  "dp": {
+   "figura": {
+    "n": 4019,
+    "gana": 57.9,
+    "pct_op": -0.19
+   },
+   "mitad1": {
+    "n": 1880,
+    "gana": 57.9,
+    "pct_op": -0.17
+   },
+   "mitad2": {
+    "n": 2139,
+    "gana": 57.9,
+    "pct_op": -0.2
+   },
+   "azar": {
+    "n": 20095,
+    "gana": 54.8,
+    "pct_op": -0.21
+   }
+  },
+  "hchi": {
+   "figura": {
+    "n": 1717,
+    "gana": 50.1,
+    "pct_op": -0.12
+   },
+   "mitad1": {
+    "n": 772,
+    "gana": 49.5,
+    "pct_op": -0.11
+   },
+   "mitad2": {
+    "n": 945,
+    "gana": 50.7,
+    "pct_op": -0.13
+   },
+   "azar": {
+    "n": 8585,
+    "gana": 48.7,
+    "pct_op": -0.21
+   }
+  },
+  "ts": {
+   "figura": {
+    "n": 3576,
+    "gana": 27.9,
+    "pct_op": -0.18
+   },
+   "mitad1": {
+    "n": 1679,
+    "gana": 30.6,
+    "pct_op": -0.07
+   },
+   "mitad2": {
+    "n": 1897,
+    "gana": 25.5,
+    "pct_op": -0.27
+   },
+   "azar": {
+    "n": 17880,
+    "gana": 28.6,
+    "pct_op": -0.2
+   }
+  },
+  "ta": {
+   "figura": {
+    "n": 4253,
+    "gana": 34.6,
+    "pct_op": -0.14
+   },
+   "mitad1": {
+    "n": 2009,
+    "gana": 35.8,
+    "pct_op": -0.07
+   },
+   "mitad2": {
+    "n": 2244,
+    "gana": 33.5,
+    "pct_op": -0.2
+   },
+   "azar": {
+    "n": 21265,
+    "gana": 34.2,
+    "pct_op": -0.18
+   }
+  },
+  "bb": {
+   "figura": {
+    "n": 666,
+    "gana": 35,
+    "pct_op": -0.23
+   },
+   "mitad1": {
+    "n": 366,
+    "gana": 41.3,
+    "pct_op": -0.08
+   },
+   "mitad2": {
+    "n": 300,
+    "gana": 27.3,
+    "pct_op": -0.43
+   },
+   "azar": {
+    "n": 3330,
+    "gana": 37.3,
+    "pct_op": -0.13
+   }
+  }
+ }
+}
