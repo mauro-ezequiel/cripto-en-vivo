@@ -714,6 +714,9 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
 #drwBar{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:6px;background:rgba(21,26,34,.95);border:1px solid var(--line);border-radius:12px;padding:5px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
 #drwBar[hidden]{display:none}#drwBar button{background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:600;cursor:pointer;min-height:34px}
 .rbtn[data-mag].on{color:#ffb74d}
+
+.fsind-h{position:sticky;top:-6px;z-index:1;display:flex;align-items:center;justify-content:space-between;gap:8px;background:rgba(22,26,34,.99);padding:6px 6px 8px;margin:-6px -6px 2px;border-bottom:1px solid var(--line)}
+.fsind-h b{font-size:13px;padding-left:4px}.fsind .fsind-x{flex:0 0 auto;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:700;min-height:34px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 </style>
 </head>
 <body>
@@ -1625,7 +1628,7 @@ function renderChips(){
   const M=MODES[mode];
   $('inds').classList.toggle('hide',!M.inds.length);
   $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
-  $('fsInd').innerHTML=M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
+  $('fsInd').innerHTML='<div class="fsind-h"><b>Indicadores</b><button type="button" class="fsind-x" data-fsx="1" aria-label="Cerrar indicadores">✕ Cerrar</button></div>'+M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
   $('fsIndBtn').hidden=!M.inds.length;if($('indN'))$('indN').textContent=active.size;if($('indTop'))$('indTop').hidden=!M.inds.length;['halvBtn','fsHalvBtn'].forEach(id=>{const b=$(id);if(b)b.hidden=mode==='a';});$('inds').classList.toggle('open',document.body.classList.contains('ind-open'));
   if($('liqOptsRow'))$('liqOptsRow').hidden=!active.has('liq')||!M.inds.length;
 }
@@ -1633,7 +1636,9 @@ $('inds').onclick=e=>{const b=e.target.closest('[data-ind]');if(!b)return;const 
   active.has(k)?active.delete(k):active.add(k);
   try{localStorage.setItem('cv_ind4_'+mode,JSON.stringify([...active]))}catch(e){}indUserSet(k,active.has(k));
   renderChips();layout();calcInd(true);hmKey='';};
-$('fsInd').onclick=e=>$('inds').onclick(e);
+$('fsInd').onclick=e=>{if(e.target.closest('[data-fsx]')){e.stopPropagation();$('fsInd').hidden=true;return;}$('inds').onclick(e);};
+/* octubre 2026: el panel de indicadores en pantalla completa se cierra con ✕ o tocando afuera (antes había que salir de pantalla completa) */
+document.addEventListener('pointerdown',e=>{const p=$('fsInd');if(!p||p.hidden)return;if(e.target.closest('#fsInd,#fsIndBtn'))return;p.hidden=true;},true);
 
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
