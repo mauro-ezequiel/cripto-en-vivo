@@ -24,8 +24,11 @@ function cuenta(b) { const n = b.length, cl = b.map(x => x.close), tr = b.map((x
   const upL = [st[j] === 1, e21[j] != null && c > e21[j], e9[j] != null && e21[j] != null && e9[j] > e21[j], rsi[j] != null && rsi[j] > 50, h > 0, sp[j] != null && sm[j] != null && sp[j] > sm[j], fl3 > 0, fig[j] === 1];
   const NOM = ['Supertrend', 'EMA 21', 'EMA 9/21', 'RSI', 'MACD', 'DMI', 'flujo', 'figura'];
   return { baja: dnL.filter(Boolean).length, sube: upL.filter(Boolean).length, nomBaja: NOM.filter((_, k) => dnL[k]), nomSube: NOM.filter((_, k) => upL[k]) }; }
-/* ¿hay que salir? bars4h: velas de 4 h CERRADAS; px: cierre de la última vela de 1 h; o: {dir, entry, sl (precio), hit} */
-function salir(bars4h, o, px) { if (!bars4h || bars4h.length < 60) return null; const d = o.dir, g = d * (px / o.entry - 1), sd = Math.abs(o.sl / o.entry - 1);
+/* ¿hay que salir? bars4h: velas CERRADAS (4 h en TRADING; las de la señal, 15 o 30 min, en SHOOTER); px: último cierre; o: {dir, entry, sl (precio), hit}
+   opt: {N0, N1} = señales en contra para salir antes / después del objetivo 1 (9 = nunca). TRADING v7: 5 y 5 · SHOOTER v9: nunca antes y 6 después */
+const SHOOTER_SAL = { N0: 9, N1: 6 };
+function salir(bars4h, o, px, opt) { if (!bars4h || bars4h.length < 60) return null; const d = o.dir, g = d * (px / o.entry - 1), sd = Math.abs(o.sl / o.entry - 1);
+  const N = o.hit === 0 ? (opt ? opt.N0 : N_SALIDA) : (opt ? opt.N1 : N_SALIDA); if (N >= 9) return null;
   if (o.hit === 0 ? !(g >= .5 * sd) : !(g > 0)) return null; const r = cuenta(bars4h), n = d > 0 ? r.baja : r.sube;
-  return n >= N_SALIDA ? { n, señales: d > 0 ? r.nomBaja : r.nomSube } : null; }
-module.exports = { cuenta, salir, N_SALIDA };
+  return n >= N ? { n, señales: d > 0 ? r.nomBaja : r.nomSube } : null; }
+module.exports = { cuenta, salir, N_SALIDA, SHOOTER_SAL };

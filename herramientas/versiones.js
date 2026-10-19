@@ -19,7 +19,8 @@ const VERS = {
     { v: 3, desde: '2026-10-08T15:08:00+02:00', txt: 'Velas de 3 min: rebote después de caer 3 % en 1 h, bajo la banda de Bollinger con RSI 7 ≤ 35 y la tendencia de 1 h a favor (solo LONG)', k: 'drop', tfs: ['3m'], n: 30, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H, atrMin: .004, atrMax: .012 },
     { v: 4, desde: '2026-10-08T17:02:00+02:00', txt: 'La misma regla en velas de 15 y 30 min, las 30 con más volumen; stop 3 ATR (máx. 5 %), objetivos 0,35 × stop, × 15', k: 'drop', tfs: ['15m', '30m'], n: 30, a: 3, r: .35, cap: .05, lev: 15, age: 12 * H, cool: H },
     { v: 5, desde: '2026-10-12T19:57:00+02:00', txt: '+ solo con el precio sobre la EMA 200; stop 4 ATR, objetivos 0,25 × stop', k: 'drop', tfs: ['15m', '30m'], n: 30, e200: 1, a: 4, r: .25, cap: .05, lev: 15, age: 12 * H, cool: H },
-    { v: 6, desde: '2026-10-14T16:29:00+02:00', txt: '+ solo las 30 con más volumen promedio de 7 días y sin caídas de más de 10 % en 24 h', k: 'drop', tfs: ['15m', '30m'], n: 30, e200: 1, uni7: 1, a: 4, r: .25, cap: .05, lev: 15, age: 12 * H, cool: H }] };
+    { v: 6, desde: '2026-10-14T16:29:00+02:00', txt: '+ solo las 30 con más volumen promedio de 7 días y sin caídas de más de 10 % en 24 h', k: 'drop', tfs: ['15m', '30m'], n: 30, e200: 1, uni7: 1, a: 4, r: .25, cap: .05, lev: 15, age: 12 * H, cool: H },
+    { v: 7, desde: '2026-10-19T21:30:00+02:00', txt: '+ salida anticipada: después del objetivo 1 y con ganancia, sale si 6 de 8 señales se dan vuelta en contra (en las velas de la señal)', k: 'drop', tfs: ['15m', '30m'], n: 30, e200: 1, uni7: 1, sal: 1, a: 4, r: .25, cap: .05, lev: 15, age: 12 * H, cool: H }] };
 const MG = { medio: 350, x: 50 }, TR = { a: 3, cap: .036, lev: 10, age: 7 * DAY, cool: 24 * H };
 const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d => Date.parse(d + 'T00:00:00Z')), cycFall = t => CYC_TOPS.some(a => t >= a && t < a + 400 * DAY);
 const r2 = v => v == null || !isFinite(v) ? null : +(+v).toFixed(2);
@@ -85,9 +86,12 @@ async function run(now, base, U7, D) { const S = D.S;
   for (const o of A.ops.filter(x => !x.out)) { try { const k = await D.getJ(`${D.API}/klines?symbol=${o.sym}&interval=5m&startTime=${o.chk || o.t}&limit=1000`);
       for (const r of k || []) { const b = { t: +r[0], h: +r[2], l: +r[3], c: +r[4] }; if (b.t + 3e5 > now) break; if (b.t + 3e5 <= o.t) continue; step(o, b); o.chk = b.t + 3e5; ch = true; if (o.out) break; }
       /* v7: salida anticipada al cierre de cada vela de 1 h */
-      if (!o.out && o.sal) { const h1 = Math.floor(now / H); if (o.hChk !== h1) { o.hChk = h1; const k1 = await D.kl(o.sym, '1h', 3), c1 = k1[k1.length - 2].close, b4 = (await D.kl(o.sym, '4h', 300)).slice(0, -1);
-          const s = SAL.salir(b4, { dir: o.dir, entry: o.entry, sl: o.sl, hit: o.hit }, c1); if (s) { { const d = o.dir; let v = 0; for (let q = 0; q < o.hit; q++) v += d * (o.tp[q] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (c1 / o.entry - 1);
-              o.out = { c: 6, hit: o.hit, p: +c1.toPrecision(8), t: h1 * H, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (h1 * H - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; } ch = true; } } } } catch (e) {} await D.sleep(30); }
+      /* SHOOTER v7 (de la página): al cierre de cada vela de la señal, solo después del objetivo 1, con 6 de 8 en contra */
+      const X = o.m === 'x', bms = X ? (o.tf === '30m' ? 18e5 : 9e5) : H;
+      if (!o.out && o.sal && (!X || o.hit >= 1)) { const h1 = Math.floor(now / bms); if (o.hChk !== h1) { o.hChk = h1; let c1, b4;
+          if (X) { b4 = (await D.kl(o.sym, o.tf || '15m', 300)).slice(0, -1); c1 = b4[b4.length - 1].close; } else { const k1 = await D.kl(o.sym, '1h', 3); c1 = k1[k1.length - 2].close; b4 = (await D.kl(o.sym, '4h', 300)).slice(0, -1); }
+          const s = SAL.salir(b4, { dir: o.dir, entry: o.entry, sl: o.sl, hit: o.hit }, c1, X ? SAL.SHOOTER_SAL : null); if (s) { { const d = o.dir; let v = 0; for (let q = 0; q < o.hit; q++) v += d * (o.tp[q] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (c1 / o.entry - 1);
+              o.out = { c: 6, hit: o.hit, p: +c1.toPrecision(8), t: h1 * bms, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (h1 * bms - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; } ch = true; } } } } catch (e) {} await D.sleep(30); }
   if (A.ops.length > 6000) A.ops = A.ops.slice(-6000);
   if (ch) A.dirty = true;
   if (A.dirty && (!A.pubT || now - A.pubT >= 15 * 6e4) && process.env.GH_TOKEN) {

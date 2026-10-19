@@ -142,7 +142,8 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    en ese momento (desequilibrio ±0,5 / 1 / 2 %, diferencia compra/venta, profundidad, precio) y cómo terminó (código como el historial:
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
-const VER = { medio: 'v7', x: 'v8' }; // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
+const VER = { medio: 'v7', x: 'v9' }; // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
+ // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
 const SAL = require('./herramientas/salida-lib.js'); // TRADING v6 (octubre 2026): + tendencia de BTC con fuerza (ADX 4 h ≥ 24)
 const bitId = x => x.sym + '-' + x.t;
 const bitRec = x => ({ id: bitId(x), m: x.m, sym: x.sym, dir: x.dir, entry: x.entry, tp: x.tp, sl: x.sl, ll: x.ll == null ? null : x.ll, setup: x.setup || null, conf: x.conf || null, t: x.t, v: x.v || null, libro: x.libro || null, out: null });
@@ -265,6 +266,11 @@ async function main() {
         try { const k1 = await kl(o.sym, '1h', 3), c1 = k1[k1.length - 2].close, b4 = (await kl(o.sym, '4h', 300)).slice(0, -1), r = SAL.salir(b4, o, c1);
           if (r) { o.done = true; bitClose(bid, 6, o.hit, c1, now);
             await tg(`💰 ${cfg.name} ${c}: SALÍ ANTES con ganancia en ${fp(c1)} (${pct(c1, o.entry)}${o.hit ? `, después del objetivo ${o.hit}` : ''}).\n${r.n} de 8 señales se dieron vuelta en contra: ${r.señales.join(', ')}.\nGanancia asegurada: cerrá lo que queda de la operación.`); continue; } } catch (e) { console.log('salida', o.sym, e.message); } } }
+    /* SHOOTER v9: al cierre de cada vela de la señal (15 o 30 min), después del objetivo 1 y en ganancia, si 6 de 8 señales están en contra se sale */
+    if (o.m === 'x' && o.hit >= 1) { const tf = o.tf || '15m', ms = tf === '30m' ? 18e5 : 9e5, bar = Math.floor(now / ms); if (o.bChk !== bar && now - bar * ms < 10 * 6e4) { o.bChk = bar;
+        try { const bb = (await kl(o.sym, tf, 300)).slice(0, -1), cx = bb[bb.length - 1].close, r = SAL.salir(bb, o, cx, SAL.SHOOTER_SAL);
+          if (r) { o.done = true; bitClose(bid, 6, o.hit, cx, now);
+            await tg(`💰 ${cfg.name} ${c}: SALÍ ANTES con ganancia en ${fp(cx)} (${pct(cx, o.entry)}, después del objetivo ${o.hit}).\n${r.n} de 8 señales se dieron vuelta en contra: ${r.señales.join(', ')}.\nGanancia asegurada: cerrá lo que queda de la operación.`); continue; } } catch (e) { console.log('salida x', o.sym, e.message); } } }
     if (now - o.t > cfg.maxAge) { o.done = true; bitClose(bid, 5, o.hit, p, now); await tg(`⌛ ${cfg.name} ${c}: pasó el plazo sin llegar al objetivo ni al stop. Precio ${fp(p)} (${pct(p, o.entry)}).`); }
   }
   S.open = S.open.filter(o => !o.done);
@@ -300,9 +306,9 @@ async function main() {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
       if (S.open.some(o => o.sym === s && o.m === m)) continue;
       try {
-        let e;
+        let e, tfx = null;
         if (m === 'x') { const [c15, c30, hc] = await Promise.all([kl(s, '15m', 300), kl(s, '30m', 300), kl(s, '1h', 200)]); if (c15.length < 150 || hc.length < 60) continue;
-          e = evalShooter(c15, hc, 15); if (!e.dir) e = evalShooter(c30, hc, 30); if (!e.dir || !(await wildOK(s, hc))) continue; }
+          e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue; }
         else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
           e = evalTrading(cs, hc, rankOf[s]); if (!e.dir || !(await wildOK(s))) continue; }
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
@@ -311,7 +317,7 @@ async function main() {
         if (conf < MINCERT[m]) continue;
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
-        S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0 }); sent++;
+        S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0, ...(tfx ? { tf: tfx } : {}) }); sent++;
         const hx = { m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now, v: VER[m] };
         (S.hist = S.hist || []).push(hx); S.histDirty = true;
         let libro = null; try { const dp = await getJ(`${API}/depth?symbol=${s}&limit=1000`); if (dp && dp.bids && dp.bids.length && dp.asks.length) libro = require('./herramientas/libro-lib.js').stats(dp); } catch (er) {} // foto del libro en el momento de la señal

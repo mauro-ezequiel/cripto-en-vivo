@@ -169,7 +169,9 @@ function against(rb, j, dir, T) { const o = trendOf(rb), c = rb[j].close, a21 = 
    3 velas y una figura chartista confirmada en contra en las últimas 6 velas. Se mira al cierre de cada vela de 1 h (o con las de 4 h). */
 /* TRADING v7 (octubre 2026): la salida anticipada ya es parte de la regla (5 de 8 en contra, velas de 4 h). SIN_V7=1 la saca. */
 const SXV7 = { N0: 5, N1: 5, P: .5, tf: '4h', cerca: 0 };
-const SALIDA = !!process.env.SALIDA, SV = [], SVX = [], FIGL = SALIDA ? require('./figuras-lib.js') : null, AGC = new WeakMap();
+/* SHOOTER v9 del bot (v7 en la página, octubre 2026): después del objetivo 1 sale con 6 de 8 en contra en sus propias velas. SIN_V9X=1 la saca. */
+const SXV9X = { N0: 9, N1: 6, P: .5, tf: 'misma', cerca: 0 };
+const SALIDA = !!process.env.SALIDA, SV = [], SVX = [], FIGL = require('./figuras-lib.js'), AGC = new WeakMap();
 /* N0: señales en contra para salir ANTES del objetivo 1 (con ganancia ≥ medio stop) · N1: DESPUÉS del objetivo 1 (camino al 2 o al 3)
    cerca=1: después del objetivo 1 solo sale si el precio ya hizo al menos la mitad del camino al objetivo siguiente (salir cerca del máximo). 9 = nunca */
 if (SALIDA) for (const N0 of [5, 6, 9]) for (const N1 of [4, 5, 6, 9]) { if (N0 === 9 && N1 === 9) continue; SVX.push({ N0, N1, P: .5, tf: 'misma', cerca: 0 }); } // SHOOTER: con sus propias velas
@@ -263,7 +265,7 @@ async function runShooter(s, rank = 0) {
       if (tooWild(hb, W1, t)) continue;
       if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) continue; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
-      const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t);
+      const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, process.env.SIN_V9X ? null : Object.assign({}, SXV9X));
       if (SALIDA) res.sal = SVX.map(X => sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, X)));
       if (RECUP) res.alt = RV.map(V => { const o = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
       CANDS.push({ m: 'x', setup: 'sh-c', tf, s, t, dir, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, ...res,
