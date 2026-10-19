@@ -13,6 +13,21 @@ from sklearn.metrics import roc_auc_score
 
 D = json.load(gzip.open(sys.argv[1] if len(sys.argv) > 1 else 'ia-datos.json.gz'))
 FEE, EXF, ENF = D['fee'], D['exitF'], D['entryF']
+# IA_ANTES=1: estudia como la versión anterior (sin los datos nuevos, sin las versiones viejas y con las reglas de antes), para comparar
+ANTES = os.environ.get('IA_ANTES') == '1'
+STRICT = not ANTES
+NEN0, NEX0 = 15, 19  # cantidad de datos de entrada y de salida de la versión 1
+if ANTES and len(ENF) > NEN0:
+    _k0 = 1 + len(ENF)
+    for _f in ('tr', 'sh'):
+        for _o in D[_f]['ops']:
+            _o['X'] = [x[:NEX0] for x in _o['X']]
+        D[_f]['ent'] = [r[:1 + NEN0] + r[_k0:] for r in D[_f]['ent']]
+        D[_f]['old'] = []
+    ENF, EXF = ENF[:NEN0], EXF[:NEX0]; D['entryF'], D['exitF'] = ENF, EXF
+for _f in ('tr', 'sh'):
+    D[_f].setdefault('old', [])
+WMIN = {'tr': 70, 'sh': 80}  # acierto mínimo para operar de verdad (como los bots)
 FAM = {'tr': dict(K=1.5, H=24, name='TRADING y TRADING+'), 'sh': dict(K=1.5, H=20, name='SHOOTER')}
 RNG = np.random.default_rng(7)
 
@@ -126,7 +141,7 @@ def cut_of(ts):
     return float(max(np.quantile(ts, 2 / 3), ts.max() - 120 * DAY))
 
 
-def walk_forward(ops, E, rows, days=100):
+def walk_forward(ops, E, rows, days=100, extra=()):
     """Resultado de la IA operación por operación en los últimos `days` días, sin trampa: cada 15 días la IA
     vuelve a aprender, solo con operaciones que ya habían terminado antes de empezar esos 15 días."""
     end = max(o['t'] for o in ops); start = end - days * DAY; out = []
@@ -138,7 +153,7 @@ def walk_forward(ops, E, rows, days=100):
         past = [o for o in ops if o['t'] + 1.5 * o['maxAge'] < a]
         if len(past) < 60:
             continue
-        m = gbc().fit(*rows(past))
+        m = gbc().fit(*rows(past + [o for o in extra if o['t'] + 1.5 * o['maxAge'] < a]))
         for o in win:
             r = policy2(o, m.predict_proba(np.array(o['X'], float))[:, 1], E['theta'], E['minhold'], E['variant'], E['hold'])
             out.append([o['m'], o['setup'], o['s'].replace('USDT', ''), o['t'], round(o['botPct'], 2), o['botHit'], round(r['pct'], 2), r['hits'], r['k'], r['kind'], float('%.6g' % r['px']), o['L'], o.get('tf', '4h')])
@@ -163,7 +178,9 @@ def resumen(recs, now):
 VENTANA = float(__import__('os').environ.get('IA_VENTANA', 365))  # días de aprendizaje antes de la prueba
 
 
-def fam_exit(ops, K, H):
+def fam_exit(ops, K, H, old=()):
+    """old: señales de versiones viejas de los bots (las que un filtro nuevo saca). Solo se usan para APRENDER (más ejemplos, sobre todo de
+    errores); la prueba y la comparación con los bots son siempre con las señales de la versión actual."""
     ops = [o for o in ops if len(o['B']) > 2]
     ts = np.array([o['t'] for o in ops])
     cut = cut_of(ts)
@@ -172,6 +189,10 @@ def fam_exit(ops, K, H):
     ts = np.array([o['t'] for o in ops])
     for o in ops:
         o['y'] = labels(o, K, H)
+    old = [o for o in old if len(o['B']) > 2 and o['t'] >= cut - VENTANA * DAY] if STRICT else []
+    for o in old:
+        o['y'] = labels(o, K, H)
+    plus = lambda lim: [o for o in old if o['t'] + 1.5 * o['maxAge'] < lim]  # versiones viejas ya terminadas antes de `lim`
     def rows(sel):
         X, Y = [], []
         for o in sel:
@@ -187,7 +208,7 @@ def fam_exit(ops, K, H):
     for i, q in enumerate(qs):
         fit = [o for o in tr if o['t'] < q]; val = [o for o in tr if q <= o['t'] < (qs[i + 1] if i + 1 < len(qs) else cut)]
         if len(fit) >= 60 and len(val) >= 15:
-            mA = gbc().fit(*rows(fit)); folds.append((val, [mA.predict_proba(np.array(o['X'], float))[:, 1] for o in val]))
+            mA = gbc().fit(*rows(fit + plus(q))); folds.append((val, [mA.predict_proba(np.array(o['X'], float))[:, 1] for o in val]))
             Xv, Yv = rows(val); fa.append(roc_auc_score(Yv, mA.predict_proba(Xv)[:, 1]) if len(set(Yv)) > 1 else .5)
     # PRUDENCIA: si en los tramos el modelo no predice (precisión < 0,53), la IA no toma el control: solo corrige el plan del bot (D)
     predice = bool(fa and np.mean(fa) >= .53)
@@ -202,7 +223,7 @@ def fam_exit(ops, K, H):
     _, theta, minhold, variant, hold = best
     eleccion = {'tramos': len(folds), 'puntaje': round(best[0], 2), 'por_variante': {v: max(x[4] for x in sel if x[0] == v) for v in 'ABCD' if any(x[0] == v for x in sel)}, 'auc_tramos': round(float(np.mean(fa)), 3) if fa else None, 'predice': predice}
     # 2) prueba honesta: modelo con todo el entrenamiento, evaluado en los últimos meses
-    Xtr, Ytr = rows(tr); Xte, Yte = rows(te)
+    Xtr, Ytr = rows(tr + plus(cut)); Xte, Yte = rows(te)
     mT = gbc().fit(Xtr, Ytr)
     auc = roc_auc_score(Yte, mT.predict_proba(Xte)[:, 1])
     ia, bot, better = [], [], 0
@@ -212,7 +233,7 @@ def fam_exit(ops, K, H):
     ia, bot = np.array(ia), np.array(bot)
     imp = importance(mT, Xte, Yte, EXF)
     # 3) modelo final con todo el año
-    Xall, Yall = rows(ops)
+    Xall, Yall = rows(ops + old)
     mF = gbc().fit(Xall, Yall)
     res = {'n_ops': len(ops), 'n_test': len(te), 'auc': round(auc, 3),
            'bot': {'pct': round(float(bot.mean()), 2), 'gana': round(float((bot > 0).mean() * 100), 1), 'peor': round(float(bot.min()), 1)},
@@ -226,7 +247,7 @@ def fam_exit(ops, K, H):
         sub = [o for o in tr if o['t'] >= cut - fr * span * DAY]
         if len(sub) < 60:
             continue
-        m = mT if fr == 1.0 else gbc().fit(*rows(sub))
+        m = mT if fr == 1.0 else gbc().fit(*rows(sub + [o for o in plus(cut) if o['t'] >= cut - fr * span * DAY]))
         v = [policy(o, m.predict_proba(np.array(o['X'], float))[:, 1], theta, minhold, variant, hold)[0] for o in te]
         curva.append([round(fr * span / 30, 2), round(float(np.sum(v)), 2)])
     res['curva'] = {'meses_ia': curva, 'bot_suma': round(float(bot.sum()), 2), 'n': len(te)}
@@ -238,8 +259,14 @@ def fam_exit(ops, K, H):
     res['por_modo'] = {k: {'n': b['n'], 'bot': round(b['bot'] / b['n'], 2), 'ia': round(b['ia'] / b['n'], 2)} for k, b in by.items()}
     # solo se usa en vivo si le ganó al bot en los meses que no vio (y de verdad predice algo)
     res['activa'] = bool(res['ia']['pct'] > res['bot']['pct'] + .3 and auc >= .53)
+    # ESTRICTA (octubre 2026): además tiene que ganarle al bot en las DOS mitades de la prueba y predecir también en los tramos
+    tmid = float(np.median([o['t'] for o in te])); h1 = np.array([o['t'] < tmid for o in te])
+    res['mitades'] = [[round(float(bot[h].mean()), 2), round(float(ia[h].mean()), 2)] for h in (h1, ~h1) if h.any()]
+    res['versiones_viejas'] = len(old)
+    if STRICT:
+        res['activa'] = bool(res['activa'] and predice and len(res['mitades']) == 2 and all(i_ > b_ for b_, i_ in res['mitades']))
     E = {'model': export(mF, Xall), 'theta': theta, 'minhold': minhold, 'variant': variant, 'hold': hold, 'K': K, 'H': H, 'test': res, 'imp': imp, 'activa': res['activa']}
-    E['ops'] = walk_forward(ops, E, rows)
+    E['ops'] = walk_forward(ops, E, rows, extra=old)
     return E
 
 
@@ -315,7 +342,7 @@ def importance(m, X, Y, names, reps=2):
     return sorted(out, key=lambda x: -x[1])
 
 
-def fam_entry(ent, fam):
+def fam_entry(ent, fam, bot_ops=()):
     w = min(len(r) for r in ent); A = np.array([r[:min(w, 1 + len(ENF) + 5)] for r in ent], float)
     if len(A) < 500:
         return None
@@ -353,14 +380,27 @@ def fam_entry(ent, fam):
         if len(pk) < 15:
             continue
         PP = P[pk]; sc = (PP.mean() + .5 * PP[PP < 0].sum() / len(PP)) if CAL_Q else PP.sum() + .5 * PP[PP < 0].sum()
-        if PP.mean() > 0 and Y[pk].mean() >= Y[v].mean() and sc > best_s:
+        ok = PP.mean() > 0 and Y[pk].mean() >= Y[v].mean()
+        if STRICT and ok:  # ESTRICTA: gana en las dos mitades de la validación y acierta como los bots
+            tm = np.median(t[pk]); a1, a2 = PP[t[pk] < tm], PP[t[pk] >= tm]
+            ok = len(a1) and len(a2) and a1.mean() > 0 and a2.mean() > 0 and (PP > 0).mean() * 100 >= WMIN[fam]
+        if ok and sc > best_s:
             best_q, best_s = q, sc
+    apta = best_s > -1e18
     ptr = m.predict_proba(X[tr])[:, 1]; thr = float(np.quantile(ptr, best_q))
     pick = picks(np.where(te)[0], p, thr); dias = (t[te].max() - t[te].min()) / DAY if te.sum() else 1
     PP = P[pick] if len(pick) else np.array([0.])
     res['propias'] = {'n': int(len(pick)), 'q': best_q, 'por_dia': round(len(pick) / max(dias, 1) / samp, 2), 'obj1': round(float(Y[pick].mean() * 100), 1) if len(pick) else None,
                       'pct': round(float(P[pick].mean()), 2) if len(pick) else None, 'gana': round(float((P[pick] > 0).mean() * 100), 1) if len(pick) else None,
                       'peor': round(float(PP.min()), 2), 'base_obj1': round(float(Y[te].mean() * 100), 1), 'base_pct': round(float(P[te].mean()), 2)}
+    # contra los bots: lo que ganaron las señales de los bots en los mismos meses de prueba (% del margen por operación)
+    tp0 = float(t[te].min()) if te.sum() else 0
+    bp = [o['botPct'] for o in bot_ops if o['t'] >= tp0]
+    if len(pick):
+        tm = np.median(t[pick]); res['propias']['mitades'] = [round(float(P[pick][t[pick] < tm].mean()), 2) if (t[pick] < tm).any() else None, round(float(P[pick][t[pick] >= tm].mean()), 2) if (t[pick] >= tm).any() else None]
+    res['propias']['bot_pct'] = round(float(np.mean(bp)), 2) if bp else None
+    res['propias']['apta'] = bool(apta) if STRICT else True
+    res['propias']['supera_bots'] = bool(len(pick) and bp and res['propias']['pct'] >= np.mean(bp))
     mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
     OUTE = {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
     # CON DATOS DE FUTUROS (interés abierto, flujo, traders grandes, minoristas, funding): segundo modelo con las mismas entradas que los tienen.
@@ -412,31 +452,34 @@ def memoria(D):
         t0 = min([o['t'] for o in cur['ops']] or [D['upd']])
         keep = [o for o in old.get('ops', []) if lim <= o['t'] < t0]
         cur['ops'] = keep + cur['ops']; add += len(keep)
+        o0 = min([o['t'] for o in cur.get('old') or []] or [D['upd']])
+        cur['old'] = [o for o in old.get('old', []) if lim <= o['t'] < o0] + (cur.get('old') or [])
         if cur['ent']:
             e0, w = min(r[0] for r in cur['ent']), len(cur['ent'][0])
             cur['ent'] = [r for r in old.get('ent', []) if lim <= r[0] < e0 and len(r) == w] + cur['ent']
     return {'ops': add}
 
 
-MEM = memoria(D)
+MEM = memoria(D) if not ANTES else {'ops': 0}
 ALL_T = [o['t'] for f in FAM for o in D[f]['ops']]
 MEM['dias'] = round((max(ALL_T) - min(ALL_T)) / DAY) if ALL_T else 0
-with gzip.open('ia-datos.json.gz', 'wt') as fh:  # se guarda la memoria para mañana
-    json.dump(D, fh, separators=(',', ':'))
+if not ANTES:
+    with gzip.open('ia-datos.json.gz', 'wt') as fh:  # se guarda la memoria para mañana
+        json.dump(D, fh, separators=(',', ':'))
 print('memoria', MEM)
 
 t0 = time.time()
-OUT = {'upd': D['upd'], 'ver': 1, 'exitF': EXF, 'entryF': ENF}
+OUT = {'upd': D['upd'], 'ver': 1 if ANTES else 2, 'exitF': EXF, 'entryF': ENF}
 for f, cfg in FAM.items():
     part = D[f]
     OUT[f] = {'name': cfg['name']}
     if len(part['ops']) >= int(__import__('os').environ.get('IA_MIN', 60)):
-        OUT[f]['exit'] = fam_exit(part['ops'], cfg['K'], cfg['H'])
+        OUT[f]['exit'] = fam_exit(part['ops'], cfg['K'], cfg['H'], part.get('old') or [])
         print(f, 'salida', json.dumps(OUT[f]['exit']['test'], ensure_ascii=False), OUT[f]['exit']['theta'], OUT[f]['exit']['minhold'], OUT[f]['exit']['variant'])
         print(f, 'importa (salida)', OUT[f]['exit']['imp'][:8])
         OUT[f]['reglas'] = rules_search([o for o in part['ops'] if len(o['B']) > 2], f)
         print(f, 'reglas', json.dumps(OUT[f]['reglas'], ensure_ascii=False))
-    e = fam_entry(part['ent'], f)
+    e = fam_entry(part['ent'], f, part['ops'])
     if e:
         OUT[f]['entry'] = e
         print(f, 'entrada', e['test'], e['imp'][:8])
@@ -450,7 +493,13 @@ def progreso(R, prev):
     """La IA se autoevalúa: cuánto de la ganancia de los bots consigue (100 % = iguala, más = los supera), en los últimos 3 meses."""
     b = sum((x.get('bot_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
     i = sum((x.get('ia_pct', 0) * x['n']) for x in R['3meses'].values() if x.get('n'))
-    val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 2)
+    n = sum(x['n'] for x in R['3meses'].values() if x.get('n'))
+    if ANTES:
+        val = None if b <= 0 else round(max(0, min(1000, 100 * i / b)), 2)
+    else:
+        # octubre 2026: cuando los bots ganan casi nada la división se disparaba (2,4 ÷ 0,14 = 1.700 %). Ahora los bots cuentan como
+        # mínimo +1 % del margen por operación: para pasar el 100 % la IA tiene que ganar de verdad, no solo "menos poco".
+        val = None if not n else round(max(0, min(1000, 100 * i / max(b, n * 1.0))), 2)
     hist = [h for h in (prev.get('progreso', {}).get('hist') or []) if h[0] < D['upd'] - 3600e3][-120:] + [[D['upd'], val]]
     notas = []
     pc = lambda v: (f'{v:+.1f}').replace('.', ',')
@@ -495,6 +544,37 @@ try:
 except Exception:
     prev = {}
 OUT['progreso'] = progreso(OUT['resumen'], prev)
+
+
+FILTROS = {'contra_btc': 'BTC en contra', 'btc_sin_fuerza': 'BTC sin fuerza (ADX < 24, antes de TRADING v6)', 'impredecible': 'moneda impredecible esa semana',
+           'bajo_ema200': 'precio bajo la EMA 200 (antes de SHOOTER v5)', 'fuera_lista_7d': 'fuera de la lista de 7 días (antes de SHOOTER v6)'}
+
+
+def versiones():
+    """Qué aprendió de las versiones viejas: las señales que cada filtro nuevo sacó, cómo les hubiera ido (gestión de antes) contra las de la
+    versión actual en el mismo año. Si las sacadas ganaban menos, el filtro corrigió un error; si ganaban más, perdió señales buenas."""
+    out, notas = {}, []
+    st = lambda L: {'n': len(L), 'gana': round(100 * sum(1 for x in L if x > 0) / len(L), 1), 'pct': round(float(np.mean(L)), 2)} if L else {'n': 0}
+    for f, nm in (('tr', 'TRADING'), ('sh', 'SHOOTER')):
+        lim = D['upd'] - 365 * DAY
+        cur = [o['botPct'] for o in D[f]['ops'] if o['t'] >= lim]; o_ = {'actual': st(cur), 'filtros': {}}
+        G = {}
+        for o in D[f].get('old') or []:
+            if o['t'] >= lim:
+                G.setdefault(o.get('filtro', '?'), []).append(o['botPct'])
+        for k, L in G.items():
+            o_['filtros'][k] = st(L)
+            if len(L) >= 20 and cur:
+                x = o_['filtros'][k]; bien = x['pct'] < o_['actual']['pct']
+                notas.append(f"{nm}: el filtro «{FILTROS.get(k, k)}» sacó {len(L)} señales que ganaban {str(x['pct']).replace('.', ',')} % por operación ({x['gana']:.0f} % ganadas) contra {str(o_['actual']['pct']).replace('.', ',')} % de las actuales: {'corrigió un error' if bien else 'sacó señales buenas, conviene revisarlo'}.")
+        out[f] = o_
+    return out, notas
+
+
+if not ANTES:
+    OUT['versiones'], _nv = versiones()
+    OUT['progreso']['notas'] += _nv[:4]
+    print('versiones', json.dumps(OUT['versiones'], ensure_ascii=False))
 
 
 def estimar():
