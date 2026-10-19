@@ -2,6 +2,10 @@ name: Investigación SALIDA anticipada en ACCIONES
 # Se corre a mano: no cambia la página ni los bots. Guarda el resultado en la rama salida-acc-<número>.
 on:
   workflow_dispatch:
+    inputs:
+      env:
+        description: "Variables"
+        default: ""
 permissions:
   contents: write
 jobs:
@@ -14,7 +18,7 @@ jobs:
         with:
           node-version: '20'
       - run: npm i --no-save --no-package-lock playwright-core@1.47.2
-      - run: node herramientas/investigacion-salida-acciones.js
+      - run: env ${{ inputs.env }} node herramientas/investigacion-salida-acciones.js
       - name: Guardar el resultado
         if: always()
         run: |

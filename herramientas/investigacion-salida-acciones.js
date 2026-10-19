@@ -28,7 +28,7 @@ histFollow=function(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o
       if(ok){const G=__agArr(rb),cnt=d>0?G.a[j]:G.u[j];if(cnt>=(hit===0?SX.N0:SX.N1)){const r=close(hit>0?'win':'exp',b.close,b.t+resMs,'salida anticipada',pnlAt(b.close));r.salida=1;return r;}}}
     if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,'venció el plazo',Math.max(-loss,pnlAt(px)));}}
   o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;};`;
-const VARS = [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
+const VARS = process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
 (async () => {
   const br = await chromium.launch({ channel: 'chrome' }), pg = await br.newPage();
   await pg.goto('https://mauro-ezequiel.github.io/cripto-en-vivo/?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
@@ -41,7 +41,8 @@ const VARS = [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 
       const st = A => { const n = A.length; if (!n) return { n: 0 }; const u = A.map(o => o.pnl / o.not * 3000), lo = u.filter(x => x < 0);
         return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0,
           pct_margen_app: +(A.reduce((a, o) => a + o.pnl / SIM.a.margin * 100, 0) / n).toFixed(2), salidas: A.filter(o => o.salida).length, salidas_tras_obj1: A.filter(o => o.salida && o.hit >= 1).length }; };
-      return { v: V || 'actual', año: st(L), mitad1: st(L.filter(o => o.t < mid)), mitad2: st(L.filter(o => o.t >= mid)) }; }, V);
-    out.variantes.push(r); console.log(JSON.stringify(r)); fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
+      const det = L.map(o => ({ id: o.id, sym: o.sym, t: o.t, setup: o.setup, hit: o.hit, salida: o.salida ? 1 : 0, usd: +(o.pnl / o.not * 3000).toFixed(1), cierre: o.closeAt, por: o.why }));
+      return { det, v: V || 'actual', año: st(L), mitad1: st(L.filter(o => o.t < mid)), mitad2: st(L.filter(o => o.t >= mid)) }; }, V);
+    out.variantes.push(r); console.log(JSON.stringify(Object.assign({}, r, { det: undefined }))); fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
   await br.close();
 })().catch(e => { console.error(e); process.exit(1); });
