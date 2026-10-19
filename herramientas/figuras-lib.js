@@ -66,6 +66,11 @@
     const res = [...best.values()].sort((x, y) => x.i1 - y.i1);
     /* la misma figura no se repite en velas seguidas (las banderas se detectaban varias veces) */
     return res.filter((f, k) => !res.slice(Math.max(0, k - 6), k).some(g => g.tipo === f.tipo && f.i1 - g.i1 <= 6)); }
-  const FIG = { scan, pivots, atrArr, N };
+  /* qué dice la figura justo antes de entrar en una operación (velas cerradas hasta idx) */
+  function estado(b, idx, dir, LB) { const off = Math.max(0, idx - 400), w = b.slice(off, idx + 1), f = scan(w, { formando: true, maxAge: 20 });
+    const conf = f.filter(x => x.conf && x.i1 + off >= idx - LB).pop(); if (conf) return { g: conf.dir === dir ? 'a_favor' : conf.dir === -dir ? 'en_contra' : 'lateral', tipo: conf.tipo, conf: 1 };
+    const form = f.filter(x => !x.conf).pop(); if (form) return { g: form.dir === dir ? 'formando_a_favor' : form.dir === -dir ? 'formando_en_contra' : 'formando_lateral', tipo: form.tipo, conf: 0 };
+    return { g: 'sin_figura' }; }
+  const FIG = { scan, pivots, atrArr, estado, N };
   if (typeof module !== 'undefined' && module.exports) module.exports = FIG; else root.FIG = FIG;
 })(typeof window !== 'undefined' ? window : globalThis);

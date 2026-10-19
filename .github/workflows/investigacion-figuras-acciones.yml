@@ -1,0 +1,22 @@
+name: Investigación FIGURAS en ACCIONES
+# Se corre a mano: no cambia la página ni los bots. Guarda el resultado en la rama figuras-acc-<número>.
+on:
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  investigar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm i --no-save --no-package-lock playwright-core@1.47.2
+      - run: node herramientas/investigacion-figuras-acciones.js
+      - name: Guardar el resultado
+        if: always()
+        run: |
+          mkdir out && (cp investigacion-figuras-acciones.json out/ || echo '{}' > out/investigacion-figuras-acciones.json) && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Investigación FIGURAS ACCIONES"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:figuras-acc-${{ github.run_id }}
