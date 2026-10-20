@@ -1830,6 +1830,9 @@ async function loadChart(){
     const r=await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000`);
     const d=await r.json();
     if(sym!==symbol||t!==tf) return;
+    /* octubre 2026: la vista del halving (2016–2030) es para velas semanales. Si quedó prendida y el gráfico abre en otra temporalidad
+       (al entrar o al cambiar de moneda), las velas quedaban aplastadas en una franja a la izquierda: se apaga sola */
+    if(HALV&&t!=='1w'){HALV=false;HVPREV=null;try{localStorage.setItem('cv_halv','0')}catch(_){}['halvBtn','fsHalvBtn'].forEach(id=>{const b=$(id);if(b)b.classList.remove('on');});}
     const same=window.LASTK===sym+'|'+t;window.LASTK=sym+'|'+t;if(!same)CHUSER=false; /* si solo se reconectó (misma moneda y temporalidad), respeta el zoom de la persona */
     candles=d.map(toBar);
     if(candles.length) setPrecision(candles.at(-1).close);
