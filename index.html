@@ -1743,10 +1743,16 @@ document.addEventListener('pointerdown',e=>{const p=$('fsInd');if(!p||p.hidden)r
    mostraba una sola vela gigante. Ahora, cuando el gráfico aparece o queda con muy pocas velas a la vista, se re-centra solo
    (salvo que la persona ya lo haya movido o hecho zoom). */
 var CHW=0,CHUSER=false;
-try{['pointerdown','wheel','touchstart'].forEach(ev=>$('chart').addEventListener(ev,()=>{CHUSER=true;},{passive:true}));
+try{$('chart').addEventListener('wheel',()=>{CHUSER=true;},{passive:true});$('chart').addEventListener('touchmove',()=>{CHUSER=true;},{passive:true});$('chart').addEventListener('pointermove',e=>{if(e.buttons)CHUSER=true;},{passive:true});
   new ResizeObserver(en=>{const w=en[0].contentRect.width;if(w>50&&CHW<=50&&candles.length&&!CHUSER)requestAnimationFrame(()=>{try{fitView();}catch(_){}});CHW=w;}).observe($('chart'));}catch(_){}
 function chartCheck(){if(CHUSER||!candles.length||!$('chart').clientWidth)return;if(typeof HALV!=='undefined'&&HALV)return;const r=chart.timeScale().getVisibleLogicalRange();if(!r||Math.min(r.to,candles.length)-Math.max(r.from,0)<20)fitView();} /* menos de 20 velas reales a la vista (una vela gigante o mirando el vacío) */
-setInterval(chartCheck,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(chartCheck,300);});
+setInterval(chartCheck,1500);
+/* al abrir o volver a la app (en el celular a veces el gráfico no se volvía a dibujar hasta tocarlo): se re-centra y se fuerza el dibujo
+   varias veces en los primeros segundos, salvo que la persona ya lo haya tocado */
+function chartKick(){if(!candles.length||!$('chart').clientWidth)return;try{if(!CHUSER&&!(typeof HALV!=='undefined'&&HALV))fitView();else{const r=chart.timeScale().getVisibleLogicalRange();if(r)chart.timeScale().setVisibleLogicalRange({from:r.from,to:r.to});}
+  series.priceScale().applyOptions({autoScale:true});}catch(_){}}
+function chartKicks(){[400,1200,2500,5000].forEach(ms=>setTimeout(chartKick,ms));}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)chartKicks();});window.addEventListener('pageshow',chartKicks);window.addEventListener('focus',()=>setTimeout(chartKick,300));
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
 function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{try{rsiRender();}catch(e){}},80);
@@ -1824,10 +1830,11 @@ async function loadChart(){
     const r=await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000`);
     const d=await r.json();
     if(sym!==symbol||t!==tf) return;
-    candles=d.map(toBar);CHUSER=false;
+    const same=window.LASTK===sym+'|'+t;window.LASTK=sym+'|'+t;if(!same)CHUSER=false; /* si solo se reconectó (misma moneda y temporalidad), respeta el zoom de la persona */
+    candles=d.map(toBar);
     if(candles.length) setPrecision(candles.at(-1).close);
     series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
-    fitView();if(HALV)hvRange();
+    if(!(same&&CHUSER)){fitView();if(HALV)hvRange();chartKicks();}
     restoreLines();setTimeout(()=>niRender(true),400);
   }catch(e){$('loading').textContent='No se pudo cargar el gráfico';return;}
   $('loading').style.display='none';
@@ -3505,7 +3512,7 @@ async function loadChartStk(){CHUSER=false;
   try{const intra=STK_INTRA.has(t),I=intra?await stkIntra(sym,t):null,b=intra?I.b:await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
     if(intra){STKI[sym].cur=I;if((t==='1m'&&I.k!=='m1')||(t==='5m'&&I.k!=='m5'))setTimeout(()=>{const n=$('loading');if(n){n.textContent=`${sym}: velas de ${t} solo en las principales; se muestran las de 15 min`;n.style.display='flex';setTimeout(()=>n.style.display='none',3500);}},50);}
     candles=intra?aggIntra(stkIntraLive(sym,b,I.bms),t,I.bms):aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
-    series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();restoreLines();setTimeout(()=>niRender(true),400);
+    series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();chartKicks();restoreLines();setTimeout(()=>niRender(true),400);
     const q=STK[sym],lb=b.at(-1);if(q&&lb&&(lb.date===artDay()||!mktOpen())&&Math.abs(lb.close/q.c-1)<.02){q.h=Math.max(lb.date===artDay()?q.h||0:0,lb.high);q.l=Math.min(lb.date===artDay()?q.l||Infinity:Infinity,lb.low);}updateTop();
   }catch(e){if(id===stkLoadId)$('loading').textContent='No se pudo cargar el historial de '+sym;return;}
   $('loading').style.display='none';
