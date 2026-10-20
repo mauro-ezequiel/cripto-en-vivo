@@ -1739,6 +1739,14 @@ $('fsInd').onclick=e=>{if(e.target.closest('[data-fsx]')){e.stopPropagation();$(
 /* octubre 2026: el panel de indicadores en pantalla completa se cierra con ✕ o tocando afuera (antes había que salir de pantalla completa) */
 document.addEventListener('pointerdown',e=>{const p=$('fsInd');if(!p||p.hidden)return;if(e.target.closest('#fsInd,#fsIndBtn'))return;p.hidden=true;},true);
 
+/* octubre 2026: si el gráfico se cargaba oculto (pantalla de acceso mientras entra la cuenta, otra pestaña) quedaba sin ancho y al aparecer
+   mostraba una sola vela gigante. Ahora, cuando el gráfico aparece o queda con muy pocas velas a la vista, se re-centra solo
+   (salvo que la persona ya lo haya movido o hecho zoom). */
+var CHW=0,CHUSER=false;
+try{['pointerdown','wheel','touchstart'].forEach(ev=>$('chart').addEventListener(ev,()=>{CHUSER=true;},{passive:true}));
+  new ResizeObserver(en=>{const w=en[0].contentRect.width;if(w>50&&CHW<=50&&candles.length&&!CHUSER)requestAnimationFrame(()=>{try{fitView();}catch(_){}});CHW=w;}).observe($('chart'));}catch(_){}
+function chartCheck(){if(CHUSER||!candles.length||!$('chart').clientWidth)return;if(typeof HALV!=='undefined'&&HALV)return;const r=chart.timeScale().getVisibleLogicalRange();if(!r||Math.min(r.to,candles.length)-Math.max(r.from,0)<20)fitView();} /* menos de 20 velas reales a la vista (una vela gigante o mirando el vacío) */
+setInterval(chartCheck,1500);document.addEventListener('visibilitychange',()=>{if(!document.hidden)setTimeout(chartCheck,300);});
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
 const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
 function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{try{rsiRender();}catch(e){}},80);
@@ -1816,7 +1824,7 @@ async function loadChart(){
     const r=await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000`);
     const d=await r.json();
     if(sym!==symbol||t!==tf) return;
-    candles=d.map(toBar);
+    candles=d.map(toBar);CHUSER=false;
     if(candles.length) setPrecision(candles.at(-1).close);
     series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
     fitView();if(HALV)hvRange();
@@ -3488,7 +3496,7 @@ function appVerShow(){if($('updBtn'))return;const b=document.createElement('butt
   b.onclick=async()=>{b.textContent='Actualizando…';try{if(swReg)await swReg.update();const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.reload();};document.body.appendChild(b);}
 setTimeout(appVerCheck,5000);setInterval(appVerCheck,3*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appVerCheck();});
 let stkLoadId=0;
-async function loadChartStk(){
+async function loadChartStk(){CHUSER=false;
   const id=++stkLoadId;$('loading').textContent='Cargando…';$('loading').style.display='flex';
   setNames();renderChips();
   if(klineWs){klineWs.onclose=null;klineWs.close();klineWs=null;}
