@@ -29,7 +29,7 @@ histFollow=function(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o
     if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,'venció el plazo',Math.max(-loss,pnlAt(px)));}}
   o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;};`;
 const UNIS = process.env.UNI ? process.env.UNI.split(',').map(Number) : null;
-const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
+const VARS = process.env.MACRO || process.env.EARN ? [null] : UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
 (async () => {
   const br = await chromium.launch({ channel: 'chrome' }), pg = await br.newPage();
   await pg.goto((process.env.PAGE || 'https://mauro-ezequiel.github.io/cripto-en-vivo/') + '?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
@@ -55,6 +55,19 @@ const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.
       const VM = [{ v: 'actual' }, { v: 'todos −12 h / +8 h', a: 12, d: 8 }, { v: 'todos −24 h / +12 h', a: 24, d: 12 }, { v: 'todos −36 h / +12 h', a: 36, d: 12 }, { v: 'todos −2 h / +24 h', a: 2, d: 24 },
         { v: 'solo Fed −24 h / +12 h', a: 24, d: 12, tp: ['fomc'] }, { v: 'solo inflación −24 h / +12 h', a: 24, d: 12, tp: ['cpi'] }, { v: 'solo empleo −24 h / +12 h', a: 24, d: 12, tp: ['empleo'] }];
       out.macro = VM.map(V => { const A = V.a == null ? D : D.filter(o => !MAC.bloquea(o.t, V.a, V.d, V.tp || null)); return { v: V.v, año: st(A), mitad1: st(A.filter(o => o.t < mid)), mitad2: st(A.filter(o => o.t >= mid)) }; });
-      console.log('macro', JSON.stringify(out.macro)); } fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
+      console.log('macro', JSON.stringify(out.macro)); }
+    /* EARN=1 (octubre 2026): ¿conviene no entrar si la empresa presenta resultados pronto? (el salto de la apertura se saltea el stop)
+       Fechas de Nasdaq (calendario de resultados, un pedido por día). La señal es al cierre del día D (t = D + 1 a las 00:00 UTC):
+       un reporte después del cierre de D o antes de la apertura de D + 1 ya cae en la operación. */
+    if (process.env.EARN && vi === 0) { const D = r.det, d0 = Math.min(...D.map(o => o.t)) - 3 * 864e5, d1 = Date.now() + 50 * 864e5, E = {}; let ok = 0, err = 0;
+      for (let t = Math.floor(d0 / 864e5) * 864e5; t <= d1; t += 864e5) { const dw = new Date(t).getUTCDay(); if (dw === 0 || dw === 6) continue; const ds = new Date(t).toISOString().slice(0, 10);
+        let j = null; for (let k = 0; k < 3 && !j; k++) { try { const rr = await fetch('https://api.nasdaq.com/api/calendar/earnings?date=' + ds, { headers: { 'User-Agent': 'Mozilla/5.0', Accept: 'application/json' } }); if (rr.ok) j = await rr.json(); } catch (e) {} if (!j) await new Promise(z => setTimeout(z, 2000)); }
+        if (!j) { err++; continue; } ok++; for (const x of (j.data && j.data.rows) || []) { const s = (x.symbol || '').toUpperCase(), tt = t + (x.time === 'time-after-hours' ? 21 * 36e5 : x.time === 'time-pre-market' ? 12 * 36e5 : 16 * 36e5); (E[s] = E[s] || []).push(tt); }
+        await new Promise(z => setTimeout(z, 120)); }
+      const nx = (s, a, b) => (E[s] || []).some(x => x >= a && x <= b), st = A => { const n = A.length; if (!n) return { n: 0 }; const lo = A.filter(o => o.usd < 0); return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(A.reduce((a, o) => a + o.usd, 0) / n).toFixed(1), usd: Math.round(A.reduce((a, o) => a + o.usd, 0)), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.usd, 0) / lo.length).toFixed(1) : 0 }; };
+      const mid = Date.now() - DIAS / 2 * 864e5, VE = [['actual', null], ['sin resultados en los próximos 3 días', o => nx(o.sym, o.t - 864e5 + 18 * 36e5, o.t + 3 * 864e5)], ['sin resultados en los próximos 7 días', o => nx(o.sym, o.t - 864e5 + 18 * 36e5, o.t + 7 * 864e5)],
+        ['sin resultados en los próximos 14 días', o => nx(o.sym, o.t - 864e5 + 18 * 36e5, o.t + 14 * 864e5)], ['sin resultados durante la operación', o => nx(o.sym, o.t - 864e5 + 18 * 36e5, o.cierre || o.t + 42 * 864e5)]];
+      out.resultados = { dias_ok: ok, dias_error: err, empresas: Object.keys(E).length, con_dato: D.filter(o => E[o.sym]).length, variantes: VE.map(([v, bad]) => { const A = bad ? D.filter(o => !bad(o)) : D; return { v, año: st(A), mitad1: st(A.filter(o => o.t < mid)), mitad2: st(A.filter(o => o.t >= mid)) }; }) };
+      console.log('resultados', JSON.stringify(out.resultados)); } fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
   await br.close();
 })().catch(e => { console.error(e); process.exit(1); });

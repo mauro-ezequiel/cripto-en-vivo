@@ -466,6 +466,32 @@ async function main() { const t0 = Date.now();
       out.dvol.variantes.push(r); }
     const base = pick(); for (const m of ['medio', 'x']) { const A = base.filter(o => o.m === m && o.setup !== 'tp-x'); out.dvol.por_tramo[m] = [[0, 40], [40, 50], [50, 60], [60, 999]].map(([a, b]) => ({ tramo: a + '–' + (b > 900 ? '' : b), ...st3(A.filter(o => o.dv != null && o.dv >= a && o.dv < b)) })); }
     console.log('dvol', JSON.stringify(out.dvol)); }
+  /* FLUJOS=1 (investigación octubre 2026): plata que entra o sale de cripto.
+     · stablecoins en circulación (DefiLlama, diario): cambio en 7 y 30 días hasta el día anterior a la señal.
+     · flujos de los ETF de Bitcoin de EE.UU. por semana (TFTC, desde enero 2024): signo de la última semana completa (se conoce el lunes siguiente).
+     Se sacan las señales según la regla y se vuelve a elegir. */
+  if (process.env.FLUJOS) { const SC = new Map(), ETF = new Map(); let etfN = 0;
+    try { const j = await (await fetch('https://stablecoins.llama.fi/stablecoincharts/all')).json(); for (const x of j) SC.set(+x.date * 1000, x.totalCirculatingUSD && x.totalCirculatingUSD.peggedUSD); } catch (e) { console.log('stablecoins', e.message); }
+    try { const t = await (await fetch('https://www.tftc.io/bitcoin-etf-flows', { headers: { 'User-Agent': 'Mozilla/5.0' } })).text(), re = /\\?"rect\\?",\\?"(\d{4}-\d\d-\d\d)\\?",\{[^}]*?\\?"height\\?":\\?"([\d.]+)\\?"[^}]*?\\?"fill\\?":\\?"(#[0-9a-f]{6})/g; let m;
+      const R = []; while ((m = re.exec(t))) R.push([Date.parse(m[1] + 'T00:00:00Z'), m[3] === '#f7931a' ? 1 : m[3] === '#5e92d6' ? -1 : 0, +m[2]]);
+      /* la página tiene varios gráficos (diarios recientes y uno semanal desde 2024): se toma la serie más larga de lunes seguidos cada 7 días */
+      let best = [], cur = []; for (const r of R) { if (cur.length && r[0] - cur[cur.length - 1][0] === 7 * DAY) cur.push(r); else { if (cur.length > best.length) best = cur; cur = [r]; } } if (cur.length > best.length) best = cur;
+      for (const r of best) if (r[1]) { ETF.set(r[0], r[1] * r[2]); etfN++; } } catch (e) { console.log('etf', e.message); }
+    const day = t => Math.floor(t / DAY) * DAY, scAt = (t, d) => { const a = SC.get(day(t) - DAY), b = SC.get(day(t) - DAY - d * DAY); return a && b ? a / b - 1 : null; };
+    const wk = t => { const d = new Date(day(t)), dow = (d.getUTCDay() + 6) % 7; return day(t) - dow * DAY; }, etfAt = (t, k) => { const w0 = wk(t); let s = 0, n = 0; for (let q = 1; q <= k; q++) { const v = ETF.get(w0 - q * 7 * DAY); if (v == null) return null; s += v; n++; } return n ? s : null; };
+    for (const c of CANDS) { c.sc7 = scAt(c.t, 7); c.sc30 = scAt(c.t, 30); c.etf1 = etfAt(c.t, 1); c.etf2 = etfAt(c.t, 2); }
+    const mid = FROM + SPAN / 2, st3 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
+    const VF = [['actual', null],
+      ['LONG solo con stablecoins subiendo en 30 días', c => c.dir > 0 && c.sc30 != null && c.sc30 <= 0], ['LONG solo con stablecoins subiendo en 7 días', c => c.dir > 0 && c.sc7 != null && c.sc7 <= 0],
+      ['LONG solo con stablecoins +1 % en 30 días', c => c.dir > 0 && c.sc30 != null && c.sc30 < .01], ['SHORT solo con stablecoins bajando en 30 días', c => c.dir < 0 && c.sc30 != null && c.sc30 >= 0],
+      ['LONG solo con ETF entrando la última semana', c => c.dir > 0 && c.etf1 != null && c.etf1 <= 0], ['LONG solo con ETF entrando en las últimas 2 semanas', c => c.dir > 0 && c.etf2 != null && c.etf2 <= 0],
+      ['SHORT solo con ETF saliendo la última semana', c => c.dir < 0 && c.etf1 != null && c.etf1 >= 0], ['sin operar con ETF saliendo la última semana', c => c.etf1 != null && c.etf1 < 0]];
+    out.flujos = { nota: 'usd = cada señal con 300 USD × 10 (pct del margen × 3), con costos. Stablecoins: DefiLlama. ETF: TFTC (semanal desde 2024; antes no hay dato y no se filtra).', dias_stable: SC.size, semanas_etf: etfN, sin_etf: CANDS.filter(c => c.etf1 == null).length, variantes: [] };
+    for (const [v, bad] of VF) { const L = pick(bad ? CANDS.filter(c => !bad(c)) : CANDS), r = { v };
+      for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
+      out.flujos.variantes.push(r); }
+    console.log('flujos', JSON.stringify(out.flujos).slice(0, 4000)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
