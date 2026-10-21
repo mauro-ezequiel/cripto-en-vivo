@@ -16,7 +16,9 @@ const IAD = { tr: { ent: [], ops: [], old: [] }, sh: { ent: [], ops: [], old: []
 const OLDLAST = {};
 /* FILTROS=1 (investigación octubre 2026): prueba combinada de todos los datos nuevos (calendario, DVOL, stablecoins, ETF) y de volver a aceptar
    señales que sacaron versiones viejas (OLDC), con la gestión de ahora. Prende también los estudios sueltos. */
-const FILTROS = !!process.env.FILTROS, OLDC = []; if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; }
+const FILTROS = !!process.env.FILTROS, OLDC = [];
+/* SHOOTER v10 del bot (v8 en la página): no entra con el DVOL bajo 35. SIN_DV35=1 lo saca. DVS se carga al empezar (si Deribit no responde, no se filtra). */
+const DVL = require('./dvol-lib.js'); let DVS = new Map(); if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; }
 function iaVieja(fam, filtro, o) { const k = fam + filtro + o.s; if (OLDLAST[k] && o.t - OLDLAST[k] < o.cool) return; OLDLAST[k] = o.t;
   const res = sim(o.rb, o.resMs, o.maxAge, o.j0, o.entry, o.dir, o.sl, o.g.r, o.g.L, o.g.ex, o.llConf, o.t); if (res.open) return; const ia = iaPath(o.P, o.j0, o.entry, o.dir, o.sl, o.g.r, o.maxAge, o.t, o.resMs);
   IAD[fam].old.push({ m: fam === 'sh' ? 'x' : 'medio', setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.g.r, L: o.g.L, tf: o.tf, maxAge: o.maxAge, botPct: +res.pct.toFixed(3), botHit: res.hit, kind: res.kind, filtro, X: ia.X, B: ia.B }); }
@@ -277,7 +279,8 @@ async function runShooter(s, rank = 0) {
       let viejo = null;
       if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) viejo = 'bajo_ema200'; // v7: solo con el precio sobre la EMA 200
       else if (tooWild(hb, W1, t)) viejo = 'impredecible';
-      else if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) viejo = 'fuera_lista_7d'; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
+      else if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) viejo = 'fuera_lista_7d';
+      else if (DVS.size) { const dv = DVL.at(DVS, t); if (dv != null && dv < DVL.SHOOTER_DVMIN) viejo = 'dvol_bajo'; } // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
       if (viejo && FILTROS) { const g = GEO.sh, sl = slOf(g, atrP); OLDC.push({ m: 'x', setup: 'sh-c', tf, s, t, dir: 1, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, viejo, ...sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, SXV9X)) }); }
       if (viejo) { if (IAON) { const g = GEO.sh; iaVieja('sh', viejo, { s, t, dir: 1, setup: 'sh-c', entry: cb, sl: slOf(g, atrP), g, rb: tb, P: P3, j0: i + 1, resMs: tfMs, maxAge: SH.maxAge, llConf: null, cool: SH.cool, tf }); } continue; }
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
@@ -376,6 +379,7 @@ async function publish(body) { const tok = process.env.GH_TOKEN, repo = process.
   return false; }
 
 async function main() { const t0 = Date.now();
+  if (!process.env.SIN_DV35 && !MOCK) { try { DVS = await DVL.serie(FROM - 3 * DAY, NOW); } catch (e) {} console.log('DVOL horas', DVS.size); }
   const T = await getJ(`${API}/ticker/24hr`);
   const base = T.filter(t => t.symbol.endsWith('USDT') && !STABLE.test(t.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol) && +t.quoteVolume > MINVOL && Math.abs(+t.priceChangePercent) < 25)
     .sort((a, b) => b.quoteVolume - a.quoteVolume).map(t => t.symbol);

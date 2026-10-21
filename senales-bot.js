@@ -142,7 +142,9 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    en ese momento (desequilibrio ±0,5 / 1 / 2 %, diferencia compra/venta, profundidad, precio) y cómo terminó (código como el historial:
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
-const VER = { medio: 'v7', x: 'v9' }; // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
+const DVL = require('./herramientas/dvol-lib.js');
+const VER = { medio: 'v7', x: 'v10' }; // SHOOTER v10 (octubre 2026): + no entra con el DVOL de Deribit bajo 35
+// // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
  // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
 const SAL = require('./herramientas/salida-lib.js'); // TRADING v6 (octubre 2026): + tendencia de BTC con fuerza (ADX 4 h ≥ 24)
 const bitId = x => x.sym + '-' + x.t;
@@ -308,7 +310,8 @@ async function main() {
       try {
         let e, tfx = null;
         if (m === 'x') { const [c15, c30, hc] = await Promise.all([kl(s, '15m', 300), kl(s, '30m', 300), kl(s, '1h', 200)]); if (c15.length < 150 || hc.length < 60) continue;
-          e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue; }
+          e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue;
+          { const dv = await DVL.ahora(now); if (dv != null && dv < DVL.SHOOTER_DVMIN) { S.dvSkip = (S.dvSkip || 0) + 1; continue; } if (dv != null) e.reasons.push('DVOL ' + dv.toFixed(0) + ' (mercado despierto)'); } }
         else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
           e = evalTrading(cs, hc, rankOf[s]); if (!e.dir || !(await wildOK(s))) continue; }
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
@@ -328,7 +331,7 @@ async function main() {
     }
     console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
   }
-  try { VD.S = S; await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
+  try { VD.S = S; VD.dvol = await DVL.ahora(now); await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
   try { await semanal(now); } catch (e) { console.log('semanal', e.message); }
   try { if (!S.frenoT || now - S.frenoT > 36e5) { S.frenoT = now; await freno(now); S.bitDirty = true; } } catch (e) { console.log('freno', e.message); }
   try { IAD.S = S; await IAB.run(now, { tr: base.map(t => t.symbol), sh: (S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, 30).map(t => t.symbol) }, IAD); } catch (e) { console.log('IA', e.message); }

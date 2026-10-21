@@ -590,7 +590,7 @@ OUT['progreso'] = progreso(OUT['resumen'], prev)
 
 
 FILTROS = {'contra_btc': 'BTC en contra', 'btc_sin_fuerza': 'BTC sin fuerza (ADX < 24, antes de TRADING v6)', 'impredecible': 'moneda impredecible esa semana',
-           'bajo_ema200': 'precio bajo la EMA 200 (antes de SHOOTER v5)', 'fuera_lista_7d': 'fuera de la lista de 7 días (antes de SHOOTER v6)'}
+           'bajo_ema200': 'precio bajo la EMA 200 (antes de SHOOTER v5)', 'fuera_lista_7d': 'fuera de la lista de 7 días (antes de SHOOTER v6)', 'dvol_bajo': 'DVOL bajo 35 (antes de SHOOTER v8)'}
 
 
 def versiones():
