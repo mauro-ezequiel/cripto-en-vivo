@@ -14,6 +14,9 @@ const IAD = { tr: { ent: [], ops: [], old: [] }, sh: { ent: [], ops: [], old: []
    nuevo saca (BTC en contra, BTC sin fuerza, moneda impredecible, SHOOTER bajo la EMA 200 o fuera de la lista de 7 días), con la gestión de
    antes (sin salida anticipada). Así ve los errores que corrigió cada versión y si alguna sacó señales buenas. Una por moneda y filtro cada pausa. */
 const OLDLAST = {};
+/* FILTROS=1 (investigación octubre 2026): prueba combinada de todos los datos nuevos (calendario, DVOL, stablecoins, ETF) y de volver a aceptar
+   señales que sacaron versiones viejas (OLDC), con la gestión de ahora. Prende también los estudios sueltos. */
+const FILTROS = !!process.env.FILTROS, OLDC = []; if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; }
 function iaVieja(fam, filtro, o) { const k = fam + filtro + o.s; if (OLDLAST[k] && o.t - OLDLAST[k] < o.cool) return; OLDLAST[k] = o.t;
   const res = sim(o.rb, o.resMs, o.maxAge, o.j0, o.entry, o.dir, o.sl, o.g.r, o.g.L, o.g.ex, o.llConf, o.t); if (res.open) return; const ia = iaPath(o.P, o.j0, o.entry, o.dir, o.sl, o.g.r, o.maxAge, o.t, o.resMs);
   IAD[fam].old.push({ m: fam === 'sh' ? 'x' : 'medio', setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.g.r, L: o.g.L, tf: o.tf, maxAge: o.maxAge, botPct: +res.pct.toFixed(3), botHit: res.hit, kind: res.kind, filtro, X: ia.X, B: ia.B }); }
@@ -239,6 +242,7 @@ async function run4h(s, rank) {
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) viejo = 'contra_btc'; // solo a favor de BTC (4h vs EMA 50), como la página
     else if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) viejo = 'btc_sin_fuerza'; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
     if (!viejo && tooWild(rb, W1, t)) viejo = 'impredecible'; // moneda impredecible esa semana
+    if (viejo && FILTROS) { const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t); OLDC.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, viejo, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, Object.assign({ tb }, SXV7)) }); }
     if (viejo) { if (IAON) { const g = GEO[c.k]; iaVieja('tr', viejo, { s, t, dir: c.dir, setup: c.setup, entry: tb[i].close, sl: slOf(g, c.atrP), g, rb, P: P1, j0: idxAfter(rb, t), resMs: T4.resMs, maxAge: T4.maxAge, llConf: g.ll ? llConf : null, cool: T4.cool, tf: '4h' }); } continue; }
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
     const res = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7));
@@ -274,6 +278,7 @@ async function runShooter(s, rank = 0) {
       if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) viejo = 'bajo_ema200'; // v7: solo con el precio sobre la EMA 200
       else if (tooWild(hb, W1, t)) viejo = 'impredecible';
       else if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) viejo = 'fuera_lista_7d'; // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
+      if (viejo && FILTROS) { const g = GEO.sh, sl = slOf(g, atrP); OLDC.push({ m: 'x', setup: 'sh-c', tf, s, t, dir: 1, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, viejo, ...sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, SXV9X)) }); }
       if (viejo) { if (IAON) { const g = GEO.sh; iaVieja('sh', viejo, { s, t, dir: 1, setup: 'sh-c', entry: cb, sl: slOf(g, atrP), g, rb: tb, P: P3, j0: i + 1, resMs: tfMs, maxAge: SH.maxAge, llConf: null, cool: SH.cool, tf }); } continue; }
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);
       const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, dir, sl, g.r, g.L, g.ex, null, t, null, process.env.SIN_V9X ? null : Object.assign({}, SXV9X));
@@ -402,7 +407,7 @@ async function main() { const t0 = Date.now();
      (se cuenta siempre como costo). Se aplica a las señales y a las entradas al azar, así la comparación sigue siendo justa. SIN_COSTOS=1 lo apaga. */
   const SLIP = r => r < 10 ? .0002 : r < 30 ? .0004 : .0008, FUND8 = .0001, RK = {}; trList.forEach((x, k) => RK[x] = k); shList.forEach((x, k) => { if (RK[x] == null) RK[x] = k; });
   const cost = c => { if (process.env.SIN_COSTOS || c.t == null) return; const sz = c.ll ? 1.5 : 1, h = Math.max(0, ((c.open ? NOW : c.tEnd) - c.t) / (8 * 36e5)), k = 100 * (c.L || 1) * sz * (2 * SLIP(RK[c.s] != null ? RK[c.s] : 50) + FUND8 * h); c.pct -= k; c.costo = +k.toFixed(3); };
-  for (const c of CANDS) { if (c.sal) for (const o of c.sal) cost(Object.assign(o, { t: c.t, s: c.s, L: c.L })); cost(c); } for (const m in RAND) for (const c of RAND[m]) cost(c);
+  for (const c of CANDS) { if (c.sal) for (const o of c.sal) cost(Object.assign(o, { t: c.t, s: c.s, L: c.L })); cost(c); } for (const c of OLDC) cost(c); for (const m in RAND) for (const c of RAND[m]) cost(c);
   const ops = pick(), cal = { medio: {}, x: {} };
   /* CORR=1 (investigación de la cláusula del halving): correlación de los retornos diarios con BTC en los 90 días anteriores a cada operación */
   if (process.env.CORR) { const D1 = {}, get = async s => { if (!D1[s]) { try { const b = await klRange(s, '1d', DAY, FROM - 120 * DAY, NOW); D1[s] = new Map(b.map(x => [x.t, x.close])); } catch (e) { D1[s] = new Map(); } } return D1[s]; };
@@ -454,7 +459,7 @@ async function main() { const t0 = Date.now();
     for (let a = FROM - 3 * DAY; a < NOW; a += 800 * 36e5) { let j = null; for (let r = 0; r < 4 && !j; r++) { try { j = await (await fetch(`https://www.deribit.com/api/v2/public/get_volatility_index_data?currency=BTC&start_timestamp=${a}&end_timestamp=${Math.min(NOW, a + 800 * 36e5)}&resolution=3600`)).json(); } catch (e) { await sleep(5000); } }
       for (const x of (j && j.result && j.result.data) || []) DV.set(Math.floor(x[0] / 36e5), x[4]); await sleep(300); }
     const dvAt = t => { const h = Math.floor(t / 36e5) - 1; for (let q = 0; q < 6; q++) { const v = DV.get(h - q); if (v != null) return v; } return null; };
-    for (const c of CANDS) { c.dv = dvAt(c.t); const p = dvAt(c.t - DAY); c.dv24 = c.dv != null && p ? c.dv / p - 1 : null; }
+    for (const c of CANDS.concat(OLDC)) { c.dv = dvAt(c.t); const p = dvAt(c.t - DAY); c.dv24 = c.dv != null && p ? c.dv / p - 1 : null; }
     const mid = FROM + SPAN / 2, st3 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
       return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
     const VD = [['actual', null], ['sin DVOL > 65', c => c.dv > 65], ['sin DVOL > 60', c => c.dv > 60], ['sin DVOL > 55', c => c.dv > 55], ['sin DVOL > 50', c => c.dv > 50],
@@ -479,7 +484,7 @@ async function main() { const t0 = Date.now();
       for (const r of best) if (r[1]) { ETF.set(r[0], r[1] * r[2]); etfN++; } } catch (e) { console.log('etf', e.message); }
     const day = t => Math.floor(t / DAY) * DAY, scAt = (t, d) => { const a = SC.get(day(t) - DAY), b = SC.get(day(t) - DAY - d * DAY); return a && b ? a / b - 1 : null; };
     const wk = t => { const d = new Date(day(t)), dow = (d.getUTCDay() + 6) % 7; return day(t) - dow * DAY; }, etfAt = (t, k) => { const w0 = wk(t); let s = 0, n = 0; for (let q = 1; q <= k; q++) { const v = ETF.get(w0 - q * 7 * DAY); if (v == null) return null; s += v; n++; } return n ? s : null; };
-    for (const c of CANDS) { c.sc7 = scAt(c.t, 7); c.sc30 = scAt(c.t, 30); c.etf1 = etfAt(c.t, 1); c.etf2 = etfAt(c.t, 2); }
+    for (const c of CANDS.concat(OLDC)) { c.sc7 = scAt(c.t, 7); c.sc30 = scAt(c.t, 30); c.etf1 = etfAt(c.t, 1); c.etf2 = etfAt(c.t, 2); }
     const mid = FROM + SPAN / 2, st3 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
       return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
     const VF = [['actual', null],
@@ -492,6 +497,22 @@ async function main() { const t0 = Date.now();
       for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
       out.flujos.variantes.push(r); }
     console.log('flujos', JSON.stringify(out.flujos).slice(0, 4000)); }
+  if (FILTROS) { const MAC = require('./macro-lib.js'), mid = FROM + SPAN / 2, L1 = c => c.dir > 0, S1 = c => c.dir < 0;
+    const st4 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, g: +(100 * (n - lo.length) / n).toFixed(1), op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), t: Math.round(u.reduce((a, x) => a + x, 0)), pm: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
+    const F = { medio: { 'DVOL>60': c => c.dv > 60, 'DVOL>55': c => c.dv > 55, 'DVOL>50': c => c.dv > 50, 'DVOL<35': c => c.dv < 35, 'DVOL baja >10% 24h': c => c.dv24 < -.10,
+        'macro ±24h': c => !!MAC.bloquea(c.t, 24, 24), 'Fed ±12h': c => !!MAC.bloquea(c.t, 12, 12, ['fomc']), 'LONG sin stable 30d ↑': c => L1(c) && c.sc30 != null && c.sc30 <= 0,
+        'SHORT sin stable 30d ↓': c => S1(c) && c.sc30 != null && c.sc30 >= 0, 'LONG sin ETF 1 sem ↑': c => L1(c) && c.etf1 != null && c.etf1 <= 0, 'LONG sin ETF 2 sem ↑': c => L1(c) && c.etf2 != null && c.etf2 <= 0 },
+      x: { 'DVOL<40': c => c.dv < 40, 'DVOL<35': c => c.dv < 35, 'DVOL<45': c => c.dv < 45, 'DVOL>65': c => c.dv > 65, 'DVOL sube >10% 24h': c => c.dv24 > .10, 'Fed ±12h': c => !!MAC.bloquea(c.t, 12, 12, ['fomc']),
+        'macro −6/+2h': c => !!MAC.bloquea(c.t, 6, 2), 'sin stable 30d ↑': c => c.sc30 != null && c.sc30 <= 0, 'sin stable 7d ↑': c => c.sc7 != null && c.sc7 <= 0, 'sin ETF 1 sem ↑': c => c.etf1 != null && c.etf1 <= 0 } };
+    const RE = { medio: [[], ['btc_sin_fuerza'], ['impredecible'], ['btc_sin_fuerza', 'impredecible']], x: [[], ['fuera_lista_7d'], ['impredecible'], ['bajo_ema200'], ['fuera_lista_7d', 'impredecible']] };
+    out.filtros = { nota: 'Cada variante: re = señales de versiones viejas que se vuelven a aceptar; f = filtros (se saca la señal si se cumple). Valores con 300 USD × 10 y costos: n señales, g % ganadas, op USD por operación, t total, pm pérdida promedio.', viejas: OLDC.reduce((a, c) => (a[c.m + ' ' + c.viejo] = (a[c.m + ' ' + c.viejo] || 0) + 1, a), {}), modos: {} };
+    for (const m of ['medio', 'x']) { const ks = Object.keys(F[m]), combos = [[]]; for (const a of ks) combos.push([a]); for (let i = 0; i < ks.length; i++) for (let j = i + 1; j < ks.length; j++) combos.push([ks[i], ks[j]]);
+      const base = CANDS.filter(c => c.m === m && c.setup !== 'tp-x'), R = [];
+      for (const re of RE[m]) { const pool = base.concat(OLDC.filter(c => c.m === m && re.includes(c.viejo)));
+        for (const fs_ of combos) { const L = pick(pool.filter(c => !fs_.some(k => F[m][k](c)))); R.push({ re, f: fs_, a: st4(L), m1: st4(L.filter(o => o.t < mid)), m2: st4(L.filter(o => o.t >= mid)) }); } }
+      out.filtros.modos[m] = R; }
+    console.log('filtros', Object.keys(out.filtros.modos).map(m => m + ' ' + out.filtros.modos[m].length).join(' '), JSON.stringify(out.filtros.viejas)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
