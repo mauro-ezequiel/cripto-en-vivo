@@ -18,7 +18,7 @@ const OLDLAST = {};
    señales que sacaron versiones viejas (OLDC), con la gestión de ahora. Prende también los estudios sueltos. */
 const FILTROS = !!process.env.FILTROS, OLDC = [];
 /* SHOOTER v10 del bot (v8 en la página): no entra con el DVOL bajo 35. SIN_DV35=1 lo saca. DVS se carga al empezar (si Deribit no responde, no se filtra). */
-const DVL = require('./dvol-lib.js'); let DVS = new Map(); if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; }
+const DVL = require('./dvol-lib.js'); let DVS = new Map(); if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; } if (process.env.DVDET) process.env.DVOL = '1';
 function iaVieja(fam, filtro, o) { const k = fam + filtro + o.s; if (OLDLAST[k] && o.t - OLDLAST[k] < o.cool) return; OLDLAST[k] = o.t;
   const res = sim(o.rb, o.resMs, o.maxAge, o.j0, o.entry, o.dir, o.sl, o.g.r, o.g.L, o.g.ex, o.llConf, o.t); if (res.open) return; const ia = iaPath(o.P, o.j0, o.entry, o.dir, o.sl, o.g.r, o.maxAge, o.t, o.resMs);
   IAD[fam].old.push({ m: fam === 'sh' ? 'x' : 'medio', setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.g.r, L: o.g.L, tf: o.tf, maxAge: o.maxAge, botPct: +res.pct.toFixed(3), botHit: res.hit, kind: res.kind, filtro, X: ia.X, B: ia.B }); }
@@ -474,7 +474,14 @@ async function main() { const t0 = Date.now();
       for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
       out.dvol.variantes.push(r); }
     const base = pick(); for (const m of ['medio', 'x']) { const A = base.filter(o => o.m === m && o.setup !== 'tp-x'); out.dvol.por_tramo[m] = [[0, 40], [40, 50], [50, 60], [60, 999]].map(([a, b]) => ({ tramo: a + '–' + (b > 900 ? '' : b), ...st3(A.filter(o => o.dv != null && o.dv >= a && o.dv < b)) })); }
-    console.log('dvol', JSON.stringify(out.dvol)); }
+    console.log('dvol', JSON.stringify(out.dvol));
+    /* DVDET=1: TRADING actual contra TRADING con DVOL (sin DVOL > 55 ni DVOL bajando > 10 % en 24 h), y el detalle de las señales que saca */
+    if (process.env.DVDET) { const bad = c => c.dv != null && (c.dv > 55 || (c.dv24 != null && c.dv24 < -.10)), M = c => c.m === 'medio' && c.setup !== 'tp-x';
+      const A = pick().filter(M), N = pick(CANDS.filter(c => !bad(c))).filter(M), id = o => o.s + o.t, inN = new Set(N.map(id)), inA = new Set(A.map(id));
+      const sac = A.filter(o => bad(o)), agr = N.filter(o => !inA.has(id(o))), tri = L => ({ año: st3(L), mitad1: st3(L.filter(o => o.t < mid)), mitad2: st3(L.filter(o => o.t >= mid)) });
+      out.dvdet = { actual: tri(A), dvol: tri(N), sacadas: tri(sac), entraron_en_su_lugar: tri(agr),
+        lista_sacadas: sac.filter(o => !o.open).map(o => ({ moneda: o.s.replace('USDT', ''), fecha: new Date(o.t).toISOString().slice(0, 10), dir: o.dir > 0 ? 'LONG' : 'SHORT', dvol: +o.dv.toFixed(1), dvol_24h: o.dv24 != null ? +(o.dv24 * 100).toFixed(1) : null, usd: +(o.pct * 3).toFixed(1) })) };
+      console.log('dvdet', JSON.stringify(out.dvdet).slice(0, 3000)); } }
   /* FLUJOS=1 (investigación octubre 2026): plata que entra o sale de cripto.
      · stablecoins en circulación (DefiLlama, diario): cambio en 7 y 30 días hasta el día anterior a la señal.
      · flujos de los ETF de Bitcoin de EE.UU. por semana (TFTC, desde enero 2024): signo de la última semana completa (se conoce el lunes siguiente).
