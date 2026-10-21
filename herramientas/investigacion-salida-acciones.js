@@ -29,7 +29,7 @@ histFollow=function(o,rb,resMs,maxAge,llConf,fee){const d=o.dir,T=[o.tp0,o.tp1,o
     if(ts-o.t>maxAge){const px=(b.low+b.high)/2;return close(hit>0?'win':'exp',px,ts,'venció el plazo',Math.max(-loss,pnlAt(px)));}}
   o.state='open';o.hit=hit;o.real=real;if(o.ll)Object.assign(o,{ae,fail,loss,sz});return o;};`;
 const UNIS = process.env.UNI ? process.env.UNI.split(',').map(Number) : null;
-const VARS = UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
+const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
 (async () => {
   const br = await chromium.launch({ channel: 'chrome' }), pg = await br.newPage();
   await pg.goto('https://mauro-ezequiel.github.io/cripto-en-vivo/?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
@@ -45,6 +45,13 @@ const VARS = UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6,
           pct_margen_app: +(A.reduce((a, o) => a + o.pnl / SIM.a.margin * 100, 0) / n).toFixed(2), salidas: A.filter(o => o.salida).length, salidas_tras_obj1: A.filter(o => o.salida && o.hit >= 1).length }; };
       const det = L.map(o => ({ id: o.id, sym: o.sym, t: o.t, setup: o.setup, hit: o.hit, salida: o.salida ? 1 : 0, usd: +(o.pnl / o.not * 3000).toFixed(1), cierre: o.closeAt, por: o.why }));
       return { det, v: V || ('universo ' + (window.__UNI || 130)), año: st(L), mitad1: st(L.filter(o => o.t < mid)), mitad2: st(L.filter(o => o.t >= mid)) }; }, V);
-    out.variantes.push(r); console.log(JSON.stringify(Object.assign({}, r, { det: undefined }))); fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
+    out.variantes.push(r); console.log(JSON.stringify(Object.assign({}, r, { det: undefined })));
+    /* MACRO=1 (octubre 2026): ¿conviene no entrar cerca de los datos de EE.UU. (Fed, inflación, empleo)? Se sacan las señales cuya hora cae en la ventana */
+    if (process.env.MACRO && vi === 0) { const MAC = require('./macro-lib.js'), mid = Date.now() - 182.5 * 864e5, D = r.det;
+      const st = A => { const n = A.length; if (!n) return { n: 0 }; const lo = A.filter(o => o.usd < 0); return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(A.reduce((a, o) => a + o.usd, 0) / n).toFixed(1), usd: Math.round(A.reduce((a, o) => a + o.usd, 0)), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.usd, 0) / lo.length).toFixed(1) : 0 }; };
+      const VM = [{ v: 'actual' }, { v: 'todos −12 h / +8 h', a: 12, d: 8 }, { v: 'todos −24 h / +12 h', a: 24, d: 12 }, { v: 'todos −36 h / +12 h', a: 36, d: 12 }, { v: 'todos −2 h / +24 h', a: 2, d: 24 },
+        { v: 'solo Fed −24 h / +12 h', a: 24, d: 12, tp: ['fomc'] }, { v: 'solo inflación −24 h / +12 h', a: 24, d: 12, tp: ['cpi'] }, { v: 'solo empleo −24 h / +12 h', a: 24, d: 12, tp: ['empleo'] }];
+      out.macro = VM.map(V => { const A = V.a == null ? D : D.filter(o => !MAC.bloquea(o.t, V.a, V.d, V.tp || null)); return { v: V.v, año: st(A), mitad1: st(A.filter(o => o.t < mid)), mitad2: st(A.filter(o => o.t >= mid)) }; });
+      console.log('macro', JSON.stringify(out.macro)); } fs.writeFileSync('investigacion-salida-acciones.json', JSON.stringify(out, null, 1)); }
   await br.close();
 })().catch(e => { console.error(e); process.exit(1); });

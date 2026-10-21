@@ -311,7 +311,7 @@ function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {
 
 /* una operación por moneda a la vez y espera entre señales (como el bot y la página).
    TRADING y TRADING+ son carteras separadas: una operación abierta de TRADING+ no frena una de TRADING en la misma moneda (y al revés) */
-function pick() { const by = {}; for (const c of CANDS) { const k = c.m + (c.setup === 'tp-x' ? '+' : '') + c.s; (by[k] = by[k] || []).push(c); }
+function pick(LIST = CANDS) { const by = {}; for (const c of LIST) { const k = c.m + (c.setup === 'tp-x' ? '+' : '') + c.s; (by[k] = by[k] || []).push(c); }
   const out = []; for (const k in by) { let free = 0; for (const c of by[k].sort((a, b) => a.t - b.t)) { if (c.t < free) continue; out.push(c); free = Math.max(c.t + c.cool, c.tEnd); } }
   return out.sort((a, b) => a.t - b.t); }
 function stats(L) { const done = L.filter(x => !x.open), n = done.length; if (!n) return { n: 0 };
@@ -436,6 +436,18 @@ async function main() { const t0 = Date.now();
       out.recup[m] = { desde_prueba: cut, sin: { aprendizaje: sumr(A.map(o => o.pct)), prueba: sumr(P.map(o => o.pct)) },
         con: RV.map((V, k) => ({ v: V, aprendizaje: sumr(A.map(o => o.alt[k][0])), prueba: sumr(P.map(o => o.alt[k][0])), salen_prueba: P.filter(o => o.alt[k][1]).length })) }; }
     console.log('recup', JSON.stringify(out.recup).slice(0, 3000)); }
+  /* MACRO=1 (investigación octubre 2026): ¿conviene no abrir señales cerca de los datos de EE.UU. (Fed, inflación, empleo)?
+     Se sacan las señales que caen dentro de la ventana y se vuelve a elegir (la moneda queda libre para la señal siguiente, como en vivo). */
+  if (process.env.MACRO) { const MAC = require('./macro-lib.js'), mid = FROM + SPAN / 2;
+    const VM = [{ v: 'actual' }, { v: 'todos −6 h / +2 h', a: 6, d: 2 }, { v: 'todos −12 h / +12 h', a: 12, d: 12 }, { v: 'todos −24 h / +24 h', a: 24, d: 24 }, { v: 'todos −2 h / +6 h', a: 2, d: 6 },
+      { v: 'solo Fed −12 h / +12 h', a: 12, d: 12, tp: ['fomc'] }, { v: 'solo inflación −12 h / +12 h', a: 12, d: 12, tp: ['cpi'] }, { v: 'solo empleo −12 h / +12 h', a: 12, d: 12, tp: ['empleo'] }];
+    const st3 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
+    out.macro = { nota: 'usd = cada señal con 300 USD × 10 (pct del margen × 3), con costos. actual = sin filtro. Se saca la señal si su hora cae entre «antes» y «después» del dato.', eventos: MAC.EV.filter(e => e[0] >= FROM && e[0] <= NOW).length, variantes: [] };
+    for (const V of VM) { const L = pick(V.a == null ? CANDS : CANDS.filter(c => !MAC.bloquea(c.t, V.a, V.d, V.tp || null))), r = { v: V.v };
+      for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
+      out.macro.variantes.push(r); }
+    console.log('macro', JSON.stringify(out.macro)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
