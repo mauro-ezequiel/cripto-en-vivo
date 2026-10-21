@@ -448,6 +448,24 @@ async function main() { const t0 = Date.now();
       for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
       out.macro.variantes.push(r); }
     console.log('macro', JSON.stringify(out.macro)); }
+  /* DVOL=1 (investigación octubre 2026): índice de volatilidad implícita de BTC de Deribit (lo que esperan los que operan opciones, el "VIX" de BTC).
+     ¿Rinden mejor las señales con el DVOL alto, bajo o cuando se dispara? Se sacan las señales según el DVOL de la última hora cerrada y se vuelve a elegir. */
+  if (process.env.DVOL) { const DV = new Map();
+    for (let a = FROM - 3 * DAY; a < NOW; a += 800 * 36e5) { let j = null; for (let r = 0; r < 4 && !j; r++) { try { j = await (await fetch(`https://www.deribit.com/api/v2/public/get_volatility_index_data?currency=BTC&start_timestamp=${a}&end_timestamp=${Math.min(NOW, a + 800 * 36e5)}&resolution=3600`)).json(); } catch (e) { await sleep(5000); } }
+      for (const x of (j && j.result && j.result.data) || []) DV.set(Math.floor(x[0] / 36e5), x[4]); await sleep(300); }
+    const dvAt = t => { const h = Math.floor(t / 36e5) - 1; for (let q = 0; q < 6; q++) { const v = DV.get(h - q); if (v != null) return v; } return null; };
+    for (const c of CANDS) { c.dv = dvAt(c.t); const p = dvAt(c.t - DAY); c.dv24 = c.dv != null && p ? c.dv / p - 1 : null; }
+    const mid = FROM + SPAN / 2, st3 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0 }; };
+    const VD = [['actual', null], ['sin DVOL > 65', c => c.dv > 65], ['sin DVOL > 60', c => c.dv > 60], ['sin DVOL > 55', c => c.dv > 55], ['sin DVOL > 50', c => c.dv > 50],
+      ['sin DVOL < 35', c => c.dv < 35], ['sin DVOL < 40', c => c.dv < 40], ['sin DVOL < 45', c => c.dv < 45], ['sin DVOL subiendo > 10 % en 24 h', c => c.dv24 > .10], ['sin DVOL subiendo > 5 % en 24 h', c => c.dv24 > .05], ['sin DVOL bajando > 10 % en 24 h', c => c.dv24 < -.10]];
+    const vals = CANDS.filter(c => c.dv != null).map(c => c.dv).sort((a, b) => a - b), q = f => vals.length ? +vals[Math.floor(f * (vals.length - 1))].toFixed(1) : null;
+    out.dvol = { nota: 'usd = cada señal con 300 USD × 10 (pct del margen × 3), con costos. DVOL de la última hora cerrada antes de la señal.', horas: DV.size, sin_dato: CANDS.filter(c => c.dv == null).length, cuartiles: [q(.25), q(.5), q(.75)], variantes: [], por_tramo: {} };
+    for (const [v, bad] of VD) { const L = pick(bad ? CANDS.filter(c => !(c.dv != null && bad(c))) : CANDS), r = { v };
+      for (const m of ['medio', 'x']) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st3(A), mitad1: st3(A.filter(o => o.t < mid)), mitad2: st3(A.filter(o => o.t >= mid)) }; }
+      out.dvol.variantes.push(r); }
+    const base = pick(); for (const m of ['medio', 'x']) { const A = base.filter(o => o.m === m && o.setup !== 'tp-x'); out.dvol.por_tramo[m] = [[0, 40], [40, 50], [50, 60], [60, 999]].map(([a, b]) => ({ tramo: a + '–' + (b > 900 ? '' : b), ...st3(A.filter(o => o.dv != null && o.dv >= a && o.dv < b)) })); }
+    console.log('dvol', JSON.stringify(out.dvol)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
