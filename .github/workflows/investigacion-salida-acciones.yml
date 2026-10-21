@@ -1,10 +1,14 @@
 name: Investigación SALIDA anticipada en ACCIONES
 # Se corre a mano: no cambia la página ni los bots. Guarda el resultado en la rama salida-acc-<número>.
+# ref: rama con la página a probar (se sirve localmente, así se puede probar sin publicar).
 on:
   workflow_dispatch:
     inputs:
       env:
         description: "Variables"
+        default: ""
+      ref:
+        description: "Rama de la página a probar (vacío = la publicada)"
         default: ""
 permissions:
   contents: write
@@ -14,10 +18,18 @@ jobs:
     timeout-minutes: 120
     steps:
       - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: inputs.ref != ''
+        with:
+          ref: ${{ inputs.ref }}
+          path: pagina
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
       - run: npm i --no-save --no-package-lock playwright-core@1.47.2
+      - name: Servir la página de la rama
+        if: inputs.ref != ''
+        run: (cd pagina && nohup python3 -m http.server 8080 >/dev/null 2>&1 &) && sleep 2 && echo "PAGE=http://localhost:8080/" >> $GITHUB_ENV
       - run: env ${{ inputs.env }} node herramientas/investigacion-salida-acciones.js
       - name: Guardar el resultado
         if: always()

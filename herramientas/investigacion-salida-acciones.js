@@ -32,7 +32,7 @@ const UNIS = process.env.UNI ? process.env.UNI.split(',').map(Number) : null;
 const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.env.DETALLE ? [null, { N0: 6, N1: 5 }, { N0: 5, N1: 5 }] : [null, { N0: 5, N1: 5 }, { N0: 5, N1: 4 }, { N0: 5, N1: 6 }, { N0: 6, N1: 5 }, { N0: 9, N1: 5 }, { N0: 5, N1: 9 }, { N0: 6, N1: 6 }];
 (async () => {
   const br = await chromium.launch({ channel: 'chrome' }), pg = await br.newPage();
-  await pg.goto('https://mauro-ezequiel.github.io/cripto-en-vivo/?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
+  await pg.goto((process.env.PAGE || 'https://mauro-ezequiel.github.io/cripto-en-vivo/') + '?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
   await pg.waitForFunction(() => typeof stkReady !== 'undefined' && stkReady && typeof histStocks === 'function', null, { timeout: 180000 });
   await pg.evaluate(() => { if (mode !== 'a') applyMode('a'); }); if (!(await pg.evaluate(() => typeof FIG !== 'undefined'))) await pg.addScriptTag({ content: LIB });
   await pg.addScriptTag({ content: PATCH });
