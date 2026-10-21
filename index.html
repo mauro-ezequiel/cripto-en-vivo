@@ -17,6 +17,7 @@
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
 <script src="ia-core.js"></script>
+<script src="herramientas/macro-lib.js"></script>
 <style>
 :root{--bg:#0f1115;--panel:#161a22;--line:#262b36;--txt:#d1d4dc;--mut:#7c8394;--up:#26a69a;--dn:#ef5350;--acc:#2962ff}
 *{box-sizing:border-box}
@@ -2973,7 +2974,7 @@ setInterval(checkSignals,2000);
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · objetivos 0,75 / 1,5 / 2,25 × stop · salvavidas 175 USD · sale antes con ganancia si 5 de 8 señales se dan vuelta'},
            x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 4 × ATR con tope 5 % (−37,5 USD) · objetivos 0,25 / 0,5 / 0,75 × stop · sin salvavidas · después del objetivo 1 sale antes si 6 de 8 señales se dan vuelta'}};
 SIM.p={...SIM.medio};
-SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD · apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20) · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días'};
+SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD · apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20) · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días · no entra la noche antes ni la del dato de inflación de EE.UU.'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
 /* operaciones descartadas al rehacer el historial con las reglas nuevas: no se vuelven a importar del servidor ni de la nube */
@@ -3634,6 +3635,10 @@ function stkScore(cc,q){const i=cc.length-1,cl=closes(),c=cc[i].close,v=[];const
   if(mode==='a'){const nf=newsFactors().find(x=>x.k==='news');if(nf)add(nf.s,1.2);}
   const cn=coNewsFactor(q.s);if(cn)add(cn.s);
   const sw=v.reduce((a,x)=>a+x[1],0);return sw?Math.round(50+50*v.reduce((a,x)=>a+x[0]*x[1],0)/sw):50;}
+/* octubre 2026 · ACCIONES + calendario: no entrar la noche antes ni la noche del dato de inflación de EE.UU. (CPI, 8:30 de Nueva York).
+   Probado con 1 año y con ~14 meses: más ganancia por operación (+64,5 → +71,9 USD con 300 × 10), pérdida promedio más chica y el mismo total.
+   t = momento de la señal como en la simulación (vela diaria cerrada + 1 día). Solo acciones de EE.UU.; con otros datos (Fed, empleo) no mejoraba. */
+const stkMacroBlock=t=>{try{return typeof MACRO!=='undefined'?MACRO.bloquea(t,24,12,['cpi']):null;}catch(e){return null;}};
 function evalStock(sym,cs,hc){
   const q=STK[sym],cc=stkClosed(cs),out={keep:true,score:0,dir:0,c:q?q.c:cs.at(-1).close,atr:null,adx:null,htf:0,reasons:[],setup:null};
   if(!q||cc.length<210||(q.kind==='US'&&!(STKH[sym]&&STKH[sym].ced)))return out;
@@ -3644,7 +3649,7 @@ function evalStock(sym,cs,hc){
     if(q.kind==='AR'){if(adx>=25&&L.body>.5&&L.vr>=1.8&&mh>0&&mh>mh1){dir=1;setup='a-mom';}
       else if(adx>=30&&L.body<-.5&&mh<0&&mh<mh1&&r1>65&&r<r1){dir=-1;setup='a-rev';}}
     else{const cl=closes(),st=calcST(10,3).dir[i],e21=emaArr(cl,21)[i],e50=emaArr(cl,50)[i],e200=emaArr(cl,200)[i],mk=window.__spyUp;
-      var SH=stkHistory(cc,i);const X=stkPrepX(cc),su=stkSetupAt(cc,i,X);if(su&&window.__spy200===1){dir=1;setup=su;}}
+      var SH=stkHistory(cc,i);const X=stkPrepX(cc),su=stkSetupAt(cc,i,X);if(su&&window.__spy200===1){const mb=stkMacroBlock(cc[i].t+864e5);if(mb)out.macro=mb;else{dir=1;setup=su;}}}
       /* retroceso (c-pb) quitado en octubre 2026: con 224 acciones perdía en todos los períodos (−3 % a −10 % por operación) */
     if(!dir)return out;
     const sc=stkScore(cc,q);if(!['c-reb','c-rup','c-rsi2'].includes(setup)&&dir*(sc-50)<0)return out; // en el rebote el termómetro suele estar bajista: no se usa
@@ -4315,7 +4320,7 @@ const pc0=v=>v==null?'—':Math.round(v)+' %';
    365 días de velas reales de Binance con las reglas actuales; entra el día nuevo y sale el más viejo).
    ACCIONES se calcula acá con las velas diarias que ya usa la página. */
 var HIST_A=null,histABusy=false,HSRC='sim',HSUB='all',HIST_OPS=null,HIST_OPS_U=0;
-try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===7)HIST_A=c.ops;}catch(e){}
+try{HSRC=localStorage.getItem('cv_hsrc')||'sim';HSUB='all';const c=JSON.parse(localStorage.getItem('cv_hist_a')||'null');if(c&&c.day===new Date().toISOString().slice(0,10)&&c.v===8)HIST_A=c.ops;}catch(e){}
 const HKIND={7:'💰 salió antes: las señales se dieron vuelta en contra (ganancia asegurada)',1:'tocó el stop',2:'⚠️ aviso de salida: se dio vuelta y se cerró antes del stop',3:'el resto se cerró en la entrada',4:'llegó a los 3 objetivos',5:'venció el plazo'};
 function histOps(){const j=window.HISTYR;if(!j||!Array.isArray(j.ops))return null;if(HIST_OPS&&HIST_OPS_U===j.upd)return HIST_OPS;
   HIST_OPS=j.ops.map(([m,setup,sym,t,dir,hit,kind,usd,ll,tEnd,e,sl,r,L])=>{const o={id:sym+'USDT-'+t,m,setup,sym:sym+'USDT',t,dir,hit,pnl:usd,ll:ll?{margin:SIM[m]?SIM[m].margin/2:0}:null,closeAt:tEnd||null,lite:1,hist:1,
@@ -4353,11 +4358,12 @@ async function histStocks(){if(histABusy)return;const U=stkUniverse();if(!U.leng
         for(let i=210;i<n;i++){const t=b[i].t+D;if(t<FROM||t<free)continue;if(A[i]==null||M.hist[i]==null||M.hist[i-1]==null||R[i]==null)continue;
           const c=b[i].close,setup=stkSetupAt(b,i,X);
           if(!setup||!spy200(b[i].t+D))continue;
+          if(stkMacroBlock(t))continue; // calendario: dato de inflación de EE.UU.
           const sl=Math.min(STKG.max,Math.max(.004,STKG.a*atr[i]/c)),lev=stkLev(sl),not=SIM.a.margin*lev,P=v=>+v.toPrecision(8);
           const o={id:s+'-'+t,m:'a',setup,sym:s,dir:1,entry:P(c),t,tp0:P(c*(1+STKG.r*sl)),tp1:P(c*(1+2*STKG.r*sl)),tp2:P(c*(1+3*STKG.r*sl)),fail:P(c*(1-sl)),not,loss:Math.round(not*sl*100)/100,liqD:sl,llAt:null,llMargin:SIM.a.margin/2,lev,conf:CAL.a[setup].p,hist:1};
           histFollow(o,b,D,SIM.a.maxAge,llConf,.001);ops.push(o);free=o.state==='open'?Infinity:o.closeAt;}});
       await new Promise(r=>setTimeout(r,20));}
-    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:7,ops}));}catch(e){}
+    ops.sort((a,b)=>a.t-b.t);HIST_A=ops;try{localStorage.setItem('cv_hist_a',JSON.stringify({day:new Date().toISOString().slice(0,10),v:8,ops}));}catch(e){}
   }catch(e){}finally{histABusy=false;if(typeof renderRes==='function')renderRes();}}
 /* ---------- 📡 Mis señales en vivo: rehechas con las reglas de hoy (sin borrar nada) ----------
    🕓 Como pasó realmente: las operaciones tal cual se dieron (las de la página + las archivadas + la bitácora del bot 24 h).
@@ -4462,7 +4468,7 @@ const VERS={
     ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo'],['v6','2026-10-17T00:30:00+02:00','+ solo si la tendencia de BTC tiene fuerza (ADX 4 h ≥ 24)'],['v7','2026-10-19T12:00:00+02:00','+ salida anticipada con 5 de 8 señales en contra y monedas desde 5 M de volumen']],
   x:[['v1','2026-10-07T12:53:00+02:00','5 min: Bollinger ±2 y RSI 7, LONG y SHORT'],['v2','2026-10-07T15:16:00+02:00','+ RSI 7 extremo y a favor de BTC'],['v3','2026-10-08T15:08:00+02:00','3 min: rebote tras caer 3 % en 1 h'],['v4','2026-10-08T17:02:00+02:00','15 y 30 min, las 30 con más volumen'],
     ['v5','2026-10-12T19:57:00+02:00','+ sobre la EMA 200, stop 4 ATR, objetivos 0,25 × stop'],['v6','2026-10-14T16:29:00+02:00','+ lista de 7 días y sin caídas de más de 10 % en 24 h'],['v7','2026-10-19T21:30:00+02:00','+ salida anticipada después del objetivo 1 con 6 de 8 señales en contra']],
-  a:[['v1','2026-10-07T15:30:00+02:00','primera versión calibrada'],['v2','2026-10-07T20:18:00+02:00','solo impulso, stop 3 ATR'],['v3','2026-10-08T14:49:00+02:00','rebote tras caída moderada'],['v4','2026-10-12T07:20:00+02:00','tres reglas en diario, hasta × 8'],['v5','2026-10-12T17:42:00+02:00','menor riesgo: rebote y ruptura con el S&P 500 sobre su media de 200']],
+  a:[['v1','2026-10-07T15:30:00+02:00','primera versión calibrada'],['v2','2026-10-07T20:18:00+02:00','solo impulso, stop 3 ATR'],['v3','2026-10-08T14:49:00+02:00','rebote tras caída moderada'],['v4','2026-10-12T07:20:00+02:00','tres reglas en diario, hasta × 8'],['v5','2026-10-12T17:42:00+02:00','menor riesgo: rebote y ruptura con el S&P 500 sobre su media de 200'],['v6','2026-10-22T12:00:00+02:00','+ no entra la noche antes ni la del dato de inflación de EE.UU.']],
   ia:[['v1','2026-10-08T23:01:00+02:00','entradas propias: opera sola donde ganó en la prueba'],['v2','2026-10-09T22:53:00+02:00','modelo de entradas con datos de futuros'],['v3','2026-10-13T21:07:00+02:00','opera con el stop y objetivos con los que aprende y elige por ganancia por operación'],
     ['v4','2026-10-13T21:27:00+02:00','solo si en la prueba gana 1 % del margen por operación'],['v5','2026-10-14T16:30:00+02:00','además 70 % de acierto en TRADING y 80 % en SHOOTER'],['v6','2026-10-16T06:10:00+02:00','piensa y practica las 24 h en el bot']]};
 var VCOPEN=false;
