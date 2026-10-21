@@ -14,7 +14,7 @@ permissions:
 jobs:
   variante:
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 300
     steps:
       - uses: actions/checkout@v4
         with:
@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: '20'
       - name: Recalcular
-        run: env ${{ inputs.env }} NO_PUBLISH=1 node --max-old-space-size=6500 herramientas/historial-anual.js | tail -5
+        run: env ${{ inputs.env }} NO_PUBLISH=1 node --max-old-space-size=13000 herramientas/historial-anual.js | tail -5
       - name: Guardar el resultado
         run: |
           mkdir out && cp historial.json out/ && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "${{ inputs.env }}"

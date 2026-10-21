@@ -36,10 +36,13 @@ const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.
   await pg.waitForFunction(() => typeof stkReady !== 'undefined' && stkReady && typeof histStocks === 'function', null, { timeout: 180000 });
   await pg.evaluate(() => { if (mode !== 'a') applyMode('a'); }); if (!(await pg.evaluate(() => typeof FIG !== 'undefined'))) await pg.addScriptTag({ content: LIB });
   await pg.addScriptTag({ content: PATCH });
+  /* DIAS=1461: la misma simulación de ACCIONES pero con más historia (la página usa 365 días) */
+  const DIAS = +(process.env.DIAS || 365);
+  if (DIAS !== 365) await pg.evaluate(d => { window.__DIAS = d; histStocks = eval('(' + histStocks.toString().replace('FROM=NOW-365*864e5', 'FROM=NOW-window.__DIAS*864e5') + ')'); }, DIAS);
   const out = { upd: Date.now(), nota: 'usd300 = resultado si cada señal fuera 300 USD × 10 (retorno sobre el precio × 3000, con comisión). Sin salida = versión actual.', variantes: [] };
   if (UNIS) await pg.addScriptTag({ content: "stkUniverse=function(){return Object.values(STK).filter(x=>x.kind==='US'&&(NYSE.has(x.s)||NASDAQ.has(x.s))&&x.q>0&&x.c>0).sort((a,b)=>b.q-a.q).slice(0,window.__UNI||130).map(x=>x.s);};" });
   for (const [vi, V] of VARS.entries()) { if (UNIS) await pg.evaluate(n => { window.__UNI = n; }, UNIS[vi]); const r = await pg.evaluate(async V => { window.__SX = V; HIST_A = null; histABusy = false; await histStocks();
-      const L = (HIST_A || []).filter(o => o.state !== 'open').sort((a, b) => a.t - b.t), mid = Date.now() - 182.5 * 864e5;
+      const L = (HIST_A || []).filter(o => o.state !== 'open').sort((a, b) => a.t - b.t), mid = Date.now() - (window.__DIAS || 365) / 2 * 864e5;
       const st = A => { const n = A.length; if (!n) return { n: 0 }; const u = A.map(o => o.pnl / o.not * 3000), lo = u.filter(x => x < 0);
         return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0,
           pct_margen_app: +(A.reduce((a, o) => a + o.pnl / SIM.a.margin * 100, 0) / n).toFixed(2), salidas: A.filter(o => o.salida).length, salidas_tras_obj1: A.filter(o => o.salida && o.hit >= 1).length }; };
@@ -47,7 +50,7 @@ const VARS = process.env.MACRO ? [null] : UNIS ? UNIS.map(() => null) : process.
       return { det, v: V || ('universo ' + (window.__UNI || 130)), año: st(L), mitad1: st(L.filter(o => o.t < mid)), mitad2: st(L.filter(o => o.t >= mid)) }; }, V);
     out.variantes.push(r); console.log(JSON.stringify(Object.assign({}, r, { det: undefined })));
     /* MACRO=1 (octubre 2026): ¿conviene no entrar cerca de los datos de EE.UU. (Fed, inflación, empleo)? Se sacan las señales cuya hora cae en la ventana */
-    if (process.env.MACRO && vi === 0) { const MAC = require('./macro-lib.js'), mid = Date.now() - 182.5 * 864e5, D = r.det;
+    if (process.env.MACRO && vi === 0) { const MAC = require('./macro-lib.js'), mid = Date.now() - DIAS / 2 * 864e5, D = r.det;
       const st = A => { const n = A.length; if (!n) return { n: 0 }; const lo = A.filter(o => o.usd < 0); return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(A.reduce((a, o) => a + o.usd, 0) / n).toFixed(1), usd: Math.round(A.reduce((a, o) => a + o.usd, 0)), perd_media: lo.length ? +(lo.reduce((a, o) => a + o.usd, 0) / lo.length).toFixed(1) : 0 }; };
       const VM = [{ v: 'actual' }, { v: 'todos −12 h / +8 h', a: 12, d: 8 }, { v: 'todos −24 h / +12 h', a: 24, d: 12 }, { v: 'todos −36 h / +12 h', a: 36, d: 12 }, { v: 'todos −2 h / +24 h', a: 2, d: 24 },
         { v: 'solo Fed −24 h / +12 h', a: 24, d: 12, tp: ['fomc'] }, { v: 'solo inflación −24 h / +12 h', a: 24, d: 12, tp: ['cpi'] }, { v: 'solo empleo −24 h / +12 h', a: 24, d: 12, tp: ['empleo'] }];
