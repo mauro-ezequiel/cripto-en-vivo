@@ -178,6 +178,10 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
    y en pantalla completa arriba solo el activo y los indicadores, abajo buscador + temporalidad + herramientas */
 .chrow{flex:1;display:flex;min-height:0;position:relative}
 .top-r2{flex-basis:100%;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}.top-r2 .signal{margin-left:auto}@media (max-width:800px){.top-r2{flex-wrap:nowrap;gap:6px}.top-r2 .signal{margin-left:auto;gap:4px}.top-r2 .signal>span:first-child{display:none}.top-r2 .signal .big{font-size:12px;padding:4px 7px;white-space:nowrap}.top-r2 .seg .btn{padding:5px 7px;font-size:11.5px}}
+/* octubre 2026: en celulares angostos la barra de herramientas del gráfico se salía unos píxeles por la derecha */
+@media (max-width:440px){.toolbar .rbtn{width:28px}.toolbar .rsep{margin:0 2px}.toolbar .rail{gap:1px}}
+/* octubre 2026: con TRADING X son 4 modos y en el celular la fila se salía de la pantalla: los modos ocupan todo el ancho y el termómetro pasa abajo */
+@media (max-width:560px){.top-r2{flex-wrap:wrap;row-gap:6px}.top-r2 .top-modes{flex:1 1 100%;display:flex}.top-r2 .top-modes .btn{flex:1 1 0;min-width:0;padding:6px 2px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-r2 .signal{margin-left:auto}}
 .toolbar .rail{flex-direction:row;width:auto;border:0;background:none;padding:0;gap:2px}.toolbar .rsep{width:1px;height:20px;margin:0 4px}
 .toolbar .tfpop{left:0;top:38px}@media (max-width:800px){.toolbar .ind-top{order:-1}.ind-top{font-size:12px;padding:5px 8px}}
 .rail{display:flex;flex-direction:column;align-items:center;gap:3px;padding:6px 4px;border-right:1px solid var(--line);background:var(--panel);flex:none;width:44px;overflow:visible;z-index:12}
@@ -1297,13 +1301,15 @@ function renderMarket(){if(!$('posCard')||getComputedStyle($('posCard')).display
 let FIGC={k:'',t:0,f:[]};
 function figList(){const k=symbol+tf+candles.length+':'+(candles.at(-1)||{}).time;if(FIGC.k===k||(Date.now()-FIGC.t<2000&&FIGC.f.length))return FIGC.f;
   try{FIGC={k,t:Date.now(),f:FIG.scan(candles,{formando:true})};}catch(e){FIGC={k,t:Date.now(),f:[]};}return FIGC.f;}
-function drawFig(ctx,from,to,X,Y,paneW){const V=figList().filter(f=>f.i1>=from-5&&f.i0<=to),L=[];
+function drawFig(ctx,from,to,X,Y,paneW){const V=figList().filter(f=>f.i1>=from-5&&f.i0<=to),L=[],PL=[];
   for(let k=V.length-1;k>=0&&L.length<4;k--){const f=V[k];if(L.some(g=>Math.min(g.i1,f.i1)-Math.max(g.i0,f.i0)>.3*Math.min(g.i1-g.i0,f.i1-f.i0)))continue;L.unshift(f);} // las más nuevas, sin encimarse
   for(const f of L){const x0=X(f.i0),x1=X(f.i1),y0=Y(f.hi),y1=Y(f.lo);if(x0==null||x1==null||y0==null||y1==null)continue;
     ctx.save();ctx.strokeStyle='#ffd600';ctx.lineWidth=1.5;ctx.fillStyle='rgba(255,214,0,.07)';if(!f.conf)ctx.setLineDash([5,4]);
     ctx.fillRect(x0,y0,x1-x0,y1-y0);ctx.strokeRect(x0,y0,x1-x0,y1-y0);ctx.setLineDash([]);
     const tx=(f.dir>0?'▲ sube':f.dir<0?'▼ cae':'▬ se mantiene'),col=f.dir>0?'#26a69a':f.dir<0?'#ef5350':'#b0bec5',lb=`${f.nombre}${f.conf?'':' · formándose'}`;
-    ctx.font='600 11px system-ui,sans-serif';const w1=ctx.measureText(lb+'  ').width,w2=ctx.measureText(tx).width,bx=Math.max(2,Math.min(paneW-w1-w2-14,x0)),by=Math.max(2,y0-20);
+    ctx.font='600 11px system-ui,sans-serif';const w1=ctx.measureText(lb+'  ').width,w2=ctx.measureText(tx).width,bx=Math.max(2,Math.min(paneW-w1-w2-14,x0)),bw=w1+w2+10;let by=Math.max(2,y0-20);
+    /* octubre 2026: si el cartel se pisa con el de otra figura, se corre hacia abajo (o hacia arriba) */
+    for(let q=0;q<6&&PL.some(r=>bx<r[0]+r[2]&&bx+bw>r[0]&&by<r[1]+r[3]+2&&by+17>r[1]-2);q++)by=q<3?by+19:Math.max(2,y0-20)-19*(q-2);PL.push([bx,by,bw,17]);
     ctx.fillStyle='rgba(20,22,28,.9)';ctx.fillRect(bx,by,w1+w2+10,17);ctx.strokeStyle='#ffd600';ctx.lineWidth=1;ctx.strokeRect(bx,by,w1+w2+10,17);
     ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillStyle='#ffd600';ctx.fillText(lb,bx+5,by+9);ctx.fillStyle=col;ctx.fillText(tx,bx+5+w1,by+9);
     if(f.conf&&f.obj!=null){const yo=Y(f.obj),xe=X(f.i1+12);if(yo!=null&&xe!=null){ctx.strokeStyle=col;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x1,yo);ctx.lineTo(Math.min(xe,paneW),yo);ctx.stroke();ctx.setLineDash([]);
@@ -1387,6 +1393,16 @@ function drawInd(ctx,w,h){
     if(k==='cvd'&&C.cvd)txt+=`  ${fnum(C.cvd[i]??0)} ${symbol.replace('USDT','')}`;
     if(k==='adx'&&C.adx)txt+=`  ADX ${(C.adx.adx[i]??0).toFixed(1)}  +DI ${(C.adx.pdi[i]??0).toFixed(1)}  −DI ${(C.adx.mdi[i]??0).toFixed(1)}`;
     ctx.font='12px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle=IND[k].color;ctx.fillText(txt,10,y+5);});
+  /* octubre 2026: la escala de precios del gráfico principal seguía hacia abajo por los paneles (RSI, MACD, ADX, CVD) con precios que no tienen
+     nada que ver. Se tapa esa parte y cada panel muestra su propio valor actual y sus niveles de referencia (RSI 70/30, Stoch 80/20, ADX 25) */
+  if(os.length){const yT=paneH*(1-block),aw=w-paneW;if(aw>8){ctx.fillStyle='#0f1115';ctx.fillRect(paneW+1,yT,aw,paneH-yT);ctx.strokeStyle='#262b36';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(paneW+.5,yT);ctx.lineTo(paneW+.5,paneH);ctx.stroke();
+    const S={rsi:[OS.rsi.rsi,C.rsi&&C.rsi[i],'#b388ff',[70,30]],stochrsi:[OS.stochrsi.k,C.srsi&&C.srsi.k[i],'#26c6da',[80,20]],macd:[OS.macd.macd,C.macd&&C.macd.macd[i],'#2962ff',[]],
+      kon:[OS.kon.marron,C.kon&&C.kon.marron[i],'#2962ff',[]],adx:[OS.adx.adx,C.adx&&C.adx.adx[i],'#e0e0e0',[25]],cvd:[OS.cvd.cvd,C.cvd&&C.cvd[i],'#ffd166',[]]};
+    ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
+    os.forEach((k,n)=>{const s=S[k];if(!s)return;const [se,v,col,refs]=s,top=paneH*(1-block+n*PANE),bot=top+paneH*PANE;
+      for(const r of refs){const y=se.priceToCoordinate(r);if(y!=null&&y>top+4&&y<bot-4){ctx.fillStyle='#6e7687';ctx.fillText(String(r),paneW+6,y);}}
+      if(v!=null&&isFinite(v)){let y=se.priceToCoordinate(v);if(y!=null){y=Math.max(top+9,Math.min(bot-9,y));const t=k==='cvd'?fnum(v):k==='macd'?(+v).toPrecision(3):(+v).toFixed(1);
+        ctx.fillStyle=col;ctx.fillRect(paneW+1,y-8,aw-1,16);ctx.fillStyle=k==='adx'||k==='cvd'?'#0f1115':'#fff';ctx.fillText(t,paneW+5,y);}}});}}
 }
 
 /* =====================================================================
