@@ -7,7 +7,7 @@
      ext = {dv, dv24, t}; si no se pasa se usa IA.EXT (la página y el bot lo cargan con el último DVOL). Sin dato vale 0. */
   IA.EXT = null;
   let MACX = null; const macLib = () => { if (MACX) return MACX; try { MACX = typeof module !== 'undefined' && module.exports && typeof require === 'function' ? require('./herramientas/macro-lib.js') : root.MACRO; } catch (e) { MACX = root.MACRO; } return MACX; };
-  function extF(P, j, ext) { const e = ext || IA.EXT || {}, b = P.bars, t = e.t || (b[j] ? b[j].t + (j > 0 ? b[j].t - b[j - 1].t : 0) : Date.now()), M = macLib(); // sin t: el cierre de la vela let evh = 96, evp = 96;
+  function extF(P, j, ext) { const e = ext || IA.EXT || {}, b = P.bars, t = e.t || (b[j] ? b[j].t + (j > 0 ? b[j].t - b[j - 1].t : 0) : Date.now()), M = macLib(); /* sin t: el cierre de la vela */ let evh = 96, evp = 96;
     if (M && M.EV) for (const ev of M.EV) { const dh = (ev[0] - t) / 36e5; if (dh >= 0 && dh < evh) evh = dh; if (dh < 0 && -dh < evp) evp = -dh; }
     return { dv: N(e.dv), dv24: e.dv24 == null ? 0 : N(e.dv24) * 100, evh: +evh.toFixed(1), evp: +evp.toFixed(1) }; }
   /* octubre 2026 (v2): figuras chartistas y el conteo de 8 señales de los bots (las mismas de la salida anticipada) como datos nuevos */
