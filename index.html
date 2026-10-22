@@ -751,7 +751,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
       <div class="stat">Máx 24h<b id="s-hi">—</b></div>
       <div class="stat">Mín 24h<b id="s-lo">—</b></div>
       <div class="stat">Volumen 24h (USDT)<b id="s-vol">—</b></div>
-      <div class="top-r2"><span class="seg top-modes" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span>
+      <div class="top-r2"><span class="seg top-modes" id="modeSeg"><button class="btn" data-mode="medio">TRADING</button><button class="btn" data-mode="tx">TRADING X</button><button class="btn" data-mode="x">SHOOTER</button><button class="btn" data-mode="a">ACCIONES</button></span>
       <div class="signal hide" id="signal" title="Resumen de los 8 indicadores activos. No es consejo financiero."></div></div>
     </div>
     <div id="chartWrap">
@@ -965,6 +965,10 @@ const MODES = {
     def: ['liq','trend','canal','supertrend','ema','vprofile','rsi','adx','cvd','kon']
   }
 };
+/* octubre 2026 · TRADING X: señales aparte de TRADING (las manda el bot 24 h). Mismas entradas que TRADING, objetivos más cerca (0,4 × stop)
+   y no entra con el DVOL de Deribit > 55 ni con el DVOL cayendo > 10 % en 24 h. Último año: 92,5 % ganadas; 4 años: 88,3 %. */
+MODES.tx=Object.assign({},MODES.medio,{name:'TRADING X',tag:'Más aciertos',desc:'Como TRADING, con objetivos más cerca y filtro de volatilidad: gana más seguido, cobra menos por operación',
+  info:['Temporalidad inicial: 4H','Mismas entradas que TRADING','Objetivos 0,4 / 0,8 / 1,2 × stop (TRADING: 0,75 / 1,5 / 2,25)','No entra con el DVOL de Deribit > 55 ni cayendo > 10 % en 24 h']});
 let mode = 'medio';
 let tickers = {}, symbol = 'BTCUSDT', tf = MODES[mode].tf, tool = 'cursor';
 let klineWs, candles = [], loadingMore = false, noMore = false;
@@ -1020,6 +1024,7 @@ const hexA=(h,a)=>{const n=parseInt(String(h).slice(1),16);return `rgba(${n>>16&
 function sty(k,i,dc,dw){return mode==='p'&&CU[k]?[CU[k].c[i]||dc,CU[k].w]:[dc,dw];}
 const PRM={medio:{rsi:14,st:[10,3],ema:[21,50,200],bb:2},a:{rsi:14,st:[10,3],ema:[20,50,200],bb:2,bbp:20,macd:[12,26,9],adx:14},
   get x(){return PRM_X[tf]||PRM_X['5m'];},
+  get tx(){return PRM.medio;},
   get p(){const u=CU;return {rsi:u.rsi.len[0],st:[u.supertrend.len[0],u.supertrend.mult],ema:u.ema.len,bb:u.bollinger.mult,bbp:u.bollinger.len[0],macd:u.macd.len,adx:u.adx.len[0],ichi:u.ichimoku.len,srsi:u.stochrsi.len};}};
 function setNames(){const pr=PRM[mode];IND.rsi.name=`RSI (${pr.rsi})`;IND.supertrend.name=`Supertrend (${pr.st.join(',')})`;IND.ema.name=`EMA ${pr.ema.join(' / ')}`;IND.bollinger.name=`Bollinger (${pr.bbp||20},${pr.bb})`;
   IND.macd.name=`MACD (${(pr.macd||[12,26,9]).join(',')})`;IND.adx.name=`ADX / DMI (${pr.adx||14})`;IND.stochrsi.name=`Stoch RSI (${(pr.srsi||[14,14,3,3]).join(',')})`;IND.ichimoku.name=pr.ichi?`Ichimoku (${pr.ichi.join(',')})`:'Ichimoku';
@@ -1755,7 +1760,7 @@ function chartKick(){if(!candles.length||!$('chart').clientWidth)return;try{if(!
 function chartKicks(){[400,1200,2500,5000].forEach(ms=>setTimeout(chartKick,ms));}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden)chartKicks();});window.addEventListener('pageshow',chartKicks);window.addEventListener('focus',()=>setTimeout(chartKick,300));
 function fitView(){const n=MODES[mode].bars;chart.timeScale().setVisibleLogicalRange({from:candles.length-n,to:candles.length+(active.has('ichimoku')?30:active.has('trend')?16:8)});series.priceScale().applyOptions({autoScale:true});}
-const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
+const TF_MODE={medio:['1h','2h','4h','8h','12h','1d','1w','1M'],tx:['1h','2h','4h','8h','12h','1d','1w','1M'],x:['1m','3m','5m','15m','30m'],p:['1h','2h','4h','8h','12h','1d','1w','1M'],a:['1h','2h','4h','1d','1w','1M']};
 function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{try{rsiRender();}catch(e){}},80);
   const wasA=mode==='a';mode=m;const M=MODES[m];if(typeof pilRender==='function')setTimeout(pilRender,0);
   if((m==='a')!==wasA&&typeof switchMarket==='function')switchMarket(m==='a');
@@ -2630,12 +2635,13 @@ const SIGCFG={
   medio:{name:'TRADING',tf:'4h',htf:'1d',min:.0125,maxAtr:.017,H:18,every:180e3,uni:'top',n:400,thr:.5,maxAge:36e5*24},
   x:{name:'SHOOTER',tf:'15m',htf:'1h',min:.016,maxAtr:.027,H:12,every:120e3,uni:'top',n:30,thr:.5,maxAge:36e5*3}};
 SIGCFG.p={...SIGCFG.medio,name:'PERSONALIZADO'};
+SIGCFG.tx={...SIGCFG.medio,name:'TRADING X'};
 SIGCFG.a={name:'ACCIONES',tf:'1d',htf:'1w',min:.05,maxAtr:.08,H:15,every:600e3,uni:'stk',n:30,thr:.5,maxAge:3*864e5};
 const SAFE=['BTC','ETH','SOL','BNB','XRP','DOGE','ADA','AVAX','LINK','LTC','TRX','DOT'].map(s=>s+'USDT');
 const STABLE=/^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
-let SIG={medio:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,x:0,p:0,a:0};
+let SIG={medio:[],tx:[],x:[],p:[],a:[]},scanBusy=false,lastScan={medio:0,tx:0,x:0,p:0,a:0};
 try{const s=JSON.parse(localStorage.getItem('cv_sig')||'null');if(s&&Array.isArray(s.medio)&&Array.isArray(s.x)){SIG=s;SIG.medio=SIG.medio.filter(x=>x.srv);SIG.x=SIG.x.filter(x=>x.srv);}}catch(e){} // octubre 2026: TRADING y SHOOTER solo del bot 24 h
-if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];for(const k of ['medio','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-c','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','c-rup','c-rsi2','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
+if(!Array.isArray(SIG.p))SIG.p=[];if(!Array.isArray(SIG.a))SIG.a=[];if(!Array.isArray(SIG.tx))SIG.tx=[];SIG.tx=SIG.tx.filter(x=>x.srv);for(const k of ['medio','tx','x','p','a'])SIG[k]=SIG[k].filter(x=>['t-pb','sh-r','sh-c','sh-k','cu','a-mom','a-rev','c-mom','c-pb','c-reb','c-rup','c-rsi2','tp-r55','tp-u80','tp-x'].includes(x.setup)); // descarta señales de versiones anteriores
 const saveSig=()=>{try{localStorage.setItem('cv_sig',JSON.stringify(SIG))}catch(e){}};
 function withCandles(cs,fn){const prev=candles;candles=cs;try{return fn();}finally{candles=prev;}}
 function universe(m){const cfg=SIGCFG[m];if(m==='a')return stkUniverse();
@@ -2738,8 +2744,8 @@ const CAL={medio:{'t-pb':{p:86,p3:30,n:73,usd:37.4,txt:'retroceso dentro de la t
    Una pre-señal (avisar cuando el RSI está entre 25 y 35) se descartó: solo 1 de cada 4 señales pasa antes por esa zona y 78 % de las pre-señales no se confirman. */
 var PLUSG={a:3,r:.35,lev:10,max:.076,cut:.5,label:'350 USD × 7 · stop 3 × ATR · sin salvavidas · aviso de salida si se da vuelta'};
 /* octubre 2026 v7: TRADING objetivos 0,75 × stop (antes 0,5) y no entra si el precio se alejó más de 8 % de la EMA 200 · SHOOTER stop 4 ATR y objetivos 0,25 × stop, solo sobre la EMA 200 */
-const NEWG={medio:{a:3,r:.75,max:.036},x:{a:4,r:.25,max:.05}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
-const MINCERT={medio:62,x:56,p:0,a:30},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:44,g:44,p3:0,n:2147,usd:25,txt:'rebote tras una caída moderada (sin desplome ni subida histórica), con el S&P 500 sobre su media de 200 días'},'c-rup':{p:43,g:43,p3:1,n:2946,usd:31,txt:'ruptura de máximos de 20 días con volumen, en tendencia alcista y con el S&P 500 sobre su media de 200 días'},'c-rsi2':{p:36,g:52,p3:3,n:5183,usd:19.9,txt:'caída corta (RSI 2 bajo) dentro de una tendencia alcista'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
+const NEWG={medio:{a:3,r:.75,max:.036},x:{a:4,r:.25,max:.05},tx:{a:3,r:.4,max:.036}},NEWG_SET={'t-pb':1,'tp-r55':1,'tp-u80':1,'sh-r':1,'sh-c':1};
+const MINCERT={medio:62,tx:62,x:56,p:0,a:30},MINCERT_SET={'tp-x':60};CAL.a={'a-mom':{p:92,p3:60,n:62,txt:'impulso con volumen fuerte (acciones argentinas)'},'a-rev':{p:79,p3:33,n:58,txt:'agotamiento tras sobrecompra (acciones argentinas)'},'c-mom':{p:51,p3:20,n:786,usd:12.5,txt:'impulso con tendencia semanal y el S&P 500 a favor'},'c-pb':{p:57,p3:23,n:122,usd:16.5,txt:'retroceso dentro de la tendencia con volumen bajo y el S&P 500 a favor'},'c-reb':{p:44,g:44,p3:0,n:2147,usd:25,txt:'rebote tras una caída moderada (sin desplome ni subida histórica), con el S&P 500 sobre su media de 200 días'},'c-rup':{p:43,g:43,p3:1,n:2946,usd:31,txt:'ruptura de máximos de 20 días con volumen, en tendencia alcista y con el S&P 500 sobre su media de 200 días'},'c-rsi2':{p:36,g:52,p3:3,n:5183,usd:19.9,txt:'caída corta (RSI 2 bajo) dentro de una tendencia alcista'}};CAL.p={cu:{p:50,n:0,txt:'tus ajustes personalizados (sin calibrar)'}};
 function calCert(m,setup){
   const c=CAL[m][setup];if(!c)return null;
   const mine=(typeof OPS!=='undefined'?OPS:[]).filter(o=>o.m===m&&o.setup===setup&&o.state!=='open');
@@ -2884,7 +2890,7 @@ function buildSignalV2(m,sym,e,fd){
 /* ACCIONES también (octubre 2026): las busca un navegador del bot cada 30 min, las 24 h (herramientas/acciones-bot.js abre esta misma página con
    ?bot=acciones, así usa exactamente las mismas reglas, noticias incluidas) y las publica en datos/acciones.json. */
 const ACCBOT=/[?&]bot=acciones/.test(location.search);
-const BOTSRC=m=>m==='medio'||m==='x'||(m==='a'&&!ACCBOT);var SRVCHK=0,ACCCHK=0,ACCOPS=null;
+const BOTSRC=m=>m==='medio'||m==='tx'||m==='x'||(m==='a'&&!ACCBOT);var SRVCHK=0,ACCCHK=0,ACCOPS=null;
 async function scanSignals(mm){
   if(BOTSRC(mm||mode)){lastScan[mm||mode]=Date.now();try{await ((mm||mode)==='a'?accImport():srvImport());}catch(e){}renderSignals();return;}
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
@@ -2902,7 +2908,7 @@ async function scanSignals(mm){
         else{[cs,hc]=m==='a'?await stkKl(s):await Promise.all([kl(s,cfg.tf,300),kl(s,cfg.htf,120)]);if(cs.length<150||hc.length<30)continue;
           e=m==='p'?evalCustom(cs,hc):m==='a'?evalStock(s,cs,hc):evalTrading(cs,hc);if(m==='medio'&&e.dir&&!(await wildOK(s)))e.dir=0;}
         const ex=SIG[m].find(x=>x.sym===s&&x.state==='live');
-        if(!ex&&(m==='medio'||m==='x')&&OPS.some(o=>o.m===m&&o.sym===s&&(o.state==='open'||Date.now()-o.t<(m==='x'?36e5:24*36e5))))continue; // una operación por moneda a la vez y espera entre señales (como en la simulación)
+        if(!ex&&(m==='medio'||m==='tx'||m==='x')&&OPS.some(o=>o.m===m&&o.sym===s&&(o.state==='open'||Date.now()-o.t<(m==='x'?36e5:24*36e5))))continue; // una operación por moneda a la vez y espera entre señales (como en la simulación)
         if(ex){ex.score=e.score;if(!e.keep&&(Math.sign(e.score)!==ex.dir||Math.abs(e.score)<.2))lose(ex,'los indicadores ya no confirman la dirección');}
         else{const sg=buildSignalV2(m,s,e,fd);if(sg){if(tf30)sg.tf='30m';fresh.push(sg);}}
       }catch(err){}
@@ -2932,7 +2938,7 @@ function checkSignals(){
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
 function renderSignals(){try{iaSigRender();}catch(e){}
   const m=mode,cfg=SIGCFG[m],now=Date.now();
-  if(SIGV!=='ia')$('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
+  if(SIGV!=='ia')$('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio'||m==='tx')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
   {const sw=document.querySelector('#sigBox .sig-warn');if(sw){if(!sw.dataset.def)sw.dataset.def=sw.innerHTML;sw.innerHTML=m==='p'?'<b class="dn">⚠ NO RECOMENDABLE.</b> En PERSONALIZADO las señales salen de tus propios ajustes de indicadores y no están calibradas con datos históricos: úsalas solo para probar.':m==='a'?'Señales probadas con 6 años de velas diarias de 356 acciones de EE. UU. (elegidas con los primeros 4 años y medidas en los últimos 2). El % es cuántas operaciones terminaron ganando: los objetivos están lejos (1, 2 y 3 veces el stop), así que el objetivo 1 se toca menos seguido, pero cada acierto paga más. Ninguna es segura: usá siempre el stop.':sw.dataset.def;}}
   if(BOTSRC(m)){const ck=m==='a'?ACCCHK:SRVCHK;$('sigScan').textContent=ck?`· bot 24 h · revisado ${new Date(ck).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'})}`:'· conectando con el bot 24 h…';}else
   $('sigScan').textContent=scanBusy?'· escaneando…':lastScan[m]?`· último escaneo ${new Date(lastScan[m]).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}`:'· preparando…';
@@ -2971,9 +2977,11 @@ setInterval(checkSignals,2000);
    SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · objetivos 0,75 / 1,5 / 2,25 × stop · salvavidas 175 USD · sale antes con ganancia si 5 de 8 señales se dan vuelta'},
+CAL.tx=Object.fromEntries(Object.entries(CAL.medio).map(([k,v])=>[k,Object.assign({},v,{p:92,p3:32,n:93})])); // TRADING X: simulación del último año (92,5 % al objetivo 1)
+const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · objetivos 0,75 / 1,5 / 2,25 × stop · salvavidas 175 USD · sale antes con ganancia si 5 de 8 señales se dan vuelta · no entra con el DVOL > 55 ni cayendo > 10 % en 24 h'},
            x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 4 × ATR con tope 5 % (−37,5 USD) · objetivos 0,25 / 0,5 / 0,75 × stop · sin salvavidas · después del objetivo 1 sale antes si 6 de 8 señales se dan vuelta · no entra con el DVOL bajo 35'}};
 SIM.p={...SIM.medio};
+SIM.tx={...SIM.medio,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 %) · objetivos 0,4 / 0,8 / 1,2 × stop · salvavidas 175 USD · sale antes con ganancia si 5 de 8 señales se dan vuelta · no entra con el DVOL > 55 ni cayendo > 10 % en 24 h'};
 SIM.a={margin:500,lev:8,maxLoss:400,maxAge:42*864e5,kl:'1d',klMs:864e5,label:'500 USD · apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20) · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 × stop · solo con el S&P 500 sobre su media de 200 días · no entra la noche antes ni la del dato de inflación de EE.UU.'};
 const TGT=['objetivo 1','objetivo 2','objetivo 3'];
 let OPS=[];try{const s=JSON.parse(localStorage.getItem('cv_ops')||'[]');if(Array.isArray(s))OPS=s;}catch(e){}
@@ -2989,7 +2997,7 @@ const saveOps=()=>{if(OPS.length>400){for(const o of OPS.slice(0,OPS.length-400)
    SHOOTER 50 USD × 15): ganancia y pérdida se escalan con el nuevo apalancamiento y el stop se recorta al tope nuevo (TRADING+ 7,6 %, SHOOTER 5 %).
    También se borran las repetidas (misma moneda, mismo modo y dirección, con menos de 10 minutos de diferencia). Se puede correr las veces que sea. */
 function opsToCurrent(){let ch=false;const seen=[];
-  for(const o of OPS){if(!(o.m==='medio'||o.m==='x'))continue;const plus=o.setup==='tp-x',tgt=o.m==='x'?SIM.x.lev:plus?PLUSG.lev:SIM.medio.lev,mg=SIM[o.m].margin;
+  for(const o of OPS){if(!(o.m==='medio'||o.m==='tx'||o.m==='x'))continue;const plus=o.setup==='tp-x',tgt=o.m==='x'?SIM.x.lev:plus?PLUSG.lev:SIM.medio.lev,mg=SIM[o.m].margin;
     const old=o.lev||(o.not?o.not/mg:SIM[o.m].lev);if(!(old>0)||Math.abs(old-tgt)<1e-9)continue;
     const k=tgt/old,cap=o.m==='x'?NEWG.x.max:plus?PLUSG.max:null;
     o.lev=tgt;o.not=(o.not||mg*old)*k;if(o.real!=null)o.real*=k;
@@ -2999,7 +3007,7 @@ function opsToCurrent(){let ch=false;const seen=[];
     ch=true;}
   /* octubre 2026: además, como en la simulación, en TRADING y SHOOTER una operación por moneda a la vez y una espera entre señales (1 h SHOOTER, 24 h TRADING):
      si la página y el bot 24 h abrieron la misma moneda con minutos de diferencia, o se abrió otra con la anterior todavía en curso, la repetida se borra */
-  const keep=[];for(const o of OPS.sort((a,b)=>a.t-b.t)){const cool=o.m==='x'?36e5:o.m==='medio'?24*36e5:0;
+  const keep=[];for(const o of OPS.sort((a,b)=>a.t-b.t)){const cool=o.m==='x'?36e5:o.m==='medio'||o.m==='tx'?24*36e5:0;
     const d=keep.find(x=>x.m===o.m&&x.sym===o.sym&&(x.dir===o.dir&&Math.abs(x.t-o.t)<10*6e4||cool&&o.t>=x.t&&(o.t<x.t+cool||x.state==='open'||(x.closeAt&&o.t<x.closeAt))));
     if(d){opsArch(o,'repetida');OPS_DROP.add(o.id);ch=true;continue;}keep.push(o);}
   if(ch){OPS=keep;try{localStorage.setItem('cv_ops',JSON.stringify(OPS));localStorage.setItem('cv_ops_drop',JSON.stringify([...OPS_DROP].slice(-800)));}catch(e){}}
@@ -3083,7 +3091,7 @@ function applyLL(o,ts){const d=o.dir,px=o.llAt,s=o.liqD||lossOf(o)/notOf(o);
   o.ae=(o.entry+.5*px)/1.5;o.sz=1.5;o.fail=o.ae*(1-d*s);o.loss=1.5*notOf(o)*s;o.ll={t:ts,px,why:llWhy(o.m),margin:o.llMargin||SIM[o.m].margin/2};
   const sg=(SIG[o.m]||[]).find(x=>x.op===o.id);if(sg){sg.ll=true;sg.sl=o.fail;saveSig();}
   notifyLL(o);}
-function notifyLL(o){if(typeof NTF==='undefined'||!NTF[o.m]||!ntfAny())return;window.__skipRmt=!!(RMT.srv&&(o.m==='medio'||o.m==='x'));
+function notifyLL(o){if(typeof NTF==='undefined'||!NTF[o.m]||!ntfAny())return;window.__skipRmt=!!(RMT.srv&&(o.m==='medio'||o.m==='tx'||o.m==='x'));
   const c=o.sym.replace('USDT',''),mg=o.ll.margin+' USD';
   notify(`🟡🛟 SALVAVIDAS · ${SIGCFG[o.m].name} ${o.dir>0?'▲ LONG':'▼ SHORT'} ${c}`,`Se suman ${mg} (× ${SIM[o.m].lev}) en ${fp(o.ll.px)}: ${o.ll.why}. Entrada promedio ${fp(o.ae)} · nuevo stop ${fp(o.fail)}.`,'ll-'+o.id,{sym:o.sym,tf:SIGCFG[o.m].tf,m:o.m});}
 function liveOps(){let ch=false;const now=Date.now();for(const o of OPS){if(o.state!=='open')continue;if(o.llPend){llResolve(o);continue;}const t=tickers[o.sym];if(!t)continue;const r=stepOp(o,t.c,t.c,now);if(r==='ll')llResolve(o);else if(r)ch=true;o.last=now;}if(ch)saveOps();}
@@ -3215,7 +3223,7 @@ function sigPop(m,f){if(!f||!f.op||Date.now()-(f.t||0)>=SIGPOP_MS||SIGPOPS.some(
 setInterval(sigPopRender,6e4);setTimeout(sigPopRender,1500);
 function notifySig(m,f){if(window.__importing)return;
   if(!NTF[m]||!ntfAny())return;
-  window.__skipRmt=!!(RMT.srv&&(m==='medio'||m==='x'));
+  window.__skipRmt=!!(RMT.srv&&(m==='medio'||m==='tx'||m==='x'));
   const L=f.dir>0,c=f.sym.replace('USDT','');
   notify(`${SIGCFG[m].name}: ${L?'▲ LONG':'▼ SHORT'} ${c}`,`Entrada ${fp(f.zl)} – ${fp(f.zh)} · Objetivo 1 ${fp(f.tp1)} · Stop ${fp(f.sl)}${m==='x'?'':` · Salvavidas en ${fp(f.entry+(f.sl-f.entry)*LLTH)}`} · acierto hist. ${f.conf} %`,f.op,{sym:f.sym,tf:f.tf,m});
 }
@@ -3255,7 +3263,7 @@ function renderDrw(){
   document.querySelectorAll('#drwModes .mcard').forEach(b=>b.classList.toggle('on',b.dataset.m===mode));
   const on=k=>ntfAny()&&NTF[k];
   $('drwNtf').innerHTML=(permOK()?'':`<button class="mcard" data-t="ask" style="text-align:center"><b>🔔 Permitir notificaciones</b><small>${canNotify?'Hace falta para que el celu te muestre los avisos':(isIOS?'En iPhone primero instala la app en la pantalla de inicio':'Este navegador no permite avisos')}</small></button>`)+
-    [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['a','Señales ACCIONES','Avisa cuando aparece una señal de acciones de NYSE'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
+    [['medio','Señales TRADING','Avisa cuando aparece una señal de largo plazo'],['tx','Señales TRADING X','Avisa cuando aparece una señal de TRADING X (objetivos cortos)'],['x','Señales SHOOTER','Avisa cuando aparece una señal de 1 a 30 min'],['a','Señales ACCIONES','Avisa cuando aparece una señal de acciones de NYSE'],['alert','Alertas de precio','Avisa cuando un activo llega a tu precio']]
     .map(([k,t,d])=>`<div class="tg"><div>${t}<small>${d}</small></div><button class="tsw${on(k)?' on':''}" data-t="${k}" role="switch" aria-checked="${on(k)}" aria-label="${t}"></button></div>`).join('');
   renderAlrList();if(typeof rmtRender==='function')rmtRender();
 }
@@ -4386,7 +4394,7 @@ async function bitPgLoad(){if(Date.now()-bitPgT<10*6e4)return;bitPgT=Date.now();
 /* octubre 2026: TRADING, SHOOTER y ACCIONES en vivo = lo que registra el bot 24 h (igual en todas las cuentas).
    Además se siguen mostrando, sin borrar nada, las operaciones que esta página había anotado por su cuenta ANTES de pasar al bot compartido
    (llevan 📱 porque son de esta cuenta o dispositivo). Desde el cambio ya no se agregan nuevas de ese tipo. */
-const SHARED_T=Date.parse('2026-10-16T23:30:00+02:00'),SHARED_TOL={medio:8*36e5,x:36e5,a:2*864e5};
+const SHARED_T=Date.parse('2026-10-16T23:30:00+02:00'),SHARED_TOL={medio:8*36e5,tx:8*36e5,x:36e5,a:2*864e5};
 function realOps(m){let S=null;
   if(m==='a'&&BOTSRC('a')&&ACCOPS)S=OPS.filter(o=>o.m==='a');
   else if(m!=='a'&&BOTSRC(m)&&Array.isArray(BITOPS)){const byId=new Map(OPS.map(o=>[o.id,o]));
@@ -4405,7 +4413,7 @@ function realOpsLegacy(m,extra){const L=[],seen=new Set(),inOps=new Set(OPS.map(
   for(const o of extra||[])add(o);
   for(const b of BITOPS||[])add(b);
   return L.sort((a,b)=>a.t-b.t);}
-const REC_TOL={medio:8*36e5,x:36e5,a:2*864e5};
+const REC_TOL={medio:8*36e5,tx:8*36e5,x:36e5,a:2*864e5};
 function recOps(m){const R=realOps(m),sim=m==='a'?HIST_A:histOps()&&histOps().filter(o=>o.m===m&&o.setup!=='tp-x');if(!sim)return null;
   const t0=R.length?R[0].t:Date.now()-30*864e5,cut=m==='a'?Infinity:(window.HISTYR&&HISTYR.upd)||Date.now(),A=sim.filter(o=>o.t>=t0&&o.t<cut);
   for(const o of R)if(o.t>=cut&&!o.arch&&!A.some(x=>x.sym===o.sym&&x.t<o.t&&(x.state==='open'||(x.closeAt&&o.t<x.closeAt))))A.push(o);
@@ -4464,8 +4472,9 @@ function ledHTML(){const m=mode;if(VERSEL&&HSRC==='live'&&VERD){const h=verDetai
    Cuenta las operaciones reales (como pasaron, sin rehacer) abiertas mientras regía cada versión. Verde = ganó plata por operación con
    60 % o más ganadas · amarillo = ganó plata con menos acierto · rojo = perdió plata · gris = sin operaciones cerradas. */
 const VERS={
+  tx:[['v1','2026-10-22T04:00:00+02:00','mismas entradas que TRADING, objetivos 0,4 × stop, no entra con DVOL > 55 ni cayendo > 10 % en 24 h']],
   medio:[['v1','2026-10-07T12:53:00+02:00','tendencia alineada y retroceso; stop 3 ATR, objetivos 0,5 × stop'],['v2','2026-10-07T14:45:00+02:00','+ solo a favor de BTC'],['v3','2026-10-08T14:57:00+02:00','+ el retroceso frena antes de la EMA 50'],
-    ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo'],['v6','2026-10-17T00:30:00+02:00','+ solo si la tendencia de BTC tiene fuerza (ADX 4 h ≥ 24)'],['v7','2026-10-19T12:00:00+02:00','+ salida anticipada con 5 de 8 señales en contra y monedas desde 5 M de volumen']],
+    ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo'],['v6','2026-10-17T00:30:00+02:00','+ solo si la tendencia de BTC tiene fuerza (ADX 4 h ≥ 24)'],['v7','2026-10-19T12:00:00+02:00','+ salida anticipada con 5 de 8 señales en contra y monedas desde 5 M de volumen'],['v8','2026-10-22T04:00:00+02:00','+ no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h']],
   x:[['v1','2026-10-07T12:53:00+02:00','5 min: Bollinger ±2 y RSI 7, LONG y SHORT'],['v2','2026-10-07T15:16:00+02:00','+ RSI 7 extremo y a favor de BTC'],['v3','2026-10-08T15:08:00+02:00','3 min: rebote tras caer 3 % en 1 h'],['v4','2026-10-08T17:02:00+02:00','15 y 30 min, las 30 con más volumen'],
     ['v5','2026-10-12T19:57:00+02:00','+ sobre la EMA 200, stop 4 ATR, objetivos 0,25 × stop'],['v6','2026-10-14T16:29:00+02:00','+ lista de 7 días y sin caídas de más de 10 % en 24 h'],['v7','2026-10-19T21:30:00+02:00','+ salida anticipada después del objetivo 1 con 6 de 8 señales en contra'],['v8','2026-10-22T02:00:00+02:00','+ no entra con el DVOL de Deribit bajo 35 (mercado dormido)']],
   a:[['v1','2026-10-07T15:30:00+02:00','primera versión calibrada'],['v2','2026-10-07T20:18:00+02:00','solo impulso, stop 3 ATR'],['v3','2026-10-08T14:49:00+02:00','rebote tras caída moderada'],['v4','2026-10-12T07:20:00+02:00','tres reglas en diario, hasta × 8'],['v5','2026-10-12T17:42:00+02:00','menor riesgo: rebote y ruptura con el S&P 500 sobre su media de 200'],['v6','2026-10-22T02:00:00+02:00','+ no entra la noche antes ni la del dato de inflación de EE.UU.']],
@@ -4480,7 +4489,7 @@ var VCOPEN=false;
    Cada señal real de las secciones marcadas usa su margen (editable; por defecto el de siempre) y la plata se descuenta o se suma al cerrar.
    Mientras una operación está abierta su margen queda "en uso" y el saldo se mueve en vivo con su resultado. Si no alcanza la plata disponible, esa señal no se toma.
    Las versiones viejas (práctica) y las prácticas de la IA no tocan la billetera. */
-const WAL_DEF={cap:11000,tr:1,sh:1,a:1,ia:1,cic:1,mg:{medio:350,x:50,a:500,iatr:350,iash:50,cic:200},lim:{dir:6,uso:60,dia:5}};
+const WAL_DEF={cap:11000,tr:1,tx:1,sh:1,a:1,ia:1,cic:1,mg:{medio:350,tx:350,x:50,a:500,iatr:350,iash:50,cic:200},lim:{dir:6,uso:60,dia:5}};
 var WAL=JSON.parse(JSON.stringify(WAL_DEF));try{const w=JSON.parse(localStorage.getItem('cv_wal')||'null');if(w&&w.v===2)WAL=Object.assign(WAL,w,{mg:Object.assign({},WAL_DEF.mg,w.mg||{}),lim:Object.assign({},WAL_DEF.lim,w.lim||{})});}catch(e){}
 if(WAL.v!==2){WAL.v=2;WAL.t0=Date.now();}
 /* octubre 2026: que cuente también lo de los últimos días (una sola vez: arranca 11 días atrás si había arrancado después). Se puede cambiar en «Contar desde». */
@@ -4489,9 +4498,9 @@ const walSave=()=>{try{localStorage.setItem('cv_wal',JSON.stringify(WAL))}catch(
 const walPx=s=>(tickers[s]&&tickers[s].c)||(typeof STK!=='undefined'&&STK&&STK[s]&&STK[s].c)||null;
 /* todas las operaciones reales de las secciones marcadas, con su margen en la billetera, su resultado (cerradas) o su resultado en vivo (abiertas) */
 function walOps(){const L=[],t0=WAL.t0||0,M=WAL.mg;
-  if(WAL.tr||WAL.sh)for(const o of BITOPS||[]){if(o.t<t0||!(o.m==='medio'?WAL.tr:WAL.sh))continue;const mg0=SIM[o.m].margin,mg=M[o.m],k=mg/mg0,lev=SIM[o.m].lev;
+  if(WAL.tr||WAL.sh||WAL.tx)for(const o of BITOPS||[]){if(o.t<t0||!({medio:WAL.tr,tx:WAL.tx,x:WAL.sh})[o.m])continue;const mg0=SIM[o.m].margin,mg=M[o.m],k=mg/mg0,lev=SIM[o.m].lev;
     let u=null;if(o.state!=='open')u=o.pnl==null?null:o.pnl*k;else{const p=walPx(o.sym);if(p)u=Math.max(-mg,mg*lev*o.dir*(p/o.entry-1));}
-    L.push({k:o.m==='medio'?'TRADING':'SHOOTER',sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u});}
+    L.push({k:({medio:'TRADING',tx:'TRADING X',x:'SHOOTER'})[o.m],sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u});}
   if(WAL.a)for(const o of realOps('a')){if(o.t<t0)continue;const mg0=SIM.a.margin,mg=M.a,k=mg/mg0;let u=null;if(o.state!=='open')u=o.pnl==null?null:o.pnl*k;else{const p=walPx(o.sym);if(p)u=pnlAt(o,p)*k;}
     L.push({k:'ACCIONES',sym:o.sym,dir:o.dir,t:o.t,end:o.state==='open'?null:o.closeAt,mg,u});}
   if(WAL.ia&&IABOT)for(const x of IABOT.ops){if(x.pr||x.t<t0)continue;const mg=x.f==='tr'?M.iatr:M.iash,k=mg/x.mg;let u=null;if(x.st!=='open')u=x.pnl==null?null:x.pnl*k;else{const p=walPx(x.sym);if(p)u=iaOpLive(x,p)*k;}
@@ -4532,13 +4541,13 @@ function walRender(){const el=$('walBody');if(!el)return;if(!WALBTC||WALBTC.t0!=
       ${(()=>{const p=walPx('BTCUSDT');if(!WALBTC||!p)return '<div>Comprar y mantener BTC<b>—</b><small>calculando…</small></div>';const hv=WAL.cap*p/WALBTC.p0,df=R.eq-hv;return `<div>Si hubieras comprado BTC<b class="${hv>=WAL.cap?'up':'dn'}">${fu(hv)}</b><small>${hxPct((p/WALBTC.p0-1)*100)} · la billetera ${df>=0?'le gana':'pierde'} por ${fusd2(Math.abs(df)).replace(/^[+−]/,'')}</small></div>`;})()}
       ${(()=>{const S={};for(const x of R.L)if(x.skip&&x.skip!=='sin plata disponible')S[x.skip]=(S[x.skip]||0)+1;const k=Object.keys(S);return k.length?`<div>Frenadas por los límites<b>${k.reduce((a,y)=>a+S[y],0)}</b><small>${esc(k.map(y=>S[y]+' · '+y).join(' / '))}</small></div>`:'';})()}</div>
     ${(()=>{/* octubre 2026: cada modo por separado (solo las operaciones que tomó la billetera): abiertas, cerradas y resultado (% sobre el margen que usó y USD, con las abiertas en vivo) */
-      const K=[['TRADING','tr'],['SHOOTER','sh'],['ACCIONES','a'],['IA','ia'],['TRADE DEL CICLO','cic']].filter(([,w])=>WAL[w]);if(!K.length)return '';
+      const K=[['TRADING','tr'],['TRADING X','tx'],['SHOOTER','sh'],['ACCIONES','a'],['IA','ia'],['TRADE DEL CICLO','cic']].filter(([,w])=>WAL[w]);if(!K.length)return '';
       return `<div class="wal-modos"><b class="wal-mh">Por modo</b>${K.map(([k])=>{const X=R.L.filter(x=>x.k===k&&x.in),ab=X.filter(x=>!x.end).length,ce=X.length-ab,u=X.reduce((a,x)=>a+(x.u||0),0),mg=X.reduce((a,x)=>a+x.mg,0);
         return `<div class="wal-m"><span>${k}</span><small>${ab} abierta${ab===1?'':'s'} · ${ce} cerrada${ce===1?'':'s'}</small><b class="${u>=0?'up':'dn'}">${hxPct(mg?u/mg*100:0)} · ${fusd2(u)}</b></div>`;}).join('')}<div class="mut" style="font-size:11px">% sobre el margen que usó cada modo; incluye las abiertas en vivo.</div></div>`;})()}
     ${svg||'<div class="int-v">Todavía no hay operaciones desde que arrancó la billetera: se mueve sola con la primera señal de las secciones marcadas.</div>'}
-    <div class="wal-st"><b>Invertir en:</b>${ck('tr','TRADING')}${ck('sh','SHOOTER')}${ck('a','ACCIONES')}${ck('ia','IA')}${ck('cic','Trade del ciclo')}</div>
+    <div class="wal-st"><b>Invertir en:</b>${ck('tr','TRADING')}${ck('tx','TRADING X')}${ck('sh','SHOOTER')}${ck('a','ACCIONES')}${ck('ia','IA')}${ck('cic','Trade del ciclo')}</div>
     <details class="wal-cfg"><summary>⚙ Capital y margen de cada señal</summary><div class="wal-c"><label class="wal-mi">Capital inicial<input type="text" inputmode="decimal" data-wcap value="${WAL.cap}"></label><label class="wal-mi">Contar desde<input type="date" data-wt0 value="${(()=>{const d=new Date(WAL.t0);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');})()}" max="${new Date().toISOString().slice(0,10)}"></label>
-      ${mi('medio','TRADING')}${mi('x','SHOOTER')}${mi('a','ACCIONES')}${mi('iatr','IA TRADING')}${mi('iash','IA SHOOTER')}${mi('cic','Trade del ciclo (inicial)')}</div>
+      ${mi('medio','TRADING')}${mi('tx','TRADING X')}${mi('x','SHOOTER')}${mi('a','ACCIONES')}${mi('iatr','IA TRADING')}${mi('iash','IA SHOOTER')}${mi('cic','Trade del ciclo (inicial)')}</div>
       <div class="wal-c"><b style="width:100%;font-size:12px">Límites de riesgo</b><label class="wal-mi">Máx. abiertas en la misma dirección<input type="text" inputmode="numeric" data-wlim="dir" value="${(WAL.lim||WAL_DEF.lim).dir}"></label><label class="wal-mi">Máx. capital en uso (%)<input type="text" inputmode="numeric" data-wlim="uso" value="${(WAL.lim||WAL_DEF.lim).uso}"></label><label class="wal-mi">Pérdida máx. por día (%)<input type="text" inputmode="numeric" data-wlim="dia" value="${(WAL.lim||WAL_DEF.lim).dia}"></label></div>
       <div class="mut" style="font-size:11px">Margen en USD por señal, con la X de siempre de cada bot. Al cambiarlo, todas las señales de esa sección (las nuevas y las ya hechas, en Señales, Resultados, la simulación, la IA y el Trade del ciclo) pasan a ese margen: el resultado en USD se escala, los precios no cambian. En el Trade del ciclo las sumas crecen en la misma proporción. Los avisos de Telegram siguen con los márgenes de siempre. <button type="button" class="wal-rs" data-wdef="1">Volver a los márgenes de siempre</button> <button type="button" class="wal-rs" data-wreset="1">Reiniciar la billetera desde hoy</button></div></details><button type="button" class="wal-rs" data-wcsv="1">⬇ Descargar reporte (Excel / CSV)</button>
     ${R.L.length?`<div class="wal-l">${R.L.slice().reverse().slice(0,15).map(x=>`<div>${new Date(x.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${x.k} <span class="${x.dir>0?'up':'dn'}">${x.dir>0?'▲':'▼'}</span> ${x.sym.replace('USDT','')} · ${x.mg.toLocaleString('es-ES',{maximumFractionDigits:0})} USD · ${x.skip?`<span class="mut">no se tomó: ${esc(x.skip)}</span>`:!x.end?`<span class="live">EN VIVO</span> <span class="${(x.u||0)>=0?'up':'dn'}">${x.u==null?'—':fusd2(x.u)}</span>`:`<span class="${(x.u||0)>=0?'up':'dn'}">${fusd2(x.u||0)}</span>`}</div>`).join('')}</div>`:''}
@@ -4551,12 +4560,12 @@ setInterval(()=>{if($('walBox').open)walRender();else{try{const R=walRun();$('wa
 setTimeout(()=>{bitPgLoad();},7000);
 /* octubre 2026 · el margen de cada señal se puede cambiar en la billetera: todas las señales de esa sección (nuevas y ya hechas,
    en vivo, en Resultados y en la simulación) pasan a mostrarse con ese margen. El resultado en USD se escala; los precios no cambian. */
-const MG_DEF={medio:350,x:50,a:500,iatr:350,iash:50,cic:200};
+const MG_DEF={medio:350,tx:350,x:50,a:500,iatr:350,iash:50,cic:200};
 function mgLabel(m,old,nw){const L=SIM[m];if(!L||!L.label)return;const f=v=>(+v).toLocaleString('es-ES',{maximumFractionDigits:2});
   L.label=L.label.replace(new RegExp('^'+f(old).replace('.','\\.')+' USD'),f(nw)+' USD').replace(/−[\d.,]+ USD/,'−'+f(L.maxLoss)+' USD').replace(/salvavidas [\d.,]+ USD/,'salvavidas '+f(nw/2)+' USD');}
 function mgOp(o){const want=SIM[o.m]&&SIM[o.m].margin;if(!want||o.m==='p')return;const base=o.mgv||MG_DEF[o.m];if(!base||base===want)return;const k=want/base;
   for(const f of ['not','loss','pnl','real','llMargin'])if(typeof o[f]==='number')o[f]=o[f]*k;if(o.ll&&typeof o.ll.margin==='number')o.ll.margin*=k;o.mgv=want;}
-function mgApply(){for(const m of ['medio','x','a']){const want=+WAL.mg[m]||MG_DEF[m],cur=SIM[m].margin;if(want!==cur){const k=want/cur;SIM[m].margin=want;SIM[m].maxLoss*=k;mgLabel(m,cur,want);}}
+function mgApply(){for(const m of ['medio','tx','x','a']){const want=+WAL.mg[m]||MG_DEF[m],cur=SIM[m].margin;if(want!==cur){const k=want/cur;SIM[m].margin=want;SIM[m].maxLoss*=k;mgLabel(m,cur,want);}}
   for(const o of OPS)mgOp(o);for(const o of OPS_ARCH)mgOp(o);if(Array.isArray(HIST_A))for(const o of HIST_A)mgOp(o);
   IAOP_CFG.tr.mg=+WAL.mg.iatr||350;IAOP_CFG.sh.mg=+WAL.mg.iash||50;for(const x of IAOPS)iaMgFix(x);
   CIC.m0=+WAL.mg.cic||200;CIC.add=100*CIC.m0/200;HIST_OPS=null;}
@@ -4613,7 +4622,7 @@ function verDetailHTML(){const [m,vs]=[VERSEL.slice(0,VERSEL.search(/\d/)),+VERS
     <div class="ver-ot"><b>Operaciones</b> <span class="mut">tocá una para ver entrada, objetivos, stop e indicadores</span></div>${rows||'<div class="mut">Todavía no dio señales.</div>'}</div>`;}
 function vcalStats(L){const n=L.length;if(!n)return {n:0};const net=L.reduce((a,o)=>a+(o.pnl||0),0),mg=L.reduce((a,o)=>a+(o.mg||hxMg(o)),0);return {n,win:L.filter(o=>(o.pnl||0)>0).length/n*100,avg:net/n,pct:mg?net/mg*100:0};}
 const vcalCls=S=>!S.n?'n':S.avg>0&&S.win>=60?'g':S.avg>0?'y':'r';
-function vcalHTML(){try{const now=Date.now(),rows=[['medio','TRADING'],['x','SHOOTER'],['a','ACCIONES'],['ia','IA']],T0=Math.min(...Object.values(VERS).map(v=>Date.parse(v[0][1]))),D0=new Date(T0);D0.setHours(0,0,0,0);
+function vcalHTML(){try{const now=Date.now(),rows=[['medio','TRADING'],['tx','TRADING X'],['x','SHOOTER'],['a','ACCIONES'],['ia','IA']],T0=Math.min(...Object.values(VERS).map(v=>Date.parse(v[0][1]))),D0=new Date(T0);D0.setHours(0,0,0,0);
     const a0=D0.getTime(),span=Math.max(864e5,now-a0),X=t=>Math.max(0,Math.min(100,(t-a0)/span*100)),days=Math.ceil(span/864e5),step=Math.max(1,Math.ceil(days/12));
     const ticks=Array.from({length:days},(_,k)=>a0+k*864e5).filter((_,k)=>k%step===0).map(t=>{const d=new Date(t);return `<span style="left:${X(t)}%">${d.getDate()}/${d.getMonth()+1}</span>`;}).join('');
     const fd=t=>{const d=new Date(t);return d.getDate()+'/'+(d.getMonth()+1)+' '+d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});};
@@ -5081,7 +5090,7 @@ setTimeout(srvImport,4000);setInterval(srvImport,120000);
 /* ---------- accesos directos a TRADING, SHOOTER y ACCIONES dentro de Señales ---------- */
 var SIGV='',IAF='sh';try{SIGV=localStorage.getItem('cv_sigv')==='ia'?'ia':'';IAF=localStorage.getItem('cv_iaf')==='tr'?'tr':'sh';}catch(e){}
 function sigTabsRender(){const el=$('sigTabs');if(!el)return;let ni=0;try{ni=IAOPS.filter(x=>x.st==='open').length;}catch(_){}
-  el.innerHTML=[['medio','📈 TRADING'],['x','🎯 SHOOTER'],['a','🏛 ACCIONES']].map(([m,l])=>{const n=(SIG[m]||[]).filter(s=>s.state==='live').length;return `<button type="button" data-m="${m}" class="${!SIGV&&mode===m?'on':''}">${l}${n?`<b>${n}</b>`:''}</button>`;}).join('')
+  el.innerHTML=[['medio','📈 TRADING'],['tx','✅ TRADING X'],['x','🎯 SHOOTER'],['a','🏛 ACCIONES']].map(([m,l])=>{const n=(SIG[m]||[]).filter(s=>s.state==='live').length;return `<button type="button" data-m="${m}" class="${!SIGV&&mode===m?'on':''}">${l}${n?`<b>${n}</b>`:''}</button>`;}).join('')
     +`<button type="button" data-v="ia" class="ia-t${SIGV==='ia'?' on':''}" title="Señales propias de la IA">${(()=>{try{return iaIco('ia',16)}catch(_){return '🧠'}})()} IA${ni?`<b>${ni}</b>`:''}</button>`;
   const bx=$('sigBox');if(bx)bx.classList.toggle('iav',SIGV==='ia');}
 function setSigV(v){SIGV=v;try{localStorage.setItem('cv_sigv',v)}catch(e){}sigTabsRender();try{iaSigRender();}catch(e){}if(!v)renderSignals();}

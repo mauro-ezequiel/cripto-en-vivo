@@ -10,7 +10,10 @@ const STATE_FILE = 'estado.json';
 
 const SIGCFG = {
   medio: { name: 'TRADING', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 999, cool: 24 * 36e5, maxAge: 7 * 864e5 },
-  x: { name: 'SHOOTER', tf: '15m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 36e5, maxAge: 12 * 36e5 } // SHOOTER v4: 15 y 30 min, las 30 con más volumen
+  x: { name: 'SHOOTER', tf: '15m', htf: '1h', min: .016, maxAtr: .027, n: 30, cool: 36e5, maxAge: 12 * 36e5 }, // SHOOTER v4: 15 y 30 min, las 30 con más volumen
+  /* TRADING X (octubre 2026): señales aparte de TRADING. Mismas entradas, pero no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h,
+     y objetivos más cerca (0,4 × stop en vez de 0,75). Último año: 92,5 % ganadas, +32,5 USD por operación (300 × 10); 4 años: 88,3 %. */
+  tx: { name: 'TRADING X', tf: '4h', htf: '1d', min: .0125, maxAtr: .017, n: 999, cool: 24 * 36e5, maxAge: 7 * 864e5 }
 };
 /* octubre 2026 · medidas nuevas v2: apalancamiento, stop y objetivos elegidos juntos (más aciertos sin ganar menos).
    Stop = 3 × ATR con tope en el 80 % de la distancia a la liquidación; objetivos 0,5 / 1 / 1,5 × stop.
@@ -19,17 +22,17 @@ const SIGCFG = {
    SHOOTER × 10, stop máx. 7,6 % → 66 % al objetivo 1, +350 USD (vieja × 18: 71 %, −327 USD).
    SHOOTER va sin salvavidas: ganaba lo mismo y agrandaba las pérdidas.
    TRADING v3: × 10 y solo a favor de BTC → 81 % al objetivo 1, +10 % del margen por operación, peor racha −2,1 márgenes. */
-const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 } };
+const SIM = { medio: { margin: 350, lev: 10 }, x: { margin: 50, lev: 15 }, tx: { margin: 350, lev: 10 } };
 /* octubre 2026 v7: TRADING objetivos 0,75 × stop (antes 0,5) · SHOOTER stop 4 ATR (antes 3) y objetivos 0,25 × stop (antes 0,35) */
-const GEOM = { medio: { a: 3, r: .75, maxSl: .036 }, x: { a: 4, r: .25, maxSl: .05 } };
+const GEOM = { medio: { a: 3, r: .75, maxSl: .036 }, x: { a: 4, r: .25, maxSl: .05 }, tx: { a: 3, r: .4, maxSl: .036 } };
 /* universo (octubre 2026, 14 variantes probadas): TRADING todas con más de 10 M USD de volumen, SHOOTER las 30 con más volumen.
    Las de menos volumen eran las impredecibles. El filtro de rango de 1 h no mejoró nada: apagado (WILD_MAX = 0). */
 const MINVOL = 5e6, /* octubre 2026: 5 millones (antes 10) */ WILD_MAX = 0, WILDC = {};
 async function wildOK(s, hc) { if (!WILD_MAX) return true; const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
   try { const b = (hc && hc.length >= 169 ? hc : await kl(s, '1h', 170)).slice(0, -1).slice(-168); if (b.length < 100) return true; const v = b.reduce((a, x) => a + (x.high - x.low) / x.close, 0) / b.length * 100; WILDC[s] = { t: Date.now(), ok: v <= WILD_MAX }; return v <= WILD_MAX; } catch (e) { return true; } }
-const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 } };
+const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 }, tx: { p: 92, p3: 32, n: 93 } };
 const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71, 'sh-c': 77 };
-const MINCERT = { medio: 62, x: 56 };
+const MINCERT = { medio: 62, x: 56, tx: 62 };
 const LLTH = .65;
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG)USDT$/;
 
@@ -143,7 +146,8 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
 const DVL = require('./herramientas/dvol-lib.js');
-const VER = { medio: 'v7', x: 'v10' }; // SHOOTER v10 (octubre 2026): + no entra con el DVOL de Deribit bajo 35
+const VER = { medio: 'v8', x: 'v10', tx: 'v1' }; // TRADING v8 (octubre 2026): + no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h
+// // SHOOTER v10 (octubre 2026): + no entra con el DVOL de Deribit bajo 35
 // // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
  // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
 const SAL = require('./herramientas/salida-lib.js'); // TRADING v6 (octubre 2026): + tendencia de BTC con fuerza (ADX 4 h ≥ 24)
@@ -209,14 +213,14 @@ var SIMAVG = {};
 /* 🛑 FRENO (octubre 2026): si las últimas 10 operaciones en vivo de la versión actual de un bot pierden plata y rinden 5 puntos del margen
    por operación menos que su simulación del último año, avisa por Telegram (una vez cada 3 días) y la página lo marca en rojo. */
 async function freno(now) { S.freno = S.freno || {}; const out = {};
-  for (const m of ['medio', 'x']) { const L = (S.bit || []).filter(r => r.m === m && r.out && r.v === VER[m]).sort((a, b) => a.out.t - b.out.t).slice(-10);
+  for (const m of ['medio', 'tx', 'x']) { const L = (S.bit || []).filter(r => r.m === m && r.out && r.v === VER[m]).sort((a, b) => a.out.t - b.out.t).slice(-10);
     if (L.length < 10 || SIMAVG[m] == null) continue; const live = L.reduce((a, r) => a + r.out.pct, 0) / L.length, sim = SIMAVG[m];
     if (live < 0 && live < sim - 5) { out[m] = { live: +live.toFixed(2), sim: +sim.toFixed(2), n: L.length, t: now };
       if (!S.freno[m] || now - S.freno[m] > 3 * 864e5) { S.freno[m] = now; await tg(`🛑 FRENO · ${SIGCFG[m].name} ${VER[m]}\nSus últimas ${L.length} operaciones en vivo dan ${live.toFixed(1)} % del margen por operación; la simulación del último año da ${sim >= 0 ? '+' : ''}${sim.toFixed(1)} %.\nEn vivo está rindiendo bastante peor que lo simulado: conviene bajar el margen o pausar este modo hasta ver qué cambió.`, false); } } }
   S.frenoAct = out; }
 async function calYear() { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/historial.json?t=' + Date.now()); if (!r.ok) return;
     const j = await r.json(), minN = j.minN || 20;
-    for (const m of ['medio', 'x']) { const L = (j.ops || []).filter(o => o[0] === m && o[1] !== 'tp-x' && o[6] !== 0); if (L.length) SIMAVG[m] = L.reduce((a, o) => a + o[7] / (m === 'medio' ? 350 : 50) * 100, 0) / L.length; }
+    for (const m of ['medio', 'tx', 'x']) { const L = (j.ops || []).filter(o => o[0] === m && o[1] !== 'tp-x' && o[6] !== 0); if (L.length) SIMAVG[m] = L.reduce((a, o) => a + o[7] / (m === 'x' ? 50 : 350) * 100, 0) / L.length; }
     for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
 
 /* 🧠 IA 24 h: piensa y practica todo el tiempo (herramientas/ia-bot.js) */
@@ -228,7 +232,7 @@ function walletSim(L, cap0 = 1000, frac = .1) { let c = cap0, peak = cap0, dd = 
 async function semanal(now) { const d = new Date(now), wk = Math.floor((now - 4 * 864e5) / (7 * 864e5)); if (d.getUTCDay() !== 1 || d.getUTCHours() < 7 || S.semW === wk) return; S.semW = wk;
   const t0 = now - 7 * 864e5, pc = v => (v >= 0 ? '+' : '−') + Math.abs(v).toFixed(1).replace('.', ',') + ' %', st = L => { const n = L.length; if (!n) return null; const w = L.filter(x => x.pct > 0).length; return { n, w: Math.round(w / n * 100), avg: L.reduce((a, x) => a + x.pct, 0) / n }; };
   const B = (S.bit || []).filter(r => r.out && r.out.t >= t0).map(r => ({ m: r.m, pct: r.out.pct, end: r.out.t })), lines = ['📬 RESUMEN SEMANAL · CRIPTO-LIVE', ''];
-  for (const [m, nm] of [['medio', 'TRADING'], ['x', 'SHOOTER']]) { const s2 = st(B.filter(x => x.m === m)); lines.push(`${m === 'medio' ? '📈' : '⚡'} ${nm} (versión actual): ${s2 ? `${s2.n} cerradas · ${s2.w} % ganadas · ${pc(s2.avg)} del margen por operación` : 'sin operaciones cerradas'}`); }
+  for (const [m, nm] of [['medio', 'TRADING'], ['tx', 'TRADING X'], ['x', 'SHOOTER']]) { const s2 = st(B.filter(x => x.m === m)); lines.push(`${m === 'x' ? '⚡' : m === 'tx' ? '🎯' : '📈'} ${nm} (versión actual): ${s2 ? `${s2.n} cerradas · ${s2.w} % ganadas · ${pc(s2.avg)} del margen por operación` : 'sin operaciones cerradas'}`); }
   const V = (S.ver && S.ver.ops || []).filter(o => o.out && o.out.t >= t0);
   for (const [m, nm] of [['medio', 'TRADING'], ['x', 'SHOOTER']]) { const R = VERM.VERS[m].map(v => ({ v: v.v, s: st(V.filter(o => o.m === m && o.v === v.v).map(o => ({ pct: o.out.pct }))) })).filter(x => x.s && x.s.n >= 3).sort((a, b) => b.s.avg - a.s.avg);
     if (R.length) lines.push(`🧪 ${nm} por versión (práctica): ` + R.map(x => `v${x.v}${x.v === VERM.VERS[m].length ? ' actual' : ''} ${x.s.w} % / ${pc(x.s.avg)}`).join(' · ')); }
@@ -236,7 +240,7 @@ async function semanal(now) { const d = new Date(now), wk = Math.floor((now - 4 
   lines.push(`🔄 Trade del ciclo: ${co.length ? co.map(o => `${o.sym.replace('USDT', '')} ${o.dir > 0 ? 'LONG' : 'SHORT'} abierta, ${o.adds} sumas, margen ${o.marg} USD`).join(' · ') : 'sin operación abierta'}${cc.length ? ` · cerró ${cc.length} (${cc.reduce((a, o) => a + o.pnl, 0).toFixed(0)} USD)` : ''}`);
   const I = (S.ia && S.ia.ops || []).filter(o => o.st !== 'open' && o.closeT >= t0), ir = st(I.filter(o => !o.pr).map(o => ({ pct: o.pnl / o.mg * 100 }))), ip = st(I.filter(o => o.pr).map(o => ({ pct: o.pnl / o.mg * 100 })));
   lines.push(`🧠 IA: reales ${ir ? `${ir.n} · ${ir.w} % ganadas · ${pc(ir.avg)}` : 'ninguna'} · práctica ${ip ? `${ip.n} · ${ip.w} % ganadas · ${pc(ip.avg)}` : 'ninguna'}`);
-  const usd = B.reduce((a, x) => a + x.pct * (x.m === 'medio' ? 350 : 50) / 100, 0) + I.filter(o => !o.pr).reduce((a, o) => a + o.pnl, 0) + cc.reduce((a, o) => a + o.pnl, 0);
+  const usd = B.reduce((a, x) => a + x.pct * (x.m === 'x' ? 50 : 350) / 100, 0) + I.filter(o => !o.pr).reduce((a, o) => a + o.pnl, 0) + cc.reduce((a, o) => a + o.pnl, 0);
   lines.push('', `💼 Billetera (11.000 USD con los márgenes de siempre, bots + IA + Trade del ciclo, sin ACCIONES): ${usd >= 0 ? '+' : '−'}${Math.abs(usd).toFixed(2)} USD esta semana (${pc(usd / 11000 * 100)}). En la página la ves en vivo con tus casillas y márgenes.`, `${PAGE}`, 'ℹ️ Solo informativo, no es consejo financiero.');
   await tg(lines.join('\n'), false); }
 
@@ -264,7 +268,7 @@ async function main() {
     if (d * (stop - p) >= 0) { o.done = true; bitClose(bid, o.hit > 0 ? 3 : 1, o.hit, stop, now); await tg(o.hit > 0 ? `↩️ ${cfg.name} ${c}: volvió a la entrada (${fp(o.entry)}) después del objetivo ${o.hit}. Se cierra sin pérdida.` : `🛑 ${cfg.name} ${c}: tocó el stop (${fp(o.sl)}, ${pct(o.sl, o.entry)}).`); continue; }
     if (o.ll != null && !o.llSent && o.hit === 0 && d * (o.ll - p) >= 0) { o.llSent = true; await tg(`🟡🛟 ${cfg.name} ${c}: llegó a la zona del salvavidas (${fp(o.ll)}). Abrí la página para ver si los datos confirman agregar la mitad del margen.`); }
     /* TRADING v7: al cierre de cada vela de 1 h, si va ganando y 5 de 8 señales (velas de 4 h) se dieron vuelta en contra, se sale */
-    if (o.m === 'medio') { const h1 = Math.floor(now / 36e5); if (o.hChk !== h1 && now - h1 * 36e5 < 20 * 6e4) { o.hChk = h1;
+    if (o.m === 'medio' || o.m === 'tx') { const h1 = Math.floor(now / 36e5); if (o.hChk !== h1 && now - h1 * 36e5 < 20 * 6e4) { o.hChk = h1;
         try { const k1 = await kl(o.sym, '1h', 3), c1 = k1[k1.length - 2].close, b4 = (await kl(o.sym, '4h', 300)).slice(0, -1), r = SAL.salir(b4, o, c1);
           if (r) { o.done = true; bitClose(bid, 6, o.hit, c1, now);
             await tg(`💰 ${cfg.name} ${c}: SALÍ ANTES con ganancia en ${fp(c1)} (${pct(c1, o.entry)}${o.hit ? `, después del objetivo ${o.hit}` : ''}).\n${r.n} de 8 señales se dieron vuelta en contra: ${r.señales.join(', ')}.\nGanancia asegurada: cerrá lo que queda de la operación.`); continue; } } catch (e) { console.log('salida', o.sym, e.message); } } }
@@ -294,7 +298,8 @@ async function main() {
       const h = (j.data || []).map(x => [+x.timestamp * 1000, +x.value]).filter(x => x[1] >= 0).sort((a, b) => a[0] - b[0]);
       if (h.length > 300 && await ghPut('fyg.json', JSON.stringify({ upd: now, fuente: 'alternative.me', actual: { v: h[h.length - 1][1], t: h[h.length - 1][0], txt: j.data[0].value_classification }, hist: h }), 'fygSha', 'Miedo y codicia', h.length + ' días')) S.fygT = now; } catch (e) { console.log('fyg', e.message); } }
   /* 2) búsqueda de señales nuevas */
-  for (const m of ['medio', 'x']) {
+  const EVC = {}; // TRADING X usa la misma evaluación que TRADING (no se vuelve a bajar velas)
+  for (const m of ['medio', 'tx', 'x']) {
 /* octubre 2026 · SHOOTER v8: la lista de monedas era la del volumen del momento y una moneda que se desploma entra a "las 30 con más volumen"
    por el pánico: el bot compraba su rebote y seguía cayendo. Diagnóstico de 1 año: con la lista del momento 82,7 % ganadas y +2,6 % por operación;
    usando solo monedas que están entre las 30 con más volumen PROMEDIO de los últimos 7 días y que no cayeron más de 10 % en 24 h:
@@ -303,7 +308,7 @@ async function main() {
       if (avg.length >= 30) S.sh7 = { t: now, set: avg.sort((a, b) => b[1] - a[1]).slice(0, 30).map(x => x[0]) }; }
     const cfg = SIGCFG[m], U = (m === 'x' && S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
     if (m === 'x') { try { const bk = await kl('BTCUSDT', '1h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
-    let btcAdx = null; if (m === 'medio') { try { const bk = await kl('BTCUSDT', '4h', 300), cc = bk.slice(0, -1), cl = cc.map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; btcAdx = withCandles(cc, () => calcADX(14).adx)[cc.length - 1]; } catch (e) {} }
+    let btcAdx = null; if (m !== 'x') { try { const bk = await kl('BTCUSDT', '4h', 300), cc = bk.slice(0, -1), cl = cc.map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; btcAdx = withCandles(cc, () => calcADX(14).adx)[cc.length - 1]; } catch (e) {} }
     for (const s of U) {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
       if (S.open.some(o => o.sym === s && o.m === m)) continue;
@@ -312,16 +317,18 @@ async function main() {
         if (m === 'x') { const [c15, c30, hc] = await Promise.all([kl(s, '15m', 300), kl(s, '30m', 300), kl(s, '1h', 200)]); if (c15.length < 150 || hc.length < 60) continue;
           e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue;
           { const dv = await DVL.ahora(now); if (dv != null && dv < DVL.SHOOTER_DVMIN) { S.dvSkip = (S.dvSkip || 0) + 1; continue; } if (dv != null) e.reasons.push('DVOL ' + dv.toFixed(0) + ' (mercado despierto)'); } }
-        else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
-          e = evalTrading(cs, hc, rankOf[s]); if (!e.dir || !(await wildOK(s))) continue; }
+        else { if (EVC[s]) e = Object.assign({}, EVC[s], { reasons: EVC[s].reasons.slice() }); else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
+            e = evalTrading(cs, hc, rankOf[s]); EVC[s] = Object.assign({}, e, { reasons: (e.reasons || []).slice() }); } if (!e.dir || !(await wildOK(s))) continue; }
         const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
-        const d = e.dir, setup = e.setup || (m === 'medio' ? 't-pb' : 'sh-r'); let conf = CALSET[setup] || CAL[m].p;
-        if (m === 'medio') { if (btcDir !== d) continue; if (btcAdx != null && btcAdx < 24) continue; conf += 2; e.reasons.push('BTC a favor y con fuerza (ADX ' + btcAdx.toFixed(0) + ')'); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
+        const d = e.dir, setup = e.setup || (m !== 'x' ? 't-pb' : 'sh-r'); let conf = m === 'tx' ? CAL.tx.p : CALSET[setup] || CAL[m].p;
+        if (m !== 'x') { if (btcDir !== d) continue; if (btcAdx != null && btcAdx < 24) continue; conf += 2; e.reasons.push('BTC a favor y con fuerza (ADX ' + btcAdx.toFixed(0) + ')'); }
+        if (m !== 'x') { const dv = await DVL.estado(now); if (DVL.txBloquea(dv.v, dv.v24)) { S.txSkip = (S.txSkip || 0) + 1; continue; } if (dv.v != null) e.reasons.push('DVOL ' + dv.v.toFixed(0) + (dv.v24 != null ? ` (${dv.v24 >= 0 ? '+' : ''}${(dv.v24 * 100).toFixed(0)} % en 24 h)` : '')); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
         if (conf < MINCERT[m]) continue;
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
-        S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: now, hit: 0, ...(tfx ? { tf: tfx } : {}) }); sent++;
-        const hx = { m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: now, v: VER[m] };
+        const tS = m === 'tx' ? now + 1 : now; // TRADING X: 1 ms después, así su identificador (moneda-hora) no se pisa con el de TRADING
+        S.last[m + s] = now; S.open.push({ m, sym: s, dir: d, entry: c, tp, sl, ll, t: tS, hit: 0, ...(tfx ? { tf: tfx } : {}) }); sent++;
+        const hx = { m, sym: s, dir: d, entry: c, zl: c - zone, zh: c + zone, tp, sl, ll, conf, setup, reasons: e.reasons.slice(0, 6), t: tS, v: VER[m] };
         (S.hist = S.hist || []).push(hx); S.histDirty = true;
         let libro = null; try { const dp = await getJ(`${API}/depth?symbol=${s}&limit=1000`); if (dp && dp.bids && dp.bids.length && dp.asks.length) libro = require('./herramientas/libro-lib.js').stats(dp); } catch (er) {} // foto del libro en el momento de la señal
         if (Array.isArray(S.bit)) { S.bit.push(bitRec(Object.assign({}, hx, { libro }))); S.bitDirty = true; } else (S.bitPend = S.bitPend || []).push(bitRec(Object.assign({}, hx, { libro })));
@@ -331,7 +338,7 @@ async function main() {
     }
     console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
   }
-  try { VD.S = S; VD.dvol = await DVL.ahora(now); await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
+  try { VD.S = S; VD.dvol = await DVL.ahora(now); VD.dvx = await DVL.estado(now); await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
   try { await semanal(now); } catch (e) { console.log('semanal', e.message); }
   try { if (!S.frenoT || now - S.frenoT > 36e5) { S.frenoT = now; await freno(now); S.bitDirty = true; } } catch (e) { console.log('freno', e.message); }
   try { IAD.S = S; await IAB.run(now, { tr: base.map(t => t.symbol), sh: (S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, 30).map(t => t.symbol) }, IAD); } catch (e) { console.log('IA', e.message); }

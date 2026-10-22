@@ -12,7 +12,8 @@ const VERS = {
     { v: 4, desde: '2026-10-12T19:57:00+02:00', txt: '+ precio a menos de 8 % de la EMA 200, objetivos 0,75 × stop', btc: 1, brake: 1, d200: 1, ciclo: 0, r: .75 },
     { v: 5, desde: '2026-10-13T23:57:00+02:00', txt: '+ shorts solo en la fase de caída del ciclo del halving', btc: 1, brake: 1, d200: 1, ciclo: 1, r: .75 },
     { v: 6, desde: '2026-10-17T00:30:00+02:00', txt: '+ solo si la tendencia de BTC tiene fuerza (ADX de 4 h ≥ 24)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, r: .75 },
-    { v: 7, desde: '2026-10-19T12:00:00+02:00', txt: '+ salida anticipada: con ganancia, sale si 5 de 8 señales se dan vuelta en contra (también camino al objetivo 2 o 3)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, sal: 1, r: .75 }],
+    { v: 7, desde: '2026-10-19T12:00:00+02:00', txt: '+ salida anticipada: con ganancia, sale si 5 de 8 señales se dan vuelta en contra (también camino al objetivo 2 o 3)', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, sal: 1, r: .75 },
+    { v: 8, desde: '2026-10-22T04:00:00+02:00', txt: '+ no entra con el DVOL de Deribit > 55 ni con el DVOL cayendo > 10 % en 24 h', btc: 1, brake: 1, d200: 1, ciclo: 1, adxb: 1, sal: 1, dvtr: 1, r: .75 }],
   x: [
     { v: 1, desde: '2026-10-07T12:53:00+02:00', txt: 'Velas de 5 min: cierre fuera de la banda de Bollinger (±2) con RSI 7 ≤ 35 / ≥ 65 y la tendencia de 15 min a favor (LONG y SHORT)', k: 'bb', tfs: ['5m'], htf: '15m', r7: 35, btc: 0, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
     { v: 2, desde: '2026-10-07T15:16:00+02:00', txt: '+ RSI 7 extremo (≤ 25 / ≥ 75) y solo a favor de BTC', k: 'bb', tfs: ['5m'], htf: '15m', r7: 25, btc: 1, n: 45, a: 3, r: .5, cap: .076, lev: 10, age: 4 * H, cool: 1.5 * H },
@@ -39,7 +40,7 @@ function trAll(D, cs, hc, rank, btcDir, now, btcAdx) { const cc = cs.slice(0, -1
     const f = { rsi14: r2(r14), adx: r2(adx), ema200_dist: r2(d200), ema50_atr: r2(dir * (cb - e50) / atr), volumen: r2(L.vr), atr_pct: r2(atrP * 100), btc_a_favor: btcDir === dir ? 1 : 0,
       ciclo_a_favor: (dir < 0) === fall ? 1 : 0, adx_btc: r2(btcAdx), tendencia_diaria: Math.sign(D.htfTrend(hc)) === dir ? 1 : 0, hora: new Date(now).getUTCHours() };
     const out = [];
-    for (const V of VERS.medio) { if (V.btc && btcDir !== dir) continue; if (V.brake && !brakeOk) continue; if (V.d200 && d200 > 8) continue; if (V.ciclo && dir < 0 && !fall) continue; if (V.adxb && !(btcAdx >= 24)) continue;
+    for (const V of VERS.medio) { if (V.btc && btcDir !== dir) continue; if (V.brake && !brakeOk) continue; if (V.d200 && d200 > 8) continue; if (V.ciclo && dir < 0 && !fall) continue; if (V.adxb && !(btcAdx >= 24)) continue; if (V.dvtr && D.dvx && DVLV.txBloquea(D.dvx.v, D.dvx.v24)) continue;
       out.push({ v: V.v, dir, c, atrP, r: V.r, setup, f }); }
     return out; }); }
 function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1), mins = TFMS[tf] / 6e4, back = Math.round(60 / mins);
@@ -55,7 +56,7 @@ function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1),
         tendencia_1h: up1h, btc_a_favor: btcDir === dir ? 1 : 0, volumen: r2(L.vr), cambio_24h: r2(ch24), hora: new Date().getUTCHours() } }); }
     return out; }); }
 /* % del margen: 1/3 en cada objetivo, tocado el objetivo 1 el stop pasa a la entrada, plazo, comisión 0,05 % por lado */
-const SAL = require('./salida-lib.js');
+const SAL = require('./salida-lib.js'), DVLV = require('./dvol-lib.js');
 function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, stop = o.hit ? o.entry : o.sl;
   const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (b.t - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; }; // comisión + deslizamiento + financiación
   if (d * (adv - stop) <= 0) return fin(stop, o.hit ? 3 : 1);

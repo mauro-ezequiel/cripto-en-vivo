@@ -11,4 +11,9 @@ async function serie(from, to) { const M = new Map();
 function at(M, t) { const h = Math.floor(t / H) - 1; for (let q = 0; q < 6; q++) { const v = M.get(h - q); if (v != null) return v; } return null; }
 let CACHE = null;
 async function ahora(now = Date.now()) { if (CACHE && now - CACHE.t < 10 * 6e4) return CACHE.v; let v = null; try { v = at(await serie(now - 8 * H, now), now); } catch (e) {} CACHE = { t: now, v }; return v; }
-module.exports = { serie, at, ahora, SHOOTER_DVMIN };
+/* TRADING X (octubre 2026): no entra con el DVOL arriba de 55 (mercado muy nervioso) ni si el DVOL bajó más de 10 % en 24 h */
+const TX_MAX = 55, TX_CAIDA = -.10; let CACHE2 = null;
+async function estado(now = Date.now()) { if (CACHE2 && now - CACHE2.t < 10 * 6e4) return CACHE2.r; let r = { v: null, v24: null };
+  try { const M = await serie(now - 30 * H, now), v = at(M, now), p = at(M, now - 24 * H); r = { v, v24: v != null && p ? v / p - 1 : null }; } catch (e) {} CACHE2 = { t: now, r }; return r; }
+const txBloquea = (v, v24) => v != null && (v > TX_MAX || (v24 != null && v24 < TX_CAIDA));
+module.exports = { serie, at, ahora, estado, txBloquea, SHOOTER_DVMIN, TX_MAX, TX_CAIDA };

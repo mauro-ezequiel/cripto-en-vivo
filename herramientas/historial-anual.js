@@ -41,6 +41,7 @@ function wildArr(hb) { const out = Array(hb.length).fill(null); let s = 0; for (
 const tooWild = (hb, W, t) => { if (!WILD) return false; const i = lastClosed(hb, 36e5, t); return i >= 0 && W[i] != null && W[i] > WILD; };
 const GEO = {
   core: { L: 10, a: 3, cap: .036, floor: .004, r: +(process.env.TR_R || .75), ex: 'no', ll: true, margin: 350 },   // TRADING (v7: objetivos 0,75 × stop)
+  tx: { L: 10, a: 3, cap: .036, floor: .004, r: +(process.env.TX_R || .4), ex: 'no', ll: true, margin: 350 },   // TRADING X: objetivos 0,4 × stop y filtro del DVOL
   plus: { L: +(process.env.PLUS_LEV || 10), a: 3, cap: +(process.env.PLUS_CAP || .076), floor: 0, r: .35, ex: 'mitad', ll: false, margin: 350 },  // TRADING+ (× 10 desde octubre 2026)
   sh:   { L: +(process.env.SH_LEV || 15), a: +(process.env.SH_A || 4), cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .25), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
 };
@@ -244,6 +245,7 @@ async function run4h(s, rank) {
     if (btcDirAt(BTC4, T4.tfMs, t) !== c.dir) viejo = 'contra_btc'; // solo a favor de BTC (4h vs EMA 50), como la página
     else if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) viejo = 'btc_sin_fuerza'; } // v6: tendencia de BTC con fuerza (ADX 4 h ≥ 24)
     if (!viejo && tooWild(rb, W1, t)) viejo = 'impredecible'; // moneda impredecible esa semana
+    if (!viejo && DVS.size && !process.env.SIN_DVTR) { const v = DVL.at(DVS, t), p = DVL.at(DVS, t - DAY); if (DVL.txBloquea(v, v != null && p ? v / p - 1 : null)) viejo = 'dvol_trading'; } // TRADING v8 (y TRADING X)
     if (viejo && FILTROS) { const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t); OLDC.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, viejo, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, Object.assign({ tb }, SXV7)) }); }
     if (viejo) { if (IAON) { const g = GEO[c.k]; iaVieja('tr', viejo, { s, t, dir: c.dir, setup: c.setup, entry: tb[i].close, sl: slOf(g, c.atrP), g, rb, P: P1, j0: idxAfter(rb, t), resMs: T4.resMs, maxAge: T4.maxAge, llConf: g.ll ? llConf : null, cool: T4.cool, tf: '4h' }); } continue; }
     const g = GEO[c.k], sl = slOf(g, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
@@ -251,7 +253,10 @@ async function run4h(s, rank) {
     if (RECUP) res.alt = RV.map(V => { const o = sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, V); return [+o.pct.toFixed(2), o.kind === 6 ? 1 : 0]; });
     if (SALIDA) res.sal = SV.map(X => sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, sl, g.r, g.L, g.ex, g.ll ? llConf : null, t, null, Object.assign({ tb }, X)));
     CANDS.push({ m: 'medio', setup: c.setup, s, t, dir: c.dir, sl, entry, r: g.r, L: g.L, cool: T4.cool, margin: g.margin, ...res,
-      ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null }); }
+      ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null });
+    /* TRADING X: la misma entrada con objetivos 0,4 × stop, si el DVOL lo permite (no > 55 ni cayendo > 10 % en 24 h). Se elige aparte de TRADING. */
+    if (!process.env.SIN_TX) { { const gx = GEO.tx, slx = slOf(gx, c.atrP);
+      CANDS.push({ m: 'tx', setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7)) }); } } }
   return { rb, tb, llConf }; }
 
 /* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
@@ -420,7 +425,8 @@ async function main() { const t0 = Date.now();
       for (let k = 90; k >= 1; k--) { const a1 = C.get(d0 - k * DAY), a0 = C.get(d0 - (k + 1) * DAY), b1 = B.get(d0 - k * DAY), b0 = B.get(d0 - (k + 1) * DAY); if (a1 && a0 && b1 && b0) { x.push(Math.log(a1 / a0)); y.push(Math.log(b1 / b0)); } }
       if (x.length >= 60) { const n = x.length, mx = x.reduce((a, v) => a + v, 0) / n, my = y.reduce((a, v) => a + v, 0) / n; let sxy = 0, sxx = 0, syy = 0; for (let i = 0; i < n; i++) { sxy += (x[i] - mx) * (y[i] - my); sxx += (x[i] - mx) ** 2; syy += (y[i] - my) ** 2; }
         o.corr = +(sxy / Math.sqrt(sxx * syy || 1)).toFixed(2); } else o.corr = o.s === 'BTCUSDT' ? 1 : null; } }
-  for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup)); cal[SETUP_M[setup]][setup] = st; }
+  for (const setup in SETUP_M) { const st = stats(ops.filter(o => o.setup === setup && o.m === SETUP_M[setup])); cal[SETUP_M[setup]][setup] = st; }
+  { const T = ops.filter(o => o.m === 'tx'); cal.tx = { todas: stats(T) }; }
   /* ¿PUEDE SER SUERTE? Para cada bot: 3.000 grupos de entradas al azar (mismo stop, objetivos y costos), del mismo tamaño que las señales del bot.
      p = qué parte de esos grupos ganó por operación tanto o más que el bot. Bajo (< 5 %) = difícil que sea casualidad. Se mide en el año y en cada mitad
      (cada mitad por separado, como una prueba por ventanas: si en una mitad no le gana al azar, la ventaja no es estable). */
