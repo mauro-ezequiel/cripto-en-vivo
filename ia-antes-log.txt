@@ -1,0 +1,9 @@
+memoria {'ops': 0, 'dias': 0}
+Traceback (most recent call last):
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 485, in <module>
+    e = fam_entry(part['ent'], f, part['ops'])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 349, in fam_entry
+    w = min(len(r) for r in ent); A = np.array([r[:min(w, 1 + len(ENF) + 5)] for r in ent], float)
+        ^^^^^^^^^^^^^^^^^^^^^^^^
+ValueError: min() iterable argument is empty
