@@ -30,7 +30,10 @@ const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EU
 const MIN_N = 20; // con menos casos el % no se publica como acierto
 
 /* medidas vigentes (idénticas a la página: SIM, NEWG y PLUSG) */
-const T4 = { tf: '4h', tfMs: 4 * 36e5, res: '1h', resMs: 36e5, n: +(process.env.BT_NT || 80), cool: 24 * 36e5, maxAge: 7 * DAY };
+/* BT_TF (investigación octubre 2026): otra temporalidad para TRADING / TRADING X (1h, 2h, 3h armada con velas de 1 h, 6h, 8h, 12h).
+   Los límites de volatilidad (ATR) se escalan con la raíz del tiempo, así la regla es la misma en otra escala. */
+const BT_TF = process.env.BT_TF || '4h', TFH = { '1h': 1, '2h': 2, '3h': 3, '4h': 4, '6h': 6, '8h': 8, '12h': 12 }[BT_TF] || 4, ATRSC = Math.sqrt(TFH / 4);
+const T4 = { tf: BT_TF, tfMs: TFH * 36e5, res: '1h', resMs: 36e5, n: +(process.env.BT_NT || 80), cool: 24 * 36e5, maxAge: 7 * DAY };
 /* SHOOTER v4 (octubre 2026): velas de 15 y 30 min (antes 3 min). Una operación por moneda a la vez entre las dos temporalidades. */
 const SH = { tfs: (process.env.SH_TFS || '15m,30m').split(','), htf: '1h', htfMs: 36e5, n: +(process.env.BT_NS || 30), cool: 36e5, maxAge: 12 * 36e5 };
 const TFMIN = { '3m': 3, '5m': 5, '15m': 15, '30m': 30 };
@@ -86,6 +89,10 @@ function smaStd(v, p) { const m = Array(v.length).fill(null), s = Array(v.length
    en la caída, +13,5 % y 72 %. Sin ellos: 64 → 69 % ganadas y +3.884 → +6.597 USD en 4 años (mejoró en las dos mitades). Los longs no cambian. */
 const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d => Date.parse(d + 'T00:00:00Z')), cycFall = t => CYC_TOPS.some(a => t >= a && t < a + 400 * 864e5);
 /* TRADING y TRADING+ sobre la ventana de 299 velas cerradas (igual que la página y el bot) */
+/* velas de 3 h armadas con las de 1 h (desde las 00:00 UTC), con volumen y compras sumados */
+function agg3h(b) { const o = []; for (const x of b) { const k = Math.floor(x.t / (3 * 36e5)) * 3 * 36e5, l = o[o.length - 1];
+    if (l && l.t === k) { l.high = Math.max(l.high, x.high); l.low = Math.min(l.low, x.low); l.close = x.close; l.v += x.v; l.tb = (l.tb || 0) + (x.tb || 0); l.n++; } else o.push({ ...x, t: k, n: 1 }); }
+  if (o.length && o[o.length - 1].n < 3) o.pop(); return o; }
 function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = closes(), cb = cc[i].close, atrP = wilder(trArr(), 14)[i] / cb;
   const st = calcST(10, 3).dir[i], e21 = emaArr(cl, 21)[i], e50 = emaArr(cl, 50)[i], e200 = emaArr(cl, 200)[i], r14 = calcRSI(14)[i];
   if (e200 == null || r14 == null) return null;
@@ -93,7 +100,7 @@ function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = clos
   if (dir < 0 && !process.env.SIN_CICLO && !cycFall(cc[i].t)) return null; // shorts solo en la fase de caída del ciclo del halving
   let vs = 0; for (let j = Math.max(0, i - 19); j <= i; j++) vs += cc[j].v; const vr = cc[i].v / ((vs / Math.min(i + 1, 20)) || 1);
   if (!process.env.SIN_D200 && dir * (cb / e200 - 1) * 100 > 8) return null; // v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
-  const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 && atrP <= .05 / 3 && atrP <= .017;
+  const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 * ATRSC && atrP <= .05 / 3 * ATRSC && atrP <= .017 * ATRSC;
   const d50 = dir * (cb - emaArr(cl, 50)[i]) / (atrP * cb); // octubre 2026: el retroceso tiene que frenar antes de la EMA 50
   if (core && rr < 50) return d50 >= .5 ? { k: 'core', dir, atrP, setup: rank < 40 ? 't-pb' : 'tp-u80' } : null;
   const adx = calcADX(14).adx[i]; if (adx == null || adx < 25) return null;
@@ -217,7 +224,7 @@ function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V, SX)
     if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; }
     if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } }
     const sxOk = SX && (hit === 0 ? SX.N0 < 9 && dir * (b.close / ae - 1) / sl >= SX.P : SX.N1 < 9 && dir * (b.close / ae - 1) > 0 && (!SX.cerca || hit >= 3 || dir * (b.close - tps[hit - 1]) >= .5 * dir * (tps[hit] - tps[hit - 1])));
-    if (sxOk) { let cnt; SX.N = hit === 0 ? SX.N0 : SX.N1; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, 144e5, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
+    if (sxOk) { let cnt; SX.N = hit === 0 ? SX.N0 : SX.N1; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, T4.tfMs, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
       if (cnt >= SX.N) { pnl = val(b.close); kind = 7; break; } } }
   const open = pnl == null && (j >= rb.length || !rb.length) && rb.length && rb[rb.length - 1].t - t0 <= maxAge;
   if (pnl == null) { const jj = Math.min(Math.max(j, j0), rb.length - 1), px = rb[jj] ? rb[jj].close : entry; pnl = Math.max(-sz * sl, val(px)); j = jj; }
@@ -234,7 +241,7 @@ const btcDirAt = (B, ms, t) => { const i = lastClosed(B.b, ms, t); return i >= 0
 
 async function run4h(s, rank) {
   const MX = IAX && IAON && rank < IAXN ? await loadMetrics(s) : null;
-  const tb = await klRange(s, T4.tf, T4.tfMs, FROM - 300 * T4.tfMs, NOW); if (tb.length < 350) return;
+  const tb = T4.tf === '3h' ? agg3h(await klRange(s, '1h', 36e5, FROM - 900 * 36e5, NOW)) : await klRange(s, T4.tf, T4.tfMs, FROM - 300 * T4.tfMs, NOW); if (tb.length < 350) return;
   const rb = await klRange(s, T4.res, T4.resMs, FROM - 300 * T4.resMs, NOW); if (rb.length < 50) return; const W1 = wildArr(rb);
   candles = tb; const e200 = emaArr(closes(), 200);
   const P1 = IAON ? IA.prep(rb) : null, P4 = IAON ? IA.prep(tb) : null;
