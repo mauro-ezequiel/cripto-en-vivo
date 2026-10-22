@@ -1,0 +1,33 @@
+name: Capturas de la página
+# Se corre a mano: saca capturas de la página publicada (datos reales) y anota errores. Guarda el resultado en la rama capturas-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Rama de la página a probar (vacío = la publicada)'
+        default: ''
+permissions:
+  contents: write
+jobs:
+  capturas:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        if: inputs.ref != ''
+        with:
+          ref: ${{ inputs.ref }}
+          path: pagina
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: npm i --no-save --no-package-lock playwright-core@1.47.2
+      - name: Servir la página de la rama
+        if: inputs.ref != ''
+        run: (cd pagina && nohup python3 -m http.server 8080 >/dev/null 2>&1 &) && sleep 2 && echo "PAGE=http://localhost:8080/" >> $GITHUB_ENV
+      - run: node herramientas/capturas.js
+      - name: Guardar
+        if: always()
+        run: |
+          mkdir -p capturas && cd capturas && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Capturas" && git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:capturas-${{ github.run_id }}
