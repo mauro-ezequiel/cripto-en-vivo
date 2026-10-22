@@ -5,7 +5,7 @@
    - Operaciones de PRÁCTICA: con un umbral un poco más bajo y sin esas condiciones, para que aprenda de lo que pasa en vivo. No avisan.
    Todas se siguen con velas de 1 min (primero el stop, después los objetivos; tocado el objetivo 1 el stop pasa a la entrada) y quedan guardadas
    en datos/ia-ops.json. El estudio diario mide su acierto real por puntaje y ajusta el umbral en vivo (ia.json → vivo). */
-const IA = require('../ia-core.js');
+const IA = require('../ia-core.js'), DVL = require('./dvol-lib.js');
 const CFG = { tr: { nm: 'TRADING', mg: 350, lev: 10, age: 7 * 864e5, cool: 24 * 36e5, max: 4, maxP: 8, tfs: ['4h'], a: 3, r: .75, cap: .036, wmin: 70 },
   sh: { nm: 'SHOOTER', mg: 50, lev: 15, age: 12 * 36e5, cool: 36e5, max: 6, maxP: 12, tfs: ['15m', '30m'], a: 4, r: .25, cap: .05, wmin: 80 } };
 const FEE = .0016, /* comisión + deslizamiento (antes solo comisión, .0008) */ TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
@@ -59,6 +59,7 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
       if (o && o.c !== z.c && (o.c === 'g' || z.c === 'g')) await tg(`🧠 IA · ${CFG[f].nm}: semáforo ${({ g: '🟢', y: '🟡', r: '🔴' })[o.c]} → ${({ g: '🟢', y: '🟡', r: '🔴' })[z.c]}. ${z.c === 'g' ? 'Desde ahora sus operaciones cuentan (billetera y avisos).' : 'Sus operaciones dejan de contar: sigue practicando y estudiando.'}\n${z.why.join(' · ')}`, false); }
     for (const f of ['tr', 'sh']) { const C = CFG[f], E = M[f] && M[f].entry; if (!E || !E.model || E.thr == null) continue;
       const real = A.sem[f] && A.sem[f].c === 'g', thr = Math.max(E.thr, (M.vivo && M.vivo[f] && M.vivo[f].thr) || 0), thrP = E.thr * PRACT;
+      { const e = await DVL.estado(now); IA.EXT = { dv: e.v, dv24: e.v24 }; } // DVOL de ahora para la IA (las horas al próximo dato salen de la vela)
       for (const tf of C.tfs) { const ms = TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last[f + tf] === bar || now - bar < 60e3) continue; A.last[f + tf] = bar; ch = true; if (now - bar > 20 * 6e4) continue; // solo velas recién cerradas: precio de entrada real
         let bs = 0; try { const b = (await kl('BTCUSDT', tf, 80)).slice(0, -1), e = IA._.ema(b.map(x => x.close), 50); bs = b[b.length - 1].close > e[e.length - 1] ? 1 : -1; } catch (e) {}
         const out = [];

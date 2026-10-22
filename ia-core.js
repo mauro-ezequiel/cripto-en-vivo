@@ -2,7 +2,14 @@
    Calcula los indicadores de cada vela, el estado de una operación abierta y evalúa los modelos (árboles) que aprende la IA.
    Todo lo que la IA "mira" sale de acá, así lo que aprende y lo que usa en vivo es exactamente lo mismo. */
 (function (root) {
-  const IA = { ver: 2 };
+  const IA = { ver: 3 };
+  /* octubre 2026 (v3): datos de afuera de las velas: DVOL de Deribit (nivel y cambio en 24 h) y cercanía a los datos de EE.UU. (Fed, inflación, empleo).
+     ext = {dv, dv24, t}; si no se pasa se usa IA.EXT (la página y el bot lo cargan con el último DVOL). Sin dato vale 0. */
+  IA.EXT = null;
+  let MACX = null; const macLib = () => { if (MACX) return MACX; try { MACX = typeof module !== 'undefined' && module.exports && typeof require === 'function' ? require('./herramientas/macro-lib.js') : root.MACRO; } catch (e) { MACX = root.MACRO; } return MACX; };
+  function extF(P, j, ext) { const e = ext || IA.EXT || {}, b = P.bars, t = e.t || (b[j] ? b[j].t + (j > 0 ? b[j].t - b[j - 1].t : 0) : Date.now()), M = macLib(); // sin t: el cierre de la vela let evh = 96, evp = 96;
+    if (M && M.EV) for (const ev of M.EV) { const dh = (ev[0] - t) / 36e5; if (dh >= 0 && dh < evh) evh = dh; if (dh < 0 && -dh < evp) evp = -dh; }
+    return { dv: N(e.dv), dv24: e.dv24 == null ? 0 : N(e.dv24) * 100, evh: +evh.toFixed(1), evp: +evp.toFixed(1) }; }
   /* octubre 2026 (v2): figuras chartistas y el conteo de 8 señales de los bots (las mismas de la salida anticipada) como datos nuevos */
   let FIGX = null; const figLib = () => { if (FIGX) return FIGX; try { FIGX = typeof module !== 'undefined' && module.exports && typeof require === 'function' ? require('./herramientas/figuras-lib.js') : root.FIG; } catch (e) { FIGX = root.FIG; } return FIGX; };
   const N = x => (x == null || !isFinite(x) ? 0 : x);
@@ -67,12 +74,12 @@
       mh: P.mh ? d * N(P.mh[j]) / at : 0, e921: P.e9 && P.e9[j] != null && P.e21[j] != null ? d * (P.e9[j] - P.e21[j]) / at : 0, hl20: P.hl20 ? (d > 0 ? P.hl20[j] : 1 - P.hl20[j]) : .5 }; }
 
   /* ENTRADA: ¿esta señal va a llegar al objetivo 1? */
-  IA.ENTRY_F = ['r14', 'r7', 'adx', 'di', 'd21', 'd50', 'd200', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20'];
-  IA.entryX = function (P, j, d, btc) { const m = mkt(P, j, d); m.btc = N(btc) * d; return IA.ENTRY_F.map(k => m[k]); };
+  IA.ENTRY_F = ['r14', 'r7', 'adx', 'di', 'd21', 'd50', 'd200', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20', 'dv', 'dv24', 'evh', 'evp'];
+  IA.entryX = function (P, j, d, btc, ext) { const m = Object.assign(mkt(P, j, d), extF(P, j, ext)); m.btc = N(btc) * d; return IA.ENTRY_F.map(k => m[k]); };
 
   /* SALIDA: estado de la operación + mercado. pos = {dir, entry, sl (fracción), peak (mejor precio desde la entrada), hits, age (0–1+)} */
-  IA.EXIT_F = ['gR', 'peakR', 'ddR', 'hits', 'age', 'r14', 'r7', 'adx', 'di', 'd21', 'd50', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20'];
-  IA.exitX = function (P, j, pos, btc) { const d = pos.dir, c = P.bars[j].close, sd = pos.sl * pos.entry, m = mkt(P, j, d);
+  IA.EXIT_F = ['gR', 'peakR', 'ddR', 'hits', 'age', 'r14', 'r7', 'adx', 'di', 'd21', 'd50', 'st', 'fl6', 'r6', 'vr', 'z', 'body', 'atrP', 'btc', 'agF', 'agC', 'fig', 'mh', 'e921', 'hl20', 'dv', 'dv24', 'evh', 'evp'];
+  IA.exitX = function (P, j, pos, btc, ext) { const d = pos.dir, c = P.bars[j].close, sd = pos.sl * pos.entry, m = Object.assign(mkt(P, j, d), extF(P, j, ext));
     m.gR = d * (c - pos.entry) / sd; m.peakR = d * (pos.peak - pos.entry) / sd; m.ddR = m.peakR - m.gR; m.hits = pos.hits; m.age = pos.age; m.btc = N(btc) * d;
     return IA.EXIT_F.map(k => m[k]); };
 
@@ -87,7 +94,7 @@
   IA.NAMES = { oi24: 'interés abierto 24 h', oi1: 'interés abierto 1 h', taker: 'flujo comprador/vendedor', top: 'traders grandes', retail: 'minoristas', funding: 'funding', gR: 'ganancia actual', peakR: 'máximo alcanzado', ddR: 'retroceso desde el máximo', hits: 'objetivos tocados', age: 'tiempo en la operación',
     r14: 'RSI 14', r7: 'RSI 7', adx: 'ADX (fuerza)', di: 'DMI (quién empuja)', d21: 'distancia a la EMA 21', d50: 'distancia a la EMA 50', d200: 'distancia a la EMA 200',
     st: 'Supertrend', fl6: 'CVD (flujo de órdenes)', r6: 'impulso reciente', vr: 'volumen', z: 'Bollinger', body: 'última vela', atrP: 'volatilidad', btc: 'BTC',
-    agF: 'señales a favor (de 8)', agC: 'señales en contra (de 8)', fig: 'figura chartista', mh: 'MACD', e921: 'EMA 9 / 21', hl20: 'posición en el rango de 20 velas' };
+    agF: 'señales a favor (de 8)', agC: 'señales en contra (de 8)', fig: 'figura chartista', mh: 'MACD', e921: 'EMA 9 / 21', hl20: 'posición en el rango de 20 velas', dv: 'DVOL (miedo del mercado de opciones)', dv24: 'cambio del DVOL en 24 h', evh: 'horas hasta el próximo dato de EE.UU.', evp: 'horas desde el último dato de EE.UU.' };
   /* la IA "en práctica" sobre una operación: recorre las velas cerradas desde la entrada y decide igual que en el estudio diario
      (stop del bot; al tocar el objetivo 1 el stop pasa a la entrada y después al objetivo anterior; sale si la probabilidad de seguir
      a favor cae bajo el umbral). pos = {dir, entry, sl, r, maxAge, t0, resMs}; btcAt(t) = lado de BTC (1 / −1) en ese momento.

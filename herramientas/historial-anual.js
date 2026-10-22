@@ -18,7 +18,8 @@ const OLDLAST = {};
    señales que sacaron versiones viejas (OLDC), con la gestión de ahora. Prende también los estudios sueltos. */
 const FILTROS = !!process.env.FILTROS, OLDC = [];
 /* SHOOTER v10 del bot (v8 en la página): no entra con el DVOL bajo 35. SIN_DV35=1 lo saca. DVS se carga al empezar (si Deribit no responde, no se filtra). */
-const DVL = require('./dvol-lib.js'); let DVS = new Map(); if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; } if (process.env.DVDET) process.env.DVOL = '1';
+const DVL = require('./dvol-lib.js'); let DVS = new Map();
+const iaExt = t => { const v = DVL.at(DVS, t), p = DVL.at(DVS, t - DAY); return { dv: v, dv24: v != null && p ? v / p - 1 : null, t }; }; // datos de afuera para la IA en el momento t if (FILTROS) { process.env.DVOL = process.env.FLUJOS = process.env.MACRO = '1'; } if (process.env.DVDET) process.env.DVOL = '1';
 function iaVieja(fam, filtro, o) { const k = fam + filtro + o.s; if (OLDLAST[k] && o.t - OLDLAST[k] < o.cool) return; OLDLAST[k] = o.t;
   const res = sim(o.rb, o.resMs, o.maxAge, o.j0, o.entry, o.dir, o.sl, o.g.r, o.g.L, o.g.ex, o.llConf, o.t); if (res.open) return; const ia = iaPath(o.P, o.j0, o.entry, o.dir, o.sl, o.g.r, o.maxAge, o.t, o.resMs);
   IAD[fam].old.push({ m: fam === 'sh' ? 'x' : 'medio', setup: o.setup, s: o.s, t: o.t, dir: o.dir, entry: o.entry, sl: o.sl, r: o.g.r, L: o.g.L, tf: o.tf, maxAge: o.maxAge, botPct: +res.pct.toFixed(3), botHit: res.hit, kind: res.kind, filtro, X: ia.X, B: ia.B }); }
@@ -256,7 +257,7 @@ async function run4h(s, rank) {
       ia: IAON ? iaPath(P1, j0, entry, c.dir, sl, g.r, T4.maxAge, t, T4.resMs) : null });
     /* TRADING X: la misma entrada con objetivos 0,4 × stop, si el DVOL lo permite (no > 55 ni cayendo > 10 % en 24 h). Se elige aparte de TRADING. */
     if (!process.env.SIN_TX) { { const gx = GEO.tx, slx = slOf(gx, c.atrP);
-      CANDS.push({ m: 'tx', setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7)) }); } } }
+      CANDS.push({ m: 'tx', setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ia: IAON ? iaPath(P1, j0, entry, c.dir, slx, gx.r, T4.maxAge, t, T4.resMs) : null, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7)) }); } } }
   return { rb, tb, llConf }; }
 
 /* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
@@ -278,7 +279,7 @@ async function runShooter(s, rank = 0) {
       const z = (cb - bm[i]) / bs[i];
       if (IAON && z <= -1.8 && r7[i] <= 35 && rnd() < .3) { // candidatas para aprender a entrar
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
-        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
+        if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t), iaExt(t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       let viejo = null;
@@ -304,7 +305,7 @@ function iaPath(P, j0, entry, dir, sl, r, maxAge, t0, resMs) {
   for (let j = j0; j < P.bars.length && j < j0 + Math.ceil(1.5 * maxAge / resMs); j++) { const b = P.bars[j];
     peak = dir > 0 ? Math.max(peak, b.high) : Math.min(peak, b.low); while (hits < 3 && dir * (peak - tps[hits]) >= 0) hits++;
     const tc = b.t + resMs;
-    X.push(IA.exitX(P, j, { dir, entry, sl, peak, hits, age: (tc - t0) / maxAge }, btcDirAt(BTC1, 36e5, tc)).map(v => +v.toFixed(3)));
+    X.push(IA.exitX(P, j, { dir, entry, sl, peak, hits, age: (tc - t0) / maxAge }, btcDirAt(BTC1, 36e5, tc), iaExt(tc)).map(v => +v.toFixed(3)));
     B.push([b.high, b.low, b.close, +(P.atr[j] || 0).toPrecision(5)]); }
   return { X, B }; }
 /* entradas posibles de 4h (tendencia alineada) y si llegaron al objetivo 1 con las medidas de TRADING */
@@ -312,7 +313,7 @@ function iaEntry4h(P4, P1, rb, i, t, llConf, rank, MX) { const b = P4.bars[i], s
   if (!st || P4.e200[i] == null || P4.e21[i] == null || P4.e50[i] == null) return;
   if (Math.sign(P4.e21[i] - P4.e50[i]) !== st || Math.sign(b.close - P4.e200[i]) !== st || rnd() > .5) return;
   const g = GEO.core, atrP = (P4.atr[i] || 0) / b.close, o = sim(rb, T4.resMs, T4.maxAge, idxAfter(rb, t), b.close, st, slOf(g, atrP), g.r, g.L, g.ex, g.ll ? llConf : null, t);
-  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, st, ...(IAX ? metX(MX, t, st) : [])]); }
+  if (!o.open) IAD.tr.ent.push([t, ...IA.entryX(P4, i, st, btcDirAt(BTC4, T4.tfMs, t), iaExt(t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, st, ...(IAX ? metX(MX, t, st) : [])]); }
 
 /* entradas al azar con el mismo stop y objetivos (para medir cuánto aporta la señal) */
 function randomEntries(m, s, rb, resMs, maxAge, every, slPool, g, llConf, ok) {

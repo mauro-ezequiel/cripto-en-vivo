@@ -5077,6 +5077,7 @@ setTimeout(histYrLoad,2500);setInterval(histYrLoad,6*36e5);
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
 const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
 async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();
+  if(j.dvol&&window.IA)IA.EXT={dv:j.dvol.v,dv24:j.dvol.v24}; /* octubre 2026: el DVOL que publica el bot (dato de la IA v3) */
   for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
@@ -5768,7 +5769,7 @@ async function iaCmpOpen(id){let o=OPS.find(x=>x.id===id)||(histOps()||[]).find(
 /* ---------- autoevaluación: objetivos que nunca terminan ---------- */
 /* al llegar a un objetivo pasa al siguiente: 100 % = iguala a los bots, 125 % = les saca 25 % más, y así */
 const IA_META=[100,125,150,200,300,500,750,1000,1500,2000];
-const iaModoOf=r=>r[0]==='x'?'SHOOTER':r[1]==='tp-x'?'TRADING+':'TRADING';
+const iaModoOf=r=>r[0]==='x'?'SHOOTER':r[0]==='tx'?'TRADING X':r[1]==='tp-x'?'TRADING+':'TRADING';
 function iaGoals(){const R=iaRecs().filter(r=>r[3]>=Date.now()-90*864e5),G=[],avg=a=>a.reduce((s,v)=>s+v,0)/(a.length||1),wr=a=>a.filter(v=>v>0).length/(a.length||1)*100;
   if(R.length>=5){const b=R.map(r=>r[4]),i=R.map(r=>r[6]),lb=b.filter(v=>v<0),li=i.filter(v=>v<0);
     G.push(['Gana más por operación que los bots',avg(i)>=avg(b),`${iaPct2(avg(i))} contra ${iaPct2(avg(b))}`]);

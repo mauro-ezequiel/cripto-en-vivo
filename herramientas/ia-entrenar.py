@@ -16,14 +16,17 @@ FEE, EXF, ENF = D['fee'], D['exitF'], D['entryF']
 # IA_ANTES=1: estudia como la versión anterior (sin los datos nuevos, sin las versiones viejas y con las reglas de antes), para comparar
 ANTES = os.environ.get('IA_ANTES') == '1'
 STRICT = not ANTES
-NEN0, NEX0 = 15, 19  # cantidad de datos de entrada y de salida de la versión 1
+NEN0, NEX0 = 21, 25  # cantidad de datos de entrada y de salida de la versión anterior (v2: con figuras y conteo de señales)
 if ANTES and len(ENF) > NEN0:
     _k0 = 1 + len(ENF)
     for _f in ('tr', 'sh'):
         for _o in D[_f]['ops']:
             _o['X'] = [x[:NEX0] for x in _o['X']]
         D[_f]['ent'] = [r[:1 + NEN0] + r[_k0:] for r in D[_f]['ent']]
-        D[_f]['old'] = []
+        D[_f]['ops'] = [o for o in D[_f]['ops'] if o.get('m') != 'tx']  # la versión anterior no estudiaba TRADING X
+        D[_f]['old'] = [o for o in D[_f].get('old', []) if o.get('filtro') not in ('dvol_bajo', 'dvol_trading')]
+        for _o in D[_f]['old']:
+            _o['X'] = [x[:NEX0] for x in _o['X']]
     ENF, EXF = ENF[:NEN0], EXF[:NEX0]; D['entryF'], D['exitF'] = ENF, EXF
 for _f in ('tr', 'sh'):
     D[_f].setdefault('old', [])
@@ -165,8 +168,8 @@ def resumen(recs, now):
     res = {}
     for nm, days in (('semana', 7), ('3meses', 90)):
         res[nm] = {}
-        for modo in ('TRADING', 'TRADING+', 'SHOOTER'):
-            L = [r for r in recs if r[3] >= now - days * DAY and (('SHOOTER' if r[0] == 'x' else 'TRADING+' if r[1] == 'tp-x' else 'TRADING') == modo)]
+        for modo in ('TRADING', 'TRADING X', 'TRADING+', 'SHOOTER'):
+            L = [r for r in recs if r[3] >= now - days * DAY and (('SHOOTER' if r[0] == 'x' else 'TRADING X' if r[0] == 'tx' else 'TRADING+' if r[1] == 'tp-x' else 'TRADING') == modo)]
             if not L:
                 res[nm][modo] = {'n': 0}; continue
             b = np.array([r[4] for r in L]); i = np.array([r[6] for r in L])
@@ -253,7 +256,7 @@ def fam_exit(ops, K, H, old=()):
     res['curva'] = {'meses_ia': curva, 'bot_suma': round(float(bot.sum()), 2), 'n': len(te)}
     by = {}
     for o, v in zip(te, ia):
-        k = 'TRADING+' if o['setup'] == 'tp-x' else 'SHOOTER' if o['m'] == 'x' else 'TRADING'
+        k = 'TRADING+' if o['setup'] == 'tp-x' else 'SHOOTER' if o['m'] == 'x' else 'TRADING X' if o['m'] == 'tx' else 'TRADING'
         b = by.setdefault(k, {'n': 0, 'bot': 0, 'ia': 0})
         b['n'] += 1; b['bot'] += o['botPct']; b['ia'] += v
     res['por_modo'] = {k: {'n': b['n'], 'bot': round(b['bot'] / b['n'], 2), 'ia': round(b['ia'] / b['n'], 2)} for k, b in by.items()}
@@ -469,7 +472,7 @@ if not ANTES:
 print('memoria', MEM)
 
 t0 = time.time()
-OUT = {'upd': D['upd'], 'ver': 1 if ANTES else 2, 'exitF': EXF, 'entryF': ENF}
+OUT = {'upd': D['upd'], 'ver': 2 if ANTES else 3, 'exitF': EXF, 'entryF': ENF}
 for f, cfg in FAM.items():
     part = D[f]
     OUT[f] = {'name': cfg['name']}

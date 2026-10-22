@@ -129,7 +129,7 @@ async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin
   await sendTo(CHAT, text); if (canal && CANAL) await sendTo(canalId(), text); }
 
 /* ---------- publica las señales en la rama "datos" para que la página las muestre ---------- */
-async function ghPublish() { return ghPut('senales.json', JSON.stringify({ upd: Date.now(), senales: S.hist || [] }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
+async function ghPublish() { let dvol = null; try { const e = await DVL.estado(); dvol = { v: e.v, v24: e.v24, t: Date.now() }; } catch (e) {} return ghPut('senales.json', JSON.stringify({ upd: Date.now(), dvol, senales: S.hist || [] }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
 async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
   const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'cripto-live-bot' }, api = 'https://api.github.com/repos/' + repo;
   try { if (!S.brOk) { let r = await fetch(api + '/git/ref/heads/datos', { headers: H });
