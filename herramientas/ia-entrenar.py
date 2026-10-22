@@ -345,19 +345,23 @@ def importance(m, X, Y, names, reps=2):
     return sorted(out, key=lambda x: -x[1])
 
 
-def fam_entry(ent, fam, bot_ops=()):
+def fam_entry(ent, fam, bot_ops=(), ncol=None):
+    """ncol: usar solo los primeros ncol datos de entrada (la versión sin DVOL ni calendario). El modelo queda igual de compatible."""
     w = min(len(r) for r in ent); A = np.array([r[:min(w, 1 + len(ENF) + 5)] for r in ent], float)
     if len(A) < 500:
         return None
     k0 = 1 + len(ENF)
     t, X, Y, P = A[:, 0], A[:, 1:k0], A[:, k0], A[:, k0 + 2]
+    if ncol:
+        X = X[:, :ncol]
+    NAMES = list(ENF)[:X.shape[1]]
     RK = A[:, k0 + 3] if A.shape[1] > k0 + 3 else np.arange(len(A))  # datos viejos sin la moneda: no se agrupa
     cut = cut_of(t); tr, te = t < cut, t >= cut
     m = gbc(120).fit(X[tr], Y[tr]); p = m.predict_proba(X[te])[:, 1]
     auc = roc_auc_score(Y[te], p); top = p >= np.quantile(p, .8)
     res = {'n': int(len(A)), 'auc': round(auc, 3), 'base': round(float(Y[te].mean() * 100), 1), 'top20': round(float(Y[te][top].mean() * 100), 1),
            'top20_pct': round(float(P[te][top].mean()), 2), 'base_pct': round(float(P[te].mean()), 2)}
-    imp = importance(m, X[te], Y[te], ENF)
+    imp = importance(m, X[te], Y[te], NAMES)
     # ENTRADAS PROPIAS: la IA busca sola en todas las velas candidatas (no solo en las señales de los bots) las que puntúa más alto.
     # Umbral elegido con los meses de aprendizaje (mejor 10 %), resultado medido en los meses que no vio, una por moneda cada 24 h (TRADING) o 1 h (SHOOTER).
     samp, cool = (.5, 24 * 36e5) if fam == 'tr' else (.3, 36e5)
@@ -403,6 +407,8 @@ def fam_entry(ent, fam, bot_ops=()):
         tm = np.median(t[pick]); res['propias']['mitades'] = [round(float(P[pick][t[pick] < tm].mean()), 2) if (t[pick] < tm).any() else None, round(float(P[pick][t[pick] >= tm].mean()), 2) if (t[pick] >= tm).any() else None]
     res['propias']['bot_pct'] = round(float(np.mean(bp)), 2) if bp else None
     res['propias']['apta'] = bool(apta) if STRICT else True
+    res['propias']['val'] = round(float(best_s), 3) if apta else None
+    res['datos_nuevos'] = not ncol
     res['propias']['supera_bots'] = bool(len(pick) and bp and res['propias']['pct'] >= np.mean(bp))
     mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
     OUTE = {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
@@ -435,7 +441,7 @@ def fam_entry(ent, fam, bot_ops=()):
         usar = bool(sx > sb and px['pct'] is not None and px['pct'] > 0)
         mXF = gbc(120).fit(XE, YE); pallX = mXF.predict_proba(XE)[:, 1]
         OUTE['futuros'] = {'model': export(mXF, XE), 'thr': round(float(np.quantile(pallX, qx)), 4), 'test': px, 'usar': usar,
-                           'imp': importance(mX, XE[teE], YE[teE], list(ENF) + ['oi24', 'oi1', 'taker', 'top', 'retail', 'funding'])}
+                           'imp': importance(mX, XE[teE], YE[teE], NAMES + ['oi24', 'oi1', 'taker', 'top', 'retail', 'funding'])}
         print(fam, 'entrada con futuros', px, 'usar' if usar else 'no se usa')
     return OUTE
 
@@ -483,6 +489,16 @@ for f, cfg in FAM.items():
         OUT[f]['reglas'] = rules_search([o for o in part['ops'] if len(o['B']) > 2], f)
         print(f, 'reglas', json.dumps(OUT[f]['reglas'], ensure_ascii=False))
     e = fam_entry(part['ent'], f, part['ops'])
+    # IA v3: elige sola, para cada bot, si le conviene usar el DVOL y el calendario. Se decide con la validación (meses de aprendizaje),
+    # nunca con la prueba: si sin los datos nuevos elige mejor, usa el modelo sin ellos.
+    if e and STRICT and len(ENF) > NEN0:
+        e0 = fam_entry(part['ent'], f, part['ops'], NEN0)
+        p1, p0 = e['test'].get('propias') or {}, e0['test'].get('propias') or {} if e0 else {}
+        s1 = (bool(p1.get('apta')), p1.get('val') if p1.get('val') is not None else -1e18)
+        s0 = (bool(p0.get('apta')), p0.get('val') if p0.get('val') is not None else -1e18)
+        print(f, 'entrada: con datos nuevos', s1, 'sin', s0)
+        if e0 and s0 > s1:
+            e = e0
     if e:
         OUT[f]['entry'] = e
         print(f, 'entrada', e['test'], e['imp'][:8])
