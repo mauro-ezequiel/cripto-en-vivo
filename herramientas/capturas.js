@@ -3,6 +3,9 @@
 const fs = require('fs'), { chromium } = require('playwright-core');
 (async () => { fs.mkdirSync('capturas', { recursive: true });
   const br = await chromium.launch({ channel: 'chrome' }), pg = await br.newPage({ viewport: { width: 412, height: 1500 }, deviceScaleFactor: 2, isMobile: true, hasTouch: true });
+  /* Binance no atiende a servidores de EE.UU. (GitHub): los mismos datos públicos se piden por su espejo data-api.binance.vision */
+  await pg.route(/https:\/\/api\.binance\.com\/api\/v3\/.*/, r => r.continue({ url: r.request().url().replace('https://api.binance.com', 'https://data-api.binance.vision') }));
+  await pg.route(/wss?:\/\/.*binance.*/, r => r.abort());
   const errs = []; pg.on('pageerror', e => errs.push('pageerror: ' + e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 300)); });
   await pg.goto((process.env.PAGE || 'https://mauro-ezequiel.github.io/cripto-en-vivo/') + '?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
   await pg.waitForTimeout(15000);
