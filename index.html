@@ -4384,7 +4384,7 @@ var BITOPS=null,bitPgT=0;
 const BIT_WHY={1:'tocó el stop',4:'llegó a los 3 objetivos',5:'venció el plazo',6:'💰 salió antes: las señales se dieron vuelta en contra (ganancia asegurada)'};
 async function bitPgLoad(){if(Date.now()-bitPgT<10*6e4)return;bitPgT=Date.now();
   try{const j=await getJ('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/bitacora.json?t='+Math.floor(Date.now()/6e5));if(!j||!Array.isArray(j.ops))return;
-    window.FRENO=j.freno||{};BITOPS=j.ops.filter(r=>SIM[r.m]&&Array.isArray(r.tp)).map(r=>{const o=r.out,mg=SIM[r.m].margin;return {id:r.id,m:r.m,setup:r.setup,sym:r.sym,dir:r.dir,entry:r.entry,tp0:r.tp[0],tp1:r.tp[1],tp2:r.tp[2],fail:r.sl,t:r.t,v:r.v,bot:1,
+    window.FRENO=j.freno||{};window.BITUPD=j.upd||0;BITOPS=j.ops.filter(r=>SIM[r.m]&&Array.isArray(r.tp)).map(r=>{const o=r.out,mg=SIM[r.m].margin;return {id:r.id,m:r.m,setup:r.setup,sym:r.sym,dir:r.dir,entry:r.entry,tp0:r.tp[0],tp1:r.tp[1],tp2:r.tp[2],fail:r.sl,t:r.t,v:r.v,bot:1,
       hit:o?o.hit:0,state:!o?'open':o.c===1?'fail':o.c===6?(o.pct>=0?'win':'exp'):o.hit>0?'win':'exp',pnl:o?Math.round(o.pct*mg)/100:null,closeAt:o?o.t:null,lite:o?0:1,
       why:o?(o.c===6?BIT_WHY[6]:o.c===3?'llegó al objetivo '+o.hit+' y el resto se cerró en la entrada':o.c===5&&o.hit?'llegó al objetivo '+o.hit+' y venció el plazo':BIT_WHY[o.c]||''):''};});
     {let ch=false;for(const b of BITOPS){if(b.state==='open')continue;const o=OPS.find(x=>x.id===b.id);if(o&&o.state==='open'){Object.assign(o,{state:b.state,hit:b.hit,pnl:b.pnl,closeAt:b.closeAt,why:b.why,px:null});ch=true;}}if(ch){try{saveOps();renderSignals();}catch(_){}}} // octubre 2026: lo que cerró el bot (salida anticipada incluida) se cierra igual acá
@@ -4399,7 +4399,10 @@ function realOps(m){let S=null;
   if(m==='a'&&BOTSRC('a')&&ACCOPS)S=OPS.filter(o=>o.m==='a');
   else if(m!=='a'&&BOTSRC(m)&&Array.isArray(BITOPS)){const byId=new Map(OPS.map(o=>[o.id,o]));
     S=BITOPS.filter(o=>o.m===m&&o.setup!=='tp-x').map(b=>{if(b.state!=='open')return b;const l=byId.get(b.id);if(l&&!l.lite)return l;
-      const lev=SIM[m].lev,not=SIM[m].margin*lev,liqD=b.fail&&b.entry?Math.abs(b.fail/b.entry-1):SIM[m].maxLoss/not;return Object.assign({},b,{lev,not,liqD,loss:+(not*liqD).toFixed(2),lite:0,real:0});});}
+      const lev=SIM[m].lev,not=SIM[m].margin*lev,liqD=b.fail&&b.entry?Math.abs(b.fail/b.entry-1):SIM[m].maxLoss/not;return Object.assign({},b,{lev,not,liqD,loss:+(not*liqD).toFixed(2),lite:0,real:0});});
+    /* octubre 2026: el bot sube la bitácora cada 15 min y la página la relee cada 10: mientras tanto, las señales nuevas del bot que esta página
+       ya está siguiendo se muestran igual (antes no aparecían en «Mis señales en vivo» hasta media hora después) */
+    {const have=new Set(S.map(o=>o.id)),from=(window.BITUPD||0)-6*36e5;for(const o of OPS)if(o.m===m&&!have.has(o.id)&&o.t>=from&&o.t>=SHARED_T&&o.setup!=='tp-x')S.push(o);}}
   if(!S)return realOpsLegacy(m);
   let extra=[];if(m==='a'){try{extra=JSON.parse(localStorage.getItem('cv_ops_a_local')||'[]');}catch(_){}}
   const ids=new Set(S.map(o=>o.id)),tol=SHARED_TOL[m],L=S.slice();
