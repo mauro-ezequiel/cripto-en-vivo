@@ -483,7 +483,9 @@ for f, cfg in FAM.items():
     part = D[f]
     OUT[f] = {'name': cfg['name']}
     if len(part['ops']) >= int(__import__('os').environ.get('IA_MIN', 60)):
-        OUT[f]['exit'] = fam_exit(part['ops'], cfg['K'], cfg['H'], part.get('old') or [])
+        # TRADING X tiene objetivos mucho más cerca: si se mezcla con TRADING para aprender cuándo cerrar, la IA confunde las dos gestiones.
+        # Para la salida estudia solo las operaciones de TRADING (TRADING X sigue sirviendo para las entradas y las notas).
+        OUT[f]['exit'] = fam_exit([o for o in part['ops'] if o.get('m') != 'tx'], cfg['K'], cfg['H'], part.get('old') or [])
         print(f, 'salida', json.dumps(OUT[f]['exit']['test'], ensure_ascii=False), OUT[f]['exit']['theta'], OUT[f]['exit']['minhold'], OUT[f]['exit']['variant'])
         print(f, 'importa (salida)', OUT[f]['exit']['imp'][:8])
         OUT[f]['reglas'] = rules_search([o for o in part['ops'] if len(o['B']) > 2], f)
