@@ -178,6 +178,8 @@ body.fs-on #chartWrap .toolbar,body.fs-on #chartWrap .inds,body.fs-on .legend{di
    y en pantalla completa arriba solo el activo y los indicadores, abajo buscador + temporalidad + herramientas */
 .chrow{flex:1;display:flex;min-height:0;position:relative}
 .top-r2{flex-basis:100%;display:flex;align-items:center;gap:10px 14px;flex-wrap:wrap}.top-r2 .signal{margin-left:auto}@media (max-width:800px){.top-r2{flex-wrap:nowrap;gap:6px}.top-r2 .signal{margin-left:auto;gap:4px}.top-r2 .signal>span:first-child{display:none}.top-r2 .signal .big{font-size:12px;padding:4px 7px;white-space:nowrap}.top-r2 .seg .btn{padding:5px 7px;font-size:11.5px}}
+/* octubre 2026: en celulares angostos la barra de herramientas del gráfico se salía unos píxeles por la derecha */
+@media (max-width:440px){.toolbar .rbtn{width:28px}.toolbar .rsep{margin:0 2px}.toolbar .rail{gap:1px}}
 /* octubre 2026: con TRADING X son 4 modos y en el celular la fila se salía de la pantalla: los modos ocupan todo el ancho y el termómetro pasa abajo */
 @media (max-width:560px){.top-r2{flex-wrap:wrap;row-gap:6px}.top-r2 .top-modes{flex:1 1 100%;display:flex}.top-r2 .top-modes .btn{flex:1 1 0;min-width:0;padding:6px 2px;font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.top-r2 .signal{margin-left:auto}}
 .toolbar .rail{flex-direction:row;width:auto;border:0;background:none;padding:0;gap:2px}.toolbar .rsep{width:1px;height:20px;margin:0 4px}
