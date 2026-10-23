@@ -92,14 +92,14 @@ const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d 
 function agg3h(b) { const o = []; for (const x of b) { const k = Math.floor(x.t / (3 * 36e5)) * 3 * 36e5, l = o[o.length - 1];
     if (l && l.t === k) { l.high = Math.max(l.high, x.high); l.low = Math.min(l.low, x.low); l.close = x.close; l.v += x.v; l.tb = (l.tb || 0) + (x.tb || 0); l.n++; } else o.push({ ...x, t: k, n: 1 }); }
   if (o.length && o[o.length - 1].n < 3) o.pop(); return o; }
-function classify4h(cc, rank) { candles = cc; const i = cc.length - 1, cl = closes(), cb = cc[i].close, atrP = wilder(trArr(), 14)[i] / cb;
+function classify4h(cc, rank, sc = ATRSC) { candles = cc; const i = cc.length - 1, cl = closes(), cb = cc[i].close, atrP = wilder(trArr(), 14)[i] / cb;
   const st = calcST(10, 3).dir[i], e21 = emaArr(cl, 21)[i], e50 = emaArr(cl, 50)[i], e200 = emaArr(cl, 200)[i], r14 = calcRSI(14)[i];
   if (e200 == null || r14 == null) return null;
   const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0; if (!dir) return null;
   if (dir < 0 && !process.env.SIN_CICLO && !cycFall(cc[i].t)) return null; // shorts solo en la fase de caída del ciclo del halving
   let vs = 0; for (let j = Math.max(0, i - 19); j <= i; j++) vs += cc[j].v; const vr = cc[i].v / ((vs / Math.min(i + 1, 20)) || 1);
   if (!process.env.SIN_D200 && dir * (cb / e200 - 1) * 100 > 8) return null; // v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
-  const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 * ATRSC && atrP <= .05 / 3 * ATRSC && atrP <= .017 * ATRSC;
+  const rr = dir > 0 ? r14 : 100 - r14, core = vr < 1 && atrP > .01 * sc && atrP <= .05 / 3 * sc && atrP <= .017 * sc;
   const d50 = dir * (cb - emaArr(cl, 50)[i]) / (atrP * cb); // octubre 2026: el retroceso tiene que frenar antes de la EMA 50
   if (core && rr < 50) return d50 >= .5 ? { k: 'core', dir, atrP, setup: rank < 40 ? 't-pb' : 'tp-u80' } : null;
   const adx = calcADX(14).adx[i]; if (adx == null || adx < 25) return null;
@@ -223,7 +223,7 @@ function sim(rb, resMs, maxAge, j0, entry, dir, sl, r, L, ex, llConf, t0, V, SX)
     if (!hit && ex === 'mitad' && dir * (entry - b.close) / entry >= .5 * sl) { pnl = val(b.close); kind = 2; break; }
     if (V && !hit) { minR = Math.min(minR, dir * (adv / ae - 1) / sl); if (minR <= -V.D && dir * (b.close / ae - 1) / sl >= -V.X && against(rb, j, dir, V.T)) { pnl = val(b.close); kind = 6; break; } }
     const sxOk = SX && (hit === 0 ? SX.N0 < 9 && dir * (b.close / ae - 1) / sl >= SX.P : SX.N1 < 9 && dir * (b.close / ae - 1) > 0 && (!SX.cerca || hit >= 3 || dir * (b.close - tps[hit - 1]) >= .5 * dir * (tps[hit] - tps[hit - 1])));
-    if (sxOk) { let cnt; SX.N = hit === 0 ? SX.N0 : SX.N1; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, T4.tfMs, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
+    if (sxOk) { let cnt; SX.N = hit === 0 ? SX.N0 : SX.N1; if (SX.tf === '4h') { const i4 = lastClosed(SX.tb, SX.tfMs || T4.tfMs, b.t + resMs); const G = agArr(SX.tb); cnt = i4 < 0 ? 0 : dir > 0 ? G.a[i4] : G.b[i4]; } else { const G = agArr(rb); cnt = dir > 0 ? G.a[j] : G.b[j]; }
       if (cnt >= SX.N) { pnl = val(b.close); kind = 7; break; } } }
   const open = pnl == null && (j >= rb.length || !rb.length) && rb.length && rb[rb.length - 1].t - t0 <= maxAge;
   if (pnl == null) { const jj = Math.min(Math.max(j, j0), rb.length - 1), px = rb[jj] ? rb[jj].close : entry; pnl = Math.max(-sz * sl, val(px)); j = jj; }
@@ -264,7 +264,21 @@ async function run4h(s, rank) {
     /* TRADING X: la misma entrada con objetivos 0,4 × stop, si el DVOL lo permite (no > 55 ni cayendo > 10 % en 24 h). Se elige aparte de TRADING. */
     if (!process.env.SIN_TX) { { const gx = GEO.tx, slx = slOf(gx, c.atrP);
       CANDS.push({ m: 'tx', setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7)) }); } } }
+  if (process.env.TX_TFS) for (const tfx of process.env.TX_TFS.split(',').filter(x => x && x !== T4.tf)) await txExtra(s, rank, rb, W1, tfx);
   return { rb, tb, llConf }; }
+/* TX_TFS=4h,3h,12h (investigación octubre 2026): TRADING X mirando también otras temporalidades. Misma regla (límites de ATR escalados),
+   mismos filtros (BTC a favor y con fuerza, DVOL), seguimiento con velas de 1 h. Una operación por moneda a la vez entre todas. */
+async function txExtra(s, rank, rb, W1, tfx) { const H = { '1h': 1, '2h': 2, '3h': 3, '4h': 4, '6h': 6, '8h': 8, '12h': 12 }[tfx]; if (!H) return; const ms = H * 36e5, sc = Math.sqrt(H / 4);
+  const tb = tfx === '3h' ? agg3h(await klRange(s, '1h', 36e5, FROM - 900 * 36e5, NOW)) : await klRange(s, tfx, ms, FROM - 300 * ms, NOW); if (tb.length < 350) return;
+  candles = tb; const e200 = emaArr(closes(), 200), llConf = (t, dir) => { const i = lastClosed(tb, ms, t); return i >= 0 && e200[i] != null && (dir > 0 ? tb[i].close > e200[i] : tb[i].close < e200[i]); };
+  for (let i = 299; i < tb.length; i++) { const t = tb[i].t + ms; if (t < FROM) continue;
+    const c = classify4h(tb.slice(i - 298, i + 1), rank, sc); if (!c) continue;
+    if (btcDirAt(BTC4, 144e5, t) !== c.dir) continue;
+    if (!process.env.SIN_ADXBTC) { const kb = lastClosed(BTC4.b, 144e5, t); if (!(kb >= 0 && BTC4.adx[kb] != null && BTC4.adx[kb] >= +(process.env.ADX_MIN || 24))) continue; }
+    if (tooWild(rb, W1, t)) continue;
+    if (DVS.size) { const v = DVL.at(DVS, t), p = DVL.at(DVS, t - DAY); if (DVL.txBloquea(v, v != null && p ? v / p - 1 : null)) continue; }
+    const gx = GEO.tx, slx = slOf(gx, c.atrP), entry = tb[i].close, j0 = idxAfter(rb, t);
+    CANDS.push({ m: 'tx', tfx, setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb, tfMs: ms }, SXV7)) }); } }
 
 /* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
    volumen PROMEDIO de los 7 días anteriores (entre las 70 con más volumen de hoy) y se descartan las que cayeron más de 10 % en 24 h. SH_ESTATICA=1 vuelve a la lista fija. */
@@ -537,6 +551,11 @@ async function main() { const t0 = Date.now();
         for (const fs_ of combos) { const L = pick(pool.filter(c => !fs_.some(k => F[m][k](c)))); R.push({ re, f: fs_, a: st4(L), m1: st4(L.filter(o => o.t < mid)), m2: st4(L.filter(o => o.t >= mid)) }); } }
       out.filtros.modos[m] = R; }
     console.log('filtros', Object.keys(out.filtros.modos).map(m => m + ' ' + out.filtros.modos[m].length).join(' '), JSON.stringify(out.filtros.viejas)); }
+  if (process.env.TX_TFS) { const mid = FROM + SPAN / 2, st5 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, stops: D.filter(o => o.kind === 1).length }; };
+    const T = ops.filter(o => o.m === 'tx'), by = {}; for (const o of T) (by[o.tfx || T4.tf] = by[o.tfx || T4.tf] || []).push(o);
+    out.tx_tfs = { tfs: process.env.TX_TFS, todas: { año: st5(T), mitad1: st5(T.filter(o => o.t < mid)), mitad2: st5(T.filter(o => o.t >= mid)) }, por_tf: Object.fromEntries(Object.entries(by).map(([k, L]) => [k, st5(L)])) };
+    console.log('tx_tfs', JSON.stringify(out.tx_tfs)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
