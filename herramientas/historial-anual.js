@@ -556,6 +556,24 @@ async function main() { const t0 = Date.now();
     const T = ops.filter(o => o.m === 'tx'), by = {}; for (const o of T) (by[o.tfx || T4.tf] = by[o.tfx || T4.tf] || []).push(o);
     out.tx_tfs = { tfs: process.env.TX_TFS, todas: { año: st5(T), mitad1: st5(T.filter(o => o.t < mid)), mitad2: st5(T.filter(o => o.t >= mid)) }, por_tf: Object.fromEntries(Object.entries(by).map(([k, L]) => [k, st5(L)])) };
     console.log('tx_tfs', JSON.stringify(out.tx_tfs)); }
+  /* DIASEM=1 (investigación octubre 2026): idea del usuario: de lunes a jueves el mercado cripto tiende a subir o lateralizar y de viernes a domingo a caer.
+     Día de la semana en hora de Argentina (UTC−3) al abrir la señal. Se sacan las señales según la regla y se vuelve a elegir (como en vivo). */
+  if (process.env.DIASEM) { const mid = FROM + SPAN / 2, dw = t => new Date(t - 3 * 36e5).getUTCDay(), fin = c => [5, 6, 0].includes(dw(c.t)), MM = ['medio', 'tx', 'x'];
+    const st6 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, stops: D.filter(o => o.kind === 1).length }; };
+    const VS = [['actual', null], ['lun–jue solo LONG y vie–dom solo SHORT', c => fin(c) ? c.dir > 0 : c.dir < 0], ['lun–jue sin SHORT', c => !fin(c) && c.dir < 0],
+      ['vie–dom sin LONG', c => fin(c) && c.dir > 0], ['vie–dom sin operar', c => fin(c)], ['solo vie–dom sin LONG desde el viernes 12 h', c => fin(c) && (dw(c.t) !== 5 || new Date(c.t - 3 * 36e5).getUTCHours() >= 12) && c.dir > 0]];
+    out.diasem = { nota: 'usd = cada señal con 300 USD × 10, con costos. Día en hora de Argentina.', variantes: [], por_dia: {}, btc: {} };
+    for (const [v, bad] of VS) { const L = pick(bad ? CANDS.filter(c => !bad(c)) : CANDS), r = { v };
+      for (const m of MM) { const A = L.filter(o => o.m === m && o.setup !== 'tp-x'); r[m] = { año: st6(A), mitad1: st6(A.filter(o => o.t < mid)), mitad2: st6(A.filter(o => o.t >= mid)) }; }
+      out.diasem.variantes.push(r); }
+    const base = pick(), N = ['dom', 'lun', 'mar', 'mié', 'jue', 'vie', 'sáb'];
+    for (const m of MM) { const A = base.filter(o => o.m === m && o.setup !== 'tp-x'); out.diasem.por_dia[m] = N.map((nm, d) => ({ dia: nm, long: st6(A.filter(o => dw(o.t) === d && o.dir > 0)), short: st6(A.filter(o => dw(o.t) === d && o.dir < 0)) })); }
+    /* BTC: suba o baja promedio de cada día (velas de 4 h según el día en que abren) */
+    const acc = N.map(() => ({ s: 0, n: 0, up: 0 }));
+    for (const k of BTC4.b) { const t = k.t != null ? k.t : k.time * 1000; if (t < FROM) continue; const r = k.close / k.open - 1, a = acc[dw(t)]; a.s += r; a.n++; if (r > 0) a.up++; }
+    out.diasem.btc = N.map((nm, d) => ({ dia: nm, pct_dia: +(acc[d].s / Math.max(1, acc[d].n) * 6 * 100).toFixed(2), velas_suben: +(100 * acc[d].up / Math.max(1, acc[d].n)).toFixed(1) }));
+    console.log('diasem', JSON.stringify(out.diasem).slice(0, 6000)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
