@@ -6308,5 +6308,38 @@ function iaShow(on){IAOPEN=on;$('iaPanel').hidden=!on;$('iaTab').hidden=on;docum
   document.addEventListener('click',e=>{const b=e.target.closest('[data-iacmp]');if(!b)return;e.preventDefault();e.stopPropagation();iaCmpOpen(b.dataset.iacmp);},true);
   iaLoad().then(()=>{iaTick();iaSigTick();try{renderRes();renderSignals();}catch(e){}});setInterval(iaLoad,3*36e5);setInterval(()=>iaTick(),2*6e4);setInterval(iaSigTick,5*6e4);setInterval(iaOpsTrack,6e4);setTimeout(iaOpsTrack,8000);setTimeout(iaBotLoad,5000);setInterval(iaBotLoad,5*6e4);try{mgApply();renderSignals();renderRes(true);cicRender();}catch(e){}setInterval(()=>{if(IAM)iaIdeasScan();},15*6e4);setTimeout(()=>{if(IAM)iaIdeasScan();},20000);})();
 </script>
+<script>
+/* ---------- botón "atrás" del celular: cierra lo que esté abierto y vuelve a la pantalla anterior; para salir hay que tocarlo dos veces ---------- */
+(function(){
+  if(!history.pushState)return;
+  const VST=[];let fromBack=false,exitT=0;
+  const sv=window.setView;
+  if(typeof sv==='function')window.setView=setView=function(v){const cur=document.body.dataset.v||'main';if(!fromBack&&v!==cur){if(v==='main')VST.length=0;else{VST.push(cur);if(VST.length>20)VST.shift();}}return sv(v);};
+  const vis=id=>{const e=$(id);return e&&!e.hidden;};
+  function closeTop(){
+    try{if(typeof PAYUI!=='undefined'&&PAYUI.open){payClose();return true;}}catch(e){}
+    try{if(typeof ADM!=='undefined'&&ADM.open){admClose();return true;}}catch(e){}
+    if(vis('iaCmp')){$('iaCmp').hidden=true;return true;}
+    if(vis('tpop')){$('tpop').hidden=true;return true;}
+    if(vis('cu')){$('cu').hidden=true;return true;}
+    if(vis('iaPanel')){iaShow(false);return true;}
+    const lq=$('lqBox');if(lq&&lq.classList.contains('big')){$('lqX').click();return true;}
+    if(document.body.classList.contains('fs-on')){$('fsExit').click();return true;}
+    if(vis('trn')){trnHide();return true;}
+    const dw=$('drw');if(dw&&dw.classList.contains('open')){drawer(false);return true;}
+    const cur=document.body.dataset.v||'main';
+    if(cur!=='main'&&typeof setView==='function'){fromBack=true;try{setView(VST.pop()||'main');}finally{fromBack=false;}return true;}
+    return false;}
+  const arm=()=>{try{history.pushState({cvb:1},'',location.href);}catch(e){}};
+  try{history.replaceState({cvb:0},'',location.href);}catch(e){}
+  arm();
+  addEventListener('popstate',e=>{
+    if(e.state&&e.state.cvb===1)return;
+    if(closeTop()){exitT=0;arm();return;}
+    if(Date.now()-exitT<2500){history.back();return;}
+    exitT=Date.now();arm();
+    try{trnToast('Tocá <b>atrás</b> otra vez para salir de CRIPTO-LIVE');}catch(_){}});
+})();
+</script>
 </body>
 </html>

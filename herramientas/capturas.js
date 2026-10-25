@@ -18,6 +18,13 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         const ov = document.getElementById('overlay'), ch = document.getElementById('chart'), rr = chart.timeScale().getVisibleLogicalRange();
         return { m, t, sym: symbol, velas: candles.length, rango: rr ? [Math.round(rr.from), Math.round(rr.to)] : null, chartH: ch.clientHeight, chartW: ch.clientWidth, overlayH: ov && ov.height, overlayCssH: ov && ov.clientHeight, ind: [...active] }; }, [m, t, s]);
       info.push(r); const el = await pg.$('#chartWrap') || await pg.$('#chart'); await el.screenshot({ path: `capturas/${m}-${t}.png` }); } catch (e) { info.push({ m, t, error: e.message }); } }
+  /* botón atrás del celular: cada paso anota la pantalla y lo abierto */
+  try { const st = () => pg.evaluate(() => ({ v: document.body.dataset.v, ia: !!(document.getElementById('iaPanel') && !document.getElementById('iaPanel').hidden), trn: !!(document.getElementById('trn') && !document.getElementById('trn').hidden), toast: !!document.querySelector('.trn-toast'), url: location.href.slice(-30) }));
+    const at = []; await pg.evaluate(() => { document.querySelectorAll('.trn-toast').forEach(x => x.remove()); setView('main'); });
+    for (const g of ['sig', 'pil', 'cic']) { await pg.evaluate(g => document.querySelector(`#mnav [data-go="${g}"]`).click(), g); await pg.waitForTimeout(500); at.push(['abre ' + g, await st()]); }
+    await pg.evaluate(() => iaShow(true)); await pg.waitForTimeout(800); at.push(['abre IA', await st()]);
+    for (let i = 0; i < 6; i++) { await pg.evaluate(() => history.back()); await pg.waitForTimeout(700); at.push(['atrás ' + (i + 1), await st().catch(e => 'salió: ' + e.message.slice(0, 60))]); }
+    info.push({ atras: at }); } catch (e) { info.push({ atras_error: e.message }); }
   await pg.screenshot({ path: 'capturas/pagina-completa.png', fullPage: true });
   fs.writeFileSync('capturas/errores.json', JSON.stringify({ info, errs }, null, 1)); console.log(JSON.stringify({ info, errs }, null, 1)); await br.close();
 })().catch(e => { console.error(e); process.exit(1); });
