@@ -43,6 +43,7 @@ const pctM = (f, hrs) => +(100 * (LEV * f - LEV * 2 * COSTO - LEV * FUND * hrs /
 
 /* ---------- gestión ---------- */
 let BTC = null;
+function btcAdx(t) { let lo = 0, hi = BTC.b.length; while (lo < hi) { const m = (lo + hi) >> 1; if (BTC.b[m].t + 4 * H <= t) lo = m + 1; else hi = m; } return BTC.adx[lo - 1] || 0; }
 function btcOk(t, d) { if (!BTC) return true; let lo = 0, hi = BTC.b.length; while (lo < hi) { const m = (lo + hi) >> 1; if (BTC.b[m].t + 4 * H <= t) lo = m + 1; else hi = m; } const i = lo - 1;
   if (i < 50 || !BTC.e[i]) return true; return d > 0 ? BTC.b[i].c > BTC.e[i] : BTC.b[i].c < BTC.e[i]; }
 /* objetivos sobre las velas de resolución R (ms = su duración) */
@@ -54,7 +55,7 @@ function tpSim(R, ms, j0, e, d, sl, r, maxH, t0) { const tps = [1, 2, 3].map(k =
 function push(OUT, s, t, d, sl, x) { if (!x) { OUT.push({ s, t, d, open: true }); return Infinity; }
   OUT.push({ s, t, d, sl, pct: pctM(x.f, (x.end - t) / H), stop: !!x.stop, hit: x.hit || 0, plazo: !!x.plazo, hrs: (x.end - t) / H }); return x.end; }
 /* entrada en la vela i de b (tf ms): con "lvl", disparo intravela al tocar ese precio (buscado en las velas de resolución); sin lvl, a la apertura de i */
-function entrar(C, P, OUT, d, e, sl, i, lvl) { const { s, b, ms, R, rms } = C; if (P.minsl && sl < P.minsl) sl = P.minsl; if (!(sl <= MAXSL) || sl < .002) return 0; if (P.btc && !btcOk(b[i].t, d)) return 0;
+function entrar(C, P, OUT, d, e, sl, i, lvl) { const { s, b, ms, R, rms } = C; if (P.minsl && sl < P.minsl) sl = P.minsl; if (!(sl <= MAXSL) || sl < .002) return 0; if (P.btc && !btcOk(b[i].t, d)) return 0; if (P.adxb && btcAdx(b[i].t) < P.adxb) return 0;
   let j0 = idxAfter(R, b[i].t), te = b[i].t;
   if (lvl != null) { for (; j0 < R.length && R[j0].t < b[i].t + ms; j0++) if (d > 0 ? R[j0].h >= lvl : R[j0].l <= lvl) break; if (j0 >= R.length || R[j0].t >= b[i].t + ms) return 0; te = R[j0].t; }
   if (P.r) return push(OUT, s, te, d, sl, tpSim(R, rms, j0, e, d, sl, P.r, P.maxH, te));
@@ -153,8 +154,22 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     'LARGO · TORTUGAS 20 · 1d · obj 0,4': ['largo', '1d', tortugas, O({ n: 20, ema: 200, k: .5, r: .4, maxH: 504 })],
     'LARGO · WILLIAMS · 1d · obj 0,5': ['largo', '1d', williams, O({ k: .5, ema: 20, r: .5, maxH: 24 })] };
   const VF = process.env.VAR ? new RegExp(process.env.VAR) : null; for (const k of Object.keys(V)) if (VF && !VF.test(k)) delete V[k];
+  if (process.env.RONDA === '3') { for (const k of Object.keys(V)) delete V[k];
+    for (const [pl, tf, mh] of [['medio', '4h', 168], ['largo', '8h', 336], ['largo', '12h', 336], ['largo', '1d', 504]]) {
+      const T = (pl === 'medio' ? 'MEDIO' : 'LARGO') + ' · ', z = ' · ' + tf;
+      for (const r of [.3, .5, .75]) { const rr = ' · obj ' + String(r).replace('.', ',');
+        V[T + 'RASCHKE Turtle Soup' + z + rr] = [pl, tf, sopa, O({ r, maxH: mh })];
+        V[T + 'RASCHKE Turtle Soup · EMA 200' + z + rr] = [pl, tf, sopa, O({ r, maxH: mh, ema: 1 })];
+        V[T + 'RASCHKE Turtle Soup · BTC ADX ≥ 24' + z + rr] = [pl, tf, sopa, O({ r, maxH: mh, adxb: 24 })];
+        V[T + 'CONNORS RSI 2' + z + rr] = [pl, tf, connors, O({ lo: 10, atr: 1, r, maxH: mh })];
+        V[T + 'CONNORS RSI 2 extremo (5)' + z + rr] = [pl, tf, connors, O({ lo: 5, atr: 1, r, maxH: mh })];
+        V[T + 'CONNORS RSI 2 · BTC ADX ≥ 24' + z + rr] = [pl, tf, connors, O({ lo: 10, atr: 1, r, maxH: mh, adxb: 24 })];
+        V[T + 'TORTUGAS 20' + z + rr] = [pl, tf, tortugas, O({ n: 20, ema: 200, k: tf === '4h' ? 1 : tf === '1d' ? .5 : .6, r, maxH: mh })];
+        V[T + 'TORTUGAS 20 · BTC ADX ≥ 24' + z + rr] = [pl, tf, tortugas, O({ n: 20, ema: 200, k: tf === '4h' ? 1 : tf === '1d' ? .5 : .6, r, maxH: mh, adxb: 24 })];
+        V[T + 'RASCHKE Holy Grail' + z + rr] = [pl, tf, holy, O({ adx: 30, r, maxH: mh })];
+        V[T + 'KULLAMÄGI' + z + rr] = [pl, tf, kulla, O(Object.assign({ r, maxH: mh }, tf === '4h' ? KU4 : tf === '8h' ? { up: 60, base: 9, sube: .35, rango: .18, vol: 1.5 } : tf === '12h' ? { up: 50, base: 8, sube: .35, rango: .18, vol: 1.5 } : { up: 40, base: 6, sube: .40, rango: .20, vol: 1.5 }))]; } } }
   const R = Object.fromEntries(Object.keys(V).map(k => [k, []])), MS = { '1h': H, '15m': M15, '30m': 2 * M15, '4h': 4 * H, '8h': 8 * H, '12h': 12 * H, '1d': DAY };
-  { const bb = agg(await klines('BTCUSDT', '1h', H, FROM - 260 * DAY), H, 4); BTC = { b: bb, e: ema(bb.map(x => x.c), 50) }; }
+  { const bb = agg(await klines('BTCUSDT', '1h', H, FROM - 260 * DAY), H, 4); BTC = { b: bb, e: ema(bb.map(x => x.c), 50), adx: adxA(bb).adx }; }
   for (let si = 0; si < syms.length; si++) { const s = syms[si]; const b1 = await klines(s, '1h', H, FROM - 260 * DAY); if (b1.length < 2000) { console.log('sin datos', s); continue; }
     const TF = { '1h': b1, '4h': agg(b1, H, 4), '8h': agg(b1, H, 8), '12h': agg(b1, H, 12), '1d': agg(b1, H, 24) }; let b15 = null;
     if (si < NS) { b15 = await klines(s, '15m', M15, FROM - 25 * DAY); TF['15m'] = b15; TF['30m'] = agg(b15, M15, 2); }
