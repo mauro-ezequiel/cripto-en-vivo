@@ -120,6 +120,48 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, peor: Math.round(u.reduce((a, x) => Math.min(a, x), 0)), stops: D.filter(o => o.stop).length,
     obj: [1, 2, 3].map(k => +(100 * D.filter(o => o.hit >= k).length / n).toFixed(1)), long: D.filter(o => o.d > 0).length, horas: Math.round(D.reduce((a, o) => a + o.hrs, 0) / n), x: +(D.reduce((a, o) => a + (o.lev || LEV), 0) / n).toFixed(1) }; }
 
+/* RONDA=5: los 5 bots elegidos con las MISMAS reglas que corren en vivo (herramientas/traders-lib.js), cada uno con su X,
+   y qué indicador le suma o le resta a la certeza (para la página). Escribe traders-bt.json */
+async function ronda5(syms, FROM, T1) { const TL = require('./traders-lib.js'), mid = FROM + (NOW - FROM) / 2, M4 = DIAS / 30.4, MSx = { '4h': 4 * H, '12h': 12 * H };
+  const bb1 = await klines('BTCUSDT', '1h', H, FROM - 260 * DAY), bb = agg(bb1, H, 4); BTC = { b: bb, e: ema(bb.map(x => x.c), 50), adx: adxA(bb).adx };
+  const R = Object.fromEntries(TL.BOTS.map(V => [V.v, []]));
+  for (const s of syms) { const b1 = await klines(s, '1h', H, FROM - 260 * DAY); if (b1.length < 2000) continue;
+    const TF = { '4h': agg(b1, H, 4), '12h': agg(b1, H, 12) }, bd = agg(b1, H, 24), dE = ema(bd.map(x => x.c), 21);
+    const dTrend = t => { let i = idxAfter(bd, t - DAY + 1) - 1; if (i < 4 || !dE[i] || !dE[i - 3]) return 0; return (bd[i].c > dE[i] ? .5 : -.5) + (dE[i] > dE[i - 3] ? .5 : -.5); };
+    for (const V of TL.BOTS) { const b = TF[V.tf], ms = MSx[V.tf], OUT = R[V.v]; let free = 0;
+      for (let i = 301; i < b.length; i++) { if (b[i].t < free || b[i].t < FROM - 30 * DAY) continue;
+        const ctx = { tf: V.tf, btcAdx: btcAdx(b[i].t), btcDir: btcOk(b[i].t, 1) ? 1 : -1, dTrend: dTrend(b[i].t) };
+        const xs = TL.plan(V, b.slice(i - 300, i), ctx); let done = false;
+        for (const x of xs) { let j0 = idxAfter(b1, b[i].t), e, te, lo = Infinity, hi = -Infinity;
+          if (x.ya) { e = b[i].o; te = b[i].t; }
+          else { for (; j0 < b1.length && b1[j0].t < b[i].t + ms; j0++) { const q = b1[j0]; if (x.dir > 0 ? q.h >= x.lvl : q.l <= x.lvl) break; lo = Math.min(lo, q.l); hi = Math.max(hi, q.h); }
+            if (j0 >= b1.length || b1[j0].t >= b[i].t + ms) continue; const q = b1[j0]; e = x.dir > 0 ? Math.max(x.lvl, q.o) : Math.min(x.lvl, q.o); te = q.t; lo = Math.min(lo, q.o); hi = Math.max(hi, q.o); }
+          if (!btcOk(te, x.dir)) continue; if (V.adxb && btcAdx(te) < V.adxb) continue;
+          const sx = TL.stopDe(V, x, e, isFinite(lo) ? lo : null, isFinite(hi) ? hi : null); if (!sx) continue; const d = x.dir;
+          let res;
+          if (V.r) res = tpSim(b1, H, j0, e, d, sx.sl, V.r, V.age / H, te);
+          else { let lv = e * (1 - d * sx.sl); res = null;
+            for (let j = j0; j < b1.length; j++) { const q = b1[j]; if (q.t - te >= V.age) { res = { f: d * (q.c / e - 1), end: q.t + H, plazo: 1 }; break; }
+              if (d * (lv - (d > 0 ? q.l : q.h)) >= 0) { const xx = d > 0 ? Math.min(lv, q.o) : Math.max(lv, q.o); res = { f: d * (xx / e - 1), end: q.t + H, stop: d * (xx / e - 1) <= -sx.sl * .98 }; break; }
+              if ((q.t + H) % ms === 0) { const bi = idxAfter(b, q.t + H - ms); if (b[bi] && b[bi].t === q.t + H - ms && bi > V.m) { const ex = d > 0 ? loN(b, bi + 1, V.m) : hiN(b, bi + 1, V.m); lv = d > 0 ? Math.max(lv, ex) : Math.min(lv, ex); } } } }
+          if (!res) { free = Infinity; done = true; break; }
+          if (te >= FROM) OUT.push({ s, t: te, d, sl: sx.sl, lev: sx.lev, pct: pctM(res.f, (res.end - te) / H, sx.lev), stop: !!res.stop, hit: res.hit || 0, hrs: (res.end - te) / H, f: x.f });
+          free = res.end; done = true; break; }
+      } } process.stdout.write(s + ' '); }
+  /* qué le suma y qué le resta: cada indicador partido en dos (sí/no o alto/bajo por la mediana); se ordena por % de ganadas (certeza) */
+  const grupos = L => { const keys = new Set(); L.forEach(o => Object.keys(o.f || {}).forEach(k => keys.add(k))); const G = [], base = L.filter(o => o.pct > 0).length / L.length * 100;
+    for (const k of keys) { const V = L.filter(o => o.f[k] != null); if (V.length < 40) continue; const vals = [...new Set(V.map(o => o.f[k]))];
+      let parts; if (vals.every(v => v === 0 || v === 1)) parts = [[k, 'si', V.filter(o => o.f[k] === 1)], [k, 'no', V.filter(o => o.f[k] === 0)]];
+      else { const srt = V.map(o => o.f[k]).sort((a, b) => a - b), med = srt[srt.length >> 1]; parts = [[k, 'alto', V.filter(o => o.f[k] >= med), med], [k, 'bajo', V.filter(o => o.f[k] < med), med]]; }
+      for (const [kk, lado, LL, med] of parts) { if (LL.length < 20) continue; const n = LL.length, w = LL.filter(o => o.pct > 0).length / n * 100;
+        G.push({ k: kk, lado, med: med != null ? +(+med).toFixed(2) : null, n, gana: +w.toFixed(1), usd_op: +(LL.reduce((a, o) => a + o.pct * 3, 0) / n).toFixed(1), dif: +(w - base).toFixed(1) }); } }
+    return G.sort((a, b) => b.dif - a.dif); };
+  const out = { upd: NOW, dias: DIAS, monedas: syms.length, nota: 'Prueba de 4 años con las mismas reglas que el bot en vivo (herramientas/traders-lib.js). Cada señal con 300 USD de margen y la X de cada bot, con costos.', bots: {} };
+  for (const V of TL.BOTS) { const L = R[V.v].sort((a, b) => a.t - b.t);
+    out.bots[V.v] = { nm: V.nm, años4: st(L, M4), mitad1: st(L.filter(o => o.t < mid), M4 / 2), mitad2: st(L.filter(o => o.t >= mid), M4 / 2), año: st(L.filter(o => o.t >= T1), 12), grupos: grupos(L) };
+    console.log('\n' + V.nm, JSON.stringify(out.bots[V.v].años4), JSON.stringify(out.bots[V.v].año)); }
+  fs.writeFileSync('investigacion-traders.json', JSON.stringify(out, null, 1)); }
+
 (async () => {
   const FROM = NOW - DIAS * DAY, T1 = NOW - 365 * DAY;
   const tk = await getJ(`${API}/ticker/24hr`), syms = tk.filter(x => /USDT$/.test(x.symbol) && !STABLE.test(x.symbol) && !/(UP|DOWN|BULL|BEAR)USDT$/.test(x.symbol)).sort((a, b) => b.quoteVolume - a.quoteVolume).slice(0, NC).map(x => x.symbol);
@@ -168,6 +210,7 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     'LARGO · TORTUGAS 20 · 1d · obj 0,4': ['largo', '1d', tortugas, O({ n: 20, ema: 200, k: .5, r: .4, maxH: 504 })],
     'LARGO · WILLIAMS · 1d · obj 0,5': ['largo', '1d', williams, O({ k: .5, ema: 20, r: .5, maxH: 24 })] };
   const VF = process.env.VAR ? new RegExp(process.env.VAR) : null; for (const k of Object.keys(V)) if (VF && !VF.test(k)) delete V[k];
+  if (process.env.RONDA === '5') return ronda5(syms, FROM, T1);
   if (process.env.RONDA === '4') { for (const k of Object.keys(V)) delete V[k];
     /* X según el stop (RIESGO) y stops más anchos: así entran las salidas originales de cada trader */
     const A = (k, v) => { V[k] = v; };
