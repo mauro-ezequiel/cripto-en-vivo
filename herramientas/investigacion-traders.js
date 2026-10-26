@@ -102,7 +102,7 @@ function connors(C, P, OUT) { const { b, ms, R, rms } = C, Cl = b.map(x => x.c),
 
 function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct / 100 * MARGEN), lo = u.filter(x => x < 0);
   return { n, por_mes: +(n / meses).toFixed(1), gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)),
-    perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, peor: Math.round(Math.min(0, ...u)), stops: D.filter(o => o.stop).length,
+    perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, peor: Math.round(u.reduce((a, x) => Math.min(a, x), 0)), stops: D.filter(o => o.stop).length,
     obj: [1, 2, 3].map(k => +(100 * D.filter(o => o.hit >= k).length / n).toFixed(1)), long: D.filter(o => o.d > 0).length, horas: Math.round(D.reduce((a, o) => a + o.hrs, 0) / n) }; }
 
 (async () => {
