@@ -16,7 +16,7 @@
    Uso: node herramientas/investigacion-traders.js → investigacion-traders.json */
 const fs = require('fs');
 const API = 'https://data-api.binance.vision/api/v3', DAY = 864e5, H = 36e5, M15 = 9e5, NOW = Date.now();
-const DIAS = +(process.env.DIAS || 1460), NC = +(process.env.NC || 60), NS = +(process.env.NS || 30), LEV = 10, MARGEN = 300, COSTO = .0008, FUND = .0001, MAXSL = +(process.env.MAXSL || .05);
+const DIAS = +(process.env.DIAS || 1460), NC = +(process.env.NC || 60), NS = +(process.env.NS || 30), LEV = 10, MARGEN = 300, COSTO = .0008, FUND = .0001, MAXSL = +(process.env.MAXSL || (process.env.RIESGO ? .25 : .05));
 const STABLE = /^(USDC|FDUSD|TUSD|USDP|DAI|BUSD|EUR|USDE|USD1|PYUSD|XUSD|AEUR|EURI|BFUSD|USDS|RLUSD|USDF|FRAX|USDG|WBTC|WBETH|BNSOL|PAXG|XAUT)USDT$/;
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function getJ(u) { for (let k = 0; k < 6; k++) { try { const r = await fetch(u); if (r.ok) return await r.json(); if (r.status === 400) return null; } catch (e) {} await sleep(1500 * (k + 1)); } return null; }
@@ -39,7 +39,8 @@ function adxA(b) { const tr = trA(b), at = wil(tr, 14), pd = [0], md = [0]; for 
 const hiN = (b, i, n) => { let m = -Infinity; for (let j = Math.max(0, i - n); j < i; j++) m = Math.max(m, b[j].h); return m; };
 const loN = (b, i, n) => { let m = Infinity; for (let j = Math.max(0, i - n); j < i; j++) m = Math.min(m, b[j].l); return m; };
 const idxAfter = (rb, t) => { let lo = 0, hi = rb.length; while (lo < hi) { const m = (lo + hi) >> 1; if (rb[m].t < t) lo = m + 1; else hi = m; } return lo; };
-const pctM = (f, hrs) => +(100 * (LEV * f - LEV * 2 * COSTO - LEV * FUND * hrs / 8)).toFixed(2);
+const RIESGO = +(process.env.RIESGO || 0); /* RIESGO=0.35: la X de cada señal se elige para que el stop cueste ~35 % del margen (máx. × 10, mín. × 1) */
+const pctM = (f, hrs, L = LEV) => +(100 * (L * f - L * 2 * COSTO - L * FUND * hrs / 8)).toFixed(2);
 
 /* ---------- gestión ---------- */
 let BTC = null;
@@ -52,21 +53,34 @@ function tpSim(R, ms, j0, e, d, sl, r, maxH, t0) { const tps = [1, 2, 3].map(k =
     if (d * (stop - (d > 0 ? q.l : q.h)) >= 0) return { f: real + (1 - hit / 3) * d * (stop / e - 1), end: q.t + ms, stop: !hit, hit };
     while (hit < 3 && d * ((d > 0 ? q.h : q.l) - tps[hit]) >= 0) { real += d * (tps[hit] / e - 1) / 3; hit++; } if (hit >= 3) return { f: real, end: q.t + ms, hit }; }
   if (j >= R.length) return null; const k = Math.max(j - 1, j0); return { f: real + (1 - hit / 3) * d * (R[k].c / e - 1), end: R[k].t + ms, hit, plazo: 1 }; }
-function push(OUT, s, t, d, sl, x) { if (!x) { OUT.push({ s, t, d, open: true }); return Infinity; }
-  OUT.push({ s, t, d, sl, pct: pctM(x.f, (x.end - t) / H), stop: !!x.stop, hit: x.hit || 0, plazo: !!x.plazo, hrs: (x.end - t) / H }); return x.end; }
+function push(OUT, s, t, d, sl, x, L = LEV) { if (!x) { OUT.push({ s, t, d, open: true }); return Infinity; }
+  OUT.push({ s, t, d, sl, lev: L, pct: pctM(x.f, (x.end - t) / H, L), stop: !!x.stop, hit: x.hit || 0, plazo: !!x.plazo, hrs: (x.end - t) / H }); return x.end; }
 /* entrada en la vela i de b (tf ms): con "lvl", disparo intravela al tocar ese precio (buscado en las velas de resolución); sin lvl, a la apertura de i */
 function entrar(C, P, OUT, d, e, sl, i, lvl) { const { s, b, ms, R, rms } = C; if (P.minsl && sl < P.minsl) sl = P.minsl; if (!(sl <= MAXSL) || sl < .002) return 0; if (P.btc && !btcOk(b[i].t, d)) return 0; if (P.adxb && btcAdx(b[i].t) < P.adxb) return 0;
   let j0 = idxAfter(R, b[i].t), te = b[i].t;
   if (lvl != null) { for (; j0 < R.length && R[j0].t < b[i].t + ms; j0++) if (d > 0 ? R[j0].h >= lvl : R[j0].l <= lvl) break; if (j0 >= R.length || R[j0].t >= b[i].t + ms) return 0; te = R[j0].t; }
-  if (P.r) return push(OUT, s, te, d, sl, tpSim(R, rms, j0, e, d, sl, P.r, P.maxH, te));
-  return push(OUT, s, te, d, sl, P.orig(j0, e, d, sl, te)); }
+  const L = P.lev || (RIESGO ? Math.max(1, Math.min(10, Math.floor(RIESGO / sl))) : LEV);
+  if (P.r) return push(OUT, s, te, d, sl, tpSim(R, rms, j0, e, d, sl, P.r, P.maxH, te), L);
+  return push(OUT, s, te, d, sl, P.orig(j0, e, d, sl, te), L); }
+/* bar de b que terminó justo al final de la vela de resolución q (o -1) */
+const finB = (C, q) => { if ((q.t + C.rms) % C.ms) return -1; const bi = idxAfter(C.b, q.t + C.rms - C.ms); return C.b[bi] && C.b[bi].t === q.t + C.rms - C.ms ? bi : -1; };
 
 /* ---------- estrategias: cada una recorre las velas b de su temporalidad ---------- */
 function tortugas(C, P, OUT) { const { b } = C, A = wil(trA(b), 20), E = ema(b.map(x => x.c), P.ema || 1); let free = 0;
+  /* salida original de las Tortugas: stop 2 N y salida al romper el canal contrario de m velas (se mira al cerrar cada vela de b) */
+  P.orig = (j0, e, d, sl, te) => { const R = C.R; let lv = e * (1 - d * sl); for (let j = j0; j < R.length; j++) { const q = R[j];
+      if (d * (lv - (d > 0 ? q.l : q.h)) >= 0) { const x = d > 0 ? Math.min(lv, q.o) : Math.max(lv, q.o); return { f: d * (x / e - 1), end: q.t + C.rms, stop: d * (x / e - 1) <= -sl * .98 }; }
+      const bi = finB(C, q); if (bi > P.m) { const ex = d > 0 ? loN(b, bi + 1, P.m) : hiN(b, bi + 1, P.m); lv = d > 0 ? Math.max(lv, ex) : Math.min(lv, ex); } } return null; };
   for (let i = Math.max(P.n, 210) + 1; i < b.length; i++) { if (b[i].t < free || !A[i - 1]) continue; const up = hiN(b, i, P.n), dn = loN(b, i, P.n);
     for (const d of [1, -1]) { if (!(d > 0 ? b[i].h > up : b[i].l < dn)) continue; if (P.ema && (d > 0 ? b[i - 1].c < E[i - 1] : b[i - 1].c > E[i - 1])) continue;
       const lvl = d > 0 ? up : dn, e = d > 0 ? Math.max(up, b[i].o) : Math.min(dn, b[i].o), f = entrar(C, P, OUT, d, e, 2 * A[i - 1] / e * (P.k || 1), i, lvl); if (f) { free = f; break; } } } }
 function kulla(C, P, OUT) { const { b } = C, Cl = b.map(x => x.c), A = wil(trA(b), 14), E1 = ema(Cl, 10), E2 = ema(Cl, 20); let free = 0;
+  /* salida original de Kullamägi: vende 1/3 a los P.parcialH horas si va ganando (stop a la entrada) y el resto con un cierre bajo la media P.trail */
+  const Et = ema(Cl, P.trail || 10);
+  P.orig = (j0, e, d, sl, te) => { const R = C.R; let stop = e * (1 - sl), part = 0, real = 0;
+    for (let j = j0; j < R.length; j++) { const q = R[j]; if (q.l <= stop) return { f: real + (1 - part) * (Math.min(stop, q.o) / e - 1), end: q.t + C.rms, stop: !part };
+      if (!part && q.t - te >= P.parcialH * H && q.c > e) { part = 1 / 3; real += (q.c / e - 1) / 3; stop = Math.max(stop, e); }
+      const bi = finB(C, q); if (bi >= 0 && q.t - te >= 2 * C.ms && b[bi].c < Et[bi]) return { f: real + (1 - part) * (q.c / e - 1), end: q.t + C.rms, hit: part ? 1 : 0 }; } return null; };
   for (let i = P.up + P.base + 2; i < b.length - 1; i++) { if (b[i + 1].t < free || !A[i] || !E2[i - 1]) continue;
     const lo = loN(b, i - P.base, P.up), hiB = hiN(b, i, P.base), loB = loN(b, i, P.base);
     if (hiB / lo - 1 < P.sube || hiB / loB - 1 > P.rango || !(Cl[i - 1] > E1[i - 1] && E1[i - 1] > E2[i - 1])) continue;
@@ -104,7 +118,7 @@ function connors(C, P, OUT) { const { b, ms, R, rms } = C, Cl = b.map(x => x.c),
 function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct / 100 * MARGEN), lo = u.filter(x => x < 0);
   return { n, por_mes: +(n / meses).toFixed(1), gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)),
     perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, peor: Math.round(u.reduce((a, x) => Math.min(a, x), 0)), stops: D.filter(o => o.stop).length,
-    obj: [1, 2, 3].map(k => +(100 * D.filter(o => o.hit >= k).length / n).toFixed(1)), long: D.filter(o => o.d > 0).length, horas: Math.round(D.reduce((a, o) => a + o.hrs, 0) / n) }; }
+    obj: [1, 2, 3].map(k => +(100 * D.filter(o => o.hit >= k).length / n).toFixed(1)), long: D.filter(o => o.d > 0).length, horas: Math.round(D.reduce((a, o) => a + o.hrs, 0) / n), x: +(D.reduce((a, o) => a + (o.lev || LEV), 0) / n).toFixed(1) }; }
 
 (async () => {
   const FROM = NOW - DIAS * DAY, T1 = NOW - 365 * DAY;
@@ -154,6 +168,32 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     'LARGO · TORTUGAS 20 · 1d · obj 0,4': ['largo', '1d', tortugas, O({ n: 20, ema: 200, k: .5, r: .4, maxH: 504 })],
     'LARGO · WILLIAMS · 1d · obj 0,5': ['largo', '1d', williams, O({ k: .5, ema: 20, r: .5, maxH: 24 })] };
   const VF = process.env.VAR ? new RegExp(process.env.VAR) : null; for (const k of Object.keys(V)) if (VF && !VF.test(k)) delete V[k];
+  if (process.env.RONDA === '4') { for (const k of Object.keys(V)) delete V[k];
+    /* X según el stop (RIESGO) y stops más anchos: así entran las salidas originales de cada trader */
+    const A = (k, v) => { V[k] = v; };
+    for (const tf of ['15m', '30m']) { const z = ' · ' + tf;
+      A('CORTO · CONNORS RSI 2 · salida original · stop 3 ATR' + z, ['corto', tf, connors, O({ lo: 10, atr: 3, maxO: 24 })]);
+      A('CORTO · CONNORS RSI 2 extremo (5) · salida original · stop 4 ATR' + z, ['corto', tf, connors, O({ lo: 5, atr: 4, maxO: 24 })]);
+      A('CORTO · CONNORS RSI 2 · stop 3 ATR · obj 0,5' + z, ['corto', tf, connors, O({ lo: 10, atr: 3, r: .5, maxH: 24 })]);
+      A('CORTO · RASCHKE Turtle Soup · obj 0,75' + z, ['corto', tf, sopa, O({ r: .75, maxH: 24 })]);
+      A('CORTO · RASCHKE Turtle Soup · BTC ADX ≥ 24 · obj 0,75' + z, ['corto', tf, sopa, O({ r: .75, maxH: 24, adxb: 24 })]);
+      A('CORTO · RASCHKE Holy Grail · obj 0,75' + z, ['corto', tf, holy, O({ adx: 30, r: .75, maxH: 24 })]); }
+    A('CORTO · WILLIAMS rango de 4 h · obj 0,75', ['corto', '4h', williams, O({ k: .5, ema: 20, r: .75, maxH: 8 })]);
+    for (const [pl, tf, mh] of [['medio', '4h', 168], ['largo', '12h', 336], ['largo', '1d', 504]]) { const T = (pl === 'medio' ? 'MEDIO' : 'LARGO') + ' · ', z = ' · ' + tf;
+      A(T + 'CONNORS RSI 2 · salida original · stop 3 ATR' + z, [pl, tf, connors, O({ lo: 10, atr: 3, maxO: mh })]);
+      A(T + 'CONNORS RSI 2 extremo (5) · salida original · stop 3 ATR' + z, [pl, tf, connors, O({ lo: 5, atr: 3, maxO: mh })]);
+      A(T + 'CONNORS RSI 2 · stop 2,5 ATR · obj 0,5' + z, [pl, tf, connors, O({ lo: 10, atr: 2.5, r: .5, maxH: mh })]);
+      A(T + 'CONNORS RSI 2 · BTC ADX ≥ 24 · stop 2,5 ATR · obj 0,5' + z, [pl, tf, connors, O({ lo: 10, atr: 2.5, r: .5, maxH: mh, adxb: 24 })]);
+      A(T + 'TORTUGAS 55/20 · salida original' + z, [pl, tf, tortugas, O({ n: 55, m: 20, ema: 200 })]);
+      A(T + 'TORTUGAS 20/10 · salida original' + z, [pl, tf, tortugas, O({ n: 20, m: 10, ema: 200 })]);
+      A(T + 'TORTUGAS 20 · stop 2 N · obj 0,75' + z, [pl, tf, tortugas, O({ n: 20, ema: 200, r: .75, maxH: mh })]);
+      const ku = tf === '4h' ? KU4 : tf === '12h' ? { up: 50, base: 8, sube: .35, rango: .18, vol: 1.5 } : { up: 40, base: 6, sube: .40, rango: .20, vol: 1.5 };
+      A(T + 'KULLAMÄGI · salida original' + z, [pl, tf, kulla, O(Object.assign({ parcialH: tf === '4h' ? 72 : 96, trail: tf === '1d' ? 10 : 20 }, ku))]);
+      A(T + 'KULLAMÄGI · obj 0,75' + z, [pl, tf, kulla, O(Object.assign({ r: .75, maxH: mh }, ku))]);
+      A(T + 'RASCHKE Turtle Soup · obj 0,75' + z, [pl, tf, sopa, O({ r: .75, maxH: mh })]);
+      A(T + 'RASCHKE Turtle Soup · obj 0,5' + z, [pl, tf, sopa, O({ r: .5, maxH: mh })]);
+      A(T + 'RASCHKE Holy Grail · obj 0,75' + z, [pl, tf, holy, O({ adx: 30, r: .75, maxH: mh })]);
+      A(T + 'WILLIAMS · obj 0,75' + z, [pl, tf, williams, O({ k: .5, ema: 20, r: .75, maxH: tf === '4h' ? 8 : tf === '12h' ? 24 : 48 })]); } }
   if (process.env.RONDA === '3') { for (const k of Object.keys(V)) delete V[k];
     for (const [pl, tf, mh] of [['medio', '4h', 168], ['largo', '8h', 336], ['largo', '12h', 336], ['largo', '1d', 504]]) {
       const T = (pl === 'medio' ? 'MEDIO' : 'LARGO') + ' · ', z = ' · ' + tf;
