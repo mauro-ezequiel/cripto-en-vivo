@@ -1,0 +1,3236 @@
+{
+ "upd": 1792972909614,
+ "dias": 1460,
+ "monedas": [
+  "BTCUSDT",
+  "ETHUSDT",
+  "ZECUSDT",
+  "SOLUSDT",
+  "XRPUSDT",
+  "NEARUSDT",
+  "BNBUSDT",
+  "ENAUSDT",
+  "SUIUSDT",
+  "WLDUSDT",
+  "PEPEUSDT",
+  "UNIUSDT",
+  "TUSDT",
+  "DOGEUSDT",
+  "BMTUSDT",
+  "TRXUSDT",
+  "UUSDT",
+  "QNTUSDT",
+  "HYPEUSDT",
+  "GTCUSDT",
+  "LINKUSDT",
+  "AAVEUSDT",
+  "TAOUSDT",
+  "ADAUSDT",
+  "SNDKBUSDT",
+  "LTCUSDT",
+  "INJUSDT",
+  "ERAUSDT",
+  "PUMPUSDT",
+  "TONUSDT",
+  "SOXLBUSDT",
+  "ONDOUSDT",
+  "AVAXUSDT",
+  "STEEMUSDT",
+  "BABYUSDT",
+  "AIUSDT",
+  "DODOUSDT",
+  "XECUSDT",
+  "DASHUSDT",
+  "AIGENSYNUSDT",
+  "POLYXUSDT",
+  "GRAMUSDT",
+  "IOSTUSDT",
+  "XLMUSDT",
+  "STRKUSDT",
+  "ARBUSDT",
+  "FETUSDT",
+  "MEGAUSDT",
+  "NILUSDT",
+  "HBARUSDT",
+  "FILUSDT",
+  "ZROUSDT",
+  "DOTUSDT",
+  "ANKRUSDT",
+  "CRCLBUSDT",
+  "COMPUSDT",
+  "REZUSDT",
+  "MSTRBUSDT",
+  "TRUMPUSDT",
+  "MTLUSDT"
+ ],
+ "corto_monedas": 30,
+ "nota": "Cada señal con 300 USD × 10, con costos. usd = total; usd_op = por operación; peor = peor operación; obj = % que tocó el objetivo 1, 2 y 3.",
+ "variantes": {
+  "CORTO · CONNORS RSI 2 · 15m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "15m",
+   "años4": {
+    "n": 104609,
+    "por_mes": 2178.2,
+    "gana": 48.3,
+    "usd_op": -4.2,
+    "usd": -434151,
+    "perd_media": -22.1,
+    "peor": -155,
+    "stops": 33008,
+    "obj": [
+     68.4,
+     34.2,
+     23.1
+    ],
+    "long": 53694,
+    "horas": 2
+   },
+   "mitad1": {
+    "n": 46213,
+    "por_mes": 1924.5,
+    "gana": 47.2,
+    "usd_op": -3.9,
+    "usd": -179100,
+    "perd_media": -20.4,
+    "peor": -155,
+    "stops": 14261,
+    "obj": [
+     69,
+     34.4,
+     23
+    ],
+    "long": 24642,
+    "horas": 2
+   },
+   "mitad2": {
+    "n": 58396,
+    "por_mes": 2431.8,
+    "gana": 49.3,
+    "usd_op": -4.4,
+    "usd": -255052,
+    "perd_media": -23.5,
+    "peor": -155,
+    "stops": 18747,
+    "obj": [
+     67.8,
+     33.9,
+     23.2
+    ],
+    "long": 29052,
+    "horas": 2
+   },
+   "año": {
+    "n": 30301,
+    "por_mes": 2525.1,
+    "gana": 46.9,
+    "usd_op": -4.3,
+    "usd": -130980,
+    "perd_media": -21,
+    "peor": -155,
+    "stops": 9712,
+    "obj": [
+     67.9,
+     34,
+     23.1
+    ],
+    "long": 13335,
+    "horas": 2
+   },
+   "año_m1": {
+    "n": 15452,
+    "por_mes": 2575.3,
+    "gana": 47.4,
+    "usd_op": -4.5,
+    "usd": -68817,
+    "perd_media": -21.1,
+    "peor": -155,
+    "stops": 4858,
+    "obj": [
+     68.4,
+     33.6,
+     22.4
+    ],
+    "long": 6427,
+    "horas": 2
+   },
+   "año_m2": {
+    "n": 14849,
+    "por_mes": 2474.8,
+    "gana": 46.3,
+    "usd_op": -4.2,
+    "usd": -62162,
+    "perd_media": -20.9,
+    "peor": -154,
+    "stops": 4854,
+    "obj": [
+     67.2,
+     34.3,
+     24
+    ],
+    "long": 6908,
+    "horas": 2
+   }
+  },
+  "CORTO · CONNORS RSI 2 · 15m · salida original": {
+   "plazo": "corto",
+   "tf": "15m",
+   "años4": {
+    "n": 101918,
+    "por_mes": 2122.1,
+    "gana": 51,
+    "usd_op": -3.5,
+    "usd": -353485,
+    "perd_media": -20.2,
+    "peor": -154,
+    "stops": 17919,
+    "obj": [
+     64.1,
+     0,
+     0
+    ],
+    "long": 52041,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 45310,
+    "por_mes": 1886.9,
+    "gana": 50.6,
+    "usd_op": -3.3,
+    "usd": -150010,
+    "perd_media": -18.9,
+    "peor": -154,
+    "stops": 7741,
+    "obj": [
+     65,
+     0,
+     0
+    ],
+    "long": 24034,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 56608,
+    "por_mes": 2357.4,
+    "gana": 51.3,
+    "usd_op": -3.6,
+    "usd": -203475,
+    "perd_media": -21.3,
+    "peor": -154,
+    "stops": 10178,
+    "obj": [
+     63.4,
+     0,
+     0
+    ],
+    "long": 28007,
+    "horas": 1
+   },
+   "año": {
+    "n": 29593,
+    "por_mes": 2466.1,
+    "gana": 49.4,
+    "usd_op": -3.7,
+    "usd": -110706,
+    "perd_media": -19.4,
+    "peor": -151,
+    "stops": 5445,
+    "obj": [
+     62.6,
+     0,
+     0
+    ],
+    "long": 13027,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 15104,
+    "por_mes": 2517.3,
+    "gana": 51,
+    "usd_op": -3.5,
+    "usd": -53429,
+    "perd_media": -20,
+    "peor": -149,
+    "stops": 2724,
+    "obj": [
+     63.3,
+     0,
+     0
+    ],
+    "long": 6231,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 14489,
+    "por_mes": 2414.8,
+    "gana": 47.8,
+    "usd_op": -4,
+    "usd": -57278,
+    "perd_media": -18.8,
+    "peor": -151,
+    "stops": 2721,
+    "obj": [
+     62,
+     0,
+     0
+    ],
+    "long": 6796,
+    "horas": 1
+   }
+  },
+  "CORTO · CONNORS RSI 2 · 30m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "30m",
+   "años4": {
+    "n": 58038,
+    "por_mes": 1208.5,
+    "gana": 56.2,
+    "usd_op": -4.2,
+    "usd": -241591,
+    "perd_media": -34.1,
+    "peor": -155,
+    "stops": 18404,
+    "obj": [
+     67.4,
+     32.9,
+     21.8
+    ],
+    "long": 29290,
+    "horas": 3
+   },
+   "mitad1": {
+    "n": 25400,
+    "por_mes": 1057.8,
+    "gana": 54.9,
+    "usd_op": -3.5,
+    "usd": -88548,
+    "perd_media": -30.8,
+    "peor": -155,
+    "stops": 7808,
+    "obj": [
+     68.4,
+     33.1,
+     21.8
+    ],
+    "long": 13420,
+    "horas": 3
+   },
+   "mitad2": {
+    "n": 32638,
+    "por_mes": 1359.2,
+    "gana": 57.3,
+    "usd_op": -4.7,
+    "usd": -153043,
+    "perd_media": -36.8,
+    "peor": -154,
+    "stops": 10596,
+    "obj": [
+     66.7,
+     32.7,
+     21.8
+    ],
+    "long": 15870,
+    "horas": 3
+   },
+   "año": {
+    "n": 17082,
+    "por_mes": 1423.5,
+    "gana": 55.4,
+    "usd_op": -4.7,
+    "usd": -79961,
+    "perd_media": -32.4,
+    "peor": -153,
+    "stops": 5498,
+    "obj": [
+     66.8,
+     32.3,
+     21.6
+    ],
+    "long": 7319,
+    "horas": 3
+   },
+   "año_m1": {
+    "n": 8989,
+    "por_mes": 1498.2,
+    "gana": 56.2,
+    "usd_op": -5.8,
+    "usd": -52234,
+    "perd_media": -34.8,
+    "peor": -152,
+    "stops": 2950,
+    "obj": [
+     66.3,
+     31.1,
+     20.3
+    ],
+    "long": 3645,
+    "horas": 3
+   },
+   "año_m2": {
+    "n": 8093,
+    "por_mes": 1348.8,
+    "gana": 54.5,
+    "usd_op": -3.4,
+    "usd": -27727,
+    "perd_media": -29.8,
+    "peor": -153,
+    "stops": 2548,
+    "obj": [
+     67.5,
+     33.7,
+     23.1
+    ],
+    "long": 3674,
+    "horas": 3
+   }
+  },
+  "CORTO · CONNORS RSI 2 · 30m · salida original": {
+   "plazo": "corto",
+   "tf": "30m",
+   "años4": {
+    "n": 55294,
+    "por_mes": 1151.3,
+    "gana": 54.9,
+    "usd_op": -3.4,
+    "usd": -188043,
+    "perd_media": -28.7,
+    "peor": -155,
+    "stops": 9926,
+    "obj": [
+     64.2,
+     0,
+     0
+    ],
+    "long": 27715,
+    "horas": 2
+   },
+   "mitad1": {
+    "n": 24191,
+    "por_mes": 1007.4,
+    "gana": 55.3,
+    "usd_op": -2.8,
+    "usd": -67408,
+    "perd_media": -26.6,
+    "peor": -154,
+    "stops": 4232,
+    "obj": [
+     65.2,
+     0,
+     0
+    ],
+    "long": 12741,
+    "horas": 2
+   },
+   "mitad2": {
+    "n": 31103,
+    "por_mes": 1295.2,
+    "gana": 54.6,
+    "usd_op": -3.9,
+    "usd": -120635,
+    "perd_media": -30.3,
+    "peor": -155,
+    "stops": 5694,
+    "obj": [
+     63.4,
+     0,
+     0
+    ],
+    "long": 14974,
+    "horas": 2
+   },
+   "año": {
+    "n": 16329,
+    "por_mes": 1360.8,
+    "gana": 53.1,
+    "usd_op": -4.1,
+    "usd": -67153,
+    "perd_media": -27.5,
+    "peor": -155,
+    "stops": 3006,
+    "obj": [
+     63,
+     0,
+     0
+    ],
+    "long": 6951,
+    "horas": 2
+   },
+   "año_m1": {
+    "n": 8614,
+    "por_mes": 1435.7,
+    "gana": 54.5,
+    "usd_op": -4.5,
+    "usd": -39063,
+    "perd_media": -29.5,
+    "peor": -155,
+    "stops": 1587,
+    "obj": [
+     63.3,
+     0,
+     0
+    ],
+    "long": 3440,
+    "horas": 2
+   },
+   "año_m2": {
+    "n": 7715,
+    "por_mes": 1285.8,
+    "gana": 51.6,
+    "usd_op": -3.6,
+    "usd": -28090,
+    "perd_media": -25.4,
+    "peor": -153,
+    "stops": 1419,
+    "obj": [
+     62.8,
+     0,
+     0
+    ],
+    "long": 3511,
+    "horas": 2
+   }
+  },
+  "CORTO · RASCHKE Holy Grail · 15m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "15m",
+   "años4": {
+    "n": 11011,
+    "por_mes": 229.3,
+    "gana": 37.7,
+    "usd_op": -6.2,
+    "usd": -67969,
+    "perd_media": -17.2,
+    "peor": -152,
+    "stops": 4304,
+    "obj": [
+     60.9,
+     33,
+     22.5
+    ],
+    "long": 5217,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 4965,
+    "por_mes": 206.8,
+    "gana": 36.5,
+    "usd_op": -6.6,
+    "usd": -32582,
+    "perd_media": -16.9,
+    "peor": -152,
+    "stops": 1952,
+    "obj": [
+     60.7,
+     33,
+     22.7
+    ],
+    "long": 2363,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 6046,
+    "por_mes": 251.8,
+    "gana": 38.6,
+    "usd_op": -5.9,
+    "usd": -35388,
+    "perd_media": -17.4,
+    "peor": -147,
+    "stops": 2352,
+    "obj": [
+     61.1,
+     32.9,
+     22.3
+    ],
+    "long": 2854,
+    "horas": 1
+   },
+   "año": {
+    "n": 3124,
+    "por_mes": 260.3,
+    "gana": 37.1,
+    "usd_op": -5.8,
+    "usd": -18266,
+    "perd_media": -16.1,
+    "peor": -147,
+    "stops": 1198,
+    "obj": [
+     61.6,
+     32.8,
+     22.8
+    ],
+    "long": 1450,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 1517,
+    "por_mes": 252.8,
+    "gana": 37.3,
+    "usd_op": -5.6,
+    "usd": -8547,
+    "perd_media": -15.5,
+    "peor": -85,
+    "stops": 586,
+    "obj": [
+     61.4,
+     33,
+     23.6
+    ],
+    "long": 634,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 1607,
+    "por_mes": 267.8,
+    "gana": 36.9,
+    "usd_op": -6,
+    "usd": -9719,
+    "perd_media": -16.6,
+    "peor": -147,
+    "stops": 612,
+    "obj": [
+     61.9,
+     32.7,
+     22
+    ],
+    "long": 816,
+    "horas": 1
+   }
+  },
+  "CORTO · RASCHKE Holy Grail · 30m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "30m",
+   "años4": {
+    "n": 6850,
+    "por_mes": 142.6,
+    "gana": 44.8,
+    "usd_op": -5.6,
+    "usd": -38444,
+    "perd_media": -22.1,
+    "peor": -149,
+    "stops": 2414,
+    "obj": [
+     64.7,
+     32.9,
+     22.1
+    ],
+    "long": 3290,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 3154,
+    "por_mes": 131.3,
+    "gana": 43.2,
+    "usd_op": -5.8,
+    "usd": -18340,
+    "perd_media": -20.7,
+    "peor": -144,
+    "stops": 1118,
+    "obj": [
+     64.5,
+     32.3,
+     21.6
+    ],
+    "long": 1463,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 3696,
+    "por_mes": 153.9,
+    "gana": 46.1,
+    "usd_op": -5.4,
+    "usd": -20105,
+    "perd_media": -23.4,
+    "peor": -149,
+    "stops": 1296,
+    "obj": [
+     64.9,
+     33.4,
+     22.5
+    ],
+    "long": 1827,
+    "horas": 1
+   },
+   "año": {
+    "n": 1902,
+    "por_mes": 158.5,
+    "gana": 44.7,
+    "usd_op": -4.6,
+    "usd": -8833,
+    "perd_media": -20.8,
+    "peor": -149,
+    "stops": 647,
+    "obj": [
+     65.8,
+     34.1,
+     22.9
+    ],
+    "long": 915,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 983,
+    "por_mes": 163.8,
+    "gana": 45.7,
+    "usd_op": -5.3,
+    "usd": -5227,
+    "perd_media": -21.9,
+    "peor": -138,
+    "stops": 339,
+    "obj": [
+     65.4,
+     33.1,
+     21.6
+    ],
+    "long": 445,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 919,
+    "por_mes": 153.2,
+    "gana": 43.7,
+    "usd_op": -3.9,
+    "usd": -3606,
+    "perd_media": -19.7,
+    "peor": -149,
+    "stops": 308,
+    "obj": [
+     66.3,
+     35.3,
+     24.4
+    ],
+    "long": 470,
+    "horas": 1
+   }
+  },
+  "CORTO · RASCHKE Holy Grail · 30m · obj 0,3": {
+   "plazo": "corto",
+   "tf": "30m",
+   "años4": {
+    "n": 6958,
+    "por_mes": 144.9,
+    "gana": 41.3,
+    "usd_op": -5.4,
+    "usd": -37377,
+    "perd_media": -15.9,
+    "peor": -149,
+    "stops": 1822,
+    "obj": [
+     73.8,
+     40.9,
+     27.6
+    ],
+    "long": 3344,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 3200,
+    "por_mes": 133.3,
+    "gana": 40.4,
+    "usd_op": -5.5,
+    "usd": -17661,
+    "perd_media": -15.3,
+    "peor": -144,
+    "stops": 852,
+    "obj": [
+     73.3,
+     40.9,
+     27.2
+    ],
+    "long": 1489,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 3758,
+    "por_mes": 156.5,
+    "gana": 42,
+    "usd_op": -5.2,
+    "usd": -19716,
+    "perd_media": -16.3,
+    "peor": -149,
+    "stops": 970,
+    "obj": [
+     74.2,
+     40.8,
+     28
+    ],
+    "long": 1855,
+    "horas": 1
+   },
+   "año": {
+    "n": 1932,
+    "por_mes": 161,
+    "gana": 41.3,
+    "usd_op": -4.6,
+    "usd": -8950,
+    "perd_media": -14.9,
+    "peor": -149,
+    "stops": 488,
+    "obj": [
+     74.7,
+     42,
+     28.8
+    ],
+    "long": 927,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 1003,
+    "por_mes": 167.2,
+    "gana": 40.5,
+    "usd_op": -4.7,
+    "usd": -4717,
+    "perd_media": -14.5,
+    "peor": -115,
+    "stops": 251,
+    "obj": [
+     75,
+     40.9,
+     28.5
+    ],
+    "long": 450,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 929,
+    "por_mes": 154.8,
+    "gana": 42.2,
+    "usd_op": -4.6,
+    "usd": -4233,
+    "perd_media": -15.3,
+    "peor": -149,
+    "stops": 237,
+    "obj": [
+     74.4,
+     43.3,
+     29.2
+    ],
+    "long": 477,
+    "horas": 1
+   }
+  },
+  "CORTO · RASCHKE Turtle Soup · 15m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "15m",
+   "años4": {
+    "n": 75894,
+    "por_mes": 1580.3,
+    "gana": 42.9,
+    "usd_op": -4.9,
+    "usd": -371748,
+    "perd_media": -16.7,
+    "peor": -154,
+    "stops": 22533,
+    "obj": [
+     70.2,
+     38.3,
+     26.5
+    ],
+    "long": 40220,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 32549,
+    "por_mes": 1355.5,
+    "gana": 42.5,
+    "usd_op": -4.6,
+    "usd": -149869,
+    "perd_media": -15.9,
+    "peor": -151,
+    "stops": 9551,
+    "obj": [
+     70.6,
+     38.3,
+     26.6
+    ],
+    "long": 17818,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 43345,
+    "por_mes": 1805.1,
+    "gana": 43.2,
+    "usd_op": -5.1,
+    "usd": -221879,
+    "perd_media": -17.2,
+    "peor": -154,
+    "stops": 12982,
+    "obj": [
+     70,
+     38.3,
+     26.4
+    ],
+    "long": 22402,
+    "horas": 1
+   },
+   "año": {
+    "n": 20974,
+    "por_mes": 1747.8,
+    "gana": 42.2,
+    "usd_op": -5.1,
+    "usd": -106734,
+    "perd_media": -16.3,
+    "peor": -154,
+    "stops": 6163,
+    "obj": [
+     70.5,
+     38.4,
+     26.2
+    ],
+    "long": 9684,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 10964,
+    "por_mes": 1827.3,
+    "gana": 41.5,
+    "usd_op": -5.4,
+    "usd": -58897,
+    "perd_media": -16.3,
+    "peor": -148,
+    "stops": 3244,
+    "obj": [
+     70.3,
+     37.9,
+     25.8
+    ],
+    "long": 4603,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 10010,
+    "por_mes": 1668.3,
+    "gana": 43,
+    "usd_op": -4.8,
+    "usd": -47836,
+    "perd_media": -16.4,
+    "peor": -154,
+    "stops": 2919,
+    "obj": [
+     70.8,
+     39.1,
+     26.7
+    ],
+    "long": 5081,
+    "horas": 1
+   }
+  },
+  "CORTO · RASCHKE Turtle Soup · 30m · obj 0,5": {
+   "plazo": "corto",
+   "tf": "30m",
+   "años4": {
+    "n": 36965,
+    "por_mes": 769.7,
+    "gana": 48.1,
+    "usd_op": -5,
+    "usd": -183784,
+    "perd_media": -22.4,
+    "peor": -153,
+    "stops": 10628,
+    "obj": [
+     70.9,
+     37.4,
+     25.4
+    ],
+    "long": 19869,
+    "horas": 2
+   },
+   "mitad1": {
+    "n": 15688,
+    "por_mes": 653.3,
+    "gana": 47.1,
+    "usd_op": -5.1,
+    "usd": -79432,
+    "perd_media": -21.9,
+    "peor": -147,
+    "stops": 4535,
+    "obj": [
+     70.7,
+     36.8,
+     25
+    ],
+    "long": 8758,
+    "horas": 2
+   },
+   "mitad2": {
+    "n": 21277,
+    "por_mes": 886.1,
+    "gana": 48.8,
+    "usd_op": -4.9,
+    "usd": -104352,
+    "perd_media": -22.8,
+    "peor": -153,
+    "stops": 6093,
+    "obj": [
+     71.1,
+     37.9,
+     25.6
+    ],
+    "long": 11111,
+    "horas": 2
+   },
+   "año": {
+    "n": 10305,
+    "por_mes": 858.8,
+    "gana": 47.6,
+    "usd_op": -5.1,
+    "usd": -52812,
+    "perd_media": -21.4,
+    "peor": -150,
+    "stops": 2909,
+    "obj": [
+     71.3,
+     37.9,
+     25.1
+    ],
+    "long": 4891,
+    "horas": 2
+   },
+   "año_m1": {
+    "n": 5401,
+    "por_mes": 900.2,
+    "gana": 46.2,
+    "usd_op": -5.6,
+    "usd": -30269,
+    "perd_media": -21.1,
+    "peor": -150,
+    "stops": 1560,
+    "obj": [
+     70.6,
+     36.5,
+     24.1
+    ],
+    "long": 2364,
+    "horas": 2
+   },
+   "año_m2": {
+    "n": 4904,
+    "por_mes": 817.3,
+    "gana": 49.1,
+    "usd_op": -4.6,
+    "usd": -22544,
+    "perd_media": -21.9,
+    "peor": -146,
+    "stops": 1349,
+    "obj": [
+     72.1,
+     39.3,
+     26.3
+    ],
+    "long": 2527,
+    "horas": 2
+   }
+  },
+  "CORTO · WILLIAMS ruptura del rango de 4 h · obj 0,5": {
+   "plazo": "corto",
+   "tf": "4h",
+   "años4": {
+    "n": 56466,
+    "por_mes": 1175.7,
+    "gana": 39.5,
+    "usd_op": -10.8,
+    "usd": -608134,
+    "perd_media": -29.4,
+    "peor": -154,
+    "stops": 25443,
+    "obj": [
+     50.4,
+     26.3,
+     16.9
+    ],
+    "long": 27961,
+    "horas": 1
+   },
+   "mitad1": {
+    "n": 25024,
+    "por_mes": 1042.1,
+    "gana": 37.7,
+    "usd_op": -11.1,
+    "usd": -278370,
+    "perd_media": -28.2,
+    "peor": -154,
+    "stops": 11557,
+    "obj": [
+     49.4,
+     26,
+     16.8
+    ],
+    "long": 12993,
+    "horas": 1
+   },
+   "mitad2": {
+    "n": 31442,
+    "por_mes": 1309.4,
+    "gana": 41,
+    "usd_op": -10.5,
+    "usd": -329764,
+    "perd_media": -30.3,
+    "peor": -154,
+    "stops": 13886,
+    "obj": [
+     51.2,
+     26.6,
+     17
+    ],
+    "long": 14968,
+    "horas": 1
+   },
+   "año": {
+    "n": 16395,
+    "por_mes": 1366.3,
+    "gana": 37.5,
+    "usd_op": -11.6,
+    "usd": -190708,
+    "perd_media": -28.5,
+    "peor": -154,
+    "stops": 7587,
+    "obj": [
+     49.1,
+     25.5,
+     16
+    ],
+    "long": 6917,
+    "horas": 1
+   },
+   "año_m1": {
+    "n": 8590,
+    "por_mes": 1431.7,
+    "gana": 37.6,
+    "usd_op": -12.1,
+    "usd": -103680,
+    "perd_media": -29.1,
+    "peor": -154,
+    "stops": 4026,
+    "obj": [
+     48.5,
+     25.3,
+     15.3
+    ],
+    "long": 3120,
+    "horas": 1
+   },
+   "año_m2": {
+    "n": 7805,
+    "por_mes": 1300.8,
+    "gana": 37.5,
+    "usd_op": -11.2,
+    "usd": -87029,
+    "perd_media": -27.9,
+    "peor": -144,
+    "stops": 3561,
+    "obj": [
+     49.7,
+     25.7,
+     16.7
+    ],
+    "long": 3797,
+    "horas": 1
+   }
+  },
+  "MEDIO · CONNORS RSI 2 · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 6235,
+    "por_mes": 129.8,
+    "gana": 66.7,
+    "usd_op": -4.5,
+    "usd": -28220,
+    "perd_media": -106,
+    "peor": -157,
+    "stops": 2046,
+    "obj": [
+     67.2,
+     34,
+     23.5
+    ],
+    "long": 2768,
+    "horas": 24
+   },
+   "mitad1": {
+    "n": 2793,
+    "por_mes": 116.3,
+    "gana": 67.2,
+    "usd_op": -1.9,
+    "usd": -5215,
+    "perd_media": -100.9,
+    "peor": -156,
+    "stops": 906,
+    "obj": [
+     67.6,
+     35.6,
+     25.5
+    ],
+    "long": 1422,
+    "horas": 23
+   },
+   "mitad2": {
+    "n": 3442,
+    "por_mes": 143.3,
+    "gana": 66.3,
+    "usd_op": -6.7,
+    "usd": -23004,
+    "perd_media": -110,
+    "peor": -157,
+    "stops": 1140,
+    "obj": [
+     66.9,
+     32.6,
+     21.8
+    ],
+    "long": 1346,
+    "horas": 24
+   },
+   "año": {
+    "n": 1996,
+    "por_mes": 166.3,
+    "gana": 68.8,
+    "usd_op": -2.1,
+    "usd": -4137,
+    "perd_media": -104.7,
+    "peor": -157,
+    "stops": 605,
+    "obj": [
+     69.6,
+     34.3,
+     22.7
+    ],
+    "long": 668,
+    "horas": 24
+   },
+   "año_m1": {
+    "n": 1129,
+    "por_mes": 188.2,
+    "gana": 68.2,
+    "usd_op": -3.1,
+    "usd": -3485,
+    "perd_media": -107.1,
+    "peor": -157,
+    "stops": 350,
+    "obj": [
+     68.9,
+     33.8,
+     22.5
+    ],
+    "long": 294,
+    "horas": 23
+   },
+   "año_m2": {
+    "n": 867,
+    "por_mes": 144.5,
+    "gana": 69.6,
+    "usd_op": -0.8,
+    "usd": -651,
+    "perd_media": -101.4,
+    "peor": -154,
+    "stops": 255,
+    "obj": [
+     70.6,
+     34.9,
+     23
+    ],
+    "long": 374,
+    "horas": 25
+   }
+  },
+  "MEDIO · CONNORS RSI 2 · 4h · salida original": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 3826,
+    "por_mes": 79.7,
+    "gana": 61.9,
+    "usd_op": -3.3,
+    "usd": -12653,
+    "perd_media": -66.1,
+    "peor": -156,
+    "stops": 692,
+    "obj": [
+     65.2,
+     0,
+     0
+    ],
+    "long": 1677,
+    "horas": 13
+   },
+   "mitad1": {
+    "n": 1879,
+    "por_mes": 78.2,
+    "gana": 62.4,
+    "usd_op": -2.1,
+    "usd": -3938,
+    "perd_media": -63.6,
+    "peor": -156,
+    "stops": 339,
+    "obj": [
+     65.8,
+     0,
+     0
+    ],
+    "long": 872,
+    "horas": 13
+   },
+   "mitad2": {
+    "n": 1947,
+    "por_mes": 81.1,
+    "gana": 61.5,
+    "usd_op": -4.5,
+    "usd": -8715,
+    "perd_media": -68.5,
+    "peor": -155,
+    "stops": 353,
+    "obj": [
+     64.7,
+     0,
+     0
+    ],
+    "long": 805,
+    "horas": 13
+   },
+   "año": {
+    "n": 1228,
+    "por_mes": 102.3,
+    "gana": 62.5,
+    "usd_op": -2.8,
+    "usd": -3453,
+    "perd_media": -69.4,
+    "peor": -155,
+    "stops": 224,
+    "obj": [
+     65.8,
+     0,
+     0
+    ],
+    "long": 440,
+    "horas": 13
+   },
+   "año_m1": {
+    "n": 674,
+    "por_mes": 112.3,
+    "gana": 59.3,
+    "usd_op": -6.6,
+    "usd": -4427,
+    "perd_media": -71.5,
+    "peor": -155,
+    "stops": 130,
+    "obj": [
+     62,
+     0,
+     0
+    ],
+    "long": 202,
+    "horas": 13
+   },
+   "año_m2": {
+    "n": 554,
+    "por_mes": 92.3,
+    "gana": 66.4,
+    "usd_op": 1.8,
+    "usd": 975,
+    "perd_media": -66.3,
+    "peor": -155,
+    "stops": 94,
+    "obj": [
+     70.4,
+     0,
+     0
+    ],
+    "long": 238,
+    "horas": 13
+   }
+  },
+  "MEDIO · RASCHKE Holy Grail · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 1968,
+    "por_mes": 41,
+    "gana": 67.9,
+    "usd_op": 0.6,
+    "usd": 1086,
+    "perd_media": -75.8,
+    "peor": -155,
+    "stops": 599,
+    "obj": [
+     69.6,
+     37.6,
+     24.3
+    ],
+    "long": 944,
+    "horas": 9
+   },
+   "mitad1": {
+    "n": 863,
+    "por_mes": 35.9,
+    "gana": 67.1,
+    "usd_op": 0.4,
+    "usd": 310,
+    "perd_media": -70.5,
+    "peor": -155,
+    "stops": 267,
+    "obj": [
+     69.1,
+     37.8,
+     24.2
+    ],
+    "long": 404,
+    "horas": 9
+   },
+   "mitad2": {
+    "n": 1105,
+    "por_mes": 46,
+    "gana": 68.5,
+    "usd_op": 0.7,
+    "usd": 776,
+    "perd_media": -80,
+    "peor": -155,
+    "stops": 332,
+    "obj": [
+     70,
+     37.5,
+     24.4
+    ],
+    "long": 540,
+    "horas": 9
+   },
+   "año": {
+    "n": 592,
+    "por_mes": 49.3,
+    "gana": 66.7,
+    "usd_op": -2.1,
+    "usd": -1225,
+    "perd_media": -73.6,
+    "peor": -155,
+    "stops": 186,
+    "obj": [
+     68.6,
+     36,
+     22.1
+    ],
+    "long": 295,
+    "horas": 10
+   },
+   "año_m1": {
+    "n": 315,
+    "por_mes": 52.5,
+    "gana": 71.4,
+    "usd_op": 2,
+    "usd": 639,
+    "perd_media": -81.6,
+    "peor": -155,
+    "stops": 84,
+    "obj": [
+     73.3,
+     39.4,
+     23.8
+    ],
+    "long": 114,
+    "horas": 11
+   },
+   "año_m2": {
+    "n": 277,
+    "por_mes": 46.2,
+    "gana": 61.4,
+    "usd_op": -6.7,
+    "usd": -1864,
+    "perd_media": -66.8,
+    "peor": -152,
+    "stops": 102,
+    "obj": [
+     63.2,
+     32.1,
+     20.2
+    ],
+    "long": 181,
+    "horas": 8
+   }
+  },
+  "MEDIO · RASCHKE Holy Grail · 4h · obj 0,3": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 2003,
+    "por_mes": 41.7,
+    "gana": 69.8,
+    "usd_op": -1.3,
+    "usd": -2701,
+    "perd_media": -58.6,
+    "peor": -155,
+    "stops": 442,
+    "obj": [
+     77.9,
+     43.5,
+     30.1
+    ],
+    "long": 962,
+    "horas": 6
+   },
+   "mitad1": {
+    "n": 879,
+    "por_mes": 36.6,
+    "gana": 68.1,
+    "usd_op": -1.4,
+    "usd": -1251,
+    "perd_media": -54.1,
+    "peor": -154,
+    "stops": 201,
+    "obj": [
+     77.1,
+     44.5,
+     31.2
+    ],
+    "long": 410,
+    "horas": 6
+   },
+   "mitad2": {
+    "n": 1124,
+    "por_mes": 46.8,
+    "gana": 71.2,
+    "usd_op": -1.3,
+    "usd": -1450,
+    "perd_media": -62.4,
+    "peor": -155,
+    "stops": 241,
+    "obj": [
+     78.6,
+     42.7,
+     29.2
+    ],
+    "long": 552,
+    "horas": 5
+   },
+   "año": {
+    "n": 600,
+    "por_mes": 50,
+    "gana": 68.2,
+    "usd_op": -4.3,
+    "usd": -2567,
+    "perd_media": -58.2,
+    "peor": -155,
+    "stops": 138,
+    "obj": [
+     77,
+     39.2,
+     27
+    ],
+    "long": 303,
+    "horas": 6
+   },
+   "año_m1": {
+    "n": 317,
+    "por_mes": 52.8,
+    "gana": 74.1,
+    "usd_op": -1.3,
+    "usd": -408,
+    "perd_media": -66,
+    "peor": -155,
+    "stops": 62,
+    "obj": [
+     80.4,
+     40.4,
+     28.1
+    ],
+    "long": 116,
+    "horas": 7
+   },
+   "año_m2": {
+    "n": 283,
+    "por_mes": 47.2,
+    "gana": 61.5,
+    "usd_op": -7.6,
+    "usd": -2160,
+    "perd_media": -52.4,
+    "peor": -152,
+    "stops": 76,
+    "obj": [
+     73.1,
+     37.8,
+     25.8
+    ],
+    "long": 187,
+    "horas": 5
+   }
+  },
+  "MEDIO · RASCHKE Turtle Soup · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 3605,
+    "por_mes": 75.1,
+    "gana": 70.4,
+    "usd_op": 2,
+    "usd": 7362,
+    "perd_media": -71,
+    "peor": -154,
+    "stops": 914,
+    "obj": [
+     74.6,
+     40.6,
+     28.8
+    ],
+    "long": 2252,
+    "horas": 11
+   },
+   "mitad1": {
+    "n": 1412,
+    "por_mes": 58.8,
+    "gana": 69.1,
+    "usd_op": 2.7,
+    "usd": 3865,
+    "perd_media": -64.7,
+    "peor": -154,
+    "stops": 354,
+    "obj": [
+     74.9,
+     41.3,
+     29.3
+    ],
+    "long": 757,
+    "horas": 11
+   },
+   "mitad2": {
+    "n": 2193,
+    "por_mes": 91.3,
+    "gana": 71.3,
+    "usd_op": 1.6,
+    "usd": 3497,
+    "perd_media": -75.4,
+    "peor": -154,
+    "stops": 560,
+    "obj": [
+     74.5,
+     40.2,
+     28.5
+    ],
+    "long": 1495,
+    "horas": 10
+   },
+   "año": {
+    "n": 1144,
+    "por_mes": 95.3,
+    "gana": 70.3,
+    "usd_op": 0.7,
+    "usd": 803,
+    "perd_media": -66.7,
+    "peor": -154,
+    "stops": 287,
+    "obj": [
+     74.9,
+     39.3,
+     28.5
+    ],
+    "long": 705,
+    "horas": 10
+   },
+   "año_m1": {
+    "n": 454,
+    "por_mes": 75.7,
+    "gana": 70.9,
+    "usd_op": 0.7,
+    "usd": 301,
+    "perd_media": -67,
+    "peor": -153,
+    "stops": 117,
+    "obj": [
+     74.2,
+     38.5,
+     27.3
+    ],
+    "long": 274,
+    "horas": 10
+   },
+   "año_m2": {
+    "n": 690,
+    "por_mes": 115,
+    "gana": 69.9,
+    "usd_op": 0.7,
+    "usd": 502,
+    "perd_media": -66.6,
+    "peor": -154,
+    "stops": 170,
+    "obj": [
+     75.4,
+     39.9,
+     29.3
+    ],
+    "long": 431,
+    "horas": 10
+   }
+  },
+  "MEDIO · KULLAMÄGI · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 1135,
+    "por_mes": 23.6,
+    "gana": 65,
+    "usd_op": -5.3,
+    "usd": -5991,
+    "perd_media": -81.3,
+    "peor": -154,
+    "stops": 392,
+    "obj": [
+     65.5,
+     35.2,
+     24.2
+    ],
+    "long": 1135,
+    "horas": 6
+   },
+   "mitad1": {
+    "n": 556,
+    "por_mes": 23.2,
+    "gana": 65.6,
+    "usd_op": -5.3,
+    "usd": -2934,
+    "perd_media": -78.8,
+    "peor": -154,
+    "stops": 189,
+    "obj": [
+     66,
+     33.8,
+     22.1
+    ],
+    "long": 556,
+    "horas": 6
+   },
+   "mitad2": {
+    "n": 579,
+    "por_mes": 24.1,
+    "gana": 64.4,
+    "usd_op": -5.3,
+    "usd": -3058,
+    "perd_media": -83.6,
+    "peor": -154,
+    "stops": 203,
+    "obj": [
+     64.9,
+     36.4,
+     26.3
+    ],
+    "long": 579,
+    "horas": 6
+   },
+   "año": {
+    "n": 209,
+    "por_mes": 17.4,
+    "gana": 59.3,
+    "usd_op": -12.3,
+    "usd": -2561,
+    "perd_media": -82.8,
+    "peor": -154,
+    "stops": 85,
+    "obj": [
+     59.3,
+     32.5,
+     22.5
+    ],
+    "long": 209,
+    "horas": 6
+   },
+   "año_m1": {
+    "n": 97,
+    "por_mes": 16.2,
+    "gana": 62.9,
+    "usd_op": -8.7,
+    "usd": -845,
+    "perd_media": -71.4,
+    "peor": -117,
+    "stops": 36,
+    "obj": [
+     62.9,
+     30.9,
+     21.6
+    ],
+    "long": 97,
+    "horas": 5
+   },
+   "año_m2": {
+    "n": 112,
+    "por_mes": 18.7,
+    "gana": 56.3,
+    "usd_op": -15.3,
+    "usd": -1716,
+    "perd_media": -91.2,
+    "peor": -154,
+    "stops": 49,
+    "obj": [
+     56.3,
+     33.9,
+     23.2
+    ],
+    "long": 112,
+    "horas": 6
+   }
+  },
+  "MEDIO · KULLAMÄGI · 4h · obj 0,3": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 1197,
+    "por_mes": 24.9,
+    "gana": 71.3,
+    "usd_op": -5.5,
+    "usd": -6584,
+    "perd_media": -72,
+    "peor": -151,
+    "stops": 304,
+    "obj": [
+     74.6,
+     41.5,
+     29.6
+    ],
+    "long": 1197,
+    "horas": 3
+   },
+   "mitad1": {
+    "n": 586,
+    "por_mes": 24.4,
+    "gana": 69.8,
+    "usd_op": -6.3,
+    "usd": -3707,
+    "perd_media": -69.9,
+    "peor": -138,
+    "stops": 153,
+    "obj": [
+     73.9,
+     41.6,
+     29.4
+    ],
+    "long": 586,
+    "horas": 3
+   },
+   "mitad2": {
+    "n": 611,
+    "por_mes": 25.4,
+    "gana": 72.8,
+    "usd_op": -4.7,
+    "usd": -2877,
+    "perd_media": -74.2,
+    "peor": -151,
+    "stops": 151,
+    "obj": [
+     75.3,
+     41.4,
+     29.8
+    ],
+    "long": 611,
+    "horas": 3
+   },
+   "año": {
+    "n": 221,
+    "por_mes": 18.4,
+    "gana": 66.5,
+    "usd_op": -9.4,
+    "usd": -2069,
+    "perd_media": -68.7,
+    "peor": -148,
+    "stops": 65,
+    "obj": [
+     70.6,
+     36.2,
+     25.8
+    ],
+    "long": 221,
+    "horas": 3
+   },
+   "año_m1": {
+    "n": 100,
+    "por_mes": 16.7,
+    "gana": 65,
+    "usd_op": -8.5,
+    "usd": -854,
+    "perd_media": -58.8,
+    "peor": -117,
+    "stops": 31,
+    "obj": [
+     69,
+     38,
+     27
+    ],
+    "long": 100,
+    "horas": 3
+   },
+   "año_m2": {
+    "n": 121,
+    "por_mes": 20.2,
+    "gana": 67.8,
+    "usd_op": -10,
+    "usd": -1215,
+    "perd_media": -77.5,
+    "peor": -148,
+    "stops": 34,
+    "obj": [
+     71.9,
+     34.7,
+     24.8
+    ],
+    "long": 121,
+    "horas": 3
+   }
+  },
+  "MEDIO · TORTUGAS 20 · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 8161,
+    "por_mes": 169.9,
+    "gana": 68.6,
+    "usd_op": -1.5,
+    "usd": -12085,
+    "perd_media": -116.8,
+    "peor": -159,
+    "stops": 2535,
+    "obj": [
+     68.8,
+     36,
+     24.5
+    ],
+    "long": 4410,
+    "horas": 24
+   },
+   "mitad1": {
+    "n": 3949,
+    "por_mes": 164.5,
+    "gana": 66.8,
+    "usd_op": -5.5,
+    "usd": -21845,
+    "perd_media": -115.2,
+    "peor": -159,
+    "stops": 1305,
+    "obj": [
+     66.8,
+     34.6,
+     23.1
+    ],
+    "long": 2190,
+    "horas": 24
+   },
+   "mitad2": {
+    "n": 4212,
+    "por_mes": 175.4,
+    "gana": 70.3,
+    "usd_op": 2.3,
+    "usd": 9760,
+    "perd_media": -118.5,
+    "peor": -157,
+    "stops": 1230,
+    "obj": [
+     70.7,
+     37.2,
+     25.9
+    ],
+    "long": 2220,
+    "horas": 24
+   },
+   "año": {
+    "n": 2529,
+    "por_mes": 210.8,
+    "gana": 69.9,
+    "usd_op": 0.2,
+    "usd": 415,
+    "perd_media": -115.2,
+    "peor": -157,
+    "stops": 740,
+    "obj": [
+     70.6,
+     35.5,
+     23.3
+    ],
+    "long": 1130,
+    "horas": 25
+   },
+   "año_m1": {
+    "n": 1146,
+    "por_mes": 191,
+    "gana": 70.2,
+    "usd_op": -1.6,
+    "usd": -1890,
+    "perd_media": -120.4,
+    "peor": -156,
+    "stops": 334,
+    "obj": [
+     70.7,
+     33.2,
+     20.9
+    ],
+    "long": 400,
+    "horas": 26
+   },
+   "año_m2": {
+    "n": 1383,
+    "por_mes": 230.5,
+    "gana": 69.7,
+    "usd_op": 1.7,
+    "usd": 2305,
+    "perd_media": -110.9,
+    "peor": -157,
+    "stops": 406,
+    "obj": [
+     70.6,
+     37.4,
+     25.2
+    ],
+    "long": 730,
+    "horas": 24
+   }
+  },
+  "MEDIO · TORTUGAS 55 · 4h · obj 0,5": {
+   "plazo": "medio",
+   "tf": "4h",
+   "años4": {
+    "n": 6120,
+    "por_mes": 127.4,
+    "gana": 67.9,
+    "usd_op": -2.3,
+    "usd": -14024,
+    "perd_media": -116.6,
+    "peor": -159,
+    "stops": 1946,
+    "obj": [
+     68.1,
+     35.6,
+     24.8
+    ],
+    "long": 3385,
+    "horas": 21
+   },
+   "mitad1": {
+    "n": 2900,
+    "por_mes": 120.8,
+    "gana": 66.2,
+    "usd_op": -5.6,
+    "usd": -16302,
+    "perd_media": -115,
+    "peor": -159,
+    "stops": 976,
+    "obj": [
+     66.2,
+     34.8,
+     24
+    ],
+    "long": 1657,
+    "horas": 20
+   },
+   "mitad2": {
+    "n": 3220,
+    "por_mes": 134.1,
+    "gana": 69.4,
+    "usd_op": 0.7,
+    "usd": 2278,
+    "perd_media": -118.1,
+    "peor": -156,
+    "stops": 970,
+    "obj": [
+     69.8,
+     36.3,
+     25.6
+    ],
+    "long": 1728,
+    "horas": 21
+   },
+   "año": {
+    "n": 1886,
+    "por_mes": 157.2,
+    "gana": 68.8,
+    "usd_op": -1.5,
+    "usd": -2816,
+    "perd_media": -115,
+    "peor": -156,
+    "stops": 574,
+    "obj": [
+     69.5,
+     35,
+     23
+    ],
+    "long": 856,
+    "horas": 22
+   },
+   "año_m1": {
+    "n": 819,
+    "por_mes": 136.5,
+    "gana": 69.6,
+    "usd_op": -2.2,
+    "usd": -1783,
+    "perd_media": -120.1,
+    "peor": -155,
+    "stops": 244,
+    "obj": [
+     70,
+     33.5,
+     21.7
+    ],
+    "long": 295,
+    "horas": 21
+   },
+   "año_m2": {
+    "n": 1067,
+    "por_mes": 177.8,
+    "gana": 68.1,
+    "usd_op": -1,
+    "usd": -1033,
+    "perd_media": -111.3,
+    "peor": -156,
+    "stops": 330,
+    "obj": [
+     69.1,
+     36.3,
+     23.9
+    ],
+    "long": 561,
+    "horas": 22
+   }
+  },
+  "LARGO · CONNORS RSI 2 · 12h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "12h",
+   "años4": {
+    "n": 952,
+    "por_mes": 19.8,
+    "gana": 73,
+    "usd_op": 4.2,
+    "usd": 3970,
+    "perd_media": -113.5,
+    "peor": -157,
+    "stops": 251,
+    "obj": [
+     73.6,
+     35.6,
+     24.3
+    ],
+    "long": 376,
+    "horas": 32
+   },
+   "mitad1": {
+    "n": 499,
+    "por_mes": 20.8,
+    "gana": 70.1,
+    "usd_op": -2.5,
+    "usd": -1263,
+    "perd_media": -113.1,
+    "peor": -157,
+    "stops": 148,
+    "obj": [
+     70.3,
+     32.3,
+     23
+    ],
+    "long": 200,
+    "horas": 31
+   },
+   "mitad2": {
+    "n": 453,
+    "por_mes": 18.9,
+    "gana": 76.2,
+    "usd_op": 11.6,
+    "usd": 5233,
+    "perd_media": -114,
+    "peor": -157,
+    "stops": 103,
+    "obj": [
+     77.3,
+     39.3,
+     25.6
+    ],
+    "long": 176,
+    "horas": 32
+   },
+   "año": {
+    "n": 292,
+    "por_mes": 24.3,
+    "gana": 72.9,
+    "usd_op": 7.6,
+    "usd": 2223,
+    "perd_media": -113,
+    "peor": -157,
+    "stops": 74,
+    "obj": [
+     74.7,
+     38.7,
+     26
+    ],
+    "long": 78,
+    "horas": 30
+   },
+   "año_m1": {
+    "n": 130,
+    "por_mes": 21.7,
+    "gana": 76.2,
+    "usd_op": 17,
+    "usd": 2207,
+    "perd_media": -116.8,
+    "peor": -157,
+    "stops": 29,
+    "obj": [
+     77.7,
+     43.1,
+     33.1
+    ],
+    "long": 7,
+    "horas": 31
+   },
+   "año_m2": {
+    "n": 162,
+    "por_mes": 27,
+    "gana": 70.4,
+    "usd_op": 0.1,
+    "usd": 16,
+    "perd_media": -110.5,
+    "peor": -154,
+    "stops": 45,
+    "obj": [
+     72.2,
+     35.2,
+     20.4
+    ],
+    "long": 71,
+    "horas": 30
+   }
+  },
+  "LARGO · CONNORS RSI 2 · 1d · obj 0,5": {
+   "plazo": "largo",
+   "tf": "1d",
+   "años4": {
+    "n": 239,
+    "por_mes": 5,
+    "gana": 67.8,
+    "usd_op": -3.3,
+    "usd": -798,
+    "perd_media": -117.8,
+    "peor": -156,
+    "stops": 75,
+    "obj": [
+     68.6,
+     36,
+     25.1
+    ],
+    "long": 80,
+    "horas": 34
+   },
+   "mitad1": {
+    "n": 123,
+    "por_mes": 5.1,
+    "gana": 69.9,
+    "usd_op": 1,
+    "usd": 128,
+    "perd_media": -117.7,
+    "peor": -155,
+    "stops": 37,
+    "obj": [
+     69.9,
+     39,
+     28.5
+    ],
+    "long": 49,
+    "horas": 38
+   },
+   "mitad2": {
+    "n": 116,
+    "por_mes": 4.8,
+    "gana": 65.5,
+    "usd_op": -8,
+    "usd": -926,
+    "perd_media": -117.8,
+    "peor": -156,
+    "stops": 38,
+    "obj": [
+     67.2,
+     32.8,
+     21.6
+    ],
+    "long": 31,
+    "horas": 30
+   },
+   "año": {
+    "n": 82,
+    "por_mes": 6.8,
+    "gana": 59.8,
+    "usd_op": -15.7,
+    "usd": -1286,
+    "perd_media": -116.2,
+    "peor": -156,
+    "stops": 31,
+    "obj": [
+     62.2,
+     31.7,
+     18.3
+    ],
+    "long": 15,
+    "horas": 34
+   },
+   "año_m1": {
+    "n": 33,
+    "por_mes": 5.5,
+    "gana": 63.6,
+    "usd_op": -4.7,
+    "usd": -154,
+    "perd_media": -120.7,
+    "peor": -152,
+    "stops": 11,
+    "obj": [
+     66.7,
+     39.4,
+     27.3
+    ],
+    "long": 1,
+    "horas": 38
+   },
+   "año_m2": {
+    "n": 49,
+    "por_mes": 8.2,
+    "gana": 57.1,
+    "usd_op": -23.1,
+    "usd": -1132,
+    "perd_media": -113.6,
+    "peor": -156,
+    "stops": 20,
+    "obj": [
+     59.2,
+     26.5,
+     12.2
+    ],
+    "long": 14,
+    "horas": 31
+   }
+  },
+  "LARGO · CONNORS RSI 2 · 1d · salida original": {
+   "plazo": "largo",
+   "tf": "1d",
+   "años4": {
+    "n": 89,
+    "por_mes": 1.9,
+    "gana": 59.6,
+    "usd_op": 3.1,
+    "usd": 276,
+    "perd_media": -115.4,
+    "peor": -151,
+    "stops": 35,
+    "obj": [
+     60.7,
+     0,
+     0
+    ],
+    "long": 34,
+    "horas": 40
+   },
+   "mitad1": {
+    "n": 54,
+    "por_mes": 2.2,
+    "gana": 63,
+    "usd_op": 15.2,
+    "usd": 820,
+    "perd_media": -112.8,
+    "peor": -151,
+    "stops": 19,
+    "obj": [
+     64.8,
+     0,
+     0
+    ],
+    "long": 21,
+    "horas": 39
+   },
+   "mitad2": {
+    "n": 35,
+    "por_mes": 1.5,
+    "gana": 54.3,
+    "usd_op": -15.5,
+    "usd": -543,
+    "perd_media": -118.6,
+    "peor": -151,
+    "stops": 16,
+    "obj": [
+     54.3,
+     0,
+     0
+    ],
+    "long": 13,
+    "horas": 42
+   },
+   "año": {
+    "n": 22,
+    "por_mes": 1.8,
+    "gana": 45.5,
+    "usd_op": -37.2,
+    "usd": -818,
+    "perd_media": -116.6,
+    "peor": -151,
+    "stops": 12,
+    "obj": [
+     45.5,
+     0,
+     0
+    ],
+    "long": 4,
+    "horas": 39
+   },
+   "año_m1": {
+    "n": 8,
+    "por_mes": 1.3,
+    "gana": 75,
+    "usd_op": 17.1,
+    "usd": 137,
+    "perd_media": -139,
+    "peor": -151,
+    "stops": 2,
+    "obj": [
+     75,
+     0,
+     0
+    ],
+    "long": 1,
+    "horas": 50
+   },
+   "año_m2": {
+    "n": 14,
+    "por_mes": 2.3,
+    "gana": 28.6,
+    "usd_op": -68.2,
+    "usd": -955,
+    "perd_media": -112.1,
+    "peor": -150,
+    "stops": 10,
+    "obj": [
+     28.6,
+     0,
+     0
+    ],
+    "long": 3,
+    "horas": 33
+   }
+  },
+  "LARGO · RASCHKE Holy Grail · 12h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "12h",
+   "años4": {
+    "n": 298,
+    "por_mes": 6.2,
+    "gana": 63.8,
+    "usd_op": -8.7,
+    "usd": -2579,
+    "perd_media": -98,
+    "peor": -155,
+    "stops": 106,
+    "obj": [
+     64.4,
+     30.9,
+     22.8
+    ],
+    "long": 178,
+    "horas": 22
+   },
+   "mitad1": {
+    "n": 149,
+    "por_mes": 6.2,
+    "gana": 62.4,
+    "usd_op": -11.1,
+    "usd": -1655,
+    "perd_media": -98.2,
+    "peor": -154,
+    "stops": 55,
+    "obj": [
+     63.1,
+     30.2,
+     22.8
+    ],
+    "long": 73,
+    "horas": 23
+   },
+   "mitad2": {
+    "n": 149,
+    "por_mes": 6.2,
+    "gana": 65.1,
+    "usd_op": -6.2,
+    "usd": -924,
+    "perd_media": -97.8,
+    "peor": -155,
+    "stops": 51,
+    "obj": [
+     65.8,
+     31.5,
+     22.8
+    ],
+    "long": 105,
+    "horas": 20
+   },
+   "año": {
+    "n": 98,
+    "por_mes": 8.2,
+    "gana": 67.3,
+    "usd_op": -5.6,
+    "usd": -549,
+    "perd_media": -98,
+    "peor": -155,
+    "stops": 31,
+    "obj": [
+     68.4,
+     34.7,
+     21.4
+    ],
+    "long": 66,
+    "horas": 20
+   },
+   "año_m1": {
+    "n": 46,
+    "por_mes": 7.7,
+    "gana": 67.4,
+    "usd_op": -2.3,
+    "usd": -107,
+    "perd_media": -92.7,
+    "peor": -142,
+    "stops": 14,
+    "obj": [
+     69.6,
+     37,
+     26.1
+    ],
+    "long": 25,
+    "horas": 22
+   },
+   "año_m2": {
+    "n": 52,
+    "por_mes": 8.7,
+    "gana": 67.3,
+    "usd_op": -8.5,
+    "usd": -442,
+    "perd_media": -102.7,
+    "peor": -155,
+    "stops": 17,
+    "obj": [
+     67.3,
+     32.7,
+     17.3
+    ],
+    "long": 41,
+    "horas": 18
+   }
+  },
+  "LARGO · RASCHKE Holy Grail · 8h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "8h",
+   "años4": {
+    "n": 632,
+    "por_mes": 13.2,
+    "gana": 69.6,
+    "usd_op": -1.1,
+    "usd": -718,
+    "perd_media": -92.4,
+    "peor": -155,
+    "stops": 185,
+    "obj": [
+     70.7,
+     32.9,
+     22.2
+    ],
+    "long": 344,
+    "horas": 15
+   },
+   "mitad1": {
+    "n": 315,
+    "por_mes": 13.1,
+    "gana": 69.5,
+    "usd_op": 0.7,
+    "usd": 216,
+    "perd_media": -84.3,
+    "peor": -149,
+    "stops": 90,
+    "obj": [
+     71.4,
+     34.9,
+     23.8
+    ],
+    "long": 153,
+    "horas": 16
+   },
+   "mitad2": {
+    "n": 317,
+    "por_mes": 13.2,
+    "gana": 69.7,
+    "usd_op": -2.9,
+    "usd": -934,
+    "perd_media": -100.5,
+    "peor": -155,
+    "stops": 95,
+    "obj": [
+     70,
+     30.9,
+     20.5
+    ],
+    "long": 191,
+    "horas": 14
+   },
+   "año": {
+    "n": 181,
+    "por_mes": 15.1,
+    "gana": 68.5,
+    "usd_op": -6.3,
+    "usd": -1147,
+    "perd_media": -92.8,
+    "peor": -148,
+    "stops": 56,
+    "obj": [
+     69.1,
+     29.3,
+     18.8
+    ],
+    "long": 105,
+    "horas": 13
+   },
+   "año_m1": {
+    "n": 83,
+    "por_mes": 13.8,
+    "gana": 66.3,
+    "usd_op": -4.1,
+    "usd": -341,
+    "perd_media": -84.7,
+    "peor": -148,
+    "stops": 27,
+    "obj": [
+     67.5,
+     31.3,
+     22.9
+    ],
+    "long": 38,
+    "horas": 14
+   },
+   "año_m2": {
+    "n": 98,
+    "por_mes": 16.3,
+    "gana": 70.4,
+    "usd_op": -8.2,
+    "usd": -806,
+    "perd_media": -100.5,
+    "peor": -143,
+    "stops": 29,
+    "obj": [
+     70.4,
+     27.6,
+     15.3
+    ],
+    "long": 67,
+    "horas": 13
+   }
+  },
+  "LARGO · RASCHKE Turtle Soup · 12h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "12h",
+   "años4": {
+    "n": 706,
+    "por_mes": 14.7,
+    "gana": 80.9,
+    "usd_op": 16.8,
+    "usd": 11892,
+    "perd_media": -91,
+    "peor": -155,
+    "stops": 120,
+    "obj": [
+     83,
+     44.9,
+     31.9
+    ],
+    "long": 457,
+    "horas": 22
+   },
+   "mitad1": {
+    "n": 291,
+    "por_mes": 12.1,
+    "gana": 80.8,
+    "usd_op": 15.8,
+    "usd": 4600,
+    "perd_media": -93.7,
+    "peor": -155,
+    "stops": 51,
+    "obj": [
+     82.5,
+     45,
+     34.4
+    ],
+    "long": 175,
+    "horas": 27
+   },
+   "mitad2": {
+    "n": 415,
+    "por_mes": 17.3,
+    "gana": 81,
+    "usd_op": 17.6,
+    "usd": 7292,
+    "perd_media": -89.2,
+    "peor": -155,
+    "stops": 69,
+    "obj": [
+     83.4,
+     44.8,
+     30.1
+    ],
+    "long": 282,
+    "horas": 18
+   },
+   "año": {
+    "n": 250,
+    "por_mes": 20.8,
+    "gana": 78,
+    "usd_op": 11.4,
+    "usd": 2843,
+    "perd_media": -78.6,
+    "peor": -155,
+    "stops": 46,
+    "obj": [
+     81.6,
+     43.6,
+     28
+    ],
+    "long": 173,
+    "horas": 20
+   },
+   "año_m1": {
+    "n": 110,
+    "por_mes": 18.3,
+    "gana": 80,
+    "usd_op": 7.6,
+    "usd": 841,
+    "perd_media": -85.2,
+    "peor": -155,
+    "stops": 20,
+    "obj": [
+     81.8,
+     41.8,
+     23.6
+    ],
+    "long": 81,
+    "horas": 20
+   },
+   "año_m2": {
+    "n": 140,
+    "por_mes": 23.3,
+    "gana": 76.4,
+    "usd_op": 14.3,
+    "usd": 2002,
+    "perd_media": -74.2,
+    "peor": -152,
+    "stops": 26,
+    "obj": [
+     81.4,
+     45,
+     31.4
+    ],
+    "long": 92,
+    "horas": 20
+   }
+  },
+  "LARGO · KULLAMÄGI · 8h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "8h",
+   "años4": {
+    "n": 535,
+    "por_mes": 11.1,
+    "gana": 67.5,
+    "usd_op": -3.5,
+    "usd": -1871,
+    "perd_media": -111.8,
+    "peor": -155,
+    "stops": 174,
+    "obj": [
+     67.5,
+     35.3,
+     22.2
+    ],
+    "long": 535,
+    "horas": 9
+   },
+   "mitad1": {
+    "n": 274,
+    "por_mes": 11.4,
+    "gana": 66.4,
+    "usd_op": -2.1,
+    "usd": -575,
+    "perd_media": -108.8,
+    "peor": -155,
+    "stops": 92,
+    "obj": [
+     66.4,
+     37.6,
+     24.1
+    ],
+    "long": 274,
+    "horas": 10
+   },
+   "mitad2": {
+    "n": 261,
+    "por_mes": 10.9,
+    "gana": 68.6,
+    "usd_op": -5,
+    "usd": -1295,
+    "perd_media": -115.2,
+    "peor": -155,
+    "stops": 82,
+    "obj": [
+     68.6,
+     33,
+     20.3
+    ],
+    "long": 261,
+    "horas": 9
+   },
+   "año": {
+    "n": 67,
+    "por_mes": 5.6,
+    "gana": 56.7,
+    "usd_op": -20.2,
+    "usd": -1356,
+    "perd_media": -111.1,
+    "peor": -144,
+    "stops": 29,
+    "obj": [
+     56.7,
+     28.4,
+     17.9
+    ],
+    "long": 67,
+    "horas": 9
+   },
+   "año_m1": {
+    "n": 25,
+    "por_mes": 4.2,
+    "gana": 36,
+    "usd_op": -46.1,
+    "usd": -1152,
+    "perd_media": -103.4,
+    "peor": -142,
+    "stops": 16,
+    "obj": [
+     36,
+     20,
+     16
+    ],
+    "long": 25,
+    "horas": 7
+   },
+   "año_m2": {
+    "n": 42,
+    "por_mes": 7,
+    "gana": 69,
+    "usd_op": -4.9,
+    "usd": -204,
+    "perd_media": -120.7,
+    "peor": -144,
+    "stops": 13,
+    "obj": [
+     69,
+     33.3,
+     19
+    ],
+    "long": 42,
+    "horas": 10
+   }
+  },
+  "LARGO · KULLAMÄGI · 1d · obj 0,5": {
+   "plazo": "largo",
+   "tf": "1d",
+   "años4": {
+    "n": 74,
+    "por_mes": 1.5,
+    "gana": 60.8,
+    "usd_op": -17.3,
+    "usd": -1279,
+    "perd_media": -121.3,
+    "peor": -155,
+    "stops": 29,
+    "obj": [
+     60.8,
+     28.4,
+     17.6
+    ],
+    "long": 74,
+    "horas": 21
+   },
+   "mitad1": {
+    "n": 45,
+    "por_mes": 1.9,
+    "gana": 57.8,
+    "usd_op": -20.4,
+    "usd": -919,
+    "perd_media": -123.5,
+    "peor": -155,
+    "stops": 19,
+    "obj": [
+     57.8,
+     33.3,
+     20
+    ],
+    "long": 45,
+    "horas": 21
+   },
+   "mitad2": {
+    "n": 29,
+    "por_mes": 1.2,
+    "gana": 65.5,
+    "usd_op": -12.4,
+    "usd": -360,
+    "perd_media": -117,
+    "peor": -155,
+    "stops": 10,
+    "obj": [
+     65.5,
+     20.7,
+     13.8
+    ],
+    "long": 29,
+    "horas": 22
+   },
+   "año": {
+    "n": 8,
+    "por_mes": 0.7,
+    "gana": 50,
+    "usd_op": -47.9,
+    "usd": -383,
+    "perd_media": -137.6,
+    "peor": -145,
+    "stops": 4,
+    "obj": [
+     50,
+     12.5,
+     12.5
+    ],
+    "long": 8,
+    "horas": 24
+   },
+   "año_m1": {
+    "n": 0
+   },
+   "año_m2": {
+    "n": 8,
+    "por_mes": 1.3,
+    "gana": 50,
+    "usd_op": -47.9,
+    "usd": -383,
+    "perd_media": -137.6,
+    "peor": -145,
+    "stops": 4,
+    "obj": [
+     50,
+     12.5,
+     12.5
+    ],
+    "long": 8,
+    "horas": 24
+   }
+  },
+  "LARGO · TORTUGAS 20 · 12h · obj 0,5": {
+   "plazo": "largo",
+   "tf": "12h",
+   "años4": {
+    "n": 3119,
+    "por_mes": 64.9,
+    "gana": 67.2,
+    "usd_op": -4.5,
+    "usd": -14148,
+    "perd_media": -121.1,
+    "peor": -159,
+    "stops": 1016,
+    "obj": [
+     67.4,
+     34.9,
+     24.1
+    ],
+    "long": 1833,
+    "horas": 24
+   },
+   "mitad1": {
+    "n": 1616,
+    "por_mes": 67.3,
+    "gana": 64.2,
+    "usd_op": -10.7,
+    "usd": -17297,
+    "perd_media": -121,
+    "peor": -158,
+    "stops": 579,
+    "obj": [
+     64.2,
+     33.1,
+     22.7
+    ],
+    "long": 1003,
+    "horas": 24
+   },
+   "mitad2": {
+    "n": 1503,
+    "por_mes": 62.6,
+    "gana": 70.5,
+    "usd_op": 2.1,
+    "usd": 3149,
+    "perd_media": -121.1,
+    "peor": -159,
+    "stops": 437,
+    "obj": [
+     70.9,
+     36.9,
+     25.6
+    ],
+    "long": 830,
+    "horas": 24
+   },
+   "año": {
+    "n": 825,
+    "por_mes": 68.8,
+    "gana": 71,
+    "usd_op": 3.9,
+    "usd": 3233,
+    "perd_media": -117.6,
+    "peor": -159,
+    "stops": 233,
+    "obj": [
+     71.8,
+     36.6,
+     25.9
+    ],
+    "long": 317,
+    "horas": 26
+   },
+   "año_m1": {
+    "n": 261,
+    "por_mes": 43.5,
+    "gana": 72.4,
+    "usd_op": 9.2,
+    "usd": 2392,
+    "perd_media": -118.9,
+    "peor": -155,
+    "stops": 71,
+    "obj": [
+     72.8,
+     38.3,
+     28.7
+    ],
+    "long": 33,
+    "horas": 27
+   },
+   "año_m2": {
+    "n": 564,
+    "por_mes": 94,
+    "gana": 70.4,
+    "usd_op": 1.5,
+    "usd": 841,
+    "perd_media": -117.1,
+    "peor": -159,
+    "stops": 162,
+    "obj": [
+     71.3,
+     35.8,
+     24.6
+    ],
+    "long": 284,
+    "horas": 26
+   }
+  },
+  "LARGO · TORTUGAS 20 · 1d · obj 0,4": {
+   "plazo": "largo",
+   "tf": "1d",
+   "años4": {
+    "n": 976,
+    "por_mes": 20.3,
+    "gana": 72.2,
+    "usd_op": -1.3,
+    "usd": -1235,
+    "perd_media": -123.5,
+    "peor": -160,
+    "stops": 268,
+    "obj": [
+     72.5,
+     39,
+     29.2
+    ],
+    "long": 682,
+    "horas": 23
+   },
+   "mitad1": {
+    "n": 559,
+    "por_mes": 23.3,
+    "gana": 70.7,
+    "usd_op": -3.1,
+    "usd": -1729,
+    "perd_media": -125.2,
+    "peor": -156,
+    "stops": 164,
+    "obj": [
+     70.7,
+     38.1,
+     29
+    ],
+    "long": 413,
+    "horas": 22
+   },
+   "mitad2": {
+    "n": 417,
+    "por_mes": 17.4,
+    "gana": 74.3,
+    "usd_op": 1.2,
+    "usd": 494,
+    "perd_media": -121,
+    "peor": -160,
+    "stops": 104,
+    "obj": [
+     75.1,
+     40.3,
+     29.5
+    ],
+    "long": 269,
+    "horas": 24
+   },
+   "año": {
+    "n": 208,
+    "por_mes": 17.3,
+    "gana": 75.5,
+    "usd_op": 2.9,
+    "usd": 593,
+    "perd_media": -112.7,
+    "peor": -160,
+    "stops": 48,
+    "obj": [
+     76.9,
+     38.9,
+     25.5
+    ],
+    "long": 82,
+    "horas": 28
+   },
+   "año_m1": {
+    "n": 47,
+    "por_mes": 7.8,
+    "gana": 74.5,
+    "usd_op": 12.9,
+    "usd": 608,
+    "perd_media": -80.1,
+    "peor": -151,
+    "stops": 10,
+    "obj": [
+     78.7,
+     48.9,
+     36.2
+    ],
+    "long": 14,
+    "horas": 38
+   },
+   "año_m2": {
+    "n": 161,
+    "por_mes": 26.8,
+    "gana": 75.8,
+    "usd_op": -0.1,
+    "usd": -15,
+    "perd_media": -122.8,
+    "peor": -160,
+    "stops": 38,
+    "obj": [
+     76.4,
+     36,
+     22.4
+    ],
+    "long": 68,
+    "horas": 25
+   }
+  },
+  "LARGO · WILLIAMS · 1d · obj 0,5": {
+   "plazo": "largo",
+   "tf": "1d",
+   "años4": {
+    "n": 14811,
+    "por_mes": 308.4,
+    "gana": 53.9,
+    "usd_op": -15.1,
+    "usd": -223629,
+    "perd_media": -74.2,
+    "peor": -155,
+    "stops": 6154,
+    "obj": [
+     54.8,
+     28.2,
+     17.9
+    ],
+    "long": 6937,
+    "horas": 7
+   },
+   "mitad1": {
+    "n": 6621,
+    "por_mes": 275.7,
+    "gana": 51.9,
+    "usd_op": -16.9,
+    "usd": -111926,
+    "perd_media": -70.9,
+    "peor": -155,
+    "stops": 2864,
+    "obj": [
+     53,
+     26.6,
+     16.8
+    ],
+    "long": 3361,
+    "horas": 7
+   },
+   "mitad2": {
+    "n": 8190,
+    "por_mes": 341.1,
+    "gana": 55.5,
+    "usd_op": -13.6,
+    "usd": -111703,
+    "perd_media": -77.1,
+    "peor": -155,
+    "stops": 3290,
+    "obj": [
+     56.2,
+     29.5,
+     18.8
+    ],
+    "long": 3576,
+    "horas": 8
+   },
+   "año": {
+    "n": 4446,
+    "por_mes": 370.5,
+    "gana": 54.3,
+    "usd_op": -15,
+    "usd": -66780,
+    "perd_media": -73.2,
+    "peor": -155,
+    "stops": 1809,
+    "obj": [
+     55.2,
+     28.1,
+     17.2
+    ],
+    "long": 1611,
+    "horas": 7
+   },
+   "año_m1": {
+    "n": 2282,
+    "por_mes": 380.3,
+    "gana": 54.4,
+    "usd_op": -15.7,
+    "usd": -35713,
+    "perd_media": -74.3,
+    "peor": -154,
+    "stops": 930,
+    "obj": [
+     54.9,
+     28.4,
+     17.1
+    ],
+    "long": 634,
+    "horas": 8
+   },
+   "año_m2": {
+    "n": 2164,
+    "por_mes": 360.7,
+    "gana": 54.1,
+    "usd_op": -14.4,
+    "usd": -31066,
+    "perd_media": -72,
+    "peor": -155,
+    "stops": 879,
+    "obj": [
+     55.5,
+     27.9,
+     17.3
+    ],
+    "long": 977,
+    "horas": 7
+   }
+  }
+ }
+}
