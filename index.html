@@ -4600,7 +4600,7 @@ async function verLoad(){if(Date.now()-verT<5*6e4)return;verT=Date.now();try{con
   if(!TRDBT&&Date.now()-trdbtT>30*6e4){trdbtT=Date.now();try{const r=await fetch('herramientas/traders-bt.json?t='+Math.floor(Date.now()/36e5));if(r.ok){TRDBT=await r.json();if(HSRC==='live')renderRes(true);}}catch(e){}}}
 const VER_F={adx_btc:'fuerza de la tendencia de BTC (ADX 4 h)',rsi14:'RSI 14',adx:'ADX (fuerza de la tendencia)',ema200_dist:'distancia a la EMA 200 (%)',ema50_atr:'distancia a la EMA 50 (en ATR)',volumen:'volumen relativo',atr_pct:'volatilidad (ATR %)',btc_a_favor:'BTC a favor',ciclo_a_favor:'fase del ciclo a favor',
   tendencia_diaria:'tendencia diaria a favor',hora:'hora (UTC)',rsi7:'RSI 7',bollinger_z:'distancia a la banda de Bollinger',caida_1h:'caída de la última hora (%)',tendencia_1h:'tendencia de 1 h a favor',cambio_24h:'cambio en 24 h (%)',cambio_20v:'movimiento de las últimas 20 velas a favor (%)',rsi2:'RSI 2'};
-const VER_MG={medio:350,x:50,trd:300},VER_W0=5000;
+const VER_MG={medio:350,x:50,trd:300},VER_W0=5000,fusdN=v=>Math.round(v).toLocaleString('es-ES')+' USD';
 /* cada indicador partido en dos (sí / no, o alto / bajo por la mediana). Se ordena por certeza: % de ganadas de ese grupo contra el de todo el bot */
 function verGroups(C){const keys=new Set();C.forEach(o=>Object.keys(o.f||{}).forEach(k=>keys.add(k)));const G=[];
   for(const k of keys){const V=C.filter(o=>o.f&&o.f[k]!=null);if(V.length<6)continue;const vals=[...new Set(V.map(o=>o.f[k]))];if(vals.length<2)continue;
@@ -4629,8 +4629,8 @@ function verHTML(m){if(!(m==='medio'||m==='x'||m==='trd'))return '';if(!VERD){ve
       <span class="ver-s">${n?`${n} cerradas${open?' · '+open+' en curso':''} · <b>${Math.round(w)} %</b> ganadas · <b class="${avg>=0?'up':'dn'}">${hxPct(avg)}</b> por op. · <span class="${usd>=0?'up':'dn'}">${fusd2(usd)}</span>`:open?open+' en curso':'sin señales todavía'}</span></div>
       <div class="ver-t">${m==='trd'?'<b>'+esc(V.quien||'')+'</b> · ':''}${esc(V.txt)}</div>${an}${op?`<div class="ver-l">${L.slice().reverse().slice(0,15).map(o=>`<div>${new Date(o.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · <span class="${o.dir>0?'up':'dn'}">${o.dir>0?'▲':'▼'}</span> ${o.sym.replace('USDT','')} ${o.tf||''} · ${o.out?`<span class="${o.out.pct>=0?'up':'dn'}">${hxPct(o.out.pct)}</span> · ${o.trail?'canal':o.out.hit+'/3'}`:'<span class="live">EN CURSO</span>'}</div>`).join('')}</div>`:''}</div>`;}).join('');
   const tt=m==='trd'?'🧑‍🏫 BOTS DE TRADERS famosos: en práctica 24 h':`🧪 ${m==='medio'?'TRADING':'SHOOTER'}: todas las versiones en práctica 24 h`;
-  const txt=m==='trd'?`Estrategias públicas de traders conocidos, copiadas y probadas 4 años en cripto (300 USD por señal, cada una con su X). Todavía no mandan señales a Telegram. Recuadro verde: va ganando plata · rojo: va perdiendo. Tocá uno para ver su billetera de ${fusd2(VER_W0)}, su planilla y qué datos le suman o le restan.${VERD.pendientes?` · ${VERD.pendientes} órdenes esperando que el precio toque su nivel.`:''}`
-    :`Mismo mercado y mismo margen para todas, sin salvavidas. A Telegram solo llegan las de la versión actual. Recuadro verde: va ganando plata · rojo: va perdiendo. Tocá una versión para ver su billetera de ${fusd2(VER_W0)}, su planilla y qué datos le suman o le restan.`;
+  const txt=m==='trd'?`Estrategias públicas de traders conocidos, copiadas y probadas 4 años en cripto (300 USD por señal, cada una con su X). Todavía no mandan señales a Telegram. Recuadro verde: va ganando plata · rojo: va perdiendo. Tocá uno para ver su billetera de ${fusdN(VER_W0)}, su planilla y qué datos le suman o le restan.${VERD.pendientes?` · ${VERD.pendientes} órdenes esperando que el precio toque su nivel.`:''}`
+    :`Mismo mercado y mismo margen para todas, sin salvavidas. A Telegram solo llegan las de la versión actual. Recuadro verde: va ganando plata · rojo: va perdiendo. Tocá una versión para ver su billetera de ${fusdN(VER_W0)}, su planilla y qué datos le suman o le restan.`;
   return `<details class="vcal ver"${VERBOX?' open':''}><summary>${tt} <span class="mut">desde ${fdate(m==='trd'&&meta[0]?Date.parse(meta[0].desde):VERD.desde||VERD.upd)}</span></summary>
     <div class="mut" style="font-size:11px;margin:4px 0 6px">${txt}</div>${rows}</details>`;}
 /* billetera de cada versión / bot: arranca con 5.000 USD y cada señal usa su margen */
@@ -4638,10 +4638,10 @@ function verWallet(C,L,mg){const ch=C.slice().sort((a,b)=>a.out.t-b.out.t);let b
   ch.forEach((o,k)=>{bal+=o.out.pct*mg/100;pk=Math.max(pk,bal);dd=Math.min(dd,bal/pk-1);pts.push([k+1,bal]);});
   const open=L.length-C.length,uso=open*mg,mn=Math.min(...pts.map(p=>p[1])),mx=Math.max(...pts.map(p=>p[1])),W=300,Hh=54,X=i=>pts.length>1?i/(pts.length-1)*W:0,Y=v=>mx>mn?Hh-4-(v-mn)/(mx-mn)*(Hh-8):Hh/2;
   const path=pts.map((p,i)=>(i?'L':'M')+X(i).toFixed(1)+' '+Y(p[1]).toFixed(1)).join(' ');
-  return `<div class="ver-wal"><b>💼 Billetera simulada · arranca con ${fusd2(VER_W0)}</b>
-    <div class="int-g"><div>Saldo<b class="${bal>=VER_W0?'up':'dn'}">${fusd2(bal)}</b><small>${hxPct((bal/VER_W0-1)*100)} desde el inicio</small></div>
-      <div>En operaciones abiertas<b>${fusd2(uso)}</b><small>${open} abiertas · ${fusd2(mg)} de margen cada una</small></div>
-      <div>Disponible<b>${fusd2(bal-uso)}</b><small>para nuevas señales</small></div>
+  return `<div class="ver-wal"><b>💼 Billetera simulada · arranca con ${fusdN(VER_W0)}</b>
+    <div class="int-g"><div>Saldo<b class="${bal>=VER_W0?'up':'dn'}">${fusdN(bal)}</b><small>${hxPct((bal/VER_W0-1)*100)} desde el inicio</small></div>
+      <div>En operaciones abiertas<b>${fusdN(uso)}</b><small>${open} abiertas · ${fusdN(mg)} de margen cada una</small></div>
+      <div>Disponible<b>${fusdN(bal-uso)}</b><small>para nuevas señales</small></div>
       <div>Peor caída<b class="dn">${hxPct(dd*100)}</b><small>desde el saldo más alto</small></div></div>
     ${pts.length>2?`<svg class="ver-sp" viewBox="0 0 ${W} ${Hh}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${Y(VER_W0).toFixed(1)}" y2="${Y(VER_W0).toFixed(1)}" stroke="var(--line)" stroke-dasharray="3 3"/><path d="${path}" fill="none" stroke="${bal>=VER_W0?'#1e8e3e':'#c62828'}" stroke-width="2"/></svg>`:''}</div>`;}
 /* pantalla de una versión o bot: billetera, planilla, qué le aporta y qué le entorpece, y todas sus operaciones */
