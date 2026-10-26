@@ -9,7 +9,7 @@ const BOTS = [
   { v: 2, k: 'tort', tf: '4h', n: 20, m: 10, riesgo: .35, maxsl: .25, age: 90 * DAY, nm: 'TORTUGAS · Donchian 20/10 · 4 h', quien: 'Richard Dennis y los Turtles',
     txt: 'Reglas originales de las Tortugas: entra cuando rompe el máximo (mínimo) de 20 velas, con la EMA 200 a favor; stop 2 N (2 ATR de 20) y sale al romper el mínimo (máximo) de 10 velas. La X se ajusta al stop (35 % del margen, de × 1 a × 10). Sin objetivos fijos: deja correr la tendencia.' },
   { v: 3, k: 'sopa', tf: '12h', r: .5, lev: 10, maxsl: .05, age: 14 * DAY, nm: 'RASCHKE · Turtle Soup 12 h', quien: 'Linda Bradford Raschke',
-    txt: 'La misma ruptura falsa en velas de 12 h. 3 objetivos a 0,5 × stop; × 10; BTC a favor. La más certera de la prueba (81 %).' },
+    txt: 'La misma ruptura falsa en velas de 12 h. 3 objetivos a 0,5 × stop; × 10; BTC a favor. En la prueba de 4 años con estas mismas reglas: 71 % ganadas.' },
   { v: 4, k: 'tort', tf: '12h', n: 55, m: 20, riesgo: .35, maxsl: .25, age: 120 * DAY, nm: 'TORTUGAS · Donchian 55/20 · 12 h', quien: 'Richard Dennis y los Turtles',
     txt: 'Sistema 2 de las Tortugas en velas de 12 h: rompe el máximo (mínimo) de 55 velas con la EMA 200 a favor; stop 2 N y sale al romper 20 velas en contra. X según el stop (de × 1 a × 10).' },
   { v: 5, k: 'conn', tf: '12h', r: .5, lev: 10, maxsl: .05, adxb: 24, age: 14 * DAY, nm: 'CONNORS · RSI 2 · 12 h', quien: 'Larry Connors',

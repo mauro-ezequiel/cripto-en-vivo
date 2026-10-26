@@ -56,9 +56,11 @@ function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1),
         tendencia_1h: up1h, btc_a_favor: btcDir === dir ? 1 : 0, volumen: r2(L.vr), cambio_24h: r2(ch24), hora: new Date().getUTCHours() } }); }
     return out; }); }
 /* % del margen: 1/3 en cada objetivo, tocado el objetivo 1 el stop pasa a la entrada, plazo, comisión 0,05 % por lado */
-const SAL = require('./salida-lib.js'), DVLV = require('./dvol-lib.js');
+const SAL = require('./salida-lib.js'), DVLV = require('./dvol-lib.js'), TL = require('./traders-lib.js');
+const cv = b => ({ t: +b.t, o: b.open, h: b.high, l: b.low, c: b.close, v: b.v });
 function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, stop = o.hit ? o.entry : o.sl;
   const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (b.t - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; }; // comisión + deslizamiento + financiación
+  if (o.trail) { if (d * (adv - o.sl) <= 0) return fin(o.sl, d * (o.sl - o.entry) > 0 ? 7 : 1); if (b.t + 3e5 - o.t >= o.age) return fin(b.c, 5); return; } // Tortugas: sin objetivos, stop que sigue al canal
   if (d * (adv - stop) <= 0) return fin(stop, o.hit ? 3 : 1);
   while (o.hit < 3 && d * (fav - o.tp[o.hit]) >= 0) o.hit++; if (o.hit === 3) return fin(o.tp[2], 4);
   if (b.t + 3e5 - o.t >= o.age) return fin(b.c, 5); }
@@ -77,6 +79,28 @@ async function run(now, base, U7, D) { const S = D.S;
     let ba = null; try { const bb = (await D.kl('BTCUSDT', '4h', 300)).slice(0, -1); ba = D.withCandles(bb, () => D.calcADX(14).adx)[bb.length - 1]; } catch (e) {}
     for (const t of base) { const s = t.symbol; try { const [cs, hc] = await Promise.all([D.kl(s, '4h', 300), D.kl(s, '1d', 120)]); if (cs.length < 150 || hc.length < 30) continue;
         for (const x of trAll(D, cs, hc, rank[s], bd, now, ba)) add('medio', s, x, '4h'); A.diag.tr = (A.diag.tr || 0) + 1; } catch (e) { A.diag.err = 'tr ' + s + ': ' + e.message; } await D.sleep(40); } }
+  /* 🧑‍🏫 BOTS DE TRADERS (herramientas/traders-lib.js): al cierre de cada vela de 4 h y de 12 h arma las órdenes pendientes de la vela
+     siguiente (Turtle Soup y Tortugas entran si el precio toca el nivel) o entra ya (Connors). Las pendientes se revisan cada 5 min con el precio. */
+  A.pend = A.pend || [];
+  for (const tf of ['4h', '12h']) { const ms = TL.TFMS[tf], bar = Math.floor(now / ms) * ms; if (A.last['trd' + tf] === bar || now - bar > 30 * 6e4 || now - bar < 6e4) continue; A.last['trd' + tf] = bar; ch = true;
+    const BV = TL.BOTS.filter(V => V.tf === tf); A.pend = A.pend.filter(x => !BV.some(V => V.v === x.v));
+    let bd = 0, ba = null; try { const bb = (await get('BTCUSDT', '4h', 300)).slice(0, -1); const cl = bb.map(x => x.close), e = D.emaArr(cl, 50); bd = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; ba = D.withCandles(bb, () => D.calcADX(14).adx)[bb.length - 1]; } catch (e) {}
+    for (const t of base.slice(0, 60)) { const s = t.symbol; try { const [cs, hc] = await Promise.all([get(s, tf, 302), get(s, '1d', 60)]); if (!cs || cs.length < 260) continue;
+        const b = cs.slice(0, -1).map(cv), ctx = { tf, btcAdx: ba, btcDir: bd, dTrend: hc ? D.htfTrend(hc) : null };
+        for (const V of BV) { if (A.ops.some(o => o.m === 'trd' && o.v === V.v && o.sym === s && !o.out)) continue;
+          for (const x of TL.plan(V, b, ctx)) { const P = { v: V.v, sym: s, tf, dir: x.dir, lvl: x.lvl, ext: x.ext, atr: x.atr, f: x.f, bar, until: bar + ms, ya: !!x.ya }; A.pend.push(P); } }
+        A.diag.trd = (A.diag.trd || 0) + 1; } catch (e) { A.diag.err = 'trd ' + s + ': ' + e.message; } await D.sleep(30); } }
+  if (A.pend.length) { const px = {}; for (const t of base) px[t.symbol] = +t.lastPrice; let bd = null, ba = null;
+    const keep = []; for (const P of A.pend) { if (now >= P.until) continue; const V = TL.BOTS.find(y => y.v === P.v), p = px[P.sym]; if (!V || !p) { keep.push(P); continue; }
+      if (A.ops.some(o => o.m === 'trd' && o.v === P.v && o.sym === P.sym && !o.out)) continue;
+      if (!P.ya && !(P.dir > 0 ? p >= P.lvl : p <= P.lvl)) { keep.push(P); continue; }
+      if (bd === null) { try { const bb = (await get('BTCUSDT', '4h', 300)).slice(0, -1); const cl = bb.map(x => x.close), e = D.emaArr(cl, 50); bd = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; ba = D.withCandles(bb, () => D.calcADX(14).adx)[bb.length - 1]; } catch (e) { bd = 0; } }
+      if (bd !== P.dir || (V.adxb && !(ba >= V.adxb))) continue; // BTC en contra: se descarta (como en la prueba)
+      let lo = null, hi = null; if (V.k === 'sopa') { try { const cur = (await D.kl(P.sym, P.tf, 2)).slice(-1)[0]; lo = cur.low; hi = cur.high; } catch (e) {} }
+      const sx = TL.stopDe(V, P, p, lo, hi); if (!sx) continue; const d = P.dir, sl = sx.sl;
+      A.ops.push({ id: 'trd' + V.v + '-' + P.sym + '-' + now, m: 'trd', v: V.v, sym: P.sym, tf: P.tf, dir: d, entry: p, tp: V.r ? [1, 2, 3].map(k => p * (1 + d * k * V.r * sl)) : null, sl: p * (1 - d * sl),
+        lev: sx.lev, age: V.age, t: now, hit: 0, setup: V.k, f: P.f, out: null, ...(V.k === 'tort' ? { trail: V.m } : {}) }); ch = true; }
+    A.pend = keep; }
   /* SHOOTER: cada temporalidad cuando cierra su vela */
   const groups = [['5m', '15m', base.slice(0, 45)], ['3m', '1h', base.slice(0, 30)], ['15m', '1h', base.slice(0, 30)], ['30m', '1h', base.slice(0, 30)]];
   if (U7) for (const g of groups.slice(2)) for (const t of base) if (U7.has(t.symbol) && !g[2].includes(t)) g[2].push(t);
@@ -85,6 +109,9 @@ async function run(now, base, U7, D) { const S = D.S;
     for (const t of L) { const s = t.symbol; try { const [cs, hc] = await Promise.all([get(s, tf, 300), get(s, htf, 200)]); if (!cs || !hc || cs.length < 220 || hc.length < 60) continue;
         for (const x of shAll(D, cs, hc, tf, bd, s, U7, +t.priceChangePercent)) add('x', s, x, tf); A.diag[tf] = (A.diag[tf] || 0) + 1; } catch (e) { A.diag.err = tf + ' ' + s + ': ' + e.message; } await D.sleep(30); } }
   /* seguimiento con velas de 5 min */
+  for (const o of A.ops.filter(x => !x.out && x.trail)) { const ms = TL.TFMS[o.tf], bar = Math.floor(now / ms) * ms; if (o.trB === bar || bar <= o.t) continue;
+    try { const bb = (await D.kl(o.sym, o.tf, o.trail + 2)).slice(0, -1).map(cv), V = TL.BOTS.find(y => y.v === o.v), ex = TL.salidaTort(V, bb, o.dir);
+      if (isFinite(ex)) o.sl = o.dir > 0 ? Math.max(o.sl, ex) : Math.min(o.sl, ex); o.trB = bar; ch = true; } catch (e) {} await D.sleep(30); }
   for (const o of A.ops.filter(x => !x.out)) { try { const k = await D.getJ(`${D.API}/klines?symbol=${o.sym}&interval=5m&startTime=${o.chk || o.t}&limit=1000`);
       for (const r of k || []) { const b = { t: +r[0], h: +r[2], l: +r[3], c: +r[4] }; if (b.t + 3e5 > now) break; if (b.t + 3e5 <= o.t) continue; step(o, b); o.chk = b.t + 3e5; ch = true; if (o.out) break; }
       /* v7: salida anticipada al cierre de cada vela de 1 h */
@@ -97,6 +124,6 @@ async function run(now, base, U7, D) { const S = D.S;
   if (A.ops.length > 6000) A.ops = A.ops.slice(-6000);
   if (ch) A.dirty = true;
   if (A.dirty && (!A.pubT || now - A.pubT >= 15 * 6e4) && process.env.GH_TOKEN) {
-    const meta = { medio: VERS.medio.map(({ v, desde, txt }) => ({ v, desde, txt })), x: VERS.x.map(({ v, desde, txt }) => ({ v, desde, txt })) };
-    if (await D.ghPut('versiones.json', JSON.stringify({ upd: now, desde: A.since || (A.since = now), revisadas: A.diag, nota: 'Todas las versiones de TRADING (medio) y SHOOTER (x) en práctica 24 h. out.pct = % del margen con comisión. f = indicadores al momento de la señal.', versiones: meta, ops: A.ops }), 'verSha', 'Versiones en paralelo', A.ops.length + ' señales')) { A.dirty = false; A.pubT = now; } } }
+    const meta = { medio: VERS.medio.map(({ v, desde, txt }) => ({ v, desde, txt })), x: VERS.x.map(({ v, desde, txt }) => ({ v, desde, txt })), trd: TL.BOTS.map(({ v, nm, quien, tf, txt, lev, riesgo }) => ({ v, desde: TL.DESDE, nm, quien, tf, txt, lev: lev || null, riesgo: riesgo || null, margen: 300 })) };
+    if (await D.ghPut('versiones.json', JSON.stringify({ upd: now, desde: A.since || (A.since = now), revisadas: A.diag, nota: 'Todas las versiones de TRADING (medio) y SHOOTER (x), y los bots de traders (trd), en práctica 24 h. out.pct = % del margen con comisión. f = indicadores al momento de la señal.', versiones: meta, pendientes: A.pend.length, ops: A.ops }), 'verSha', 'Versiones en paralelo', A.ops.length + ' señales')) { A.dirty = false; A.pubT = now; } } }
 module.exports = { run, VERS };
