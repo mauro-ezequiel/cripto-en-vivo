@@ -54,7 +54,7 @@ function tpSim(R, ms, j0, e, d, sl, r, maxH, t0) { const tps = [1, 2, 3].map(k =
 function push(OUT, s, t, d, sl, x) { if (!x) { OUT.push({ s, t, d, open: true }); return Infinity; }
   OUT.push({ s, t, d, sl, pct: pctM(x.f, (x.end - t) / H), stop: !!x.stop, hit: x.hit || 0, plazo: !!x.plazo, hrs: (x.end - t) / H }); return x.end; }
 /* entrada en la vela i de b (tf ms): con "lvl", disparo intravela al tocar ese precio (buscado en las velas de resolución); sin lvl, a la apertura de i */
-function entrar(C, P, OUT, d, e, sl, i, lvl) { const { s, b, ms, R, rms } = C; if (!(sl <= MAXSL) || sl < .002) return 0; if (P.btc && !btcOk(b[i].t, d)) return 0;
+function entrar(C, P, OUT, d, e, sl, i, lvl) { const { s, b, ms, R, rms } = C; if (P.minsl && sl < P.minsl) sl = P.minsl; if (!(sl <= MAXSL) || sl < .002) return 0; if (P.btc && !btcOk(b[i].t, d)) return 0;
   let j0 = idxAfter(R, b[i].t), te = b[i].t;
   if (lvl != null) { for (; j0 < R.length && R[j0].t < b[i].t + ms; j0++) if (d > 0 ? R[j0].h >= lvl : R[j0].l <= lvl) break; if (j0 >= R.length || R[j0].t >= b[i].t + ms) return 0; te = R[j0].t; }
   if (P.r) return push(OUT, s, te, d, sl, tpSim(R, rms, j0, e, d, sl, P.r, P.maxH, te));
@@ -122,6 +122,16 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     'CORTO · RASCHKE Turtle Soup · 15m · obj 0,5': ['corto', '15m', sopa, O({ r: .5, maxH: 12 })],
     'CORTO · RASCHKE Turtle Soup · 30m · obj 0,5': ['corto', '30m', sopa, O({ r: .5, maxH: 12 })],
     'CORTO · WILLIAMS ruptura del rango de 4 h · obj 0,5': ['corto', '4h', williams, O({ k: .5, ema: 20, r: .5, maxH: 4 })],
+    /* corto plazo con stop mínimo (como SHOOTER: los costos pesan mucho con stops chicos) */
+    'CORTO · CONNORS RSI 2 · 15m · stop ≥ 1 % · obj 0,3': ['corto', '15m', connors, O({ lo: 10, atr: 3, minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · CONNORS RSI 2 · 30m · stop ≥ 1 % · obj 0,3': ['corto', '30m', connors, O({ lo: 10, atr: 3, minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · CONNORS RSI 2 · 30m · stop ≥ 1,5 % · obj 0,25': ['corto', '30m', connors, O({ lo: 5, atr: 3, minsl: .015, r: .25, maxH: 24 })],
+    'CORTO · RASCHKE Holy Grail · 30m · stop ≥ 1 % · obj 0,3': ['corto', '30m', holy, O({ adx: 30, minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · RASCHKE Holy Grail · 15m · stop ≥ 1 % · obj 0,3': ['corto', '15m', holy, O({ adx: 30, minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · RASCHKE Turtle Soup · 30m · stop ≥ 1 % · obj 0,3': ['corto', '30m', sopa, O({ minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · RASCHKE Turtle Soup · 15m · stop ≥ 1 % · obj 0,3': ['corto', '15m', sopa, O({ minsl: .01, r: .3, maxH: 12 })],
+    'CORTO · WILLIAMS rango de 4 h · stop ≥ 1 % · obj 0,3': ['corto', '4h', williams, O({ k: .5, ema: 20, minsl: .01, r: .3, maxH: 8 })],
+    'CORTO · WILLIAMS rango de 1 h · stop ≥ 1 % · obj 0,3': ['corto', '1h', williams, O({ k: .6, ema: 50, minsl: .01, r: .3, maxH: 4 })],
     'MEDIO · CONNORS RSI 2 · 4h · obj 0,5': ['medio', '4h', connors, O({ lo: 10, atr: 1.5, r: .5, maxH: 168 })],
     'MEDIO · CONNORS RSI 2 · 4h · salida original': ['medio', '4h', connors, O({ lo: 10, atr: 2, maxO: 168 })],
     'MEDIO · RASCHKE Holy Grail · 4h · obj 0,5': ['medio', '4h', holy, O({ adx: 30, r: .5, maxH: 168 })],
@@ -142,12 +152,13 @@ function st(L, meses) { const D = L.filter(o => !o.open), n = D.length; if (!n) 
     'LARGO · TORTUGAS 20 · 12h · obj 0,5': ['largo', '12h', tortugas, O({ n: 20, ema: 200, k: .6, r: .5, maxH: 336 })],
     'LARGO · TORTUGAS 20 · 1d · obj 0,4': ['largo', '1d', tortugas, O({ n: 20, ema: 200, k: .5, r: .4, maxH: 504 })],
     'LARGO · WILLIAMS · 1d · obj 0,5': ['largo', '1d', williams, O({ k: .5, ema: 20, r: .5, maxH: 24 })] };
-  const R = Object.fromEntries(Object.keys(V).map(k => [k, []])), MS = { '15m': M15, '30m': 2 * M15, '4h': 4 * H, '8h': 8 * H, '12h': 12 * H, '1d': DAY };
+  const VF = process.env.VAR ? new RegExp(process.env.VAR) : null; for (const k of Object.keys(V)) if (VF && !VF.test(k)) delete V[k];
+  const R = Object.fromEntries(Object.keys(V).map(k => [k, []])), MS = { '1h': H, '15m': M15, '30m': 2 * M15, '4h': 4 * H, '8h': 8 * H, '12h': 12 * H, '1d': DAY };
   { const bb = agg(await klines('BTCUSDT', '1h', H, FROM - 260 * DAY), H, 4); BTC = { b: bb, e: ema(bb.map(x => x.c), 50) }; }
   for (let si = 0; si < syms.length; si++) { const s = syms[si]; const b1 = await klines(s, '1h', H, FROM - 260 * DAY); if (b1.length < 2000) { console.log('sin datos', s); continue; }
-    const TF = { '4h': agg(b1, H, 4), '8h': agg(b1, H, 8), '12h': agg(b1, H, 12), '1d': agg(b1, H, 24) }; let b15 = null;
+    const TF = { '1h': b1, '4h': agg(b1, H, 4), '8h': agg(b1, H, 8), '12h': agg(b1, H, 12), '1d': agg(b1, H, 24) }; let b15 = null;
     if (si < NS) { b15 = await klines(s, '15m', M15, FROM - 25 * DAY); TF['15m'] = b15; TF['30m'] = agg(b15, M15, 2); }
-    for (const k in V) { const [pl, tf, fn, P] = V[k]; if (pl === 'corto' && !b15) continue; if (!TF[tf] || TF[tf].length < 300) continue;
+    for (const k in V) { if (VF && !VF.test(k)) continue; const [pl, tf, fn, P] = V[k]; if (pl === 'corto' && !b15) continue; if (!TF[tf] || TF[tf].length < 300) continue;
       const C = { s, b: TF[tf], ms: MS[tf], R: pl === 'corto' ? b15 : b1, rms: pl === 'corto' ? M15 : H }, out = [];
       try { fn(C, Object.assign({}, P), out); } catch (e) { console.log('error', k, s, e.message); } R[k].push(...out.filter(o => o.t >= FROM)); }
     process.stdout.write(s + ' '); }
