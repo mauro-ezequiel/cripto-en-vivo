@@ -30,8 +30,9 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       const st = () => PIL.map(p => ({ sym: p.sym, tf: p.tf, ok: !!p.a, title: p.a && p.a.title, why: p.a && p.a.why.slice(0, 3) }));
       const a = st(); document.querySelector('.pil-c[data-id="AAPL-t"] [data-a="tf"][data-tf="1d"]').click(); await new Promise(z => setTimeout(z, 300)); await pilTick(); await new Promise(z => setTimeout(z, 500));
       $('pilMk').value = 'a'; pilMkSet(); $('pilSym').value = 'NV'; pilFill(); const dd = [...document.querySelectorAll('#pilList .row')].slice(0, 3).map(x => x.dataset.s);
+      let pump = {}; for (const tf of ['1h', '1w']) { try { const D = await pilData('PUMPUSDT', tf, 'c'); pump[tf] = { ok: 1, c1: D.c1 }; try { pilAnalyze({ sym: 'PUMPUSDT', mk: 'c', tf, dir: 1, entry: 0.004, lev: 8, margin: 41.7, t: Date.now() - 4e8 }, D, tickers.PUMPUSDT ? tickers.PUMPUSDT.c : D.c1); } catch (e) { pump[tf].an = e.message + ' ' + (e.stack || '').split('\n')[1]; } } catch (e) { pump[tf] = 'error ' + e.message + ' ' + (e.stack || '').split('\n')[1]; } } pump.ticker = !!tickers.PUMPUSDT; pump.px = tickers.PUMPUSDT && tickers.PUMPUSDT.c;
       let spy = null; try { const b = await pilKl('SPY', '1d', 'a', 80); const cl = b.slice(0, -1).map(x => x.close), e = emaArr(cl, 50); spy = { n: b.length, c: b.at(-1).close, ult: cl.slice(-5), e50: e.at(-1), d0: b[0].date, ref: window.__refa }; } catch (e) { spy = 'error ' + e.message; }
-      return { antes: a, despues: st(), lista_acciones: dd, spy }; });
+      return { antes: a, despues: st(), lista_acciones: dd, spy, pump }; });
     info.push({ pilotear: r }); try { await pg.locator('#pilBox').screenshot({ path: 'capturas/pilotear.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ pilotear_error: e.message.slice(0, 200) }); }
   /* sección de versiones y bots de traders (con datos de prueba si todavía no hay señales reales de los bots de traders) */
   try { const r = await pg.evaluate(async () => { await verLoad(); for (let k = 0; k < 20 && !VERD; k++) await new Promise(z => setTimeout(z, 500));
