@@ -30,7 +30,8 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       const st = () => PIL.map(p => ({ sym: p.sym, tf: p.tf, ok: !!p.a, title: p.a && p.a.title, why: p.a && p.a.why.slice(0, 3) }));
       const a = st(); document.querySelector('.pil-c[data-id="AAPL-t"] [data-a="tf"][data-tf="1d"]').click(); await new Promise(z => setTimeout(z, 300)); await pilTick(); await new Promise(z => setTimeout(z, 500));
       $('pilMk').value = 'a'; pilMkSet(); $('pilSym').value = 'NV'; pilFill(); const dd = [...document.querySelectorAll('#pilList .row')].slice(0, 3).map(x => x.dataset.s);
-      return { antes: a, despues: st(), lista_acciones: dd }; });
+      let spy = null; try { const b = await pilKl('SPY', '1d', 'a', 80); spy = { n: b.length, c: b.at(-1).close, ref: window.__refa }; } catch (e) { spy = 'error ' + e.message; }
+      return { antes: a, despues: st(), lista_acciones: dd, spy }; });
     info.push({ pilotear: r }); try { await pg.locator('#pilBox').screenshot({ path: 'capturas/pilotear.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ pilotear_error: e.message.slice(0, 200) }); }
   /* sección de versiones y bots de traders (con datos de prueba si todavía no hay señales reales de los bots de traders) */
   try { const r = await pg.evaluate(async () => { await verLoad(); for (let k = 0; k < 20 && !VERD; k++) await new Promise(z => setTimeout(z, 500));

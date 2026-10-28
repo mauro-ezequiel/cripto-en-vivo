@@ -4171,7 +4171,7 @@ async function pilData(s,tf='1h',mk='c'){const key=s+'|'+tf+'|'+mk,D=PILD[key];i
   try{const ref=mk==='a'?'SPY':'BTCUSDT',k='__ref'+mk;if(!window[k]||Date.now()-window[k].t>10*6e4){const bk=await pilKl(ref,mk==='a'?'1d':'4h',mk,80),bc=bk.slice(0,-1).map(b=>b.close),be=emaArr(bc,50);window[k]={t:Date.now(),d:bc.at(-1)>be.at(-1)?1:-1};}q4.btc=window[k].d;}catch(e){q4.btc=0;}
   return PILD[key]={t:Date.now(),f15:f(m15),f1:f(h1),f4:f(h4),q4,lows,highs,c1:n?cc[n-1].close:null,t1:n?(+cc[n-1].t)+PIL_MS[T.m]:0,L:{lo:PIL_TFN[T.lo],m:PIL_TFN[T.m],hi:PIL_TFN[T.hi]},mk};}
 function pilSemaforo(D,d){const q=D.q4;if(!q)return null;
-  const F=[[D.mk==='a'?'el S&P 500 a favor':'BTC a favor',q.btc===d],['tendencia alineada',q.st===d&&q.al===d&&q.ab===d],['lejos de la EMA 50',d*q.d50>=.5],['flujo (CVD) a favor',d*q.fl6>=0],['24 h a favor',d*q.r24>=0]],k=F.filter(x=>x[1]).length;
+  const F=[[D.mk==='a'?'el S&P 500 a favor':'BTC a favor',q.btc===d],['tendencia alineada',q.st===d&&q.al===d&&q.ab===d],['lejos de la EMA 50',d*q.d50>=.5],['flujo (CVD) a favor',d*q.fl6>=0],[D.L&&D.L.hi!=='4 h'?'últimas 6 velas de '+D.L.hi+' a favor':'24 h a favor',d*q.r24>=0]],k=F.filter(x=>x[1]).length;
   const lab=k>=5?'🟢 entrada fuerte: en la prueba llegó al objetivo el 74 %':k>=3?`🟡 entrada media: en la prueba llegó al objetivo el ${k===4?'71':'68'} %`:'🔴 entrada floja: en la prueba llegó al objetivo el 64–67 %';
   return {k,lab,txt:`Semáforo de entrada ${k}/5 · ${lab} · `+F.map(x=>(x[1]?'✓ ':'✗ ')+x[0]).join(' · ')};}
 /* análisis: devuelve el estado y los textos que se muestran */
