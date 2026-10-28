@@ -18,6 +18,10 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         const ov = document.getElementById('overlay'), ch = document.getElementById('chart'), rr = chart.timeScale().getVisibleLogicalRange();
         return { m, t, sym: symbol, velas: candles.length, rango: rr ? [Math.round(rr.from), Math.round(rr.to)] : null, chartH: ch.clientHeight, chartW: ch.clientWidth, overlayH: ov && ov.height, overlayCssH: ov && ov.clientHeight, ind: [...active] }; }, [m, t, s]);
       info.push(r); const el = await pg.$('#chartWrap') || await pg.$('#chart'); await el.screenshot({ path: `capturas/${m}-${t}.png` }); } catch (e) { info.push({ m, t, error: e.message }); } }
+  /* planilla de RSI de ACCIONES en cada temporalidad */
+  try { for (const tf of ['h', '4h', '12h', 'w']) { const r = await pg.evaluate(async tf => { if (mode !== 'a') applyMode('a'); await new Promise(z => setTimeout(z, 1500)); RSIX.tf = tf; await rsiLoad(); rsiRender(); await new Promise(z => setTimeout(z, 500));
+        const v = [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => x.textContent); return { tf, celdas: v.length, vacias: v.filter(x => x === '—').length, ej: v.slice(0, 5) }; }, tf);
+      info.push({ rsi: r }); try { await pg.locator('#rsiBox').screenshot({ path: `capturas/rsi-${tf}.png`, timeout: 8000 }); } catch (e) {} } } catch (e) { info.push({ rsi_error: e.message.slice(0, 120) }); }
   /* sección de versiones y bots de traders (con datos de prueba si todavía no hay señales reales de los bots de traders) */
   try { const r = await pg.evaluate(async () => { await verLoad(); for (let k = 0; k < 20 && !VERD; k++) await new Promise(z => setTimeout(z, 500));
       if (VERD && !(VERD.versiones || {}).trd) { const now = Date.now(), B = [[1, 'RASCHKE · Turtle Soup 4 h', 'Linda Bradford Raschke', '4h'], [2, 'TORTUGAS · Donchian 20/10 · 4 h', 'Richard Dennis y los Turtles', '4h'], [3, 'RASCHKE · Turtle Soup 12 h', 'Linda Bradford Raschke', '12h'], [4, 'TORTUGAS · Donchian 55/20 · 12 h', 'Richard Dennis y los Turtles', '12h'], [5, 'CONNORS · RSI 2 · 12 h', 'Larry Connors', '12h']];
