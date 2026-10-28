@@ -4228,7 +4228,7 @@ function pilNotify(p,a){if(!a.act||!ntfAny())return;
   notify(`🟠 PILOTEAR · ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,`${a.title.replace(/^\S+\s/,'')}. ${a.txt}`,'pil-'+p.id,{sym:p.sym,tf:pilTfOf(p),m:p.mk==='a'?'a':'medio'});}
 let pilBusy=false;
 async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
-  try{for(const p of PIL){if(p.closed)continue;const c=pilPxOf(p);if(!c)continue;
+  try{for(const p of PIL){if(p.closed&&p.a)continue;const c=pilPxOf(p);if(!c)continue;
     try{const D=await pilData(p.sym,pilTfOf(p),p.mk||'c'),a=pilAnalyze(p,D,c);p.a=a;
       if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
     savePil();pilRender();}finally{pilBusy=false;}}
@@ -4352,7 +4352,7 @@ function pilGoChart(p,scroll=true){const a=p.mk==='a';if(a&&mode!=='a')applyMode
   if(scroll)$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}
 $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.closest('.pil-c').dataset.id,p=PIL.find(x=>x.id===id);if(!p)return;
   if(b.dataset.a==='go'){SFOC={pil:p.id};try{localStorage.setItem('cv_sfoc',JSON.stringify(SFOC))}catch(_){}SOV.key='';if(typeof setView==='function')setView('main');pilGoChart(p);setTimeout(()=>sovDraw(true),1200);}
-  else if(b.dataset.a==='tf'){p.tf=b.dataset.tf;p.plan=null;p.state=null;p.a=null;savePil();pilRender();pilTick();}
+  else if(b.dataset.a==='tf'){p.tf=b.dataset.tf;p.plan=null;if(!p.closed)p.state=null;p.a=null;savePil();pilRender();pilTick();}
   else if(b.dataset.a==='ll'){const c=pilPxOf(p),t=c?{c}:null;if(t){p.ll={px:t.c,margin:p.margin/2,t:Date.now()};p.state=null;savePil();pilTick();}}
   else if(b.dataset.a==='close'){p.closing=true;pilRender();const i=document.querySelector(`.pil-c[data-id="${id}"] input`);if(i)i.focus();}
   else if(b.dataset.a==='cancel'){p.closing=false;document.activeElement&&document.activeElement.blur();pilRender();}
