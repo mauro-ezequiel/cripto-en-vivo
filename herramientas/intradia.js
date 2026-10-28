@@ -19,10 +19,24 @@ function rsiState(c, p = 14) { if (c.length < p + 2) return null; let g = 0, l =
   for (let i = p + 1; i < c.length; i++) { const d = c[i] - c[i - 1]; g = (g * (p - 1) + Math.max(d, 0)) / p; l = (l * (p - 1) + Math.max(-d, 0)) / p; }
   return { rsi: l === 0 ? 100 : 100 - 100 / (1 + g / l), g, l }; }
 const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
+/* hora de Nueva York de una vela (Yahoo da segundos UTC): fecha, minutos desde la apertura (9:30) */
+const NYF = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hour12: false });
+function ny(t) { const p = Object.fromEntries(NYF.formatToParts(new Date(t * 1000)).map(x => [x.type, x.value])); return { d: `${p.year}-${p.month}-${p.day}`, m: (+p.hour % 24) * 60 + +p.minute - 570 }; }
+/* cierres agrupados en velas de h horas. 1, 2 y 4 h: desde la apertura de cada día (como TradingView; la última del día es más corta).
+   8 y 12 h: horas de mercado seguidas (6,5 h por día), contadas desde una fecha fija, así las velas no cambian de una corrida a otra */
+const D0 = Date.UTC(2020, 0, 6) / 864e5; // lunes
+function velasH(m, h) { const out = []; let key = null;
+  m.t.forEach((t, i) => { const x = ny(t); if (x.m < 0 || x.m >= 390) return; let k;
+    if (h <= 4) k = x.d + '#' + Math.floor(x.m / (h * 60));
+    else { const dd = Date.parse(x.d + 'T00:00:00Z') / 864e5 - D0, wd = Math.floor(dd / 7) * 5 + Math.min(dd % 7, 5), idx = wd * 26 + Math.floor(x.m / 15); k = Math.floor(idx / (h * 4)); }
+    if (k !== key) { out.push(m.c[i]); key = k; } else out[out.length - 1] = m.c[i]; });
+  return out; }
+/* semanal: cierres de cada semana (lunes a viernes) con las velas diarias; la semana en curso queda afuera y la completa el precio en vivo */
+function semanas(d1) { const out = []; let key = null; d1.t.forEach((t, i) => { const k = Math.floor((t / 86400 + 3) / 7); if (k !== key) { out.push({ k, c: d1.c[i] }); key = k; } else out[out.length - 1].c = d1.c[i]; }); return out; }
 (async () => { fs.mkdirSync(path.join(OUT, 'c'), { recursive: true });
   let prev = {}; try { prev = JSON.parse(fs.readFileSync(path.join(PREV, 'rsi.json'), 'utf8')); } catch (e) {}
   const today = new Date().toISOString().slice(0, 10), needDaily = !prev.dia || prev.dia !== today || process.env.DIARIO;
-  const D = {}, ok = [], fail = []; let q = 0;
+  const D = {}, X = {}, ok = [], fail = []; let q = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
     const m = await yahoo(s, '15m', '60d'); let row = (prev.d || {})[s] || null, old = null;
     try { const p = path.join(PREV, 'c', s + '.json.gz'); if (fs.existsSync(p)) old = JSON.parse(zlib.gunzipSync(fs.readFileSync(p))); } catch (e) {}
@@ -34,12 +48,19 @@ const r2 = v => v == null || !isFinite(v) ? null : +v.toFixed(2);
     const m15 = m && m.c.length > 20 ? m : old && old.m15;
     if (m15 || d1) { fs.writeFileSync(path.join(OUT, 'c', s + '.json.gz'), zlib.gzipSync(JSON.stringify({ s, upd: Date.now(), m15, d1 }), { level: 9 })); (m && m.c.length > 20 ? ok : fail).push(s); }
     else fail.push(s);
+    if (m && m.c.length > 20) { /* RSI de 1, 2, 4, 8 y 12 h con las velas de 15 min agrupadas */
+      const x = X[s] = X[s] || []; [1, 2, 4, 8, 12].forEach((h, k) => { const st = rsiState(velasH(m, h)); x[k] = st ? r2(st.rsi) : null; }); }
+    if (!(m && m.c.length > 20) && prev.x && prev.x[s]) { const x = X[s] = X[s] || []; for (let k = 0; k < 5; k++) x[k] = prev.x[s][k]; }
+    if (d1) { const W = semanas(d1), wk = Math.floor((Date.now() / 1000 / 86400 + 3) / 7), cl = (W.length && W[W.length - 1].k === wk ? W.slice(0, -1) : W).map(w => w.c), st = rsiState(cl);
+      const x = X[s] = X[s] || []; if (st) { x[5] = r2(st.rsi); x[6] = +st.g.toPrecision(6); x[7] = +st.l.toPrecision(6); x[8] = cl[cl.length - 1]; } }
     if (m && m.c.length > 20) { /* RSI de 1 h con las velas de 15 min agrupadas por hora */
       const hc = []; let hk = null; m.t.forEach((t, i) => { const k = Math.floor(t / 3600); if (k !== hk) { hc.push(m.c[i]); hk = k; } else hc[hc.length - 1] = m.c[i]; });
       const h1 = rsiState(hc); row = row || []; row[4] = h1 ? r2(h1.rsi) : null; row[6] = m.c[m.c.length - 1]; }
     if (row) D[s] = row; await sleep(150); } }));
   /* d[ACCION] = [RSI diario al cierre anterior, promedio de subas, promedio de bajas, cierre anterior, RSI 1 h, cambio del día anterior %, último precio de 30 min] */
-  const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D };
+  const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D,
+    /* x[ACCION] = [RSI 1 h, 2 h, 4 h, 8 h, 12 h, RSI semanal al cierre de la semana anterior, promedio de subas, de bajas, cierre de la semana anterior] */
+    xcols: ['1h', '2h', '4h', '8h', '12h', 'rsi_s', 'g_s', 'l_s', 'cierre_s'], x: Object.keys(X).length ? X : (prev.x || {}) };
   fs.writeFileSync(path.join(OUT, 'rsi.json'), JSON.stringify(out));
   /* ACUMULACIÓN: velas semanales de toda la historia de los índices (una vez por día; el resto de las corridas usa las de antes) */
   { let acu = null; try { acu = JSON.parse(fs.readFileSync(path.join(PREV, 'acum.json'), 'utf8')); } catch (e) {}
