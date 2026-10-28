@@ -1,0 +1,688 @@
+{
+ "info": [
+  {
+   "m": "medio",
+   "t": "4h",
+   "sym": "BTCUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "medio",
+   "t": "1h",
+   "sym": "ETHUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "medio",
+   "t": "1d",
+   "sym": "SOLUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "tx",
+   "t": "4h",
+   "sym": "XRPUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "x",
+   "t": "15m",
+   "sym": "BTCUSDT",
+   "velas": 1000,
+   "rango": [
+    820,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "bollinger",
+    "vwap",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "x",
+   "t": "5m",
+   "sym": "SOLUSDT",
+   "velas": 1000,
+   "rango": [
+    820,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "bollinger",
+    "vwap",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "a",
+   "t": "1d",
+   "sym": "JPM",
+   "velas": 501,
+   "rango": [
+    341,
+    517
+   ],
+   "chartH": 1094,
+   "chartW": 412,
+   "overlayH": 2188,
+   "overlayCssH": 1094,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "bollinger",
+    "fib",
+    "fig"
+   ]
+  },
+  {
+   "rsi": {
+    "tf": "h",
+    "celdas": 88,
+    "vacias": 0,
+    "ej": [
+     "59,1",
+     "62,4",
+     "49,7",
+     "68,4",
+     "54,0"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "4h",
+    "celdas": 88,
+    "vacias": 0,
+    "ej": [
+     "52,0",
+     "48,9",
+     "56,3",
+     "60,0",
+     "38,0"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "12h",
+    "celdas": 88,
+    "vacias": 0,
+    "ej": [
+     "49,7",
+     "46,4",
+     "49,2",
+     "44,1",
+     "36,8"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "w",
+    "celdas": 88,
+    "vacias": 0,
+    "ej": [
+     "59,1",
+     "54,6",
+     "56,6",
+     "48,2",
+     "44,1"
+    ]
+   }
+  },
+  {
+   "pilotear": {
+    "antes": [
+     {
+      "sym": "AAPL",
+      "tf": "1h",
+      "ok": true,
+      "title": "✅ DEJÁ CORRER: mové el stop a la entrada",
+      "why": [
+       "Semáforo de entrada 2/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ el S&P 500 a favor · ✗ tendencia alineada · ✓ lejos de la EMA 50 · ✓ flujo (CVD) a favor · ✗ 24 h a favor",
+       "tendencia 15 min a favor · 1 h a favor · 4 h neutral",
+       "RSI 1 h 56 · ADX 1 h 12"
+      ]
+     },
+     {
+      "sym": "BTCUSDT",
+      "tf": "15m",
+      "ok": true,
+      "title": "💰 ASEGURÁ: la tendencia está girando",
+      "why": [
+       "Semáforo de entrada 0/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ BTC a favor · ✗ tendencia alineada · ✗ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✗ últimas 6 velas de 1 h a favor",
+       "tendencia 5 min en contra · 15 min en contra · 1 h en contra",
+       "RSI 15 min 67 · ADX 15 min 39 empujando en contra"
+      ]
+     }
+    ],
+    "despues": [
+     {
+      "sym": "AAPL",
+      "tf": "1d",
+      "ok": true,
+      "title": "👍 MANTENER",
+      "why": [
+       "Semáforo de entrada 2/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ el S&P 500 a favor · ✗ tendencia alineada · ✓ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✓ últimas 6 velas de 1 semana a favor",
+       "tendencia 4 h neutral · 1 día a favor · 1 semana neutral",
+       "RSI 1 día 58 · ADX 1 día 20"
+      ]
+     },
+     {
+      "sym": "BTCUSDT",
+      "tf": "15m",
+      "ok": true,
+      "title": "💰 ASEGURÁ: la tendencia está girando",
+      "why": [
+       "Semáforo de entrada 0/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ BTC a favor · ✗ tendencia alineada · ✗ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✗ últimas 6 velas de 1 h a favor",
+       "tendencia 5 min en contra · 15 min en contra · 1 h en contra",
+       "RSI 15 min 67 · ADX 15 min 39 empujando en contra"
+      ]
+     }
+    ],
+    "lista_acciones": [
+     "NVDA",
+     "NVS",
+     "NVO"
+    ],
+    "spy": {
+     "n": 80,
+     "c": 769.66,
+     "ult": [
+      769.05,
+      773.09,
+      763.96,
+      759.97,
+      765.37
+     ],
+     "e50": 765.9839540141297,
+     "d0": "2026-07-07",
+     "ref": {
+      "t": 1793182330878,
+      "d": -1
+     }
+    },
+    "pump": {
+     "1h": {
+      "ok": 1,
+      "c1": 0.004371
+     },
+     "1w": {
+      "ok": 1,
+      "c1": 0.004237
+     },
+     "ticker": true,
+     "px": 0.004354
+    }
+   }
+  },
+  {
+   "versiones": {
+    "versiones": true,
+    "trd": 5,
+    "cards": 13,
+    "bt": true
+   }
+  },
+  {
+   "atras": [
+    [
+     "abre sig",
+     {
+      "v": "sig",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "abre pil",
+     {
+      "v": "pil",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "abre cic",
+     {
+      "v": "cic",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "abre IA",
+     {
+      "v": "cic",
+      "ia": true,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 1",
+     {
+      "v": "cic",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 2",
+     {
+      "v": "pil",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 3",
+     {
+      "v": "sig",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 4",
+     {
+      "v": "main",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 5",
+     {
+      "v": "main",
+      "ia": false,
+      "trn": false,
+      "toast": true,
+      "url": "o/?bot=estudio&t=1793182232222"
+     }
+    ],
+    [
+     "atrás 6",
+     {
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "about:blank"
+     }
+    ]
+   ]
+  }
+ ],
+ "errs": [
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.coindesk.com%2Farc%2Foutboundfeeds%2Frss%2F' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fcointelegraph.com%2Frss' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3Dbitcoin%2BOR%2Bcrypto%2BOR%2Bstablecoin%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3D%2522federal%2Breserve%2522%2BOR%2Binflation%2BOR%2BCPI%2BOR%2Btariffs%2BOR%2BSEC%2BOR%2Brecession%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequ",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.cnbc.com%2Fid%2F100003114%2Fdevice%2Frss%2Frss.html' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/openInterestHist?symbol=UUSDT&period=5m&limit=289' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/topLongShortPositionRatio?symbol=UUSDT&period=5m&limit=1' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/takerlongshortRatio?symbol=UUSDT&period=5m&limit=12' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=UUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=UUSDT&period=5m&limit=1' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/ethusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/ethusdt@kline_1h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/xrpusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_5m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DNYSE%2BOR%2B%2522Dow%2BJones%2522%2BOR%2B%2522New%2BYork%2BStock%2BExchange%2522%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequiel.github.io' has",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3DJPM%2520stock%2520when%253A3d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' ",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3D%2522stock%2Bmarket%2522%2BOR%2B%2522S%2526P%2B500%2522%2BOR%2BNasdaq%2BOR%2B%2522Wall%2BStreet%2522%2BOR%2Bearnings%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'h",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3D%2522federal%2Breserve%2522%2BOR%2Binflation%2BOR%2BCPI%2BOR%2Btariffs%2BOR%2Brecession%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequiel.github.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.cnbc.com%2Fid%2F100003114%2Fdevice%2Frss%2Frss.html' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.coindesk.com%2Farc%2Foutboundfeeds%2Frss%2F' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fcointelegraph.com%2Frss' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3Dbitcoin%2BOR%2Bcrypto%2BOR%2Bstablecoin%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fnews.google.com%2Frss%2Fsearch%3Fq%3D%2522federal%2Breserve%2522%2BOR%2Binflation%2BOR%2BCPI%2BOR%2Btariffs%2BOR%2BSEC%2BOR%2Brecession%2Bwhen%3A1d%26hl%3Den-US%26gl%3DUS%26ceid%3DUS%3Aen' from origin 'https://mauro-ezequ",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.rss2json.com/v1/api.json?rss_url=https%3A%2F%2Fwww.cnbc.com%2Fid%2F100003114%2Fdevice%2Frss%2Frss.html' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.binance.com/api/v3/klines?symbol=AAPL&interval=1h&limit=300' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'https://mauro-ezequiel.github.io' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451"
+ ]
+}
