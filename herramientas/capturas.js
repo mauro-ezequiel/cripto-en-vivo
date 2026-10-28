@@ -22,6 +22,16 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   try { for (const tf of ['h', '4h', '12h', 'w']) { const r = await pg.evaluate(async tf => { if (mode !== 'a') applyMode('a'); await new Promise(z => setTimeout(z, 1500)); RSIX.tf = tf; await rsiLoad(); rsiRender(); await new Promise(z => setTimeout(z, 500));
         const v = [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => x.textContent); return { tf, celdas: v.length, vacias: v.filter(x => x === '—').length, ej: v.slice(0, 5) }; }, tf);
       info.push({ rsi: r }); try { await pg.locator('#rsiBox').screenshot({ path: `capturas/rsi-${tf}.png`, timeout: 8000 }); } catch (e) {} } } catch (e) { info.push({ rsi_error: e.message.slice(0, 120) }); }
+  /* PILOTEAR: una acción y una cripto, y cambio de temporalidad en la operación ya creada */
+  try { const r = await pg.evaluate(async () => { for (let k = 0; k < 30 && !(STK.AAPL && STK.AAPL.c); k++) await new Promise(z => setTimeout(z, 500));
+      PIL = [{ id: 'AAPL-t', sym: 'AAPL', mk: 'a', tf: '1h', dir: 1, entry: STK.AAPL ? STK.AAPL.c * .99 : 200, lev: 1, margin: 1000, t: Date.now() - 864e5, state: null, ll: null, closed: false },
+        { id: 'BTC-t', sym: 'BTCUSDT', mk: 'c', tf: '15m', dir: -1, entry: tickers.BTCUSDT ? tickers.BTCUSDT.c * 1.01 : 100000, lev: 10, margin: 100, t: Date.now() - 36e5, state: null, ll: null, closed: false }];
+      if (typeof setView === 'function') setView('pil'); pilRender(); await pilTick(); await new Promise(z => setTimeout(z, 800));
+      const st = () => PIL.map(p => ({ sym: p.sym, tf: p.tf, ok: !!p.a, title: p.a && p.a.title, why: p.a && p.a.why.slice(0, 3) }));
+      const a = st(); document.querySelector('.pil-c[data-id="AAPL-t"] [data-a="tf"][data-tf="1d"]').click(); await new Promise(z => setTimeout(z, 300)); await pilTick(); await new Promise(z => setTimeout(z, 500));
+      $('pilMk').value = 'a'; pilMkSet(); $('pilSym').value = 'NV'; pilFill(); const dd = [...document.querySelectorAll('#pilList .row')].slice(0, 3).map(x => x.dataset.s);
+      return { antes: a, despues: st(), lista_acciones: dd }; });
+    info.push({ pilotear: r }); try { await pg.locator('#pilBox').screenshot({ path: 'capturas/pilotear.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ pilotear_error: e.message.slice(0, 200) }); }
   /* sección de versiones y bots de traders (con datos de prueba si todavía no hay señales reales de los bots de traders) */
   try { const r = await pg.evaluate(async () => { await verLoad(); for (let k = 0; k < 20 && !VERD; k++) await new Promise(z => setTimeout(z, 500));
       if (VERD && !(VERD.versiones || {}).trd) { const now = Date.now(), B = [[1, 'RASCHKE · Turtle Soup 4 h', 'Linda Bradford Raschke', '4h'], [2, 'TORTUGAS · Donchian 20/10 · 4 h', 'Richard Dennis y los Turtles', '4h'], [3, 'RASCHKE · Turtle Soup 12 h', 'Linda Bradford Raschke', '12h'], [4, 'TORTUGAS · Donchian 55/20 · 12 h', 'Richard Dennis y los Turtles', '12h'], [5, 'CONNORS · RSI 2 · 12 h', 'Larry Connors', '12h']];
