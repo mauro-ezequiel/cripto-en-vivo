@@ -4241,7 +4241,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('
       ${a?`<div class="pil-s${a.act?'':' ok'}"><b>${a.title}</b>${a.txt}</div>
       <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>Precio ahora</span><b>${fp(a.c)}</b>
         <span>Resultado</span><b class="${a.usd>=0?'up':'dn'}">${pilMoney(a.usd)} (${fpct(a.usd/a.mg*100)} del margen)</b>
-        <span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>
+        ${p.lev>1?`<span>Liquidación estimada</span><b class="dn">${fp(a.liq)} (${pc(a.liq)})</b>`:''}
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       ${pilTgHTML(a)}${p.mk==='a'?'':pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
