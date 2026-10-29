@@ -2,6 +2,8 @@
 <html lang="es">
 <head>
 <meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
+<meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRIPTO-LIVE</title>
 <link rel="manifest" href="manifest.json">
@@ -2635,7 +2637,7 @@ function renderNews(){
   const next=NTOP.since?new Date(NTOP.since+TOP_MS).toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'}):'';
   $('newsUpd').textContent=NEWS.upd?`· próximo cambio ${next}`:'· cargando…';
   $('newsList').innerHTML=list.map(n=>{const c=n.sent>0?'up':n.sent<0?'dn':'neu',lab=n.sent>0?'▲ Alcista':n.sent<0?'▼ Bajista':'● Neutral',imp=n.imp>=4?'alto':n.imp>=2?'medio':'bajo';
-    const ttl=n.link?`<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:`<span>${esc(n.title)}</span>`;
+    const ttl=n.link&&/^https?:\/\//i.test(n.link)?`<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:`<span>${esc(n.title)}</span>`;
     return `<div class="nw"><span class="nt">${ago(n.t)}</span><span class="ntags">${n.tags.map(([t,col])=>`<i style="color:${col};border-color:${col}66">${t}</i>`).join('')}</span>${ttl}<span class="nsrc">${n.hot?'<b class="dn">NUEVA · </b>':''}${esc(n.source)} · impacto ${imp}</span><span class="vp ${c}">${lab}</span></div>`;}).join('')
     ||`<div class="mut">${NEWS.upd?'No hay noticias relevantes en este momento.':'Cargando noticias…'}</div>`;
 }
@@ -4285,6 +4287,10 @@ async function bnGet(path,params){if(!BN.off){try{const t=await getJ(FAPI+'/fapi
   const q=new URLSearchParams(Object.assign({},params||{},{timestamp:String(Date.now()+BN.off),recvWindow:'10000'})).toString();
   const r=await fetch(`${FAPI}${path}?${q}&signature=${await bnSign(q)}`,{headers:{'X-MBX-APIKEY':BN.k}});let j=null;try{j=await r.json();}catch(e){}
   if(!r.ok)throw new Error((j&&j.msg)||('error '+r.status));return j;}
+async function bnPerms(){try{const q=new URLSearchParams({timestamp:String(Date.now()+(BN.off||0)),recvWindow:'10000'}).toString();
+    const r=await fetch(`https://api.binance.com/sapi/v1/account/apiRestrictions?${q}&signature=${await bnSign(q)}`,{headers:{'X-MBX-APIKEY':BN.k}});if(!r.ok)return null;const j=await r.json();
+    const bad=[j.enableWithdrawals&&'retirar',(j.enableSpotAndMarginTrading||j.enableMargin)&&'operar en spot o margen',j.enableFutures&&'operar futuros',(j.enableInternalTransfer||j.permitsUniversalTransfer)&&'transferir'].filter(Boolean);
+    return {peligro:bad.length?bad.join(', '):null};}catch(e){return null;}}
 async function bnSync(){if(!BN.k||!BN.s||BN.busy)return;BN.busy=true;
   try{const P=await bnGet('/fapi/v2/positionRisk');BN.pos=P.filter(x=>+x.positionAmt!==0);
     for(const x of BN.pos){const s=x.symbol,dir=+x.positionAmt>0?1:-1,lev=+x.leverage||1,entry=+x.entryPrice,qty=Math.abs(+x.positionAmt),mg=x.marginType==='isolated'&&+x.isolatedMargin>0?+x.isolatedMargin:qty*entry/lev;
@@ -4320,10 +4326,14 @@ function bnRender(){const el=$('bnBox');if(!el)return;if(el.contains(document.ac
       <div><b>2. Conectar con una clave de SOLO LECTURA</b><ol><li>En Binance: Perfil → Gestión de API → Crear API.</li><li>Dejá tildado <b>solo "Habilitar lectura"</b>. No tildes futuros, spot ni retiros.</li><li>Pegá la clave y el secreto acá.</li></ol>
         ${BN.k?`<div class="mut">Clave cargada (${esc(BN.k.slice(0,4))}…${esc(BN.k.slice(-4))}).</div><button type="button" id="bnSync">Actualizar ahora</button> <button type="button" id="bnOff">Desconectar y borrar la clave</button>`
           :`<input id="bnK" type="password" placeholder="API key" autocomplete="off"><input id="bnS" type="password" placeholder="Secret key" autocomplete="off"><label class="mut"><input type="checkbox" id="bnRem"> recordar en este navegador</label> <button type="button" id="bnGo">Conectar</button>`}
-        <div class="mut">La clave queda solo en este navegador y se usa solo para leer desde fapi.binance.com. Trae tus posiciones (con la liquidación exacta), el resultado realizado, las comisiones y el funding. No puede operar ni retirar.</div></div></div>
+        <div class="mut">La clave queda solo en este navegador (si no tildás "recordar", se borra al cerrar la página) y se usa solo para leer desde Binance. Antes de usarla reviso sus permisos: si puede operar, transferir o retirar, no la acepto.</div></div></div>
     ${BN.err?`<div class="err">${esc(BN.err)}</div>`:''}${bnSummary()}</details>`;
-  const go=$('bnGo');if(go)go.onclick=()=>{const k=$('bnK').value.trim(),s=$('bnS').value.trim();if(!k||!s){BN.err='Pegá la clave y el secreto.';bnRender();return;}BN.k=k;BN.s=s;BN.rem=$('bnRem').checked;
-    try{if(BN.rem)localStorage.setItem('cv_bn',JSON.stringify({k,s}));}catch(e){}bnSync();};
+  const go=$('bnGo');if(go)go.onclick=async()=>{const k=$('bnK').value.trim(),s=$('bnS').value.trim();if(!k||!s){BN.err='Pegá la clave y el secreto.';bnRender();return;}
+    if(!/^[A-Za-z0-9]{20,128}$/.test(k)||!/^[A-Za-z0-9]{20,128}$/.test(s)){BN.err='La clave o el secreto no tienen el formato de Binance.';bnRender();return;}
+    BN.k=k;BN.s=s;BN.rem=$('bnRem').checked;
+    /* seguridad: antes de usarla se pregunta a Binance qué permisos tiene; si puede operar o retirar, no se usa ni se guarda */
+    const P=await bnPerms();if(P&&P.peligro){BN.k=BN.s='';BN.err='Esa clave tiene permiso para '+P.peligro+'. Por seguridad no la uso ni la guardo: borrala en Binance y creá una con solo "Habilitar lectura".';bnRender();return;}
+    BN.permOk=!!P;try{if(BN.rem)localStorage.setItem('cv_bn',JSON.stringify({k,s}));}catch(e){}bnSync();};
   const off=$('bnOff');if(off)off.onclick=()=>{BN.k=BN.s='';BN.on=false;BN.inc=null;BN.pos=[];try{localStorage.removeItem('cv_bn');}catch(e){}PIL=PIL.filter(p=>!p.bn);savePil();bnRender();pilRender();};
   const sy=$('bnSync');if(sy)sy.onclick=()=>{BN.inc=null;bnSync();};
   const f=$('bnCsv');if(f)f.onchange=async()=>{const file=f.files[0];if(!file)return;try{BN.csv=bnParseCsv(await file.text(),file.name);try{localStorage.setItem('cv_bn_csv',JSON.stringify(BN.csv));}catch(e){}BN.err='';}catch(e){BN.err='No pude leer el archivo: '+e.message;}bnRender();};}
