@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<link rel="preconnect" href="https://unpkg.com" crossorigin><link rel="preconnect" href="https://www.gstatic.com" crossorigin><link rel="preconnect" href="https://api.binance.com" crossorigin><link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRIPTO-LIVE</title>
 <link rel="manifest" href="manifest.json">
@@ -849,6 +850,10 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
   <section><h4>📲 Avisos por Telegram</h4><div id="rmtBox"></div></section>
 </div></div>
 <script>
+/* rendimiento (noviembre 2026): con la página en segundo plano, cada tarea repetida corre como mucho una vez por minuto
+   (ahorra batería y datos en el celular). Al volver a la página todo se pone al día solo. Los avisos siguen llegando. */
+(function(){const SI=window.setInterval.bind(window);window.setInterval=function(fn,ms,...a){if(typeof fn!=='function'||!(ms<6e4))return SI(fn,ms,...a);let last=0;
+  return SI(function(){if(document.hidden){const n=Date.now();if(n-last<6e4)return;last=n;}else last=Date.now();return fn.apply(this,a);},ms);};})();
 /* FIGURAS CHARTISTAS (octubre 2026). Busca figuras clásicas sobre velas {open,high,low,close} usando solo datos hasta cada vela
    (sin mirar el futuro): los pivotes se confirman K velas después. Sirve igual en la página (window.FIG) y en los bots (require).
    Figuras: doble techo / doble piso, hombro-cabeza-hombro (normal e invertido), triángulo ascendente / descendente / simétrico,
