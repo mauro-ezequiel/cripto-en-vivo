@@ -4284,8 +4284,10 @@ function pilNotify(p,a){if(!a.act||!ntfAny())return;
   notify(`${a.title} · PILOTEAR ${p.sym.replace('USDT','')} ${p.dir>0?'LONG':'SHORT'} × ${p.lev}`,a.txt,'pil-'+p.id,{sym:p.sym,tf:pilTfOf(p),m:p.mk==='a'?'a':'medio'});}
 let pilBusy=false;
 async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
-  try{if(PIL.some(p=>p.mk!=='a'&&!p.closed))await pilMarks();for(const p of PIL){if(p.closed&&p.a)continue;const c=pilPxOf(p);if(!c)continue;
-    try{const D=await pilData(p.sym,pilTfOf(p),p.mk||'c'),a=pilAnalyze(p,D,c);p.a=a;
+  try{if(PIL.some(p=>p.mk!=='a'))await pilMarks();for(const p of PIL){const c=pilPxOf(p);if(!c)continue;
+    /* una operación marcada como liquidada vuelve a pilotearse si el precio volvió del lado bueno de la liquidación (antes quedaba congelada) */
+    if(p.closed){if(p.dir*(c-pilLiqPx(p))>0){p.closed=false;p.state=null;}else if(p.a)continue;}
+    try{const D=await pilData(p.sym,pilTfOf(p),p.mk||'c'),a=pilAnalyze(p,D,c);a.t=Date.now();p.a=a;
       if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
     savePil();pilRender();}finally{pilBusy=false;}}
 function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('pilCnt');if(cnt){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;cnt.textContent=PIL.length?`(${PIL.length}${n?` · ${n} con aviso`:''})`:'';}
@@ -4298,7 +4300,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('
     return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}">${bar}<div class="pil-h"><span class="mut">${p.bn?'<span class="bn-tag">Binance</span> ':''}${p.mk==='a'?'🏛 acción · ':''}${L?'LONG':'SHORT'} × ${p.lev} · margen ${p.margin} USD${p.extra?` + ${p.extra} USD que sumaste`:''}${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · margen ${p.mt==='cruzado'?'cruzado'+(p.cuenta>0?` (saldo libre ${p.cuenta} USD)`:' (sin saldo cargado)'):'aislado'} · desde ${fdate(p.t)}</span></div>
       <div class="pil-tfs"><span>Temporalidad</span>${PIL_TFS[p.mk==='a'?'a':'c'].map(t=>`<button type="button" data-a="tf" data-tf="${t}" class="${pilTfOf(p)===t?'on':''}">${PIL_TFN[t]}</button>`).join('')}</div>
       ${a?`<div class="pil-s${a.act?'':' ok'}"><b>${a.title}</b>${a.txt}</div>
-      <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>${p.mk==='a'?'Precio ahora':pilMark(p.sym)?'Precio de marca (futuros)':'Precio ahora (spot)'}</span><b>${fp(a.c)}</b>
+      <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>${p.mk==='a'?'Precio ahora':pilMark(p.sym)?'Precio de marca (futuros)':'Precio ahora (spot)'}</span><b>${fp(a.c)}${a.t&&Date.now()-a.t>9e4?` <small class="dn">(de hace ${Math.round((Date.now()-a.t)/6e4)} min)</small>`:''}</b>
         <span>Resultado</span><b class="${a.usd>=0?'up':'dn'}">${pilMoney(a.usd)} (${fpct(a.usd/a.mg*100)} del margen)</b>
         ${p.lev>1?`<span>Liquidación estimada</span><b class="dn">${isFinite(a.liq)?`${fp(a.liq)} (${pc(a.liq)})`:p.mt==='cruzado'?'cruzado: depende del saldo de tu cuenta (cargalo en «Ajustar margen»)':'—'}</b>`:''}
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
