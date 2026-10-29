@@ -18,6 +18,9 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         const ov = document.getElementById('overlay'), ch = document.getElementById('chart'), rr = chart.timeScale().getVisibleLogicalRange();
         return { m, t, sym: symbol, velas: candles.length, rango: rr ? [Math.round(rr.from), Math.round(rr.to)] : null, chartH: ch.clientHeight, chartW: ch.clientWidth, overlayH: ov && ov.height, overlayCssH: ov && ov.clientHeight, ind: [...active] }; }, [m, t, s]);
       info.push(r); const el = await pg.$('#chartWrap') || await pg.$('#chart'); await el.screenshot({ path: `capturas/${m}-${t}.png` }); } catch (e) { info.push({ m, t, error: e.message }); } }
+  /* huellas (SRI) de los scripts externos, para que el navegador rechace un archivo cambiado */
+  try { const sri = await pg.evaluate(async () => { const out = {}; for (const sc of document.querySelectorAll('script[src^="https://"]')) { try { const b = await (await fetch(sc.src, { cache: 'no-store' })).arrayBuffer(); const h = await crypto.subtle.digest('SHA-384', b);
+          out[sc.src] = 'sha384-' + btoa(String.fromCharCode(...new Uint8Array(h))); } catch (e) { out[sc.src] = 'error ' + e.message; } } return out; }); info.push({ sri }); } catch (e) { info.push({ sri_error: e.message }); }
   /* planilla de RSI de ACCIONES en cada temporalidad */
   try { for (const tf of ['h', '4h', '12h', 'w']) { const r = await pg.evaluate(async tf => { if (mode !== 'a') applyMode('a'); await new Promise(z => setTimeout(z, 1500)); RSIX.tf = tf; await rsiLoad(); rsiRender(); await new Promise(z => setTimeout(z, 500));
         const v = [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => x.textContent); return { tf, celdas: v.length, vacias: v.filter(x => x === '—').length, ej: v.slice(0, 5) }; }, tf);
