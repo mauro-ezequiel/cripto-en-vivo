@@ -573,15 +573,26 @@ async function main() { const t0 = Date.now();
     const fAt = (sy, t) => { const F = FU.get(sy); if (!F || !F.length) return null; let a = 0, b = F.length; while (a < b) { const m = (a + b) >> 1; if (F[m][0] <= t) a = m + 1; else b = m; } return a > 0 && t - F[a - 1][0] < 9 * 36e5 ? F[a - 1][1] : null; };
     for (const c of CANDS) if (MM.includes(c.m)) c.fr = fAt(c.s, c.t);
     const rk = c => { const R7 = SH7RK.get(Math.floor(c.t / DAY) * DAY); const x = R7 && R7.get(c.s); return x || [999, 0]; };
-    const V = [['actual', null, 0]];
+    const V = [['actual', null, 0]]; const SOLO2 = !!process.env.SIGMEJ2;
     for (const K of [1, 2, 3]) V.push([`máx. ${K} a la vez en la misma dirección`, null, K]);
     for (const n of [10, 15, 20]) V.push([`SHOOTER solo las ${n} con más volumen`, c => c.m === 'x' && rk(c)[0] >= n, 0]);
     for (const v of [50e6, 100e6]) V.push([`SHOOTER solo con más de ${v / 1e6} M USD por día`, c => c.m === 'x' && rk(c)[1] < v, 0]);
     for (const f of [.0001, .0002, .0003, .0005]) V.push([`sin entrar del lado lleno (funding ${(f * 100).toFixed(2)} %)`, c => c.fr != null && (c.dir > 0 ? c.fr > f : c.fr < -f), 0]);
     V.push(['LONG solo con funding ≤ 0 · SHORT solo con funding ≥ 0', c => c.fr != null && (c.dir > 0 ? c.fr > 0 : c.fr < 0), 0]);
     V.push(['máx. 2 a la vez + SHOOTER top 20', c => c.m === 'x' && rk(c)[0] >= 20, 2]);
+    /* SHOOTER solo compra caídas: en mercados flojos pierde. Filtros del mercado (BTC, velas de 4 h ya cerradas) */
+    const B = BTC4.b, BC = B.map(x => x.close), E200 = emaArr(BC, 200), bi = t => { let lo = 0, hi = B.length; while (lo < hi) { const m = (lo + hi) >> 1; if (B[m].t + 144e5 <= t) lo = m + 1; else hi = m; } return lo - 1; };
+    const bE50 = t => { const i = bi(t); return i >= 0 && BTC4.e[i] != null ? BC[i] > BTC4.e[i] : true; }, bE200 = t => { const i = bi(t); return i >= 0 && E200[i] != null ? BC[i] > E200[i] : true; }, b7 = t => { const i = bi(t); return i >= 42 ? BC[i] / BC[i - 42] - 1 : 0; };
+    const big = c => rk(c)[1] < 50e6;
+    V.push(['SHOOTER solo con BTC sobre su EMA 50 de 4 h', c => c.m === 'x' && !bE50(c.t), 0]);
+    V.push(['SHOOTER solo con BTC sobre su EMA 200 de 4 h', c => c.m === 'x' && !bE200(c.t), 0]);
+    V.push(['SHOOTER sin operar si BTC cayó más de 5 % en 7 días', c => c.m === 'x' && b7(c.t) < -.05, 0]);
+    V.push(['SHOOTER sin operar si BTC cayó más de 10 % en 7 días', c => c.m === 'x' && b7(c.t) < -.10, 0]);
+    V.push(['SHOOTER > 50 M por día + BTC sobre EMA 200 de 4 h', c => c.m === 'x' && (big(c) || !bE200(c.t)), 0]);
+    V.push(['SHOOTER > 50 M por día + BTC sobre EMA 50 de 4 h', c => c.m === 'x' && (big(c) || !bE50(c.t)), 0]);
+    V.push(['SHOOTER > 50 M por día + sin BTC −5 % en 7 días', c => c.m === 'x' && (big(c) || b7(c.t) < -.05), 0]);
     out.sigmej = { nota: 'usd = cada señal con 300 USD × 10, con costos. peor_racha = la peor seguidilla de pérdidas (USD).', funding_monedas: [...FU.values()].filter(F => F.length).length, variantes: [] };
-    for (const [v, bad, K] of V) { let L = pick(bad ? CANDS.filter(c => !bad(c)) : CANDS); if (K) L = conc(L, K); const r = { v };
+    for (const [v, bad, K] of (SOLO2 ? V.filter(x => x[0] === 'actual' || /^SHOOTER/.test(x[0])) : V)) { let L = pick(bad ? CANDS.filter(c => !bad(c)) : CANDS); if (K) L = conc(L, K); const r = { v };
       for (const m of MM) r[m] = tri(L.filter(o => o.m === m && o.setup !== 'tp-x')); out.sigmej.variantes.push(r); }
     console.log('sigmej', JSON.stringify(out.sigmej).slice(0, 8000)); }
   if (SALIDA) out.salida_x = null;
