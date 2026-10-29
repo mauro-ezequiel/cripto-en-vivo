@@ -944,21 +944,21 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon','fig']
+    inds: ['liq','trend','canal','supertrend','ema','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 15m (señales en 15 y 30 min)', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '15m', bars: 180,
-    inds: ['liq','trend','canal','bollinger','vwap','rsi','adx','cvd','kon','fig']
+    inds: ['liq','trend','canal','bollinger','vwap','smc','div','rsi','adx','cvd','kon','fig']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','rsi','adx','stochrsi','cvd','kon'],
+    inds: ['liq','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','smc','div','rsi','adx','stochrsi','cvd','kon'],
     def: ['liq','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
@@ -966,7 +966,7 @@ const MODES = {
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
     info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señales (velas diarias): rebote tras caída de 6 meses y ruptura de máximos de 20 días con volumen, solo con el S&P 500 sobre su media de 200 días', 'Simulación: 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20), stop 2,5 × ATR diario, objetivos 3 / 6 / 9 × stop'],
     tf: '1d', bars: 160,
-    inds: ['liq','trend','canal','supertrend','ema','bollinger','vprofile','fib','rsi','adx','cvd','kon','fig'],
+    inds: ['liq','trend','canal','supertrend','ema','bollinger','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig'],
     def: ['liq','trend','canal','supertrend','ema','vprofile','rsi','adx','cvd','kon']
   }
 };
@@ -1052,7 +1052,9 @@ const IND = {
   rsi:       {name:'RSI (14)',            color:'#b388ff', pane:true},
   macd:      {name:'MACD (12,26,9)',      color:'#2962ff', pane:true},
   kon:       {name:'MACD Konkorde',       color:'#2962ff', pane:true},
-  adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true}
+  adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true},
+  smc:       {name:'Zonas Smart Money (FVG y order blocks)', color:'#9575cd', pane:false},
+  div:       {name:'Divergencias de RSI', color:'#ffca28', pane:false}
 };
 let active = new Set();
 let C = {}; // resultados calculados (arrays alineados con candles)
@@ -1151,6 +1153,8 @@ function calcInd(full){
   if(active.has('vwap'))C.vwap=calcVWAP();
   if(active.has('stochrsi'))C.srsi=calcStochRSI(...(PRM[mode].srsi||[]));
   if(active.has('cvd'))C.cvd=calcCVD();
+  C.smc=active.has('smc')?calcSMC():null;
+  C.div=active.has('div')?calcDiv():null;
   C.trend=active.has('trend')?calcTrendLine():null;
   C.canal=active.has('canal')?calcCanal():null;
   const push=(ser,arr,colorFn)=>{
@@ -1202,6 +1206,8 @@ function signals(){
   if(active.has('supertrend')&&C.st){const d=C.st.dir[i];add('supertrend',d,d===1?'alcista':'bajista');}
   if(active.has('bollinger')&&C.bb){const m=C.bb.m[i],u=C.bb.u[i];if(m!=null)add('bollinger',(c-m)/((u-m)||1),c>u?'sobre banda sup.':c<C.bb.l[i]?'bajo banda inf.':c>m?'sobre la media':'bajo la media');}
   if(active.has('vprofile')&&lastPOC!=null)add('vprofile',clamp((c/lastPOC-1)*25),(c>lastPOC?'sobre':'bajo')+' POC '+fp(lastPOC));
+  if(active.has('smc')&&C.smc){const inz=[...C.smc.F,...C.smc.O].filter(z=>c>=z.bot*.998&&c<=z.top*1.002);if(inz.length){const d=inz.reduce((a,z)=>a+z.d,0);add('smc',clamp(d*.6),d>0?'precio en una zona de compra (FVG / order block)':d<0?'precio en una zona de venta (FVG / order block)':'zonas de compra y venta juntas');}}
+  if(active.has('div')&&C.div){const last=C.div.filter(v=>candles.length-1-v.i1<=12).pop();if(last)add('div',last.d*.7,last.d>0?'divergencia alcista reciente: la caída pierde fuerza':'divergencia bajista reciente: la suba pierde fuerza');}
   if(active.has('fib')&&lastFib){const {up,hi,lo}=lastFib,r=(c-lo)/(hi-lo);add('fib',up?(r>.382?.7:-.7):(r<.618?-.7:.7),(up?'tramo alcista':'tramo bajista')+', precio al '+(r*100).toFixed(0)+'%');}
   if(active.has('liq')&&LIQ&&LIQ.cl){const {wL,wS,longs,shorts}=LIQ.cl;if(wL+wS>0){const s=(wS-wL)/(wS+wL),z=s>=0?shorts[0]:longs[0];
     add('liq',s*1.2,z?(s>=0?'imán arriba: shorts en '+fp(z.p):'imán abajo: longs en '+fp(z.p)):(s>=0?'más liquidez arriba':'más liquidez abajo'));}}
@@ -1302,6 +1308,39 @@ function renderMarket(){if(!$('posCard')||getComputedStyle($('posCard')).display
 let FIGC={k:'',t:0,f:[]};
 function figList(){const k=symbol+tf+candles.length+':'+(candles.at(-1)||{}).time;if(FIGC.k===k||(Date.now()-FIGC.t<2000&&FIGC.f.length))return FIGC.f;
   try{FIGC={k,t:Date.now(),f:FIG.scan(candles,{formando:true})};}catch(e){FIGC={k,t:Date.now(),f:[]};}return FIGC.f;}
+/* ---------- 🟪 ZONAS SMART MONEY (noviembre 2026) ----------
+   FVG (hueco de valor): tres velas donde el mínimo de la tercera queda por encima del máximo de la primera (alcista) o al revés (bajista):
+   el precio suele volver a "llenar" ese hueco. Se muestran solo los que todavía no se llenaron.
+   Order block: la última vela en contra antes de un impulso fuerte (más de 2 ATR en 3 velas) que rompe el máximo/mínimo de 10 velas:
+   suele funcionar como soporte (alcista) o resistencia (bajista) cuando el precio vuelve. Se borra cuando el precio la atraviesa. */
+function calcSMC(){const b=candles,n=b.length,A=wilder(trArr(),14),F=[],O=[];if(n<30)return {F,O};
+  for(let i=2;i<n;i++){const a=A[i]||0;
+    if(b[i].low>b[i-2].high&&b[i].low-b[i-2].high>.15*a)F.push({d:1,i:i-1,top:b[i].low,bot:b[i-2].high});
+    if(b[i].high<b[i-2].low&&b[i-2].low-b[i].high>.15*a)F.push({d:-1,i:i-1,top:b[i-2].low,bot:b[i].high});
+    if(i>=13&&a){const mv=b[i].close-b[i-3].close;
+      if(mv>2*a&&b[i].close>Math.max(...b.slice(i-13,i-2).map(x=>x.high))){for(let k=i-3;k>=i-6&&k>=0;k--)if(b[k].close<b[k].open){O.push({d:1,i:k,top:b[k].high,bot:b[k].low});break;}}
+      if(-mv>2*a&&b[i].close<Math.min(...b.slice(i-13,i-2).map(x=>x.low))){for(let k=i-3;k>=i-6&&k>=0;k--)if(b[k].close>b[k].open){O.push({d:-1,i:k,top:b[k].high,bot:b[k].low});break;}}}}
+  /* vigentes: un FVG se llena cuando el precio vuelve hasta el otro borde; un order block se invalida cuando una vela cierra del otro lado */
+  const vivo=(z,fill)=>{for(let j=z.i+2;j<n;j++){if(fill?(z.d>0?b[j].low<=z.bot:b[j].high>=z.top):(z.d>0?b[j].close<z.bot:b[j].close>z.top))return false;}return true;};
+  return {F:F.filter(z=>vivo(z,true)).slice(-8),O:O.filter(z=>vivo(z,false)).slice(-6)};}
+/* ---------- 🟨 DIVERGENCIAS DE RSI ----------
+   Alcista: el precio hace un mínimo más bajo pero el RSI 14 un mínimo más alto (la caída pierde fuerza). Bajista: al revés en los máximos.
+   Se confirman con 3 velas a cada lado del giro (por eso aparecen 3 velas después). */
+function calcDiv(){const b=candles,n=b.length,R=calcRSI(14),L=[],H=[],D=[],k=3;
+  for(let i=k;i<n-k;i++){let lo=true,hi=true;for(let j=1;j<=k;j++){if(b[i].low>b[i-j].low||b[i].low>b[i+j].low)lo=false;if(b[i].high<b[i-j].high||b[i].high<b[i+j].high)hi=false;}
+    if(lo&&R[i]!=null){const p=L[L.length-1];if(p&&i-p<=40&&b[i].low<b[p].low&&R[i]>R[p]+1&&R[p]<45)D.push({d:1,i0:p,i1:i,p0:b[p].low,p1:b[i].low});L.push(i);}
+    if(hi&&R[i]!=null){const p=H[H.length-1];if(p&&i-p<=40&&b[i].high>b[p].high&&R[i]<R[p]-1&&R[p]>55)D.push({d:-1,i0:p,i1:i,p0:b[p].high,p1:b[i].high});H.push(i);}}
+  return D.slice(-12);}
+function drawSMC(ctx,from,to,X,Y,paneW){const Z=C.smc;if(!Z)return;const xr=paneW-(active.has('liq')?paneW*PROF:0);
+  const box=(z,fill,stroke,lab)=>{if(z.i>to)return;const x0=Math.max(0,X(Math.max(z.i,from))??0),y1=Y(z.top),y2=Y(z.bot);if(y1==null||y2==null||xr<=x0)return;
+    ctx.fillStyle=fill;ctx.fillRect(x0,y1,xr-x0,Math.max(1,y2-y1));ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.strokeRect(x0,y1,xr-x0,Math.max(1,y2-y1));
+    ctx.fillStyle=stroke;ctx.font='600 10px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(lab,x0+3,y1+1);};
+  Z.F.forEach(z=>box(z,z.d>0?'rgba(38,166,154,.10)':'rgba(239,83,80,.10)',z.d>0?'rgba(38,166,154,.7)':'rgba(239,83,80,.7)',z.d>0?'FVG ▲':'FVG ▼'));
+  Z.O.forEach(z=>box(z,z.d>0?'rgba(149,117,205,.16)':'rgba(255,112,67,.14)',z.d>0?'#9575cd':'#ff7043',z.d>0?'OB compra':'OB venta'));}
+function drawDiv(ctx,from,to,X,Y){const D=C.div;if(!D)return;ctx.lineWidth=2;ctx.font='700 11px system-ui,sans-serif';ctx.textAlign='center';
+  D.forEach(v=>{if(v.i1<from||v.i0>to)return;const x0=X(v.i0),x1=X(v.i1);if(x0==null||x1==null)return;const y0=Y(v.p0),y1=Y(v.p1),col=v.d>0?'#26a69a':'#ef5350';
+    ctx.strokeStyle=col;ctx.setLineDash([5,3]);ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=col;ctx.textBaseline=v.d>0?'top':'bottom';ctx.fillText(v.d>0?'div ▲':'div ▼',x1,y1+(v.d>0?6:-6));});}
 function drawFig(ctx,from,to,X,Y,paneW){const V=figList().filter(f=>f.i1>=from-5&&f.i0<=to),L=[],PL=[];
   for(let k=V.length-1;k>=0&&L.length<4;k--){const f=V[k];if(L.some(g=>Math.min(g.i1,f.i1)-Math.max(g.i0,f.i0)>.3*Math.min(g.i1-g.i0,f.i1-f.i0)))continue;L.unshift(f);} // las más nuevas, sin encimarse
   for(const f of L){const x0=X(f.i0),x1=X(f.i1),y0=Y(f.hi),y1=Y(f.lo);if(x0==null||x1==null||y0==null||y1==null)continue;
@@ -1371,6 +1410,8 @@ function drawInd(ctx,w,h){
       ctx.fillStyle='#ff9800';ctx.font='600 11px system-ui,sans-serif';ctx.textAlign=vpL?'left':'right';ctx.textBaseline='bottom';ctx.fillText('POC '+fp(lastPOC),vpL?4:paneW*(active.has('liq')?1-PROF:1)-4,py-2);
     }
     if(active.has('fig'))drawFig(ctx,from,to,X,Y,paneW);
+    if(active.has('smc'))drawSMC(ctx,from,to,X,Y,paneW);
+    if(active.has('div'))drawDiv(ctx,from,to,X,Y);
     if(active.has('fib')){
       const up=loI<hiI,LV=[[0,'#9e9e9e'],[.236,'#ef5350'],[.382,'#ff9800'],[.5,'#4caf50'],[.618,'#e040fb'],[.786,'#29b6f6'],[1,'#9e9e9e']];
       lastFib={up,hi,lo};const x0=X(Math.min(hiI,loI));
@@ -5524,6 +5565,8 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  ichimoku:{g:'Indicadores',t:'☁️ Ichimoku',ind:'ichimoku',b:'La nube resume tendencia y soportes. Precio <b>sobre</b> la nube = alcista; <b>debajo</b> = bajista; <b>dentro</b> = indecisión.',h:['Buscá long cuando el precio está sobre la nube y retrocede hacia ella.','Una nube gruesa es un soporte fuerte; una fina se rompe fácil.'],x:['q_ichi']},
  vwap:{g:'Indicadores',t:'⚖️ VWAP diario',ind:'vwap',b:'Precio promedio del día ponderado por volumen: lo que pagó en promedio todo el mercado. Las bandas ±σ marcan extremos.',h:['Sobre el VWAP dominan los compradores; debajo, los vendedores.','Rebotes en el VWAP a favor de la tendencia son buenas entradas de corto plazo.','En las bandas ±2σ el precio está estirado: no entres a favor ahí.'],x:['q_vwap']},
  vprofile:{g:'Indicadores',t:'📊 Perfil de volumen',ind:'vprofile',b:'Barras horizontales con el volumen operado en cada precio. El nivel con más volumen (POC) actúa como imán y soporte o resistencia.',h:['Zonas de mucho volumen frenan el precio: buenos lugares para entrar o tomar ganancia.','Zonas de poco volumen se atraviesan rápido: no pongas el stop en el medio de una.'],x:['q_vp']},
+ smc:{g:'Indicadores',t:'🟪 Zonas Smart Money',ind:'smc',b:'FVG: huecos que dejó un movimiento muy rápido; el precio suele volver a llenarlos. Order block: la última vela en contra antes de un impulso fuerte; suele frenar al precio cuando vuelve.',h:['Verde / violeta = zona de compra (soporte). Rojo / naranja = zona de venta (resistencia).','Sirven para ubicar la entrada o el stop, no para entrar solas.'],x:[]},
+ div:{g:'Indicadores',t:'🟨 Divergencias de RSI',ind:'div',b:'El precio hace un mínimo (o máximo) nuevo, pero el RSI no lo acompaña: el movimiento pierde fuerza y puede girar.',h:['div ▲ verde: la caída pierde fuerza (posible rebote).','div ▼ roja: la suba pierde fuerza. Aparecen 3 velas después del giro, para confirmarlo.'],x:[]},
  fib:{g:'Indicadores',t:'🌀 Fibonacci automático',ind:'fib',b:'Marca retrocesos de la última gran onda: 38,2 %, 50 % y 61,8 % son los más usados.',h:['En tendencia, esperá que el precio retroceda a 50–61,8 % y entrá a favor con el stop debajo del 78,6 %.','Si rompe el 78,6 %, la onda probablemente terminó.'],x:['q_fib']},
  liq:{g:'Indicadores',t:'🧲 Zonas de liquidación',ind:'liq',b:'Bandas donde se liquidarían muchos apalancados (verde = longs abajo, rojo = shorts arriba). El precio suele ir a buscarlas porque ahí hay órdenes forzadas.',h:['Usalas como <b>objetivo</b>: si hay una zona grande de shorts arriba, el precio tiene un imán hacia arriba.','No entres solo por una zona: confirmá la dirección con la tendencia.'],x:['q_liq']},
  rsi:{g:'Indicadores',t:'🔮 RSI (14)',ind:'rsi',b:'Mide la fuerza de las subas contra las bajas, de 0 a 100. Sobre 70 = sobrecompra; bajo 30 = sobreventa.',h:['En tendencia alcista, un RSI que baja a 40–50 marca un retroceso para comprar (así entra TRADING).','Sobrecompra no significa "shortear": en tendencias fuertes el RSI puede quedarse arriba mucho tiempo.','Divergencia: precio hace un máximo más alto y el RSI no = la suba se debilita.'],x:['e5','q_rsi']},
