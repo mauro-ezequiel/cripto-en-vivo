@@ -1322,7 +1322,7 @@ function calcSMC(){const b=candles,n=b.length,A=wilder(trArr(),14),F=[],O=[];if(
       if(-mv>2*a&&b[i].close<Math.min(...b.slice(i-13,i-2).map(x=>x.low))){for(let k=i-3;k>=i-6&&k>=0;k--)if(b[k].close>b[k].open){O.push({d:-1,i:k,top:b[k].high,bot:b[k].low});break;}}}}
   /* vigentes: un FVG se llena cuando el precio vuelve hasta el otro borde; un order block se invalida cuando una vela cierra del otro lado */
   const vivo=(z,fill)=>{for(let j=z.i+2;j<n;j++){if(fill?(z.d>0?b[j].low<=z.bot:b[j].high>=z.top):(z.d>0?b[j].close<z.bot:b[j].close>z.top))return false;}return true;};
-  return {F:F.filter(z=>vivo(z,true)).slice(-8),O:O.filter(z=>vivo(z,false)).slice(-6)};}
+  const rec=z=>z.i>=n-150;return {F:F.filter(z=>rec(z)&&vivo(z,true)).slice(-6),O:O.filter(z=>rec(z)&&vivo(z,false)).slice(-4)};}
 /* ---------- 🟨 DIVERGENCIAS DE RSI ----------
    Alcista: el precio hace un mínimo más bajo pero el RSI 14 un mínimo más alto (la caída pierde fuerza). Bajista: al revés en los máximos.
    Se confirman con 3 velas a cada lado del giro (por eso aparecen 3 velas después). */
