@@ -282,11 +282,11 @@ async function txExtra(s, rank, rb, W1, tfx) { const H = { '1h': 1, '2h': 2, '3h
 
 /* SHOOTER v8 (octubre 2026): en vivo la lista de monedas es la de ese momento. Para que la simulación mida lo mismo, cada día se usan las 30 con más
    volumen PROMEDIO de los 7 días anteriores (entre las 70 con más volumen de hoy) y se descartan las que cayeron más de 10 % en 24 h. SH_ESTATICA=1 vuelve a la lista fija. */
-let SH7 = !process.env.SH_ESTATICA; const SH7DAY = new Map(), SH7ERR = []; // SH7ERR: monedas sin datos diarios (antes quedaban afuera sin avisar)
+let SH7 = !process.env.SH_ESTATICA; const SH7DAY = new Map(), SH7RK = new Map(), SH7ERR = []; // SH7ERR: monedas sin datos diarios (antes quedaban afuera sin avisar)
 const sh7ok = (s, t, ch24) => { const d = Math.floor(t / DAY) * DAY, set = SH7DAY.get(d); return !!set && set.has(s) && ch24 > -10; };
 async function sh7Build(list) { const V = {}; for (const s of list) { for (let k = 0; k < 4; k++) { try { const b = await klRange(s, '1d', DAY, FROM - 40 * DAY, NOW); if (b.length > 20) { V[s] = new Map(b.map(x => [x.t, x.v * x.close])); break; } } catch (e) {} await sleep(15000); } if (!V[s]) SH7ERR.push(s); }
   for (let d = Math.floor(FROM / DAY) * DAY; d <= NOW; d += DAY) { const arr = []; for (const s in V) { let a = 0, n = 0; for (let k = 1; k <= 7; k++) { const v = V[s].get(d - k * DAY); if (v) { a += v; n++; } } if (n >= 5) arr.push([s, a / n]); }
-    SH7DAY.set(d, new Set(arr.sort((x, y) => y[1] - x[1]).slice(0, +(process.env.SH7N || 30)).map(x => x[0]))); } }
+    arr.sort((x, y) => y[1] - x[1]); SH7RK.set(d, new Map(arr.map((x, k) => [x[0], [k, x[1]]]))); SH7DAY.set(d, new Set(arr.slice(0, +(process.env.SH7N || 30)).map(x => x[0]))); } }
 async function runShooter(s, rank = 0) {
   const MX = IAX && IAON && rank < IAXN ? await loadMetrics(s) : null;
   const hb = await klRange(s, SH.htf, SH.htfMs, FROM - 300 * SH.htfMs, NOW); if (hb.length < 200) return;
@@ -556,6 +556,34 @@ async function main() { const t0 = Date.now();
     const T = ops.filter(o => o.m === 'tx'), by = {}; for (const o of T) (by[o.tfx || T4.tf] = by[o.tfx || T4.tf] || []).push(o);
     out.tx_tfs = { tfs: process.env.TX_TFS, todas: { año: st5(T), mitad1: st5(T.filter(o => o.t < mid)), mitad2: st5(T.filter(o => o.t >= mid)) }, por_tf: Object.fromEntries(Object.entries(by).map(([k, L]) => [k, st5(L)])) };
     console.log('tx_tfs', JSON.stringify(out.tx_tfs)); }
+  /* SIGMEJ=1 (investigación octubre 2026): mejoras para las señales que fallaron en vivo.
+     · límite de operaciones a la vez en la misma dirección (en vivo varias se frenaron juntas con un mismo movimiento del mercado)
+     · SHOOTER sin las monedas más chicas (puesto por volumen de 7 días y volumen mínimo)
+     · funding de Binance (archivo público mensual): no entrar del lado "lleno" (LONG con funding alto, SHORT con funding muy negativo) */
+  if (process.env.SIGMEJ) { const mid = FROM + SPAN / 2, MM = ['medio', 'tx', 'x'];
+    const st7 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+      return { n, por_mes: +(n / (SPAN / DAY / 30.4)).toFixed(1), gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, peor_racha: (() => { let w = 0, c = 0; for (const x of u) { c = x < 0 ? c + x : 0; w = Math.min(w, c); } return Math.round(w); })() }; };
+    const tri = L => ({ año: st7(L), mitad1: st7(L.filter(o => o.t < mid)), mitad2: st7(L.filter(o => o.t >= mid)) });
+    const conc = (L, K) => { const acc = []; for (const c of L.slice().sort((a, b) => a.t - b.t)) { const n = acc.filter(o => o.m === c.m && o.dir === c.dir && o.t <= c.t && (o.tEnd == null || o.tEnd > c.t)).length; if (n < K) acc.push(c); } return acc; };
+    /* funding: último cobro antes de la señal */
+    const FU = new Map(), syms = [...new Set(CANDS.filter(c => MM.includes(c.m)).map(c => c.s))]; let qi = 0;
+    await Promise.all(Array.from({ length: 8 }, async () => { while (qi < syms.length) { const sy = syms[qi++], F = [];
+      for (let d = new Date(ym(FROM - 31 * DAY) + '-01T00:00:00Z'); ym(+d) < ym(NOW); d.setUTCMonth(d.getUTCMonth() + 1)) { const rows = await getZipCsv(`${VIS}/monthly/fundingRate/${sy}/${sy}-fundingRate-${ym(+d)}.zip`); if (rows) for (const r of rows) F.push([+r[0], +r[2]]); }
+      F.sort((a, b) => a[0] - b[0]); FU.set(sy, F); } }));
+    const fAt = (sy, t) => { const F = FU.get(sy); if (!F || !F.length) return null; let a = 0, b = F.length; while (a < b) { const m = (a + b) >> 1; if (F[m][0] <= t) a = m + 1; else b = m; } return a > 0 && t - F[a - 1][0] < 9 * 36e5 ? F[a - 1][1] : null; };
+    for (const c of CANDS) if (MM.includes(c.m)) c.fr = fAt(c.s, c.t);
+    const rk = c => { const R7 = SH7RK.get(Math.floor(c.t / DAY) * DAY); const x = R7 && R7.get(c.s); return x || [999, 0]; };
+    const V = [['actual', null, 0]];
+    for (const K of [1, 2, 3]) V.push([`máx. ${K} a la vez en la misma dirección`, null, K]);
+    for (const n of [10, 15, 20]) V.push([`SHOOTER solo las ${n} con más volumen`, c => c.m === 'x' && rk(c)[0] >= n, 0]);
+    for (const v of [50e6, 100e6]) V.push([`SHOOTER solo con más de ${v / 1e6} M USD por día`, c => c.m === 'x' && rk(c)[1] < v, 0]);
+    for (const f of [.0001, .0002, .0003, .0005]) V.push([`sin entrar del lado lleno (funding ${(f * 100).toFixed(2)} %)`, c => c.fr != null && (c.dir > 0 ? c.fr > f : c.fr < -f), 0]);
+    V.push(['LONG solo con funding ≤ 0 · SHORT solo con funding ≥ 0', c => c.fr != null && (c.dir > 0 ? c.fr > 0 : c.fr < 0), 0]);
+    V.push(['máx. 2 a la vez + SHOOTER top 20', c => c.m === 'x' && rk(c)[0] >= 20, 2]);
+    out.sigmej = { nota: 'usd = cada señal con 300 USD × 10, con costos. peor_racha = la peor seguidilla de pérdidas (USD).', funding_monedas: [...FU.values()].filter(F => F.length).length, variantes: [] };
+    for (const [v, bad, K] of V) { let L = pick(bad ? CANDS.filter(c => !bad(c)) : CANDS); if (K) L = conc(L, K); const r = { v };
+      for (const m of MM) r[m] = tri(L.filter(o => o.m === m && o.setup !== 'tp-x')); out.sigmej.variantes.push(r); }
+    console.log('sigmej', JSON.stringify(out.sigmej).slice(0, 8000)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);
     const choose = (k) => { const by = {}; for (const c of MED) (by[c.s] = by[c.s] || []).push(c); const out2 = [];
