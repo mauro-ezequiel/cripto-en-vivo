@@ -233,7 +233,9 @@ const slOf = (g, atrP) => Math.min(g.cap, Math.max(g.floor, g.a * atrP));
 
 /* ---------- recorrido ---------- */
 const CANDS = [], RAND = { medio: [], x: [] };
-let BTC4 = null, BTC1 = null;
+let BTC4 = null, BTC1 = null, BTC4E200 = null;
+/* SHOOTER v11: BTC sobre su EMA 200 de 4 h (última vela de 4 h cerrada antes de t) */
+function btcSobre200(t) { if (!BTC4) return true; if (!BTC4E200) BTC4E200 = emaArr(BTC4.b.map(x => x.close), 200); const B = BTC4.b; let lo = 0, hi = B.length; while (lo < hi) { const m = (lo + hi) >> 1; if (B[m].t + 144e5 <= t) lo = m + 1; else hi = m; } const i = lo - 1; return !(i >= 0 && BTC4E200[i] != null && B[i].close < BTC4E200[i]); }
 /* REG=1 (investigación del filtro de régimen): estado de BTC al momento de cada señal: ADX de 4 h, volatilidad de 1 h (ATR %) y cambio en 24 h */
 const regAt = t => { const i = lastClosed(BTC4.b, 144e5, t), j = lastClosed(BTC1.b, 36e5, t); return [i >= 0 && BTC4.adx[i] != null ? +BTC4.adx[i].toFixed(1) : null, j >= 0 && BTC1.atrP[j] != null ? +BTC1.atrP[j].toFixed(3) : null, j >= 24 ? +((BTC1.b[j].close / BTC1.b[j - 24].close - 1) * 100).toFixed(2) : null]; };
 const btcDirAt = (B, ms, t) => { const i = lastClosed(B.b, ms, t); return i >= 0 && B.e[i] != null ? Math.sign(B.b[i].close - B.e[i]) : 0; };
@@ -306,7 +308,8 @@ async function runShooter(s, rank = 0) {
       if (!process.env.SIN_D200 && !(e200s[i] != null && cb > e200s[i])) viejo = 'bajo_ema200'; // v7: solo con el precio sobre la EMA 200
       else if (tooWild(hb, W1, t)) viejo = 'impredecible';
       else if (SH7 && !sh7ok(s, t, (cb / tb[Math.max(0, i - Math.round(1440 / TFMIN[tf]))].close - 1) * 100)) viejo = 'fuera_lista_7d';
-      else if (DVS.size) { const dv = DVL.at(DVS, t); if (dv != null && dv < DVL.SHOOTER_DVMIN) viejo = 'dvol_bajo'; } // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
+      else if (DVS.size && (() => { const dv = DVL.at(DVS, t); return dv != null && dv < DVL.SHOOTER_DVMIN; })()) viejo = 'dvol_bajo';
+      else if (!process.env.SIN_B200 && !btcSobre200(t)) viejo = 'btc_bajo_ema200'; // v11: solo con BTC sobre su EMA 200 de 4 h // v8: como en vivo (lista de 7 días, sin caída de más de 10 % en 24 h)
       if (viejo && FILTROS) { const g = GEO.sh, sl = slOf(g, atrP); OLDC.push({ m: 'x', setup: 'sh-c', tf, s, t, dir: 1, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, viejo, ...sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, sl, g.r, g.L, g.ex, null, t, null, Object.assign({}, SXV9X)) }); }
       if (viejo) { if (IAON) { const g = GEO.sh; iaVieja('sh', viejo, { s, t, dir: 1, setup: 'sh-c', entry: cb, sl: slOf(g, atrP), g, rb: tb, P: P3, j0: i + 1, resMs: tfMs, maxAge: SH.maxAge, llConf: null, cool: SH.cool, tf }); } continue; }
       const dir = 1, g = GEO.sh; if (SH_SKIP && g.a * atrP > g.cap) continue; const sl = slOf(g, atrP);

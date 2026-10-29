@@ -146,7 +146,7 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
 const DVL = require('./herramientas/dvol-lib.js');
-const VER = { medio: 'v8', x: 'v10', tx: 'v1' }; // TRADING v8 (octubre 2026): + no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h
+const VER = { medio: 'v8', x: 'v11', tx: 'v1' }; // SHOOTER v11 (octubre 2026): solo con BTC sobre su EMA 200 de 4 h // TRADING v8 (octubre 2026): + no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h
 // // SHOOTER v10 (octubre 2026): + no entra con el DVOL de Deribit bajo 35
 // // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
  // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
@@ -308,6 +308,8 @@ async function main() {
       if (avg.length >= 30) S.sh7 = { t: now, set: avg.sort((a, b) => b[1] - a[1]).slice(0, 30).map(x => x[0]) }; }
     const cfg = SIGCFG[m], U = (m === 'x' && S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
     if (m === 'x') { try { const bk = await kl('BTCUSDT', '1h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
+    /* SHOOTER v11: solo compra caídas, así que con BTC flojo pierde. Prueba: 1 año de −60 a +2.353 USD (85 % ganadas), 4 años de 13.205 a 16.337 USD */
+    if (m === 'x') { let up = true; try { const bk = (await kl('BTCUSDT', '4h', 300)).slice(0, -1), cl = bk.map(b => b.close), e2 = emaArr(cl, 200); up = !(e2[e2.length - 1] != null && cl[cl.length - 1] < e2[e2.length - 1]); } catch (e) {} S.btc200 = up ? 1 : -1; if (!up) { S.b200Skip = (S.b200Skip || 0) + 1; continue; } }
     let btcAdx = null; if (m !== 'x') { try { const bk = await kl('BTCUSDT', '4h', 300), cc = bk.slice(0, -1), cl = cc.map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; btcAdx = withCandles(cc, () => calcADX(14).adx)[cc.length - 1]; } catch (e) {} }
     for (const s of U) {
       if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
