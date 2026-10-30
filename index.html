@@ -258,6 +258,7 @@ body.fs-on .fsbar{display:flex}
 .cic-c .acu-m{grid-template-columns:repeat(2,1fr)}.cic-c.op{border-color:#26c6da;background:linear-gradient(180deg,rgba(38,198,218,.12),transparent 90px)}
 .cic-r{margin-top:12px;border-top:1px solid var(--line);padding-top:8px}.cic-rt{font-weight:800;font-size:13px}.cic-h{margin-top:10px}.cic-h summary{cursor:pointer;font-weight:700;font-size:12.5px}.cic-hs{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:6px;margin:8px 0}.cic-hs div{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font-size:11px;color:var(--mut)}.cic-hs b{display:block;color:var(--txt);font-size:13px}
 .cic-hl{width:100%;border-collapse:collapse;font-size:11px}.cic-hl td,.cic-hl th{padding:3px 4px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap;font-variant-numeric:tabular-nums}.cic-hl th{color:var(--mut);font-weight:400}.acu-hi{font-size:11px;color:var(--mut)}.acu-go{align-self:flex-start;background:none;border:1px solid var(--acc);color:var(--acc);border-radius:7px;padding:4px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
+.fng{margin-left:auto}.fng>span{display:inline-block;color:#fff;font-size:12px;padding:3px 9px;border-radius:7px;border:1px solid rgba(255,255,255,.18)}.fng small{opacity:.8}
 .rsix{padding:10px 14px 14px;border-top:1px solid var(--line);background:var(--panel);flex-shrink:0}.rsix .dt{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .rsi-tf{display:inline-flex;flex-wrap:wrap;gap:4px}.rsi-tf button,.rsi-nav button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:3px 10px;cursor:pointer}.rsi-tf button.on{background:#f0b90b;color:#111;border-color:#f0b90b;font-weight:800}
 .rsi-nav{margin-left:auto;display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:700}.rsi-nav button{font-size:14px;padding:2px 12px}.rsi-nav button:disabled{opacity:.35;cursor:default}
@@ -790,6 +791,10 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
         <div id="market"></div>
       </div>
     </section>
+    <section class="rsix" id="rsiCx" hidden><div class="dt"><span>📊 Planilla de RSI · cripto</span>
+      <span class="rsi-tf"><button type="button" data-rsicx="15m">15 min</button><button type="button" data-rsicx="1h">1 h</button><button type="button" data-rsicx="4h">4 h</button><button type="button" data-rsicx="1d">1 día</button><button type="button" data-rsicx="1w">1 semana</button></span>
+      <span class="fng" id="fngBox"></span></div>
+      <div id="rsiCxBody"></div></section>
     <section class="rsix" id="rsiBox" hidden><div class="dt"><span>📊 Planilla de RSI</span>
       <span class="rsi-tf"><button type="button" data-rsitf="h">1 h</button><button type="button" data-rsitf="2h">2 h</button><button type="button" data-rsitf="4h">4 h</button><button type="button" data-rsitf="8h">8 h</button><button type="button" data-rsitf="12h">12 h</button><button type="button" data-rsitf="d">1 día</button><button type="button" data-rsitf="w">1 semana</button></span>
       <span class="rsi-nav"><button type="button" id="rsiPrev" aria-label="Anterior">◀</button><span id="rsiPg"></span><button type="button" id="rsiNext" aria-label="Siguiente">▶</button></span></div>
@@ -3593,7 +3598,33 @@ function rsiBx(v,tit){if(v==null||!isFinite(v))return '';return `<span class="rs
 const RSI_PILTF={'1h':'h','4h':'4h','1d':'d','1w':'w'};
 function pilRsi(p,a){if(p.mk==='a'){if(!RSIX.j)rsiLoad();else{const k=RSI_PILTF[pilTfOf(p)];if(k){const v=rsiLive(p.sym)[k];if(v!=null)return [v,'RSI 14 de '+PIL_TFN[pilTfOf(p)]+' (planilla)'];}}}
   return a&&a.rsi!=null?[a.rsi,'RSI 14 de '+(a.rsiTf||'')]:[null,''];}
-function rsiRender(){const box=$('rsiBox');if(!box)return;box.hidden=mode!=='a';if(mode!=='a')return;const el=$('rsiBody');
+/* ---------- 📊 PLANILLA DE RSI · CRIPTO (noviembre 2026) ----------
+   Igual que la de ACCIONES pero para las criptos principales, agrupadas por tipo, en la temporalidad que elijas (RSI 14 con la vela en curso).
+   Las velas se piden solo con la planilla a la vista, de a 6 por vez, y se guardan 3 minutos. Arriba, el índice de miedo y codicia (alternative.me). */
+const RSICX_G={'Mayores':['BTC','ETH','BNB','SOL','XRP','ADA','TRX','TON'],'Capa 1 y 2':['AVAX','DOT','NEAR','APT','SUI','ARB','OP','ATOM','INJ','SEI','TIA','HBAR'],
+  'DeFi':['LINK','UNI','AAVE','LDO','CRV','PENDLE','JUP','ENA','ONDO','MKR'],'Memes':['DOGE','SHIB','PEPE','WIF','BONK','FLOKI','TRUMP','PUMP'],'IA y datos':['FET','RENDER','TAO','WLD','AR','GRT','VIRTUAL'],'Pagos y otros':['LTC','BCH','XLM','ETC','FIL','ALGO','XMR','ZEC']};
+var RSICX={tf:'4h',d:{},busy:false,fng:null,fngT:0};try{RSICX.tf=localStorage.getItem('cv_rsicx_tf')||'4h';}catch(e){}
+const rsiArr=cl=>{let g=0,l=0,o=null;for(let i=1;i<cl.length;i++){const d=cl[i]-cl[i-1],u=Math.max(d,0),w=Math.max(-d,0);if(i<=14){g+=u;l+=w;if(i===14){g/=14;l/=14;o=l===0?100:100-100/(1+g/l);}}else{g=(g*13+u)/14;l=(l*13+w)/14;o=l===0?100:100-100/(1+g/l);}}return o;};
+async function rsiCxLoad(){const tf=RSICX.tf,D=RSICX.d[tf]=RSICX.d[tf]||{t:0,v:{}};if(RSICX.busy||Date.now()-D.t<18e4)return;const box=$('rsiCx');if(!box||box.hidden||document.hidden)return;
+  const r=box.getBoundingClientRect();if(r.bottom<-200||r.top>innerHeight+600)return;RSICX.busy=true;
+  try{const L=Object.values(RSICX_G).flat().map(x=>x+'USDT').filter(s=>tickers[s]);let q=0;
+    await Promise.all(Array.from({length:6},async()=>{while(q<L.length){const s=L[q++];try{const k=await kl(s,tf,120);const cl=k.map(b=>b.close);D.v[s]=[rsiArr(cl),cl.length>1?(cl.at(-1)/cl[cl.length-2]-1)*100:null];}catch(e){}}}));
+    D.t=Date.now();}finally{RSICX.busy=false;}rsiCxRender();}
+async function fngLoad(){if(Date.now()-RSICX.fngT<30*6e4)return;RSICX.fngT=Date.now();try{const j=await getJ('https://api.alternative.me/fng/?limit=31');if(j&&Array.isArray(j.data))RSICX.fng=j.data.map(x=>[+x.value,x.value_classification]);}catch(e){}rsiCxRender();}
+const FNG_ES={'Extreme Fear':'miedo extremo','Fear':'miedo','Neutral':'neutral','Greed':'codicia','Extreme Greed':'codicia extrema'};
+function rsiCxRender(){const box=$('rsiCx');if(!box)return;box.hidden=!(mode==='medio'||mode==='tx'||mode==='x'||mode==='p');if(box.hidden)return;
+  box.querySelectorAll('[data-rsicx]').forEach(b=>b.classList.toggle('on',b.dataset.rsicx===RSICX.tf));
+  const F=RSICX.fng;if(F&&F.length){const [v,c]=F[0],w=F[7]?F[7][0]:null;$('fngBox').innerHTML=`<span title="Índice de miedo y codicia del mercado cripto (alternative.me): 0 = miedo extremo, 100 = codicia extrema. Hace una semana: ${w??'—'}" style="background:${rsiColor(100-v)}">😱 Miedo y codicia <b>${v}</b> · ${FNG_ES[c]||c}${w!=null?` <small>(hace 7 días ${w})</small>`:''}</span>`;}
+  const D=RSICX.d[RSICX.tf];if(!D||!D.t){$('rsiCxBody').innerHTML='<div class="mut">Cargando…</div>';rsiCxLoad();fngLoad();return;}
+  const blocks=Object.entries(RSICX_G).map(([n,L])=>{const rows=L.map(x=>x+'USDT').filter(s=>D.v[s]).map(s=>{const [v,ch]=D.v[s],p=tickers[s]?.p;
+      return `<tr data-rsics="${s}" title="Abrir ${s.replace('USDT','')} en el gráfico"><td>${s.replace('USDT','')}</td><td style="background:${rsiColor(v)}">${v==null?'—':iaD(Math.round(v*10)/10)}</td><td class="${(p??0)>=0?'up':'dn'}">${p==null?'—':(p>=0?'▲ ':'▼ ')+iaD(Math.abs(Math.round(p*100)/100))+' %'}</td></tr>`;}).join('');
+    if(!rows)return '';const ps=L.map(x=>tickers[x+'USDT']?.p).filter(v=>v!=null&&isFinite(v)),avg=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
+    return `<div class="rsi-b"><div class="rsi-bh"><b>${esc(n)}</b>${avg!=null?`<span class="${avg>=0?'up':'dn'}">${avg>=0?'▲':'▼'} ${iaD(Math.abs(Math.round(avg*100)/100))} %</span>`:''}</div><table><tr><th></th><th>RSI</th><th>24 h</th></tr>${rows}</table></div>`;}).join('');
+  $('rsiCxBody').innerHTML=`<div class="rsi-g">${blocks}</div><div class="rsi-leg"><span>Sobreventa</span><i></i><span>Sobrecompra</span><small>RSI 14 de ${({'15m':'15 min','1h':'1 h','4h':'4 h','1d':'1 día','1w':'1 semana'})[RSICX.tf]} con la vela en curso · actualizado ${new Date(D.t).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})} · tocá una moneda para verla en el gráfico</small></div>`;}
+document.addEventListener('click',e=>{const r=e.target.closest('[data-rsics]');if(r){if(mode==='a')applyMode('medio');select(r.dataset.rsics);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
+  const t=e.target.closest('[data-rsicx]');if(t){RSICX.tf=t.dataset.rsicx;try{localStorage.setItem('cv_rsicx_tf',RSICX.tf);}catch(_){}rsiCxRender();rsiCxLoad();}});
+setInterval(()=>{if(mode!=='a'){rsiCxRender();rsiCxLoad();fngLoad();}},6e4);setTimeout(()=>{rsiCxRender();rsiCxLoad();fngLoad();},6000);window.addEventListener('scroll',()=>{if(mode!=='a'&&!RSICX.busy)rsiCxLoad();},{passive:true});
+function rsiRender(){try{rsiCxRender();}catch(e){}const box=$('rsiBox');if(!box)return;box.hidden=mode!=='a';if(mode!=='a')return;const el=$('rsiBody');
   if(!RSIX.j){el.innerHTML='<div class="mut">Cargando la planilla… (se arma en GitHub cada 30 min con el mercado abierto)</div>';rsiLoad().then(()=>{if(RSIX.j)rsiRender();});return;}
   const S=Object.entries(RSIX.j.sectores).map(([n,L])=>[n,L.filter(s=>RSIX.j.d[s])]).filter(([,L])=>L.length);
   const pages=Math.max(1,...S.map(([,L])=>1+Math.ceil(Math.max(0,L.length-RSI_K)/RSI_K)));RSIX.pg=Math.min(RSIX.pg,pages-1);const p=RSIX.pg;

@@ -35,6 +35,10 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   /* huellas (SRI) de los scripts externos, para que el navegador rechace un archivo cambiado */
   try { const sri = await pg.evaluate(async () => { const out = {}; for (const sc of document.querySelectorAll('script[src^="https://"]')) { try { const b = await (await fetch(sc.src, { cache: 'no-store' })).arrayBuffer(); const h = await crypto.subtle.digest('SHA-384', b);
           out[sc.src] = 'sha384-' + btoa(String.fromCharCode(...new Uint8Array(h))); } catch (e) { out[sc.src] = 'error ' + e.message; } } return out; }); info.push({ sri }); } catch (e) { info.push({ sri_error: e.message }); }
+  /* planilla de RSI de cripto y miedo y codicia */
+  try { const r = await pg.evaluate(async () => { if (mode !== 'medio') applyMode('medio'); if (typeof setView === 'function') setView('main'); await new Promise(z => setTimeout(z, 1500)); $('rsiCx').scrollIntoView(); await new Promise(z => setTimeout(z, 500)); RSICX.d = {}; await rsiCxLoad(); await fngLoad(); RSICX.fngT = 0; await fngLoad(); rsiCxRender();
+      return { visible: !$('rsiCx').hidden, celdas: document.querySelectorAll('#rsiCxBody td:nth-child(2)').length, fng: $('fngBox').textContent }; }); info.push({ rsicx: r });
+    try { await pg.locator('#rsiCx').screenshot({ path: 'capturas/rsi-cripto.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ rsicx_error: e.message.slice(0, 200) }); }
   /* planilla de RSI de ACCIONES en cada temporalidad */
   try { for (const tf of ['h', '4h', '12h', 'w']) { const r = await pg.evaluate(async tf => { if (mode !== 'a') applyMode('a'); await new Promise(z => setTimeout(z, 1500)); RSIX.tf = tf; await rsiLoad(); rsiRender(); await new Promise(z => setTimeout(z, 500));
         const v = [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => x.textContent); return { tf, celdas: v.length, vacias: v.filter(x => x === '—').length, ej: v.slice(0, 5) }; }, tf);
