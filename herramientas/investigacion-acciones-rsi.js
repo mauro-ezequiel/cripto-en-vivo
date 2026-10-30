@@ -70,6 +70,17 @@ function st(L, meses) { const D = L.filter(o => o.usd != null), n = D.length; if
         const sl = Math.min(.15, Math.max(.004, 2.5 * dA[i] / c));
         for (const [g, r] of [['actual', 3], ['corta', 1]]) { const x2 = follow(d1, i + 1, c, sl, r, 42 * DAY, t); if (!x2) continue; add(`ACTUAL (c-reb / c-rup) · gestión ${g}`, res({ s, t, sl }, x2)); }
         const x3 = follow(d1, i + 1, c, sl, 3, 42 * DAY, t); free = x3 ? x3.end : Infinity; } }
+    /* --- COMBINADA: reglas actuales + "RSI diario ≤ 25" (gestión corta) como tercera regla; una operación por acción a la vez --- */
+    { let free = 0; for (let i = 260; i < d1.length - 1; i++) { const x = d1[i], t = x.t + DAY; if (t < FROMD || t < free) continue;
+        const body = (x.close - x.open) / ((x.high - x.low) || 1); let h = 0, l = 1e18; for (let j = Math.max(0, i - 251); j <= i; j++) { h = Math.max(h, d1[j].high); l = Math.min(l, d1[j].low); }
+        const c = x.close, r6 = (c / d1[i - 120].close - 1) * 100, fromHi = (c / h - 1) * 100, fromLo = (c / l - 1) * 100;
+        let setup = null; if (body > .5 && r6 <= -10 && fromHi > -35 && fromLo < 100) setup = 'c-reb';
+        else if (dE200[i] != null && c > dE200[i] && vav[i] && x.v > 1.5 * vav[i]) { let hh = 0; for (let j = i - 20; j < i; j++) hh = Math.max(hh, d1[j].high); if (c > hh) setup = 'c-rup'; }
+        if (setup && !spyOk(t)) setup = null; const rsiOk = dR[i] != null && dR[i] <= 25;
+        if (!setup && !rsiOk) continue; if (MAC.bloquea(t, 24, 12, ['cpi'])) continue;
+        const sl = Math.min(.15, Math.max(.004, 2.5 * dA[i] / c)), [r, mx] = setup ? [3, 42 * DAY] : [1, 21 * DAY], x2 = follow(d1, i + 1, c, sl, r, mx, t);
+        if (!x2) { free = Infinity; continue; } add('COMBINADA: actuales + RSI diario ≤ 25 (gestión corta)', res({ s, t, sl, setup: setup || 'c-rsi' }, x2));
+        if (!setup) add('COMBINADA · solo las de RSI', res({ s, t, sl }, x2)); free = x2.end; } }
     /* --- primero la planilla de RSI --- */
     const TFS = { '1d': d1, '1w': toW(d1) }; if (h1 && h1.length > 500) { TFS['1h'] = h1.filter(x => { const q = ny(x.t); return q.m >= 0 && q.m < 390; }); TFS['4h'] = to4h(h1); }
     for (const [tf, b] of Object.entries(TFS)) { const cl = b.map(x => x.close), Rr = rsi(cl), Mh = macdH(cl), ms = tf === '1h' ? H : tf === '4h' ? 4 * H : tf === '1d' ? DAY : 7 * DAY;
@@ -100,7 +111,7 @@ function st(L, meses) { const D = L.filter(o => o.usd != null), n = D.length; if
     out.variantes[k] = { todo: st(L, M), mitad1: st(L.filter(o => o.t < mid), M / 2), mitad2: st(L.filter(o => o.t >= mid), M / 2), año: st(L.filter(o => o.t >= NOW - 365 * DAY), 12),
       actual_mismo_periodo: tf2 ? 1 : 0 }; }
   /* las reglas actuales también en los 2 últimos años, para comparar con 1 h y 4 h */
-  for (const k of Object.keys(R).filter(k => k.startsWith('ACTUAL'))) { const L = R[k].filter(o => o.t >= NOW - 2 * 365 * DAY), mid = NOW - 365 * DAY; out.variantes[k + ' · 2 años'] = { todo: st(L, 24), mitad1: st(L.filter(o => o.t < mid), 12), mitad2: st(L.filter(o => o.t >= mid), 12), año: st(L.filter(o => o.t >= mid), 12) }; }
+  for (const k of Object.keys(R).filter(k => k.startsWith('ACTUAL') || k.startsWith('COMBINADA'))) { const L = R[k].filter(o => o.t >= NOW - 2 * 365 * DAY), mid = NOW - 365 * DAY; out.variantes[k + ' · 2 años'] = { todo: st(L, 24), mitad1: st(L.filter(o => o.t < mid), 12), mitad2: st(L.filter(o => o.t >= mid), 12), año: st(L.filter(o => o.t >= mid), 12) }; }
   fs.writeFileSync('investigacion-acciones-rsi.json', JSON.stringify(out, null, 1));
   const rows = Object.entries(out.variantes).sort((a, b) => (b[1].todo.usd || -1e9) - (a[1].todo.usd || -1e9)); for (const [k, v] of rows.slice(0, 40)) console.log(k, JSON.stringify(v.todo), 'año', JSON.stringify(v.año));
 })().catch(e => { console.error(e); process.exit(1); });
