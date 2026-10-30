@@ -15,9 +15,9 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     await pg.waitForTimeout(60000); const m1 = Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(x => [x.name, x.value]));
     const urls = {}; for (const [t, u] of REQ.slice(r0)) urls[u] = (urls[u] || 0) + 1;
     const lt = await pg.evaluate(() => ({ nodos: document.getElementsByTagName('*').length, html_kb: Math.round(document.documentElement.outerHTML.length / 1024), ls_kb: Math.round(JSON.stringify(localStorage).length / 1024), carga_ms: Math.round(performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd) }));
-    info.push({ rendimiento: { heap_mb: +(m1.JSHeapUsedSize / 1e6).toFixed(1), js_s_por_min: +(m1.ScriptDuration - m0.ScriptDuration).toFixed(2), tareas_s_por_min: +(m1.TaskDuration - m0.TaskDuration).toFixed(2), layouts: m1.LayoutCount - m0.LayoutCount, pedidos_por_min: REQ.length - r0, top: Object.entries(urls).sort((a, b) => b[1] - a[1]).slice(0, 15), ...lt } }); } catch (e) { info.push({ rendimiento_error: e.message }); }
+    globalThis.PERF = ({ rendimiento: { heap_mb: +(m1.JSHeapUsedSize / 1e6).toFixed(1), js_s_por_min: +(m1.ScriptDuration - m0.ScriptDuration).toFixed(2), tareas_s_por_min: +(m1.TaskDuration - m0.TaskDuration).toFixed(2), layouts: m1.LayoutCount - m0.LayoutCount, pedidos_por_min: REQ.length - r0, top: Object.entries(urls).sort((a, b) => b[1] - a[1]).slice(0, 15), ...lt } }); } catch (e) { globalThis.PERF = { rendimiento_error: e.message }; }
   const L = [['medio', '4h', 'BTCUSDT'], ['medio', '1h', 'ETHUSDT'], ['medio', '1d', 'SOLUSDT'], ['tx', '4h', 'XRPUSDT'], ['x', '15m', 'BTCUSDT'], ['x', '5m', 'SOLUSDT'], ['a', '1d', null]];
-  const info = [];
+  const info = []; if (globalThis.PERF) info.push(globalThis.PERF);
   for (const [m, t, s] of L) { try {
       const r = await pg.evaluate(async ([m, t, s]) => { if (mode !== m) applyMode(m); await new Promise(z => setTimeout(z, 3000)); if (s && symbol !== s) { select(s); await new Promise(z => setTimeout(z, 4000)); }
         if (tf !== t && TF_MODE[mode].includes(t)) { tf = t; renderTfs(); await loadChart(); await new Promise(z => setTimeout(z, 3000)); }
