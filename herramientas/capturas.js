@@ -8,14 +8,14 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   await pg.route(/wss?:\/\/.*binance.*/, r => r.abort());
   const errs = []; pg.on('pageerror', e => errs.push('pageerror: ' + e.message)); pg.on('console', m => { if (m.type() === 'error') errs.push('console: ' + m.text().slice(0, 300)); });
   await pg.goto((process.env.PAGE || 'https://mauro-ezequiel.github.io/cripto-en-vivo/') + '?bot=estudio&t=' + Date.now(), { waitUntil: 'domcontentloaded', timeout: 90000 });
-  const REQ = []; pg.on('request', r => REQ.push([Date.now(), r.url().replace(/\?.*$/, '').slice(0, 90)]));
+  const REQ = []; pg.on('request', r => { const u = r.url(); let k = u.replace(/\?.*$/, '').slice(0, 90); if (/klines|depth|premiumIndex/.test(u)) { const q = new URL(u).searchParams; k += ' ' + (q.get('symbol') || '*') + ' ' + (q.get('interval') || '') + ' ' + (q.get('limit') || ''); } REQ.push([Date.now(), k]); });
   await pg.waitForTimeout(15000);
   /* rendimiento: memoria, tiempo de JavaScript y pedidos de red en 60 s sin tocar nada */
   try { const cdp = await pg.context().newCDPSession(pg); await cdp.send('Performance.enable'); const m0 = Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(x => [x.name, x.value])); const r0 = REQ.length, t0 = Date.now();
     await pg.waitForTimeout(60000); const m1 = Object.fromEntries((await cdp.send('Performance.getMetrics')).metrics.map(x => [x.name, x.value]));
     const urls = {}; for (const [t, u] of REQ.slice(r0)) urls[u] = (urls[u] || 0) + 1;
     const lt = await pg.evaluate(() => ({ nodos: document.getElementsByTagName('*').length, html_kb: Math.round(document.documentElement.outerHTML.length / 1024), ls_kb: Math.round(JSON.stringify(localStorage).length / 1024), carga_ms: Math.round(performance.getEntriesByType('navigation')[0].domContentLoadedEventEnd) }));
-    globalThis.PERF = ({ rendimiento: { heap_mb: +(m1.JSHeapUsedSize / 1e6).toFixed(1), js_s_por_min: +(m1.ScriptDuration - m0.ScriptDuration).toFixed(2), tareas_s_por_min: +(m1.TaskDuration - m0.TaskDuration).toFixed(2), layouts: m1.LayoutCount - m0.LayoutCount, pedidos_por_min: REQ.length - r0, top: Object.entries(urls).sort((a, b) => b[1] - a[1]).slice(0, 15), ...lt } }); } catch (e) { globalThis.PERF = { rendimiento_error: e.message }; }
+    globalThis.PERF = ({ rendimiento: { heap_mb: +(m1.JSHeapUsedSize / 1e6).toFixed(1), js_s_por_min: +(m1.ScriptDuration - m0.ScriptDuration).toFixed(2), tareas_s_por_min: +(m1.TaskDuration - m0.TaskDuration).toFixed(2), layouts: m1.LayoutCount - m0.LayoutCount, pedidos_por_min: REQ.length - r0, top: Object.entries(urls).sort((a, b) => b[1] - a[1]).slice(0, 40), ...lt } }); } catch (e) { globalThis.PERF = { rendimiento_error: e.message }; }
   const L = [['medio', '4h', 'BTCUSDT'], ['medio', '1h', 'ETHUSDT'], ['medio', '1d', 'SOLUSDT'], ['tx', '4h', 'XRPUSDT'], ['x', '15m', 'BTCUSDT'], ['x', '5m', 'SOLUSDT'], ['a', '1d', null]];
   const info = []; if (globalThis.PERF) info.push(globalThis.PERF);
   for (const [m, t, s] of L) { try {
