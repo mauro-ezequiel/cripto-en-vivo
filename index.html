@@ -1191,11 +1191,16 @@ const barDelta=b=>{const tb=b.tb!=null&&!isNaN(b.tb)?b.tb:b.v/2;return 2*tb-b.v;
 function calcCVD(){let c=0,day=-1;return candles.map(b=>{const d=Math.floor(b.t/864e5);if(d!==day){day=d;if(mode!=='a')c=0;}c+=barDelta(b);return c;});}
 function flowScore(cs,i,n){let ds=0,av=0;for(let j=Math.max(0,i-n+1);j<=i;j++){ds+=barDelta(cs[j]);av+=cs[j].v;}return av?ds/av*2.5:0;}
 function oscList(){return ['rsi','stochrsi','macd','kon','adx','cvd'].filter(k=>active.has(k));}
+/* tamaño de cada panel de abajo (RSI, MACD…): por defecto todos iguales; arrastrando la línea que los separa se agrandan o achican
+   (también la del gráfico principal). Se guarda en este navegador; doble toque en una línea vuelve a los tamaños de siempre. */
+var PSZ={};try{PSZ=JSON.parse(localStorage.getItem('cv_psz')||'{}')||{};}catch(e){}
+function paneG(){const os=oscList(),def=os.length>=4?.13:.16;let h=os.map(k=>PSZ[k]>0?PSZ[k]:def),tot=h.reduce((a,x)=>a+x,0);
+  if(tot>.8){h=h.map(x=>x*.8/tot);tot=.8;}const top=[];let y=1-tot;for(const x of h){top.push(y);y+=x;}return {os,h,top,block:tot};}
 function layout(){
-  const os=oscList();PANE=os.length>=4?.13:.16;const block=os.length*PANE;
+  const G=paneG(),os=G.os;PANE=os.length?G.block/os.length:.16;const block=G.block;
   series.priceScale().applyOptions({scaleMargins:{top:.06,bottom:block+.1}});
   chart.priceScale('vol').applyOptions({scaleMargins:{top:1-block-.12,bottom:block+.005}});
-  os.forEach((k,i)=>{const st=1-block+i*PANE;chart.priceScale(k).applyOptions({scaleMargins:{top:st+.03,bottom:Math.max(0,1-st-PANE+.012)}});});
+  os.forEach((k,i)=>{const st=G.top[i],hh=G.h[i];chart.priceScale(k).applyOptions({scaleMargins:{top:st+Math.min(.03,hh*.18),bottom:Math.max(0,1-st-hh+Math.min(.012,hh*.08))}});});
   for(const k in OS){const on=active.has(k);for(const s in OS[k])OS[k][s].applyOptions({visible:on});}
 }
 
@@ -1327,7 +1332,11 @@ function calcSMC(){const b=candles,n=b.length,A=wilder(trArr(),14),F=[],O=[];if(
       if(-mv>2*a&&b[i].close<Math.min(...b.slice(i-13,i-2).map(x=>x.low))){for(let k=i-3;k>=i-6&&k>=0;k--)if(b[k].close>b[k].open){O.push({d:-1,i:k,top:b[k].high,bot:b[k].low});break;}}}}
   /* vigentes: un FVG se llena cuando el precio vuelve hasta el otro borde; un order block se invalida cuando una vela cierra del otro lado */
   const vivo=(z,fill)=>{for(let j=z.i+2;j<n;j++){if(fill?(z.d>0?b[j].low<=z.bot:b[j].high>=z.top):(z.d>0?b[j].close<z.bot:b[j].close>z.top))return false;}return true;};
-  const rec=z=>z.i>=n-150;return {F:F.filter(z=>rec(z)&&vivo(z,true)).slice(-6),O:O.filter(z=>rec(z)&&vivo(z,false)).slice(-4)};}
+  const rec=z=>z.i>=n-150,c=b[n-1].close,cerca=z=>Math.abs((z.top+z.bot)/2/c-1)<.12;
+  /* para que se lea mejor: zonas del mismo tipo que se tocan se juntan en una, y quedan las más cercanas al precio */
+  const unir=L=>{const out=[];for(const z of L.slice().sort((a,b2)=>a.bot-b2.bot)){const p=out.find(q=>q.d===z.d&&z.bot<=q.top*1.002&&z.top>=q.bot*.998);if(p){p.top=Math.max(p.top,z.top);p.bot=Math.min(p.bot,z.bot);p.i=Math.min(p.i,z.i);p.n=(p.n||1)+1;}else out.push({...z});}return out;};
+  const pick=(L,k)=>unir(L).sort((a,b2)=>Math.abs((a.top+a.bot)/2-c)-Math.abs((b2.top+b2.bot)/2-c)).slice(0,k);
+  return {F:pick(F.filter(z=>rec(z)&&cerca(z)&&vivo(z,true)),4),O:pick(O.filter(z=>rec(z)&&cerca(z)&&vivo(z,false)),3)};}
 /* ---------- 🟨 DIVERGENCIAS DE RSI ----------
    Alcista: el precio hace un mínimo más bajo pero el RSI 14 un mínimo más alto (la caída pierde fuerza). Bajista: al revés en los máximos.
    Se confirman con 3 velas a cada lado del giro (por eso aparecen 3 velas después). */
@@ -1337,9 +1346,11 @@ function calcDiv(){const b=candles,n=b.length,R=calcRSI(14),L=[],H=[],D=[],k=3;
     if(hi&&R[i]!=null){const p=H[H.length-1];if(p&&i-p<=40&&b[i].high>b[p].high&&R[i]<R[p]-1&&R[p]>55)D.push({d:-1,i0:p,i1:i,p0:b[p].high,p1:b[i].high});H.push(i);}}
   return D.slice(-12);}
 function drawSMC(ctx,from,to,X,Y,paneW){const Z=C.smc;if(!Z)return;const xr=paneW-(active.has('liq')?paneW*PROF:0);
+  const LY=[];/* etiquetas sin pisarse: si una cae encima de otra, se corre */
   const box=(z,fill,stroke,lab)=>{if(z.i>to)return;const x0=Math.max(0,X(Math.max(z.i,from))??0),y1=Y(z.top),y2=Y(z.bot);if(y1==null||y2==null||xr<=x0)return;
-    ctx.fillStyle=fill;ctx.fillRect(x0,y1,xr-x0,Math.max(1,y2-y1));ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.strokeRect(x0,y1,xr-x0,Math.max(1,y2-y1));
-    ctx.fillStyle=stroke;ctx.font='600 10px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';ctx.fillText(lab,x0+3,y1+1);};
+    ctx.fillStyle=fill;ctx.fillRect(x0,y1,xr-x0,Math.max(1,y2-y1));ctx.strokeStyle=stroke;ctx.lineWidth=1;ctx.globalAlpha=.8;ctx.strokeRect(x0,y1,xr-x0,Math.max(1,y2-y1));ctx.globalAlpha=1;
+    let ly=y1+1;while(LY.some(q=>Math.abs(q-ly)<12))ly+=12;LY.push(ly);const t=lab+(z.n>1?` ×${z.n}`:'');
+    ctx.font='600 10px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='top';const tw=ctx.measureText(t).width;ctx.fillStyle='rgba(15,17,21,.75)';ctx.fillRect(x0+2,ly-1,tw+4,12);ctx.fillStyle=stroke;ctx.fillText(t,x0+4,ly);};
   Z.F.forEach(z=>box(z,z.d>0?'rgba(38,166,154,.10)':'rgba(239,83,80,.10)',z.d>0?'rgba(38,166,154,.7)':'rgba(239,83,80,.7)',z.d>0?'FVG ▲':'FVG ▼'));
   Z.O.forEach(z=>box(z,z.d>0?'rgba(149,117,205,.16)':'rgba(255,112,67,.14)',z.d>0?'#9575cd':'#ff7043',z.d>0?'OB compra':'OB venta'));}
 function drawDiv(ctx,from,to,X,Y){const D=C.div;if(!D)return;ctx.lineWidth=2;ctx.font='700 11px system-ui,sans-serif';ctx.textAlign='center';
@@ -1360,10 +1371,28 @@ function drawFig(ctx,from,to,X,Y,paneW){const V=figList().filter(f=>f.i1>=from-5
     if(f.conf&&f.obj!=null){const yo=Y(f.obj),xe=X(f.i1+12);if(yo!=null&&xe!=null){ctx.strokeStyle=col;ctx.setLineDash([3,3]);ctx.beginPath();ctx.moveTo(x1,yo);ctx.lineTo(Math.min(xe,paneW),yo);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle=col;ctx.font='10px system-ui,sans-serif';ctx.fillText('objetivo '+fp(f.obj),x1+3,yo-7);}}
     ctx.restore();}}
+/* arrastrar las líneas que separan los paneles (dedo o mouse) */
+var PDRAG=null;
+(function(){const el=$('chart');if(!el)return;let lastTap=0;
+  const geo=()=>{const r=el.getBoundingClientRect(),ph=r.height-chart.timeScale().height();return {r,ph,G:paneG()};};
+  const near=(cy)=>{const {r,ph,G}=geo();const y=cy-r.top;for(let n=0;n<G.os.length;n++){if(Math.abs(y-ph*G.top[n])<=12)return {n,ph,G,r};}return null;};
+  const down=e=>{const pt=e.touches?e.touches[0]:e;const h=near(pt.clientY);if(!h)return;
+    const now=Date.now();if(now-lastTap<350){PSZ={};try{localStorage.removeItem('cv_psz');}catch(_){}layout();try{ovReq();}catch(_){}lastTap=0;e.stopPropagation();e.preventDefault();return;}lastTap=now;
+    PDRAG={n:h.n,ph:h.ph,r:h.r,G:h.G};e.stopPropagation();e.preventDefault();};
+  const move=e=>{if(!PDRAG){if(!e.touches){const h=near(e.clientY);el.style.cursor=h?'row-resize':'';}return;}const pt=e.touches?e.touches[0]:e;
+    const {n,ph,r,G}=PDRAG,f=Math.max(0,Math.min(1,(pt.clientY-r.top)/ph)),MIN=.05,h=G.h.slice();
+    if(n===0){/* línea entre el gráfico principal y el primer panel: cambia el primer panel (y el principal) */const end=G.top[0]+h[0];h[0]=end-Math.max(.2,Math.min(end-MIN,f));}
+    else{const a=G.top[n-1],b=G.top[n]+h[n],x=Math.max(a+MIN,Math.min(b-MIN,f));h[n-1]=x-a;h[n]=b-x;}
+    G.os.forEach((k,i)=>PSZ[k]=+h[i].toFixed(4));PDRAG.G=Object.assign({},G,{h,top:(()=>{const t=[];let y=1-h.reduce((s2,x)=>s2+x,0);for(const x of h){t.push(y);y+=x;}return t;})()});
+    layout();try{ovReq();}catch(_){}e.stopPropagation();e.preventDefault();};
+  const up=()=>{if(!PDRAG)return;PDRAG=null;try{localStorage.setItem('cv_psz',JSON.stringify(PSZ));}catch(_){}try{ovReq();}catch(_){}};
+  el.addEventListener('mousedown',down,true);el.addEventListener('touchstart',down,{capture:true,passive:false});
+  window.addEventListener('mousemove',move,true);window.addEventListener('touchmove',move,{capture:true,passive:false});
+  window.addEventListener('mouseup',up,true);window.addEventListener('touchend',up,true);window.addEventListener('touchcancel',up,true);})();
 function drawInd(ctx,w,h){
   if(!active.size||!candles.length) return;
   const ts=chart.timeScale(),paneH=h-ts.height(),paneW=w-series.priceScale().width();
-  const os=oscList(),block=os.length*PANE,mainH=paneH*(1-block);
+  const PG=paneG(),os=PG.os,block=PG.block,mainH=paneH*(1-block);
   const r=ts.getVisibleLogicalRange();if(!r)return;
   const from=Math.max(0,Math.floor(r.from)-2),to=Math.min(candles.length+26,Math.ceil(r.to)+2);
   const X=i=>ts.logicalToCoordinate(i),Y=p=>series.priceToCoordinate(p);
@@ -1430,8 +1459,9 @@ function drawInd(ctx,w,h){
 
   // paneles inferiores: separadores y etiquetas
   const i=candles.length-1;
-  os.forEach((k,n)=>{const y=paneH*(1-block+n*PANE);
-    ctx.strokeStyle='#2a3040';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();
+  os.forEach((k,n)=>{const y=paneH*PG.top[n];
+    ctx.strokeStyle=PDRAG&&PDRAG.n===n?'#f0b90b':'#3a4254';ctx.lineWidth=PDRAG&&PDRAG.n===n?2:1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();
+    /* agarradera para arrastrar */ctx.fillStyle=PDRAG&&PDRAG.n===n?'#f0b90b':'#4a5366';const gx=paneW/2;ctx.fillRect(gx-14,y-2,28,4);
     let txt=IND[k].name;
     if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
     if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
@@ -1446,7 +1476,7 @@ function drawInd(ctx,w,h){
     const S={rsi:[OS.rsi.rsi,C.rsi&&C.rsi[i],'#b388ff',[70,30]],stochrsi:[OS.stochrsi.k,C.srsi&&C.srsi.k[i],'#26c6da',[80,20]],macd:[OS.macd.macd,C.macd&&C.macd.macd[i],'#2962ff',[]],
       kon:[OS.kon.marron,C.kon&&C.kon.marron[i],'#2962ff',[]],adx:[OS.adx.adx,C.adx&&C.adx.adx[i],'#e0e0e0',[25]],cvd:[OS.cvd.cvd,C.cvd&&C.cvd[i],'#ffd166',[]]};
     ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
-    os.forEach((k,n)=>{const s=S[k];if(!s)return;const [se,v,col,refs]=s,top=paneH*(1-block+n*PANE),bot=top+paneH*PANE;
+    os.forEach((k,n)=>{const s=S[k];if(!s)return;const [se,v,col,refs]=s,top=paneH*PG.top[n],bot=top+paneH*PG.h[n];
       for(const r of refs){const y=se.priceToCoordinate(r);if(y!=null&&y>top+4&&y<bot-4){ctx.fillStyle='#6e7687';ctx.fillText(String(r),paneW+6,y);}}
       if(v!=null&&isFinite(v)){let y=se.priceToCoordinate(v);if(y!=null){y=Math.max(top+9,Math.min(bot-9,y));const t=k==='cvd'?fnum(v):k==='macd'?(+v).toPrecision(3):(+v).toFixed(1);
         ctx.fillStyle=col;ctx.fillRect(paneW+1,y-8,aw-1,16);ctx.fillStyle=k==='adx'||k==='cvd'?'#0f1115':'#fff';ctx.fillText(t,paneW+5,y);}}});}}
