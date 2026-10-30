@@ -1,0 +1,8303 @@
+{
+ "upd": 1793400773759,
+ "acciones": 357,
+ "nota": "usd = 300 USD de margen por señal con la X de la página (stop ≈ 40 % del margen, máx. × 20), con comisión. 1 h y 4 h: 2 años (Yahoo no da más); 1 día y 1 semana: 4 años.",
+ "variantes": {
+  "ACTUAL (c-reb / c-rup) · gestión actual": {
+   "todo": {
+    "n": 4492,
+    "por_mes": 93.5,
+    "gana": 44.2,
+    "obj1": 10.7,
+    "usd_op": 18.4,
+    "usd": 82823,
+    "perd_media": -99.8,
+    "peor_racha": -5005
+   },
+   "mitad1": {
+    "n": 2232,
+    "por_mes": 92.9,
+    "gana": 46.9,
+    "obj1": 11,
+    "usd_op": 25.2,
+    "usd": 56293,
+    "perd_media": -100.9,
+    "peor_racha": -3738
+   },
+   "mitad2": {
+    "n": 2260,
+    "por_mes": 94.1,
+    "gana": 41.5,
+    "obj1": 10.4,
+    "usd_op": 11.7,
+    "usd": 26530,
+    "perd_media": -98.9,
+    "peor_racha": -5005
+   },
+   "año": {
+    "n": 1064,
+    "por_mes": 88.7,
+    "gana": 42.4,
+    "obj1": 10.9,
+    "usd_op": 16.2,
+    "usd": 17232,
+    "perd_media": -98.4,
+    "peor_racha": -5005
+   },
+   "actual_mismo_periodo": 0
+  },
+  "ACTUAL (c-reb / c-rup) · gestión corta": {
+   "todo": {
+    "n": 4509,
+    "por_mes": 93.9,
+    "gana": 54.9,
+    "obj1": 50.6,
+    "usd_op": 12.2,
+    "usd": 54968,
+    "perd_media": -104.3,
+    "peor_racha": -1913
+   },
+   "mitad1": {
+    "n": 2232,
+    "por_mes": 92.9,
+    "gana": 56.9,
+    "obj1": 52.4,
+    "usd_op": 17.4,
+    "usd": 38836,
+    "perd_media": -105.8,
+    "peor_racha": -1879
+   },
+   "mitad2": {
+    "n": 2277,
+    "por_mes": 94.8,
+    "gana": 53,
+    "obj1": 48.9,
+    "usd_op": 7.1,
+    "usd": 16131,
+    "perd_media": -103,
+    "peor_racha": -1913
+   },
+   "año": {
+    "n": 1081,
+    "por_mes": 90.1,
+    "gana": 54,
+    "obj1": 49.5,
+    "usd_op": 9.6,
+    "usd": 10328,
+    "perd_media": -103.3,
+    "peor_racha": -1913
+   },
+   "actual_mismo_periodo": 0
+  },
+  "COMBINADA: actuales + RSI diario ≤ 25 (gestión corta)": {
+   "todo": {
+    "n": 5539,
+    "por_mes": 115.3,
+    "gana": 46.8,
+    "obj1": 17.1,
+    "usd_op": 17.2,
+    "usd": 95336,
+    "perd_media": -96.8,
+    "peor_racha": -3823
+   },
+   "mitad1": {
+    "n": 2655,
+    "por_mes": 110.6,
+    "gana": 48.8,
+    "obj1": 16.6,
+    "usd_op": 23.1,
+    "usd": 61224,
+    "perd_media": -98.2,
+    "peor_racha": -3823
+   },
+   "mitad2": {
+    "n": 2884,
+    "por_mes": 120.1,
+    "gana": 45,
+    "obj1": 17.6,
+    "usd_op": 11.8,
+    "usd": 34113,
+    "perd_media": -95.6,
+    "peor_racha": -2585
+   },
+   "año": {
+    "n": 1356,
+    "por_mes": 113,
+    "gana": 46.1,
+    "obj1": 18.2,
+    "usd_op": 16.7,
+    "usd": 22600,
+    "perd_media": -95.3,
+    "peor_racha": -2585
+   },
+   "actual_mismo_periodo": 0
+  },
+  "COMBINADA · solo las de RSI": {
+   "todo": {
+    "n": 1203,
+    "por_mes": 25,
+    "gana": 57.8,
+    "obj1": 39.7,
+    "usd_op": 15.3,
+    "usd": 18418,
+    "perd_media": -81.4,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 500,
+    "por_mes": 20.8,
+    "gana": 58.8,
+    "obj1": 40.2,
+    "usd_op": 16,
+    "usd": 7985,
+    "perd_media": -83.1,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 703,
+    "por_mes": 29.3,
+    "gana": 57,
+    "obj1": 39.3,
+    "usd_op": 14.8,
+    "usd": 10433,
+    "perd_media": -80.3,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 329,
+    "por_mes": 27.4,
+    "gana": 58.1,
+    "obj1": 40.4,
+    "usd_op": 20.9,
+    "usd": 6880,
+    "perd_media": -78.4,
+    "peor_racha": -845
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 3119,
+    "por_mes": 64.9,
+    "gana": 46.8,
+    "obj1": 8.1,
+    "usd_op": 19.5,
+    "usd": 60951,
+    "perd_media": -96.5,
+    "peor_racha": -6011
+   },
+   "mitad1": {
+    "n": 1427,
+    "por_mes": 59.4,
+    "gana": 47.2,
+    "obj1": 9.5,
+    "usd_op": 24.3,
+    "usd": 34738,
+    "perd_media": -96.4,
+    "peor_racha": -3914
+   },
+   "mitad2": {
+    "n": 1692,
+    "por_mes": 70.5,
+    "gana": 46.5,
+    "obj1": 6.9,
+    "usd_op": 15.5,
+    "usd": 26212,
+    "perd_media": -96.6,
+    "peor_racha": -6011
+   },
+   "año": {
+    "n": 765,
+    "por_mes": 63.8,
+    "gana": 44.7,
+    "obj1": 6.4,
+    "usd_op": 6.6,
+    "usd": 5036,
+    "perd_media": -93.3,
+    "peor_racha": -6011
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 3374,
+    "por_mes": 70.3,
+    "gana": 55.9,
+    "obj1": 39,
+    "usd_op": 14.3,
+    "usd": 48274,
+    "perd_media": -83.5,
+    "peor_racha": -1874
+   },
+   "mitad1": {
+    "n": 1427,
+    "por_mes": 59.4,
+    "gana": 55.7,
+    "obj1": 38.1,
+    "usd_op": 11.9,
+    "usd": 16942,
+    "perd_media": -85.4,
+    "peor_racha": -1874
+   },
+   "mitad2": {
+    "n": 1947,
+    "por_mes": 81.1,
+    "gana": 56.1,
+    "obj1": 39.7,
+    "usd_op": 16.1,
+    "usd": 31332,
+    "perd_media": -82,
+    "peor_racha": -1650
+   },
+   "año": {
+    "n": 1020,
+    "por_mes": 85,
+    "gana": 59.3,
+    "obj1": 43.1,
+    "usd_op": 28.1,
+    "usd": 28674,
+    "perd_media": -78.3,
+    "peor_racha": -1650
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 2516,
+    "por_mes": 52.4,
+    "gana": 47.7,
+    "obj1": 8,
+    "usd_op": 21.6,
+    "usd": 54410,
+    "perd_media": -94.6,
+    "peor_racha": -5884
+   },
+   "mitad1": {
+    "n": 1156,
+    "por_mes": 48.1,
+    "gana": 50.3,
+    "obj1": 9.8,
+    "usd_op": 32.3,
+    "usd": 37293,
+    "perd_media": -95.9,
+    "peor_racha": -3643
+   },
+   "mitad2": {
+    "n": 1360,
+    "por_mes": 56.6,
+    "gana": 45.5,
+    "obj1": 6.5,
+    "usd_op": 12.6,
+    "usd": 17117,
+    "perd_media": -93.7,
+    "peor_racha": -5884
+   },
+   "año": {
+    "n": 653,
+    "por_mes": 54.4,
+    "gana": 42.4,
+    "obj1": 6.1,
+    "usd_op": 6.2,
+    "usd": 4021,
+    "perd_media": -90.2,
+    "peor_racha": -5884
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 2660,
+    "por_mes": 55.4,
+    "gana": 57.8,
+    "obj1": 38.6,
+    "usd_op": 15.7,
+    "usd": 41875,
+    "perd_media": -82.3,
+    "peor_racha": -1863
+   },
+   "mitad1": {
+    "n": 1156,
+    "por_mes": 48.1,
+    "gana": 58.5,
+    "obj1": 39.8,
+    "usd_op": 17.8,
+    "usd": 20573,
+    "perd_media": -81.8,
+    "peor_racha": -1712
+   },
+   "mitad2": {
+    "n": 1504,
+    "por_mes": 62.6,
+    "gana": 57.3,
+    "obj1": 37.7,
+    "usd_op": 14.2,
+    "usd": 21301,
+    "perd_media": -82.8,
+    "peor_racha": -1863
+   },
+   "año": {
+    "n": 797,
+    "por_mes": 66.4,
+    "gana": 59.7,
+    "obj1": 39.4,
+    "usd_op": 24.5,
+    "usd": 19504,
+    "perd_media": -80.4,
+    "peor_racha": -883
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 1175,
+    "por_mes": 24.5,
+    "gana": 50.5,
+    "obj1": 8.1,
+    "usd_op": 27.7,
+    "usd": 32592,
+    "perd_media": -94.3,
+    "peor_racha": -3593
+   },
+   "mitad1": {
+    "n": 509,
+    "por_mes": 21.2,
+    "gana": 52.1,
+    "obj1": 8.4,
+    "usd_op": 33.6,
+    "usd": 17079,
+    "perd_media": -95.1,
+    "peor_racha": -1212
+   },
+   "mitad2": {
+    "n": 666,
+    "por_mes": 27.7,
+    "gana": 49.2,
+    "obj1": 7.8,
+    "usd_op": 23.3,
+    "usd": 15513,
+    "perd_media": -93.7,
+    "peor_racha": -3593
+   },
+   "año": {
+    "n": 292,
+    "por_mes": 24.3,
+    "gana": 46.6,
+    "obj1": 7.5,
+    "usd_op": 13.2,
+    "usd": 3852,
+    "perd_media": -88,
+    "peor_racha": -1815
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 1279,
+    "por_mes": 26.6,
+    "gana": 59.7,
+    "obj1": 42.1,
+    "usd_op": 21.5,
+    "usd": 27459,
+    "perd_media": -81.1,
+    "peor_racha": -1218
+   },
+   "mitad1": {
+    "n": 509,
+    "por_mes": 21.2,
+    "gana": 58.7,
+    "obj1": 40.5,
+    "usd_op": 16.9,
+    "usd": 8610,
+    "perd_media": -81.8,
+    "peor_racha": -1209
+   },
+   "mitad2": {
+    "n": 770,
+    "por_mes": 32.1,
+    "gana": 60.3,
+    "obj1": 43.1,
+    "usd_op": 24.5,
+    "usd": 18849,
+    "perd_media": -80.6,
+    "peor_racha": -1218
+   },
+   "año": {
+    "n": 396,
+    "por_mes": 33,
+    "gana": 64.6,
+    "obj1": 48.2,
+    "usd_op": 39.7,
+    "usd": 15715,
+    "perd_media": -79.2,
+    "peor_racha": -845
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 929,
+    "por_mes": 19.3,
+    "gana": 49.5,
+    "obj1": 6.9,
+    "usd_op": 23.8,
+    "usd": 22134,
+    "perd_media": -92.1,
+    "peor_racha": -2347
+   },
+   "mitad1": {
+    "n": 406,
+    "por_mes": 16.9,
+    "gana": 53.4,
+    "obj1": 9.1,
+    "usd_op": 38.6,
+    "usd": 15662,
+    "perd_media": -93.1,
+    "peor_racha": -2347
+   },
+   "mitad2": {
+    "n": 523,
+    "por_mes": 21.8,
+    "gana": 46.5,
+    "obj1": 5.2,
+    "usd_op": 12.4,
+    "usd": 6472,
+    "perd_media": -91.5,
+    "peor_racha": -2216
+   },
+   "año": {
+    "n": 232,
+    "por_mes": 19.3,
+    "gana": 40.9,
+    "obj1": 4.3,
+    "usd_op": -0.2,
+    "usd": -55,
+    "perd_media": -86.2,
+    "peor_racha": -1751
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 983,
+    "por_mes": 20.5,
+    "gana": 60.4,
+    "obj1": 38.8,
+    "usd_op": 18.3,
+    "usd": 17979,
+    "perd_media": -81.3,
+    "peor_racha": -1489
+   },
+   "mitad1": {
+    "n": 406,
+    "por_mes": 16.9,
+    "gana": 62.3,
+    "obj1": 39.4,
+    "usd_op": 20.4,
+    "usd": 8282,
+    "perd_media": -80.7,
+    "peor_racha": -1489
+   },
+   "mitad2": {
+    "n": 577,
+    "por_mes": 24,
+    "gana": 59.1,
+    "obj1": 38.3,
+    "usd_op": 16.8,
+    "usd": 9697,
+    "perd_media": -81.7,
+    "peor_racha": -1112
+   },
+   "año": {
+    "n": 286,
+    "por_mes": 23.8,
+    "gana": 59.8,
+    "obj1": 40.9,
+    "usd_op": 28.9,
+    "usd": 8260,
+    "perd_media": -77.1,
+    "peor_racha": -713
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 568,
+    "por_mes": 11.8,
+    "gana": 53.5,
+    "obj1": 12.1,
+    "usd_op": 45,
+    "usd": 25584,
+    "perd_media": -91.2,
+    "peor_racha": -1691
+   },
+   "mitad1": {
+    "n": 205,
+    "por_mes": 8.5,
+    "gana": 48.8,
+    "obj1": 12.7,
+    "usd_op": 36.3,
+    "usd": 7441,
+    "perd_media": -92.9,
+    "peor_racha": -1691
+   },
+   "mitad2": {
+    "n": 363,
+    "por_mes": 15.1,
+    "gana": 56.2,
+    "obj1": 11.8,
+    "usd_op": 50,
+    "usd": 18143,
+    "perd_media": -90.1,
+    "peor_racha": -1035
+   },
+   "año": {
+    "n": 170,
+    "por_mes": 14.2,
+    "gana": 48.8,
+    "obj1": 8.2,
+    "usd_op": 17,
+    "usd": 2898,
+    "perd_media": -86.5,
+    "peor_racha": -718
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 592,
+    "por_mes": 12.3,
+    "gana": 62.3,
+    "obj1": 44.4,
+    "usd_op": 23.7,
+    "usd": 14021,
+    "perd_media": -82.7,
+    "peor_racha": -1011
+   },
+   "mitad1": {
+    "n": 205,
+    "por_mes": 8.5,
+    "gana": 58,
+    "obj1": 41,
+    "usd_op": 14.1,
+    "usd": 2895,
+    "perd_media": -86.1,
+    "peor_racha": -668
+   },
+   "mitad2": {
+    "n": 387,
+    "por_mes": 16.1,
+    "gana": 64.6,
+    "obj1": 46.3,
+    "usd_op": 28.7,
+    "usd": 11126,
+    "perd_media": -80.5,
+    "peor_racha": -1011
+   },
+   "año": {
+    "n": 194,
+    "por_mes": 16.2,
+    "gana": 61.9,
+    "obj1": 44.3,
+    "usd_op": 27.5,
+    "usd": 5342,
+    "perd_media": -80.3,
+    "peor_racha": -685
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1h · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 12605,
+    "por_mes": 524.9,
+    "gana": 27.9,
+    "obj1": 26.1,
+    "usd_op": 8.2,
+    "usd": 103799,
+    "perd_media": -117.2,
+    "peor_racha": -17004
+   },
+   "mitad1": {
+    "n": 6501,
+    "por_mes": 541.5,
+    "gana": 29,
+    "obj1": 26.9,
+    "usd_op": 11.2,
+    "usd": 73129,
+    "perd_media": -115.9,
+    "peor_racha": -17004
+   },
+   "mitad2": {
+    "n": 6104,
+    "por_mes": 508.4,
+    "gana": 26.8,
+    "obj1": 25.3,
+    "usd_op": 5,
+    "usd": 30670,
+    "perd_media": -118.5,
+    "peor_racha": -7192
+   },
+   "año": {
+    "n": 6104,
+    "por_mes": 508.7,
+    "gana": 26.8,
+    "obj1": 25.3,
+    "usd_op": 5,
+    "usd": 30670,
+    "perd_media": -118.5,
+    "peor_racha": -7192
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 13176,
+    "por_mes": 548.7,
+    "gana": 52.4,
+    "obj1": 52.1,
+    "usd_op": 1.4,
+    "usd": 18592,
+    "perd_media": -117.2,
+    "peor_racha": -10685
+   },
+   "mitad1": {
+    "n": 6501,
+    "por_mes": 541.5,
+    "gana": 50.1,
+    "obj1": 49.8,
+    "usd_op": -4.9,
+    "usd": -31716,
+    "perd_media": -115.8,
+    "peor_racha": -10685
+   },
+   "mitad2": {
+    "n": 6675,
+    "por_mes": 555.9,
+    "gana": 54.7,
+    "obj1": 54.4,
+    "usd_op": 7.5,
+    "usd": 50308,
+    "perd_media": -118.8,
+    "peor_racha": -4884
+   },
+   "año": {
+    "n": 6675,
+    "por_mes": 556.3,
+    "gana": 54.7,
+    "obj1": 54.4,
+    "usd_op": 7.5,
+    "usd": 50308,
+    "perd_media": -118.8,
+    "peor_racha": -4884
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 11346,
+    "por_mes": 472.5,
+    "gana": 28.7,
+    "obj1": 26.5,
+    "usd_op": 10.3,
+    "usd": 116602,
+    "perd_media": -117.4,
+    "peor_racha": -31659
+   },
+   "mitad1": {
+    "n": 5732,
+    "por_mes": 477.4,
+    "gana": 29.9,
+    "obj1": 27.5,
+    "usd_op": 15.1,
+    "usd": 86757,
+    "perd_media": -115.9,
+    "peor_racha": -31659
+   },
+   "mitad2": {
+    "n": 5614,
+    "por_mes": 467.6,
+    "gana": 27.4,
+    "obj1": 25.6,
+    "usd_op": 5.3,
+    "usd": 29844,
+    "perd_media": -118.9,
+    "peor_racha": -6895
+   },
+   "año": {
+    "n": 5614,
+    "por_mes": 467.8,
+    "gana": 27.4,
+    "obj1": 25.6,
+    "usd_op": 5.3,
+    "usd": 29844,
+    "perd_media": -118.9,
+    "peor_racha": -6895
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 11706,
+    "por_mes": 487.5,
+    "gana": 52.7,
+    "obj1": 52.5,
+    "usd_op": 2.2,
+    "usd": 26085,
+    "perd_media": -117.2,
+    "peor_racha": -7249
+   },
+   "mitad1": {
+    "n": 5732,
+    "por_mes": 477.4,
+    "gana": 51.8,
+    "obj1": 51.5,
+    "usd_op": -0.7,
+    "usd": -3779,
+    "perd_media": -115.6,
+    "peor_racha": -7249
+   },
+   "mitad2": {
+    "n": 5974,
+    "por_mes": 497.6,
+    "gana": 53.5,
+    "obj1": 53.4,
+    "usd_op": 5,
+    "usd": 29865,
+    "perd_media": -118.7,
+    "peor_racha": -3264
+   },
+   "año": {
+    "n": 5974,
+    "por_mes": 497.8,
+    "gana": 53.5,
+    "obj1": 53.4,
+    "usd_op": 5,
+    "usd": 29865,
+    "perd_media": -118.7,
+    "peor_racha": -3264
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 10158,
+    "por_mes": 423,
+    "gana": 28.2,
+    "obj1": 26.3,
+    "usd_op": 6.2,
+    "usd": 62633,
+    "perd_media": -117.2,
+    "peor_racha": -7107
+   },
+   "mitad1": {
+    "n": 4771,
+    "por_mes": 397.4,
+    "gana": 30.1,
+    "obj1": 28.3,
+    "usd_op": 14.2,
+    "usd": 67596,
+    "perd_media": -115.3,
+    "peor_racha": -7107
+   },
+   "mitad2": {
+    "n": 5387,
+    "por_mes": 448.7,
+    "gana": 26.5,
+    "obj1": 24.6,
+    "usd_op": -0.9,
+    "usd": -4964,
+    "perd_media": -118.7,
+    "peor_racha": -6895
+   },
+   "año": {
+    "n": 5387,
+    "por_mes": 448.9,
+    "gana": 26.5,
+    "obj1": 24.6,
+    "usd_op": -0.9,
+    "usd": -4964,
+    "perd_media": -118.7,
+    "peor_racha": -6895
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 10518,
+    "por_mes": 438,
+    "gana": 52.9,
+    "obj1": 52.7,
+    "usd_op": 3.2,
+    "usd": 33460,
+    "perd_media": -116.9,
+    "peor_racha": -3264
+   },
+   "mitad1": {
+    "n": 4771,
+    "por_mes": 397.4,
+    "gana": 52.8,
+    "obj1": 52.5,
+    "usd_op": 3.3,
+    "usd": 15928,
+    "perd_media": -115,
+    "peor_racha": -3210
+   },
+   "mitad2": {
+    "n": 5747,
+    "por_mes": 478.7,
+    "gana": 53,
+    "obj1": 52.8,
+    "usd_op": 3.1,
+    "usd": 17532,
+    "perd_media": -118.5,
+    "peor_racha": -3264
+   },
+   "año": {
+    "n": 5747,
+    "por_mes": 478.9,
+    "gana": 53,
+    "obj1": 52.8,
+    "usd_op": 3.1,
+    "usd": 17532,
+    "perd_media": -118.5,
+    "peor_racha": -3264
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 4988,
+    "por_mes": 207.7,
+    "gana": 27.9,
+    "obj1": 26.5,
+    "usd_op": 7.7,
+    "usd": 38230,
+    "perd_media": -116.8,
+    "peor_racha": -9974
+   },
+   "mitad1": {
+    "n": 2481,
+    "por_mes": 206.6,
+    "gana": 28.3,
+    "obj1": 26.8,
+    "usd_op": 9.5,
+    "usd": 23661,
+    "perd_media": -115,
+    "peor_racha": -9974
+   },
+   "mitad2": {
+    "n": 2507,
+    "por_mes": 208.8,
+    "gana": 27.6,
+    "obj1": 26.1,
+    "usd_op": 5.8,
+    "usd": 14569,
+    "perd_media": -118.4,
+    "peor_racha": -5053
+   },
+   "año": {
+    "n": 2507,
+    "por_mes": 208.9,
+    "gana": 27.6,
+    "obj1": 26.1,
+    "usd_op": 5.8,
+    "usd": 14569,
+    "perd_media": -118.4,
+    "peor_racha": -5053
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 5101,
+    "por_mes": 212.4,
+    "gana": 53,
+    "obj1": 52.9,
+    "usd_op": 2.5,
+    "usd": 12610,
+    "perd_media": -116.5,
+    "peor_racha": -2700
+   },
+   "mitad1": {
+    "n": 2481,
+    "por_mes": 206.6,
+    "gana": 52.4,
+    "obj1": 52.2,
+    "usd_op": 0.2,
+    "usd": 391,
+    "perd_media": -114.5,
+    "peor_racha": -2569
+   },
+   "mitad2": {
+    "n": 2620,
+    "por_mes": 218.2,
+    "gana": 53.6,
+    "obj1": 53.5,
+    "usd_op": 4.7,
+    "usd": 12218,
+    "perd_media": -118.6,
+    "peor_racha": -2700
+   },
+   "año": {
+    "n": 2620,
+    "por_mes": 218.3,
+    "gana": 53.6,
+    "obj1": 53.5,
+    "usd_op": 4.7,
+    "usd": 12218,
+    "perd_media": -118.6,
+    "peor_racha": -2700
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 6363,
+    "por_mes": 265,
+    "gana": 28.6,
+    "obj1": 26.8,
+    "usd_op": 9.1,
+    "usd": 57694,
+    "perd_media": -116.7,
+    "peor_racha": -14321
+   },
+   "mitad1": {
+    "n": 3213,
+    "por_mes": 267.6,
+    "gana": 29.7,
+    "obj1": 27.7,
+    "usd_op": 12.5,
+    "usd": 40185,
+    "perd_media": -114.9,
+    "peor_racha": -14321
+   },
+   "mitad2": {
+    "n": 3150,
+    "por_mes": 262.4,
+    "gana": 27.5,
+    "obj1": 25.9,
+    "usd_op": 5.6,
+    "usd": 17509,
+    "perd_media": -118.5,
+    "peor_racha": -7770
+   },
+   "año": {
+    "n": 3150,
+    "por_mes": 262.5,
+    "gana": 27.5,
+    "obj1": 25.9,
+    "usd_op": 5.6,
+    "usd": 17509,
+    "perd_media": -118.5,
+    "peor_racha": -7770
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 6591,
+    "por_mes": 274.5,
+    "gana": 53.8,
+    "obj1": 53.6,
+    "usd_op": 4.2,
+    "usd": 27533,
+    "perd_media": -116.3,
+    "peor_racha": -3895
+   },
+   "mitad1": {
+    "n": 3213,
+    "por_mes": 267.6,
+    "gana": 53,
+    "obj1": 52.6,
+    "usd_op": 1.4,
+    "usd": 4655,
+    "perd_media": -114.4,
+    "peor_racha": -3895
+   },
+   "mitad2": {
+    "n": 3378,
+    "por_mes": 281.3,
+    "gana": 54.6,
+    "obj1": 54.4,
+    "usd_op": 6.8,
+    "usd": 22878,
+    "perd_media": -118.3,
+    "peor_racha": -2418
+   },
+   "año": {
+    "n": 3378,
+    "por_mes": 281.5,
+    "gana": 54.6,
+    "obj1": 54.4,
+    "usd_op": 6.8,
+    "usd": 22878,
+    "perd_media": -118.3,
+    "peor_racha": -2418
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 4447,
+    "por_mes": 185.2,
+    "gana": 28,
+    "obj1": 26.6,
+    "usd_op": 8.3,
+    "usd": 37096,
+    "perd_media": -116.7,
+    "peor_racha": -9655
+   },
+   "mitad1": {
+    "n": 2209,
+    "por_mes": 184,
+    "gana": 28.7,
+    "obj1": 27.2,
+    "usd_op": 12,
+    "usd": 26496,
+    "perd_media": -114.8,
+    "peor_racha": -9655
+   },
+   "mitad2": {
+    "n": 2238,
+    "por_mes": 186.4,
+    "gana": 27.3,
+    "obj1": 26,
+    "usd_op": 4.7,
+    "usd": 10600,
+    "perd_media": -118.5,
+    "peor_racha": -6189
+   },
+   "año": {
+    "n": 2238,
+    "por_mes": 186.5,
+    "gana": 27.3,
+    "obj1": 26,
+    "usd_op": 4.7,
+    "usd": 10600,
+    "perd_media": -118.5,
+    "peor_racha": -6189
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 4558,
+    "por_mes": 189.8,
+    "gana": 53.5,
+    "obj1": 53.3,
+    "usd_op": 3.6,
+    "usd": 16242,
+    "perd_media": -116.5,
+    "peor_racha": -2896
+   },
+   "mitad1": {
+    "n": 2209,
+    "por_mes": 184,
+    "gana": 53,
+    "obj1": 52.7,
+    "usd_op": 1.9,
+    "usd": 4213,
+    "perd_media": -114.2,
+    "peor_racha": -2896
+   },
+   "mitad2": {
+    "n": 2349,
+    "por_mes": 195.6,
+    "gana": 54,
+    "obj1": 53.9,
+    "usd_op": 5.1,
+    "usd": 12029,
+    "perd_media": -118.7,
+    "peor_racha": -2825
+   },
+   "año": {
+    "n": 2349,
+    "por_mes": 195.8,
+    "gana": 54,
+    "obj1": 53.9,
+    "usd_op": 5.1,
+    "usd": 12029,
+    "perd_media": -118.7,
+    "peor_racha": -2825
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 4343,
+    "por_mes": 180.9,
+    "gana": 27.4,
+    "obj1": 25.8,
+    "usd_op": 0.1,
+    "usd": 327,
+    "perd_media": -116.8,
+    "peor_racha": -8638
+   },
+   "mitad1": {
+    "n": 2076,
+    "por_mes": 172.9,
+    "gana": 29.2,
+    "obj1": 27.7,
+    "usd_op": 6.9,
+    "usd": 14412,
+    "perd_media": -114.6,
+    "peor_racha": -5855
+   },
+   "mitad2": {
+    "n": 2267,
+    "por_mes": 188.8,
+    "gana": 25.8,
+    "obj1": 24.1,
+    "usd_op": -6.2,
+    "usd": -14086,
+    "perd_media": -118.8,
+    "peor_racha": -8638
+   },
+   "año": {
+    "n": 2267,
+    "por_mes": 188.9,
+    "gana": 25.8,
+    "obj1": 24.1,
+    "usd_op": -6.2,
+    "usd": -14086,
+    "perd_media": -118.8,
+    "peor_racha": -8638
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 4422,
+    "por_mes": 184.1,
+    "gana": 52.5,
+    "obj1": 52.3,
+    "usd_op": -0.4,
+    "usd": -1893,
+    "perd_media": -116.3,
+    "peor_racha": -2343
+   },
+   "mitad1": {
+    "n": 2076,
+    "por_mes": 172.9,
+    "gana": 53.3,
+    "obj1": 53.1,
+    "usd_op": 2.5,
+    "usd": 5278,
+    "perd_media": -113.7,
+    "peor_racha": -2281
+   },
+   "mitad2": {
+    "n": 2346,
+    "por_mes": 195.4,
+    "gana": 51.8,
+    "obj1": 51.6,
+    "usd_op": -3.1,
+    "usd": -7171,
+    "perd_media": -118.6,
+    "peor_racha": -2343
+   },
+   "año": {
+    "n": 2346,
+    "por_mes": 195.5,
+    "gana": 51.8,
+    "obj1": 51.6,
+    "usd_op": -3.1,
+    "usd": -7171,
+    "perd_media": -118.6,
+    "peor_racha": -2343
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 5553,
+    "por_mes": 231.2,
+    "gana": 27.6,
+    "obj1": 26.1,
+    "usd_op": 1.6,
+    "usd": 9100,
+    "perd_media": -116.4,
+    "peor_racha": -9626
+   },
+   "mitad1": {
+    "n": 2663,
+    "por_mes": 221.8,
+    "gana": 29.2,
+    "obj1": 27.9,
+    "usd_op": 7.9,
+    "usd": 20933,
+    "perd_media": -114.1,
+    "peor_racha": -5147
+   },
+   "mitad2": {
+    "n": 2890,
+    "por_mes": 240.7,
+    "gana": 26.1,
+    "obj1": 24.5,
+    "usd_op": -4.1,
+    "usd": -11833,
+    "perd_media": -118.4,
+    "peor_racha": -9626
+   },
+   "año": {
+    "n": 2890,
+    "por_mes": 240.8,
+    "gana": 26.1,
+    "obj1": 24.5,
+    "usd_op": -4.1,
+    "usd": -11833,
+    "perd_media": -118.4,
+    "peor_racha": -9626
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 5740,
+    "por_mes": 239,
+    "gana": 53.4,
+    "obj1": 53.3,
+    "usd_op": 2.8,
+    "usd": 16065,
+    "perd_media": -115.9,
+    "peor_racha": -3368
+   },
+   "mitad1": {
+    "n": 2663,
+    "por_mes": 221.8,
+    "gana": 53.4,
+    "obj1": 53.2,
+    "usd_op": 3,
+    "usd": 8007,
+    "perd_media": -113.4,
+    "peor_racha": -3368
+   },
+   "mitad2": {
+    "n": 3077,
+    "por_mes": 256.3,
+    "gana": 53.5,
+    "obj1": 53.3,
+    "usd_op": 2.6,
+    "usd": 8058,
+    "perd_media": -118,
+    "peor_racha": -2549
+   },
+   "año": {
+    "n": 3077,
+    "por_mes": 256.4,
+    "gana": 53.5,
+    "obj1": 53.3,
+    "usd_op": 2.6,
+    "usd": 8058,
+    "perd_media": -118,
+    "peor_racha": -2549
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 3885,
+    "por_mes": 161.8,
+    "gana": 27.1,
+    "obj1": 26,
+    "usd_op": 3.1,
+    "usd": 12237,
+    "perd_media": -116.2,
+    "peor_racha": -8878
+   },
+   "mitad1": {
+    "n": 1865,
+    "por_mes": 155.3,
+    "gana": 28.7,
+    "obj1": 27.8,
+    "usd_op": 12,
+    "usd": 22462,
+    "perd_media": -113.9,
+    "peor_racha": -8878
+   },
+   "mitad2": {
+    "n": 2020,
+    "por_mes": 168.2,
+    "gana": 25.5,
+    "obj1": 24.3,
+    "usd_op": -5.1,
+    "usd": -10224,
+    "perd_media": -118.3,
+    "peor_racha": -7681
+   },
+   "año": {
+    "n": 2020,
+    "por_mes": 168.3,
+    "gana": 25.5,
+    "obj1": 24.3,
+    "usd_op": -5.1,
+    "usd": -10224,
+    "perd_media": -118.3,
+    "peor_racha": -7681
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 3972,
+    "por_mes": 165.4,
+    "gana": 52.9,
+    "obj1": 52.8,
+    "usd_op": 2.2,
+    "usd": 8918,
+    "perd_media": -115.9,
+    "peor_racha": -2945
+   },
+   "mitad1": {
+    "n": 1865,
+    "por_mes": 155.3,
+    "gana": 53.1,
+    "obj1": 52.9,
+    "usd_op": 3.1,
+    "usd": 5870,
+    "perd_media": -113.4,
+    "peor_racha": -2945
+   },
+   "mitad2": {
+    "n": 2107,
+    "por_mes": 175.5,
+    "gana": 52.8,
+    "obj1": 52.6,
+    "usd_op": 1.4,
+    "usd": 3048,
+    "perd_media": -118.1,
+    "peor_racha": -2842
+   },
+   "año": {
+    "n": 2107,
+    "por_mes": 175.6,
+    "gana": 52.8,
+    "obj1": 52.6,
+    "usd_op": 1.4,
+    "usd": 3048,
+    "perd_media": -118.1,
+    "peor_racha": -2842
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 7699,
+    "por_mes": 320.6,
+    "gana": 28.9,
+    "obj1": 26.5,
+    "usd_op": 10.8,
+    "usd": 82826,
+    "perd_media": -117.2,
+    "peor_racha": -16319
+   },
+   "mitad1": {
+    "n": 4062,
+    "por_mes": 338.3,
+    "gana": 29.2,
+    "obj1": 26.4,
+    "usd_op": 12.3,
+    "usd": 49911,
+    "perd_media": -116.2,
+    "peor_racha": -16319
+   },
+   "mitad2": {
+    "n": 3637,
+    "por_mes": 302.9,
+    "gana": 28.5,
+    "obj1": 26.6,
+    "usd_op": 9.1,
+    "usd": 32916,
+    "perd_media": -118.4,
+    "peor_racha": -9173
+   },
+   "año": {
+    "n": 3637,
+    "por_mes": 303.1,
+    "gana": 28.5,
+    "obj1": 26.6,
+    "usd_op": 9.1,
+    "usd": 32916,
+    "perd_media": -118.4,
+    "peor_racha": -9173
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 7977,
+    "por_mes": 332.2,
+    "gana": 53.2,
+    "obj1": 52.9,
+    "usd_op": 1.7,
+    "usd": 13461,
+    "perd_media": -117.3,
+    "peor_racha": -6843
+   },
+   "mitad1": {
+    "n": 4062,
+    "por_mes": 338.3,
+    "gana": 51,
+    "obj1": 50.6,
+    "usd_op": -5.1,
+    "usd": -20561,
+    "perd_media": -116.3,
+    "peor_racha": -6843
+   },
+   "mitad2": {
+    "n": 3915,
+    "por_mes": 326.1,
+    "gana": 55.6,
+    "obj1": 55.2,
+    "usd_op": 8.7,
+    "usd": 34022,
+    "perd_media": -118.6,
+    "peor_racha": -2563
+   },
+   "año": {
+    "n": 3915,
+    "por_mes": 326.3,
+    "gana": 55.6,
+    "obj1": 55.2,
+    "usd_op": 8.7,
+    "usd": 34022,
+    "perd_media": -118.6,
+    "peor_racha": -2563
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 6647,
+    "por_mes": 276.8,
+    "gana": 28.8,
+    "obj1": 26.1,
+    "usd_op": 10.1,
+    "usd": 66953,
+    "perd_media": -117.3,
+    "peor_racha": -24918
+   },
+   "mitad1": {
+    "n": 3413,
+    "por_mes": 284.3,
+    "gana": 29,
+    "obj1": 25.8,
+    "usd_op": 10.4,
+    "usd": 35454,
+    "perd_media": -116.1,
+    "peor_racha": -24918
+   },
+   "mitad2": {
+    "n": 3234,
+    "por_mes": 269.4,
+    "gana": 28.6,
+    "obj1": 26.3,
+    "usd_op": 9.7,
+    "usd": 31499,
+    "perd_media": -118.6,
+    "peor_racha": -15114
+   },
+   "año": {
+    "n": 3234,
+    "por_mes": 269.5,
+    "gana": 28.6,
+    "obj1": 26.3,
+    "usd_op": 9.7,
+    "usd": 31499,
+    "perd_media": -118.6,
+    "peor_racha": -15114
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 6812,
+    "por_mes": 283.7,
+    "gana": 52.9,
+    "obj1": 52.5,
+    "usd_op": 1.7,
+    "usd": 11343,
+    "perd_media": -117.1,
+    "peor_racha": -3735
+   },
+   "mitad1": {
+    "n": 3413,
+    "por_mes": 284.3,
+    "gana": 51.7,
+    "obj1": 51.1,
+    "usd_op": -2.8,
+    "usd": -9547,
+    "perd_media": -116,
+    "peor_racha": -3735
+   },
+   "mitad2": {
+    "n": 3399,
+    "por_mes": 283.1,
+    "gana": 54.2,
+    "obj1": 53.9,
+    "usd_op": 6.1,
+    "usd": 20890,
+    "perd_media": -118.2,
+    "peor_racha": -1948
+   },
+   "año": {
+    "n": 3399,
+    "por_mes": 283.3,
+    "gana": 54.2,
+    "obj1": 53.9,
+    "usd_op": 6.1,
+    "usd": 20890,
+    "perd_media": -118.2,
+    "peor_racha": -1948
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 5732,
+    "por_mes": 238.7,
+    "gana": 28.1,
+    "obj1": 25.8,
+    "usd_op": 4.2,
+    "usd": 23864,
+    "perd_media": -117.1,
+    "peor_racha": -15114
+   },
+   "mitad1": {
+    "n": 2667,
+    "por_mes": 222.1,
+    "gana": 28.9,
+    "obj1": 26.5,
+    "usd_op": 7.2,
+    "usd": 19077,
+    "perd_media": -115.3,
+    "peor_racha": -5947
+   },
+   "mitad2": {
+    "n": 3065,
+    "por_mes": 255.3,
+    "gana": 27.4,
+    "obj1": 25.1,
+    "usd_op": 1.6,
+    "usd": 4787,
+    "perd_media": -118.6,
+    "peor_racha": -15114
+   },
+   "año": {
+    "n": 3065,
+    "por_mes": 255.4,
+    "gana": 27.4,
+    "obj1": 25.1,
+    "usd_op": 1.6,
+    "usd": 4787,
+    "perd_media": -118.6,
+    "peor_racha": -15114
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 5897,
+    "por_mes": 245.6,
+    "gana": 52.9,
+    "obj1": 52.5,
+    "usd_op": 2.5,
+    "usd": 14549,
+    "perd_media": -116.8,
+    "peor_racha": -2952
+   },
+   "mitad1": {
+    "n": 2667,
+    "por_mes": 222.1,
+    "gana": 52.5,
+    "obj1": 51.8,
+    "usd_op": 2,
+    "usd": 5294,
+    "perd_media": -115.2,
+    "peor_racha": -2952
+   },
+   "mitad2": {
+    "n": 3230,
+    "por_mes": 269,
+    "gana": 53.2,
+    "obj1": 53,
+    "usd_op": 2.9,
+    "usd": 9255,
+    "perd_media": -118.1,
+    "peor_racha": -1948
+   },
+   "año": {
+    "n": 3230,
+    "por_mes": 269.2,
+    "gana": 53.2,
+    "obj1": 53,
+    "usd_op": 2.9,
+    "usd": 9255,
+    "perd_media": -118.1,
+    "peor_racha": -1948
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 2511,
+    "por_mes": 104.6,
+    "gana": 27.4,
+    "obj1": 25.4,
+    "usd_op": 5.4,
+    "usd": 13554,
+    "perd_media": -117.1,
+    "peor_racha": -9919
+   },
+   "mitad1": {
+    "n": 1235,
+    "por_mes": 102.9,
+    "gana": 26.1,
+    "obj1": 23.9,
+    "usd_op": -0.8,
+    "usd": -977,
+    "perd_media": -115.5,
+    "peor_racha": -9919
+   },
+   "mitad2": {
+    "n": 1276,
+    "por_mes": 106.3,
+    "gana": 28.7,
+    "obj1": 27,
+    "usd_op": 11.4,
+    "usd": 14531,
+    "perd_media": -118.6,
+    "peor_racha": -5690
+   },
+   "año": {
+    "n": 1276,
+    "por_mes": 106.3,
+    "gana": 28.7,
+    "obj1": 27,
+    "usd_op": 11.4,
+    "usd": 14531,
+    "perd_media": -118.6,
+    "peor_racha": -5690
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 2557,
+    "por_mes": 106.5,
+    "gana": 54.5,
+    "obj1": 54.2,
+    "usd_op": 3.4,
+    "usd": 8681,
+    "perd_media": -116.9,
+    "peor_racha": -3184
+   },
+   "mitad1": {
+    "n": 1235,
+    "por_mes": 102.9,
+    "gana": 53.8,
+    "obj1": 53.4,
+    "usd_op": -0.7,
+    "usd": -862,
+    "perd_media": -114.8,
+    "peor_racha": -3184
+   },
+   "mitad2": {
+    "n": 1322,
+    "por_mes": 110.1,
+    "gana": 55.1,
+    "obj1": 54.9,
+    "usd_op": 7.2,
+    "usd": 9542,
+    "perd_media": -118.9,
+    "peor_racha": -1462
+   },
+   "año": {
+    "n": 1322,
+    "por_mes": 110.2,
+    "gana": 55.1,
+    "obj1": 54.9,
+    "usd_op": 7.2,
+    "usd": 9542,
+    "perd_media": -118.9,
+    "peor_racha": -1462
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 3483,
+    "por_mes": 145,
+    "gana": 28.2,
+    "obj1": 25.7,
+    "usd_op": 5.5,
+    "usd": 19298,
+    "perd_media": -116.7,
+    "peor_racha": -11993
+   },
+   "mitad1": {
+    "n": 1768,
+    "por_mes": 147.3,
+    "gana": 27.9,
+    "obj1": 25.1,
+    "usd_op": 2.5,
+    "usd": 4478,
+    "perd_media": -115.1,
+    "peor_racha": -11993
+   },
+   "mitad2": {
+    "n": 1715,
+    "por_mes": 142.8,
+    "gana": 28.4,
+    "obj1": 26.3,
+    "usd_op": 8.6,
+    "usd": 14820,
+    "perd_media": -118.3,
+    "peor_racha": -9913
+   },
+   "año": {
+    "n": 1715,
+    "por_mes": 142.9,
+    "gana": 28.4,
+    "obj1": 26.3,
+    "usd_op": 8.6,
+    "usd": 14820,
+    "perd_media": -118.3,
+    "peor_racha": -9913
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 3580,
+    "por_mes": 149.1,
+    "gana": 54.6,
+    "obj1": 54.1,
+    "usd_op": 3.9,
+    "usd": 13856,
+    "perd_media": -116.4,
+    "peor_racha": -2313
+   },
+   "mitad1": {
+    "n": 1768,
+    "por_mes": 147.3,
+    "gana": 54,
+    "obj1": 53.2,
+    "usd_op": -0.1,
+    "usd": -219,
+    "perd_media": -114.9,
+    "peor_racha": -2313
+   },
+   "mitad2": {
+    "n": 1812,
+    "por_mes": 150.9,
+    "gana": 55.3,
+    "obj1": 55,
+    "usd_op": 7.8,
+    "usd": 14075,
+    "perd_media": -117.8,
+    "peor_racha": -1337
+   },
+   "año": {
+    "n": 1812,
+    "por_mes": 151,
+    "gana": 55.3,
+    "obj1": 55,
+    "usd_op": 7.8,
+    "usd": 14075,
+    "perd_media": -117.8,
+    "peor_racha": -1337
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 2264,
+    "por_mes": 94.3,
+    "gana": 27,
+    "obj1": 25,
+    "usd_op": 3,
+    "usd": 6679,
+    "perd_media": -117.1,
+    "peor_racha": -8463
+   },
+   "mitad1": {
+    "n": 1111,
+    "por_mes": 92.5,
+    "gana": 26,
+    "obj1": 23.6,
+    "usd_op": -1.8,
+    "usd": -1946,
+    "perd_media": -115.4,
+    "peor_racha": -8463
+   },
+   "mitad2": {
+    "n": 1153,
+    "por_mes": 96,
+    "gana": 28,
+    "obj1": 26.5,
+    "usd_op": 7.5,
+    "usd": 8625,
+    "perd_media": -118.8,
+    "peor_racha": -6258
+   },
+   "año": {
+    "n": 1153,
+    "por_mes": 96.1,
+    "gana": 28,
+    "obj1": 26.5,
+    "usd_op": 7.5,
+    "usd": 8625,
+    "perd_media": -118.8,
+    "peor_racha": -6258
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 2308,
+    "por_mes": 96.1,
+    "gana": 54.5,
+    "obj1": 54.2,
+    "usd_op": 3,
+    "usd": 6988,
+    "perd_media": -117,
+    "peor_racha": -2180
+   },
+   "mitad1": {
+    "n": 1111,
+    "por_mes": 92.5,
+    "gana": 54.1,
+    "obj1": 53.6,
+    "usd_op": -0.5,
+    "usd": -598,
+    "perd_media": -114.9,
+    "peor_racha": -2180
+   },
+   "mitad2": {
+    "n": 1197,
+    "por_mes": 99.7,
+    "gana": 55,
+    "obj1": 54.8,
+    "usd_op": 6.3,
+    "usd": 7586,
+    "perd_media": -119.1,
+    "peor_racha": -1587
+   },
+   "año": {
+    "n": 1197,
+    "por_mes": 99.8,
+    "gana": 55,
+    "obj1": 54.8,
+    "usd_op": 6.3,
+    "usd": 7586,
+    "perd_media": -119.1,
+    "peor_racha": -1587
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 1916,
+    "por_mes": 79.8,
+    "gana": 28.8,
+    "obj1": 26.5,
+    "usd_op": 2.9,
+    "usd": 5465,
+    "perd_media": -117.2,
+    "peor_racha": -7362
+   },
+   "mitad1": {
+    "n": 893,
+    "por_mes": 74.4,
+    "gana": 30.6,
+    "obj1": 28.2,
+    "usd_op": 9.3,
+    "usd": 8268,
+    "perd_media": -115.1,
+    "peor_racha": -5833
+   },
+   "mitad2": {
+    "n": 1023,
+    "por_mes": 85.2,
+    "gana": 27.2,
+    "obj1": 24.9,
+    "usd_op": -2.7,
+    "usd": -2803,
+    "perd_media": -119,
+    "peor_racha": -7362
+   },
+   "año": {
+    "n": 1023,
+    "por_mes": 85.3,
+    "gana": 27.2,
+    "obj1": 24.9,
+    "usd_op": -2.7,
+    "usd": -2803,
+    "perd_media": -119,
+    "peor_racha": -7362
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 1939,
+    "por_mes": 80.7,
+    "gana": 54.7,
+    "obj1": 54.3,
+    "usd_op": 4.5,
+    "usd": 8694,
+    "perd_media": -116.6,
+    "peor_racha": -1816
+   },
+   "mitad1": {
+    "n": 893,
+    "por_mes": 74.4,
+    "gana": 56.8,
+    "obj1": 56.3,
+    "usd_op": 10.2,
+    "usd": 9090,
+    "perd_media": -114.2,
+    "peor_racha": -1568
+   },
+   "mitad2": {
+    "n": 1046,
+    "por_mes": 87.1,
+    "gana": 52.9,
+    "obj1": 52.5,
+    "usd_op": -0.4,
+    "usd": -396,
+    "perd_media": -118.6,
+    "peor_racha": -1816
+   },
+   "año": {
+    "n": 1046,
+    "por_mes": 87.2,
+    "gana": 52.9,
+    "obj1": 52.5,
+    "usd_op": -0.4,
+    "usd": -396,
+    "perd_media": -118.6,
+    "peor_racha": -1816
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 2820,
+    "por_mes": 117.4,
+    "gana": 26.9,
+    "obj1": 25,
+    "usd_op": -3.1,
+    "usd": -8814,
+    "perd_media": -116.3,
+    "peor_racha": -7797
+   },
+   "mitad1": {
+    "n": 1334,
+    "por_mes": 111.1,
+    "gana": 28,
+    "obj1": 26.2,
+    "usd_op": 0.2,
+    "usd": 203,
+    "perd_media": -114,
+    "peor_racha": -7797
+   },
+   "mitad2": {
+    "n": 1486,
+    "por_mes": 123.8,
+    "gana": 25.8,
+    "obj1": 23.8,
+    "usd_op": -6.1,
+    "usd": -9017,
+    "perd_media": -118.3,
+    "peor_racha": -7658
+   },
+   "año": {
+    "n": 1486,
+    "por_mes": 123.8,
+    "gana": 25.8,
+    "obj1": 23.8,
+    "usd_op": -6.1,
+    "usd": -9017,
+    "perd_media": -118.3,
+    "peor_racha": -7658
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 2894,
+    "por_mes": 120.5,
+    "gana": 54.3,
+    "obj1": 53.8,
+    "usd_op": 2.2,
+    "usd": 6331,
+    "perd_media": -115.9,
+    "peor_racha": -1690
+   },
+   "mitad1": {
+    "n": 1334,
+    "por_mes": 111.1,
+    "gana": 54.9,
+    "obj1": 54.4,
+    "usd_op": 3.8,
+    "usd": 5095,
+    "perd_media": -113.5,
+    "peor_racha": -1690
+   },
+   "mitad2": {
+    "n": 1560,
+    "por_mes": 129.9,
+    "gana": 53.7,
+    "obj1": 53.3,
+    "usd_op": 0.8,
+    "usd": 1236,
+    "perd_media": -117.9,
+    "peor_racha": -1410
+   },
+   "año": {
+    "n": 1560,
+    "por_mes": 130,
+    "gana": 53.7,
+    "obj1": 53.3,
+    "usd_op": 0.8,
+    "usd": 1236,
+    "perd_media": -117.9,
+    "peor_racha": -1410
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 1830,
+    "por_mes": 76.2,
+    "gana": 26.1,
+    "obj1": 24.8,
+    "usd_op": -1.7,
+    "usd": -3076,
+    "perd_media": -116.5,
+    "peor_racha": -8907
+   },
+   "mitad1": {
+    "n": 858,
+    "por_mes": 71.5,
+    "gana": 27.5,
+    "obj1": 26.3,
+    "usd_op": 5.1,
+    "usd": 4413,
+    "perd_media": -114,
+    "peor_racha": -8907
+   },
+   "mitad2": {
+    "n": 972,
+    "por_mes": 81,
+    "gana": 24.9,
+    "obj1": 23.4,
+    "usd_op": -7.7,
+    "usd": -7489,
+    "perd_media": -118.6,
+    "peor_racha": -6209
+   },
+   "año": {
+    "n": 972,
+    "por_mes": 81,
+    "gana": 24.9,
+    "obj1": 23.4,
+    "usd_op": -7.7,
+    "usd": -7489,
+    "perd_media": -118.6,
+    "peor_racha": -6209
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 1866,
+    "por_mes": 77.7,
+    "gana": 54.7,
+    "obj1": 54.4,
+    "usd_op": 2.7,
+    "usd": 5129,
+    "perd_media": -116.6,
+    "peor_racha": -1974
+   },
+   "mitad1": {
+    "n": 858,
+    "por_mes": 71.5,
+    "gana": 56.2,
+    "obj1": 55.8,
+    "usd_op": 5.9,
+    "usd": 5095,
+    "perd_media": -113.6,
+    "peor_racha": -1309
+   },
+   "mitad2": {
+    "n": 1008,
+    "por_mes": 84,
+    "gana": 53.5,
+    "obj1": 53.2,
+    "usd_op": 0,
+    "usd": 34,
+    "perd_media": -118.9,
+    "peor_racha": -1974
+   },
+   "año": {
+    "n": 1008,
+    "por_mes": 84,
+    "gana": 53.5,
+    "obj1": 53.2,
+    "usd_op": 0,
+    "usd": 34,
+    "perd_media": -118.9,
+    "peor_racha": -1974
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 3268,
+    "por_mes": 136.1,
+    "gana": 30,
+    "obj1": 26.4,
+    "usd_op": 14.2,
+    "usd": 46296,
+    "perd_media": -117.3,
+    "peor_racha": -9772
+   },
+   "mitad1": {
+    "n": 1795,
+    "por_mes": 149.5,
+    "gana": 31.6,
+    "obj1": 27.4,
+    "usd_op": 22.3,
+    "usd": 40032,
+    "perd_media": -116.6,
+    "peor_racha": -9772
+   },
+   "mitad2": {
+    "n": 1473,
+    "por_mes": 122.7,
+    "gana": 27.9,
+    "obj1": 25.2,
+    "usd_op": 4.3,
+    "usd": 6264,
+    "perd_media": -118.1,
+    "peor_racha": -7540
+   },
+   "año": {
+    "n": 1473,
+    "por_mes": 122.8,
+    "gana": 27.9,
+    "obj1": 25.2,
+    "usd_op": 4.3,
+    "usd": 6264,
+    "perd_media": -118.1,
+    "peor_racha": -7540
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 3363,
+    "por_mes": 140,
+    "gana": 53.6,
+    "obj1": 52.9,
+    "usd_op": 2,
+    "usd": 6803,
+    "perd_media": -117.4,
+    "peor_racha": -3225
+   },
+   "mitad1": {
+    "n": 1795,
+    "por_mes": 149.5,
+    "gana": 52.2,
+    "obj1": 51.6,
+    "usd_op": -2.5,
+    "usd": -4424,
+    "perd_media": -116.8,
+    "peor_racha": -3225
+   },
+   "mitad2": {
+    "n": 1568,
+    "por_mes": 130.6,
+    "gana": 55.1,
+    "obj1": 54.4,
+    "usd_op": 7.2,
+    "usd": 11227,
+    "perd_media": -118.1,
+    "peor_racha": -1619
+   },
+   "año": {
+    "n": 1568,
+    "por_mes": 130.7,
+    "gana": 55.1,
+    "obj1": 54.4,
+    "usd_op": 7.2,
+    "usd": 11227,
+    "perd_media": -118.1,
+    "peor_racha": -1619
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 2697,
+    "por_mes": 112.3,
+    "gana": 29.4,
+    "obj1": 25,
+    "usd_op": 10.9,
+    "usd": 29267,
+    "perd_media": -117.2,
+    "peor_racha": -14132
+   },
+   "mitad1": {
+    "n": 1449,
+    "por_mes": 120.7,
+    "gana": 31,
+    "obj1": 25.5,
+    "usd_op": 17.2,
+    "usd": 24970,
+    "perd_media": -116.1,
+    "peor_racha": -14132
+   },
+   "mitad2": {
+    "n": 1248,
+    "por_mes": 103.9,
+    "gana": 27.6,
+    "obj1": 24.4,
+    "usd_op": 3.4,
+    "usd": 4297,
+    "perd_media": -118.5,
+    "peor_racha": -6670
+   },
+   "año": {
+    "n": 1248,
+    "por_mes": 104,
+    "gana": 27.6,
+    "obj1": 24.4,
+    "usd_op": 3.4,
+    "usd": 4297,
+    "perd_media": -118.5,
+    "peor_racha": -6670
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 2751,
+    "por_mes": 114.6,
+    "gana": 52.7,
+    "obj1": 52,
+    "usd_op": -0.1,
+    "usd": -197,
+    "perd_media": -117.1,
+    "peor_racha": -2360
+   },
+   "mitad1": {
+    "n": 1449,
+    "por_mes": 120.7,
+    "gana": 51.4,
+    "obj1": 50.6,
+    "usd_op": -4,
+    "usd": -5853,
+    "perd_media": -116.5,
+    "peor_racha": -2360
+   },
+   "mitad2": {
+    "n": 1302,
+    "por_mes": 108.4,
+    "gana": 54.1,
+    "obj1": 53.6,
+    "usd_op": 4.3,
+    "usd": 5656,
+    "perd_media": -117.9,
+    "peor_racha": -1767
+   },
+   "año": {
+    "n": 1302,
+    "por_mes": 108.5,
+    "gana": 54.1,
+    "obj1": 53.6,
+    "usd_op": 4.3,
+    "usd": 5656,
+    "perd_media": -117.9,
+    "peor_racha": -1767
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 2229,
+    "por_mes": 92.8,
+    "gana": 28.7,
+    "obj1": 24.9,
+    "usd_op": 4.3,
+    "usd": 9610,
+    "perd_media": -116.9,
+    "peor_racha": -6670
+   },
+   "mitad1": {
+    "n": 1037,
+    "por_mes": 86.4,
+    "gana": 31.1,
+    "obj1": 26.7,
+    "usd_op": 13.4,
+    "usd": 13864,
+    "perd_media": -114.8,
+    "peor_racha": -4010
+   },
+   "mitad2": {
+    "n": 1192,
+    "por_mes": 99.3,
+    "gana": 26.6,
+    "obj1": 23.2,
+    "usd_op": -3.6,
+    "usd": -4254,
+    "perd_media": -118.6,
+    "peor_racha": -6670
+   },
+   "año": {
+    "n": 1192,
+    "por_mes": 99.3,
+    "gana": 26.6,
+    "obj1": 23.2,
+    "usd_op": -3.6,
+    "usd": -4254,
+    "perd_media": -118.6,
+    "peor_racha": -6670
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 2283,
+    "por_mes": 95.1,
+    "gana": 53,
+    "obj1": 52.3,
+    "usd_op": 2,
+    "usd": 4566,
+    "perd_media": -116.8,
+    "peor_racha": -2360
+   },
+   "mitad1": {
+    "n": 1037,
+    "por_mes": 86.4,
+    "gana": 52.9,
+    "obj1": 51.9,
+    "usd_op": 3.2,
+    "usd": 3309,
+    "perd_media": -115.6,
+    "peor_racha": -2360
+   },
+   "mitad2": {
+    "n": 1246,
+    "por_mes": 103.8,
+    "gana": 53.1,
+    "obj1": 52.6,
+    "usd_op": 1,
+    "usd": 1257,
+    "perd_media": -117.9,
+    "peor_racha": -1767
+   },
+   "año": {
+    "n": 1246,
+    "por_mes": 103.8,
+    "gana": 53.1,
+    "obj1": 52.6,
+    "usd_op": 1,
+    "usd": 1257,
+    "perd_media": -117.9,
+    "peor_racha": -1767
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 1260,
+    "por_mes": 52.5,
+    "gana": 30.3,
+    "obj1": 26,
+    "usd_op": 12.7,
+    "usd": 16032,
+    "perd_media": -117.2,
+    "peor_racha": -6698
+   },
+   "mitad1": {
+    "n": 664,
+    "por_mes": 55.3,
+    "gana": 30.6,
+    "obj1": 24.5,
+    "usd_op": 8.4,
+    "usd": 5570,
+    "perd_media": -116.5,
+    "peor_racha": -6698
+   },
+   "mitad2": {
+    "n": 596,
+    "por_mes": 49.6,
+    "gana": 30,
+    "obj1": 27.5,
+    "usd_op": 17.6,
+    "usd": 10462,
+    "perd_media": -117.9,
+    "peor_racha": -3963
+   },
+   "año": {
+    "n": 596,
+    "por_mes": 49.7,
+    "gana": 30,
+    "obj1": 27.5,
+    "usd_op": 17.6,
+    "usd": 10462,
+    "perd_media": -117.9,
+    "peor_racha": -3963
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 1293,
+    "por_mes": 53.8,
+    "gana": 56.1,
+    "obj1": 55.4,
+    "usd_op": 6.2,
+    "usd": 7970,
+    "perd_media": -117.4,
+    "peor_racha": -4238
+   },
+   "mitad1": {
+    "n": 664,
+    "por_mes": 55.3,
+    "gana": 54.4,
+    "obj1": 53.2,
+    "usd_op": -1.6,
+    "usd": -1078,
+    "perd_media": -117.1,
+    "peor_racha": -4238
+   },
+   "mitad2": {
+    "n": 629,
+    "por_mes": 52.4,
+    "gana": 58,
+    "obj1": 57.7,
+    "usd_op": 14.4,
+    "usd": 9048,
+    "perd_media": -117.8,
+    "peor_racha": -1739
+   },
+   "año": {
+    "n": 629,
+    "por_mes": 52.4,
+    "gana": 58,
+    "obj1": 57.7,
+    "usd_op": 14.4,
+    "usd": 9048,
+    "perd_media": -117.8,
+    "peor_racha": -1739
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 955,
+    "por_mes": 39.8,
+    "gana": 28.8,
+    "obj1": 25.3,
+    "usd_op": 1.4,
+    "usd": 1319,
+    "perd_media": -116.5,
+    "peor_racha": -3148
+   },
+   "mitad1": {
+    "n": 452,
+    "por_mes": 37.6,
+    "gana": 29.4,
+    "obj1": 25,
+    "usd_op": 0.1,
+    "usd": 60,
+    "perd_media": -114.7,
+    "peor_racha": -2633
+   },
+   "mitad2": {
+    "n": 503,
+    "por_mes": 41.9,
+    "gana": 28.2,
+    "obj1": 25.6,
+    "usd_op": 2.5,
+    "usd": 1259,
+    "perd_media": -118.1,
+    "peor_racha": -3148
+   },
+   "año": {
+    "n": 503,
+    "por_mes": 41.9,
+    "gana": 28.2,
+    "obj1": 25.6,
+    "usd_op": 2.5,
+    "usd": 1259,
+    "perd_media": -118.1,
+    "peor_racha": -3148
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 980,
+    "por_mes": 40.8,
+    "gana": 55.8,
+    "obj1": 55.3,
+    "usd_op": 5.1,
+    "usd": 4993,
+    "perd_media": -116.6,
+    "peor_racha": -1119
+   },
+   "mitad1": {
+    "n": 452,
+    "por_mes": 37.6,
+    "gana": 55.5,
+    "obj1": 54.6,
+    "usd_op": 2.4,
+    "usd": 1080,
+    "perd_media": -114.8,
+    "peor_racha": -1001
+   },
+   "mitad2": {
+    "n": 528,
+    "por_mes": 44,
+    "gana": 56.1,
+    "obj1": 55.9,
+    "usd_op": 7.4,
+    "usd": 3913,
+    "perd_media": -118.1,
+    "peor_racha": -1119
+   },
+   "año": {
+    "n": 528,
+    "por_mes": 44,
+    "gana": 56.1,
+    "obj1": 55.9,
+    "usd_op": 7.4,
+    "usd": 3913,
+    "perd_media": -118.1,
+    "peor_racha": -1119
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 568,
+    "por_mes": 23.7,
+    "gana": 29.4,
+    "obj1": 25,
+    "usd_op": -2.6,
+    "usd": -1481,
+    "perd_media": -117.9,
+    "peor_racha": -1993
+   },
+   "mitad1": {
+    "n": 263,
+    "por_mes": 21.9,
+    "gana": 28.1,
+    "obj1": 22.4,
+    "usd_op": -8.4,
+    "usd": -2209,
+    "perd_media": -117.2,
+    "peor_racha": -1795
+   },
+   "mitad2": {
+    "n": 305,
+    "por_mes": 25.4,
+    "gana": 30.5,
+    "obj1": 27.2,
+    "usd_op": 2.4,
+    "usd": 728,
+    "perd_media": -118.4,
+    "peor_racha": -1993
+   },
+   "año": {
+    "n": 305,
+    "por_mes": 25.4,
+    "gana": 30.5,
+    "obj1": 27.2,
+    "usd_op": 2.4,
+    "usd": 728,
+    "perd_media": -118.4,
+    "peor_racha": -1993
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 580,
+    "por_mes": 24.2,
+    "gana": 56.9,
+    "obj1": 56,
+    "usd_op": 5.7,
+    "usd": 3325,
+    "perd_media": -117.5,
+    "peor_racha": -1497
+   },
+   "mitad1": {
+    "n": 263,
+    "por_mes": 21.9,
+    "gana": 55.1,
+    "obj1": 53.6,
+    "usd_op": -2.3,
+    "usd": -601,
+    "perd_media": -116.8,
+    "peor_racha": -969
+   },
+   "mitad2": {
+    "n": 317,
+    "por_mes": 26.4,
+    "gana": 58.4,
+    "obj1": 58,
+    "usd_op": 12.4,
+    "usd": 3926,
+    "perd_media": -118,
+    "peor_racha": -1497
+   },
+   "año": {
+    "n": 317,
+    "por_mes": 26.4,
+    "gana": 58.4,
+    "obj1": 58,
+    "usd_op": 12.4,
+    "usd": 3926,
+    "perd_media": -118,
+    "peor_racha": -1497
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 821,
+    "por_mes": 34.2,
+    "gana": 28.5,
+    "obj1": 25,
+    "usd_op": 8.9,
+    "usd": 7303,
+    "perd_media": -118,
+    "peor_racha": -5784
+   },
+   "mitad1": {
+    "n": 407,
+    "por_mes": 33.9,
+    "gana": 28.3,
+    "obj1": 23.1,
+    "usd_op": 3.5,
+    "usd": 1430,
+    "perd_media": -117.1,
+    "peor_racha": -5784
+   },
+   "mitad2": {
+    "n": 414,
+    "por_mes": 34.5,
+    "gana": 28.7,
+    "obj1": 26.8,
+    "usd_op": 14.2,
+    "usd": 5873,
+    "perd_media": -118.9,
+    "peor_racha": -3307
+   },
+   "año": {
+    "n": 414,
+    "por_mes": 34.5,
+    "gana": 28.7,
+    "obj1": 26.8,
+    "usd_op": 14.2,
+    "usd": 5873,
+    "perd_media": -118.9,
+    "peor_racha": -3307
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 834,
+    "por_mes": 34.7,
+    "gana": 54.8,
+    "obj1": 54.4,
+    "usd_op": 2.8,
+    "usd": 2301,
+    "perd_media": -118.1,
+    "peor_racha": -2144
+   },
+   "mitad1": {
+    "n": 407,
+    "por_mes": 33.9,
+    "gana": 54.5,
+    "obj1": 54.1,
+    "usd_op": -1.2,
+    "usd": -476,
+    "perd_media": -116.8,
+    "peor_racha": -2144
+   },
+   "mitad2": {
+    "n": 427,
+    "por_mes": 35.6,
+    "gana": 55,
+    "obj1": 54.8,
+    "usd_op": 6.5,
+    "usd": 2777,
+    "perd_media": -119.2,
+    "peor_racha": -1611
+   },
+   "año": {
+    "n": 427,
+    "por_mes": 35.6,
+    "gana": 55,
+    "obj1": 54.8,
+    "usd_op": 6.5,
+    "usd": 2777,
+    "perd_media": -119.2,
+    "peor_racha": -1611
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 746,
+    "por_mes": 31.1,
+    "gana": 29.2,
+    "obj1": 25.2,
+    "usd_op": 8.9,
+    "usd": 6669,
+    "perd_media": -118.2,
+    "peor_racha": -6749
+   },
+   "mitad1": {
+    "n": 365,
+    "por_mes": 30.4,
+    "gana": 28.2,
+    "obj1": 21.9,
+    "usd_op": -0.4,
+    "usd": -133,
+    "perd_media": -117.2,
+    "peor_racha": -6749
+   },
+   "mitad2": {
+    "n": 381,
+    "por_mes": 31.7,
+    "gana": 30.2,
+    "obj1": 28.3,
+    "usd_op": 17.9,
+    "usd": 6802,
+    "perd_media": -119.1,
+    "peor_racha": -3312
+   },
+   "año": {
+    "n": 381,
+    "por_mes": 31.8,
+    "gana": 30.2,
+    "obj1": 28.3,
+    "usd_op": 17.9,
+    "usd": 6802,
+    "perd_media": -119.1,
+    "peor_racha": -3312
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 759,
+    "por_mes": 31.6,
+    "gana": 55.9,
+    "obj1": 55.3,
+    "usd_op": 5,
+    "usd": 3815,
+    "perd_media": -118.2,
+    "peor_racha": -2980
+   },
+   "mitad1": {
+    "n": 365,
+    "por_mes": 30.4,
+    "gana": 55.6,
+    "obj1": 54.8,
+    "usd_op": -0.9,
+    "usd": -338,
+    "perd_media": -117,
+    "peor_racha": -2980
+   },
+   "mitad2": {
+    "n": 394,
+    "por_mes": 32.8,
+    "gana": 56.1,
+    "obj1": 55.8,
+    "usd_op": 10.5,
+    "usd": 4153,
+    "perd_media": -119.4,
+    "peor_racha": -1611
+   },
+   "año": {
+    "n": 394,
+    "por_mes": 32.8,
+    "gana": 56.1,
+    "obj1": 55.8,
+    "usd_op": 10.5,
+    "usd": 4153,
+    "perd_media": -119.4,
+    "peor_racha": -1611
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 553,
+    "por_mes": 23,
+    "gana": 27.8,
+    "obj1": 25.1,
+    "usd_op": 3.6,
+    "usd": 1970,
+    "perd_media": -117.3,
+    "peor_racha": -3475
+   },
+   "mitad1": {
+    "n": 249,
+    "por_mes": 20.7,
+    "gana": 29.3,
+    "obj1": 26.1,
+    "usd_op": 10.3,
+    "usd": 2573,
+    "perd_media": -115.2,
+    "peor_racha": -2595
+   },
+   "mitad2": {
+    "n": 304,
+    "por_mes": 25.3,
+    "gana": 26.6,
+    "obj1": 24.3,
+    "usd_op": -2,
+    "usd": -604,
+    "perd_media": -118.9,
+    "peor_racha": -3475
+   },
+   "año": {
+    "n": 304,
+    "por_mes": 25.3,
+    "gana": 26.6,
+    "obj1": 24.3,
+    "usd_op": -2,
+    "usd": -604,
+    "perd_media": -118.9,
+    "peor_racha": -3475
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1h · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 564,
+    "por_mes": 23.5,
+    "gana": 55.7,
+    "obj1": 55.3,
+    "usd_op": 3.4,
+    "usd": 1916,
+    "perd_media": -117.9,
+    "peor_racha": -1502
+   },
+   "mitad1": {
+    "n": 249,
+    "por_mes": 20.7,
+    "gana": 58.6,
+    "obj1": 58.2,
+    "usd_op": 7.2,
+    "usd": 1785,
+    "perd_media": -115.8,
+    "peor_racha": -859
+   },
+   "mitad2": {
+    "n": 315,
+    "por_mes": 26.2,
+    "gana": 53.3,
+    "obj1": 53,
+    "usd_op": 0.4,
+    "usd": 130,
+    "perd_media": -119.4,
+    "peor_racha": -1502
+   },
+   "año": {
+    "n": 315,
+    "por_mes": 26.3,
+    "gana": 53.3,
+    "obj1": 53,
+    "usd_op": 0.4,
+    "usd": 130,
+    "perd_media": -119.4,
+    "peor_racha": -1502
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 3898,
+    "por_mes": 162.3,
+    "gana": 36.9,
+    "obj1": 17.9,
+    "usd_op": 15.9,
+    "usd": 62096,
+    "perd_media": -109.6,
+    "peor_racha": -10486
+   },
+   "mitad1": {
+    "n": 2127,
+    "por_mes": 177.2,
+    "gana": 37.9,
+    "obj1": 19,
+    "usd_op": 21.2,
+    "usd": 45125,
+    "perd_media": -110.8,
+    "peor_racha": -6446
+   },
+   "mitad2": {
+    "n": 1771,
+    "por_mes": 147.5,
+    "gana": 35.7,
+    "obj1": 16.6,
+    "usd_op": 9.6,
+    "usd": 16971,
+    "perd_media": -108.3,
+    "peor_racha": -10486
+   },
+   "año": {
+    "n": 1771,
+    "por_mes": 147.6,
+    "gana": 35.7,
+    "obj1": 16.6,
+    "usd_op": 9.6,
+    "usd": 16971,
+    "perd_media": -108.3,
+    "peor_racha": -10486
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 4315,
+    "por_mes": 179.7,
+    "gana": 56.5,
+    "obj1": 51.1,
+    "usd_op": 17.4,
+    "usd": 74884,
+    "perd_media": -105.2,
+    "peor_racha": -3438
+   },
+   "mitad1": {
+    "n": 2127,
+    "por_mes": 177.2,
+    "gana": 53.3,
+    "obj1": 48.5,
+    "usd_op": 5.5,
+    "usd": 11765,
+    "perd_media": -107.1,
+    "peor_racha": -3438
+   },
+   "mitad2": {
+    "n": 2188,
+    "por_mes": 182.2,
+    "gana": 59.5,
+    "obj1": 53.5,
+    "usd_op": 28.8,
+    "usd": 63119,
+    "perd_media": -103.1,
+    "peor_racha": -1495
+   },
+   "año": {
+    "n": 2188,
+    "por_mes": 182.3,
+    "gana": 59.5,
+    "obj1": 53.5,
+    "usd_op": 28.8,
+    "usd": 63119,
+    "perd_media": -103.1,
+    "peor_racha": -1495
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 3407,
+    "por_mes": 141.9,
+    "gana": 35.5,
+    "obj1": 16.9,
+    "usd_op": 8.9,
+    "usd": 30410,
+    "perd_media": -110.7,
+    "peor_racha": -10918
+   },
+   "mitad1": {
+    "n": 1749,
+    "por_mes": 145.7,
+    "gana": 37.6,
+    "obj1": 18.6,
+    "usd_op": 16.6,
+    "usd": 29051,
+    "perd_media": -111.3,
+    "peor_racha": -6509
+   },
+   "mitad2": {
+    "n": 1658,
+    "por_mes": 138.1,
+    "gana": 33.2,
+    "obj1": 15,
+    "usd_op": 0.8,
+    "usd": 1359,
+    "perd_media": -110.2,
+    "peor_racha": -10918
+   },
+   "año": {
+    "n": 1658,
+    "por_mes": 138.2,
+    "gana": 33.2,
+    "obj1": 15,
+    "usd_op": 0.8,
+    "usd": 1359,
+    "perd_media": -110.2,
+    "peor_racha": -10918
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 3678,
+    "por_mes": 153.2,
+    "gana": 54.1,
+    "obj1": 49.1,
+    "usd_op": 11.8,
+    "usd": 43565,
+    "perd_media": -105.8,
+    "peor_racha": -3817
+   },
+   "mitad1": {
+    "n": 1749,
+    "por_mes": 145.7,
+    "gana": 53.2,
+    "obj1": 48,
+    "usd_op": 5.3,
+    "usd": 9351,
+    "perd_media": -106.6,
+    "peor_racha": -3817
+   },
+   "mitad2": {
+    "n": 1929,
+    "por_mes": 160.7,
+    "gana": 55,
+    "obj1": 50,
+    "usd_op": 17.7,
+    "usd": 34214,
+    "perd_media": -105,
+    "peor_racha": -2833
+   },
+   "año": {
+    "n": 1929,
+    "por_mes": 160.8,
+    "gana": 55,
+    "obj1": 50,
+    "usd_op": 17.7,
+    "usd": 34214,
+    "perd_media": -105,
+    "peor_racha": -2833
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 2969,
+    "por_mes": 123.6,
+    "gana": 32.6,
+    "obj1": 15.2,
+    "usd_op": -2.4,
+    "usd": -7140,
+    "perd_media": -110.7,
+    "peor_racha": -10918
+   },
+   "mitad1": {
+    "n": 1404,
+    "por_mes": 116.9,
+    "gana": 33.1,
+    "obj1": 16.5,
+    "usd_op": 0,
+    "usd": -48,
+    "perd_media": -111,
+    "peor_racha": -6509
+   },
+   "mitad2": {
+    "n": 1565,
+    "por_mes": 130.3,
+    "gana": 32.2,
+    "obj1": 14,
+    "usd_op": -4.5,
+    "usd": -7091,
+    "perd_media": -110.4,
+    "peor_racha": -10918
+   },
+   "año": {
+    "n": 1565,
+    "por_mes": 130.4,
+    "gana": 32.2,
+    "obj1": 14,
+    "usd_op": -4.5,
+    "usd": -7091,
+    "perd_media": -110.4,
+    "peor_racha": -10918
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 3240,
+    "por_mes": 134.9,
+    "gana": 52.3,
+    "obj1": 47.5,
+    "usd_op": 8.9,
+    "usd": 28772,
+    "perd_media": -105.7,
+    "peor_racha": -2833
+   },
+   "mitad1": {
+    "n": 1404,
+    "por_mes": 116.9,
+    "gana": 49.9,
+    "obj1": 44.8,
+    "usd_op": 0.7,
+    "usd": 1037,
+    "perd_media": -106.1,
+    "peor_racha": -2611
+   },
+   "mitad2": {
+    "n": 1836,
+    "por_mes": 152.9,
+    "gana": 54.2,
+    "obj1": 49.6,
+    "usd_op": 15.1,
+    "usd": 27735,
+    "perd_media": -105.4,
+    "peor_racha": -2833
+   },
+   "año": {
+    "n": 1836,
+    "por_mes": 153,
+    "gana": 54.2,
+    "obj1": 49.6,
+    "usd_op": 15.1,
+    "usd": 27735,
+    "perd_media": -105.4,
+    "peor_racha": -2833
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 1681,
+    "por_mes": 70,
+    "gana": 33.7,
+    "obj1": 16.4,
+    "usd_op": 3.3,
+    "usd": 5592,
+    "perd_media": -111.8,
+    "peor_racha": -7998
+   },
+   "mitad1": {
+    "n": 883,
+    "por_mes": 73.5,
+    "gana": 34,
+    "obj1": 17.3,
+    "usd_op": 5.1,
+    "usd": 4463,
+    "perd_media": -111.4,
+    "peor_racha": -7998
+   },
+   "mitad2": {
+    "n": 798,
+    "por_mes": 66.5,
+    "gana": 33.3,
+    "obj1": 15.4,
+    "usd_op": 1.4,
+    "usd": 1128,
+    "perd_media": -112.2,
+    "peor_racha": -6798
+   },
+   "año": {
+    "n": 798,
+    "por_mes": 66.5,
+    "gana": 33.3,
+    "obj1": 15.4,
+    "usd_op": 1.4,
+    "usd": 1128,
+    "perd_media": -112.2,
+    "peor_racha": -6798
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 1785,
+    "por_mes": 74.3,
+    "gana": 53.1,
+    "obj1": 48.4,
+    "usd_op": 7.7,
+    "usd": 13784,
+    "perd_media": -106.9,
+    "peor_racha": -2737
+   },
+   "mitad1": {
+    "n": 883,
+    "por_mes": 73.5,
+    "gana": 52.2,
+    "obj1": 47.6,
+    "usd_op": 3.4,
+    "usd": 2995,
+    "perd_media": -108.7,
+    "peor_racha": -2737
+   },
+   "mitad2": {
+    "n": 902,
+    "por_mes": 75.1,
+    "gana": 53.9,
+    "obj1": 49.2,
+    "usd_op": 12,
+    "usd": 10789,
+    "perd_media": -105.1,
+    "peor_racha": -1682
+   },
+   "año": {
+    "n": 902,
+    "por_mes": 75.2,
+    "gana": 53.9,
+    "obj1": 49.2,
+    "usd_op": 12,
+    "usd": 10789,
+    "perd_media": -105.1,
+    "peor_racha": -1682
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 1331,
+    "por_mes": 55.4,
+    "gana": 31,
+    "obj1": 15.1,
+    "usd_op": -6.7,
+    "usd": -8902,
+    "perd_media": -111.4,
+    "peor_racha": -12143
+   },
+   "mitad1": {
+    "n": 657,
+    "por_mes": 54.7,
+    "gana": 29.5,
+    "obj1": 15.1,
+    "usd_op": -10.5,
+    "usd": -6902,
+    "perd_media": -110.5,
+    "peor_racha": -8817
+   },
+   "mitad2": {
+    "n": 674,
+    "por_mes": 56.1,
+    "gana": 32.3,
+    "obj1": 15.1,
+    "usd_op": -3,
+    "usd": -1999,
+    "perd_media": -112.3,
+    "peor_racha": -12143
+   },
+   "año": {
+    "n": 674,
+    "por_mes": 56.2,
+    "gana": 32.3,
+    "obj1": 15.1,
+    "usd_op": -3,
+    "usd": -1999,
+    "perd_media": -112.3,
+    "peor_racha": -12143
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 1421,
+    "por_mes": 59.2,
+    "gana": 50.3,
+    "obj1": 44.8,
+    "usd_op": 1,
+    "usd": 1404,
+    "perd_media": -106.3,
+    "peor_racha": -2053
+   },
+   "mitad1": {
+    "n": 657,
+    "por_mes": 54.7,
+    "gana": 47.5,
+    "obj1": 42.2,
+    "usd_op": -6.8,
+    "usd": -4450,
+    "perd_media": -107.8,
+    "peor_racha": -2053
+   },
+   "mitad2": {
+    "n": 764,
+    "por_mes": 63.6,
+    "gana": 52.7,
+    "obj1": 47.1,
+    "usd_op": 7.7,
+    "usd": 5855,
+    "perd_media": -104.8,
+    "peor_racha": -1198
+   },
+   "año": {
+    "n": 764,
+    "por_mes": 63.7,
+    "gana": 52.7,
+    "obj1": 47.1,
+    "usd_op": 7.7,
+    "usd": 5855,
+    "perd_media": -104.8,
+    "peor_racha": -1198
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 1010,
+    "por_mes": 42.1,
+    "gana": 32.2,
+    "obj1": 16,
+    "usd_op": -2.7,
+    "usd": -2688,
+    "perd_media": -113.5,
+    "peor_racha": -5487
+   },
+   "mitad1": {
+    "n": 524,
+    "por_mes": 43.6,
+    "gana": 31.9,
+    "obj1": 17.2,
+    "usd_op": -1.6,
+    "usd": -820,
+    "perd_media": -113.8,
+    "peor_racha": -5487
+   },
+   "mitad2": {
+    "n": 486,
+    "por_mes": 40.5,
+    "gana": 32.5,
+    "obj1": 14.8,
+    "usd_op": -3.8,
+    "usd": -1868,
+    "perd_media": -113.1,
+    "peor_racha": -3290
+   },
+   "año": {
+    "n": 486,
+    "por_mes": 40.5,
+    "gana": 32.5,
+    "obj1": 14.8,
+    "usd_op": -3.8,
+    "usd": -1868,
+    "perd_media": -113.1,
+    "peor_racha": -3290
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 1049,
+    "por_mes": 43.7,
+    "gana": 49.8,
+    "obj1": 45.6,
+    "usd_op": -0.6,
+    "usd": -649,
+    "perd_media": -108.8,
+    "peor_racha": -2533
+   },
+   "mitad1": {
+    "n": 524,
+    "por_mes": 43.6,
+    "gana": 49,
+    "obj1": 45,
+    "usd_op": -3.1,
+    "usd": -1615,
+    "perd_media": -109.6,
+    "peor_racha": -2533
+   },
+   "mitad2": {
+    "n": 525,
+    "por_mes": 43.7,
+    "gana": 50.5,
+    "obj1": 46.1,
+    "usd_op": 1.8,
+    "usd": 965,
+    "perd_media": -108.1,
+    "peor_racha": -1432
+   },
+   "año": {
+    "n": 525,
+    "por_mes": 43.8,
+    "gana": 50.5,
+    "obj1": 46.1,
+    "usd_op": 1.8,
+    "usd": 965,
+    "perd_media": -108.1,
+    "peor_racha": -1432
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 950,
+    "por_mes": 39.6,
+    "gana": 32,
+    "obj1": 15.9,
+    "usd_op": -4,
+    "usd": -3793,
+    "perd_media": -113.3,
+    "peor_racha": -5350
+   },
+   "mitad1": {
+    "n": 497,
+    "por_mes": 41.4,
+    "gana": 32,
+    "obj1": 16.7,
+    "usd_op": -2.6,
+    "usd": -1268,
+    "perd_media": -113.1,
+    "peor_racha": -5350
+   },
+   "mitad2": {
+    "n": 453,
+    "por_mes": 37.7,
+    "gana": 32,
+    "obj1": 15,
+    "usd_op": -5.6,
+    "usd": -2525,
+    "perd_media": -113.6,
+    "peor_racha": -3434
+   },
+   "año": {
+    "n": 453,
+    "por_mes": 37.8,
+    "gana": 32,
+    "obj1": 15,
+    "usd_op": -5.6,
+    "usd": -2525,
+    "perd_media": -113.6,
+    "peor_racha": -3434
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 983,
+    "por_mes": 40.9,
+    "gana": 49.7,
+    "obj1": 45.2,
+    "usd_op": -1.4,
+    "usd": -1401,
+    "perd_media": -108.9,
+    "peor_racha": -2665
+   },
+   "mitad1": {
+    "n": 497,
+    "por_mes": 41.4,
+    "gana": 49.3,
+    "obj1": 44.9,
+    "usd_op": -2.4,
+    "usd": -1176,
+    "perd_media": -109.1,
+    "peor_racha": -2665
+   },
+   "mitad2": {
+    "n": 486,
+    "por_mes": 40.5,
+    "gana": 50.2,
+    "obj1": 45.5,
+    "usd_op": -0.5,
+    "usd": -225,
+    "perd_media": -108.6,
+    "peor_racha": -1449
+   },
+   "año": {
+    "n": 486,
+    "por_mes": 40.5,
+    "gana": 50.2,
+    "obj1": 45.5,
+    "usd_op": -0.5,
+    "usd": -225,
+    "perd_media": -108.6,
+    "peor_racha": -1449
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 980,
+    "por_mes": 40.8,
+    "gana": 31.6,
+    "obj1": 14.9,
+    "usd_op": -2.5,
+    "usd": -2460,
+    "perd_media": -110.2,
+    "peor_racha": -9109
+   },
+   "mitad1": {
+    "n": 479,
+    "por_mes": 39.9,
+    "gana": 30.7,
+    "obj1": 15.7,
+    "usd_op": -5.2,
+    "usd": -2484,
+    "perd_media": -110,
+    "peor_racha": -3824
+   },
+   "mitad2": {
+    "n": 501,
+    "por_mes": 41.7,
+    "gana": 32.5,
+    "obj1": 14.2,
+    "usd_op": 0,
+    "usd": 24,
+    "perd_media": -110.4,
+    "peor_racha": -9109
+   },
+   "año": {
+    "n": 501,
+    "por_mes": 41.8,
+    "gana": 32.5,
+    "obj1": 14.2,
+    "usd_op": 0,
+    "usd": 24,
+    "perd_media": -110.4,
+    "peor_racha": -9109
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 1033,
+    "por_mes": 43,
+    "gana": 50,
+    "obj1": 44.7,
+    "usd_op": 0.6,
+    "usd": 648,
+    "perd_media": -106.6,
+    "peor_racha": -1445
+   },
+   "mitad1": {
+    "n": 479,
+    "por_mes": 39.9,
+    "gana": 49.7,
+    "obj1": 43.6,
+    "usd_op": -2.1,
+    "usd": -1028,
+    "perd_media": -109.9,
+    "peor_racha": -1445
+   },
+   "mitad2": {
+    "n": 554,
+    "por_mes": 46.1,
+    "gana": 50.2,
+    "obj1": 45.7,
+    "usd_op": 3,
+    "usd": 1677,
+    "perd_media": -103.6,
+    "peor_racha": -1445
+   },
+   "año": {
+    "n": 554,
+    "por_mes": 46.2,
+    "gana": 50.2,
+    "obj1": 45.7,
+    "usd_op": 3,
+    "usd": 1677,
+    "perd_media": -103.6,
+    "peor_racha": -1445
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 733,
+    "por_mes": 30.5,
+    "gana": 31.4,
+    "obj1": 16.8,
+    "usd_op": -3.1,
+    "usd": -2284,
+    "perd_media": -112.6,
+    "peor_racha": -5070
+   },
+   "mitad1": {
+    "n": 370,
+    "por_mes": 30.8,
+    "gana": 29.7,
+    "obj1": 16.8,
+    "usd_op": -7.4,
+    "usd": -2752,
+    "perd_media": -112.1,
+    "peor_racha": -5070
+   },
+   "mitad2": {
+    "n": 363,
+    "por_mes": 30.2,
+    "gana": 33.1,
+    "obj1": 16.8,
+    "usd_op": 1.3,
+    "usd": 468,
+    "perd_media": -113,
+    "peor_racha": -4785
+   },
+   "año": {
+    "n": 363,
+    "por_mes": 30.3,
+    "gana": 33.1,
+    "obj1": 16.8,
+    "usd_op": 1.3,
+    "usd": 468,
+    "perd_media": -113,
+    "peor_racha": -4785
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 761,
+    "por_mes": 31.7,
+    "gana": 47.4,
+    "obj1": 42.3,
+    "usd_op": -6.9,
+    "usd": -5228,
+    "perd_media": -108,
+    "peor_racha": -2070
+   },
+   "mitad1": {
+    "n": 370,
+    "por_mes": 30.8,
+    "gana": 44.9,
+    "obj1": 40.3,
+    "usd_op": -11.5,
+    "usd": -4256,
+    "perd_media": -108.9,
+    "peor_racha": -2070
+   },
+   "mitad2": {
+    "n": 391,
+    "por_mes": 32.6,
+    "gana": 49.9,
+    "obj1": 44.2,
+    "usd_op": -2.5,
+    "usd": -972,
+    "perd_media": -107.1,
+    "peor_racha": -1053
+   },
+   "año": {
+    "n": 391,
+    "por_mes": 32.6,
+    "gana": 49.9,
+    "obj1": 44.2,
+    "usd_op": -2.5,
+    "usd": -972,
+    "perd_media": -107.1,
+    "peor_racha": -1053
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 1902,
+    "por_mes": 79.2,
+    "gana": 40.1,
+    "obj1": 18.1,
+    "usd_op": 22.3,
+    "usd": 42394,
+    "perd_media": -109.6,
+    "peor_racha": -5845
+   },
+   "mitad1": {
+    "n": 1094,
+    "por_mes": 91.1,
+    "gana": 42.7,
+    "obj1": 20.4,
+    "usd_op": 33,
+    "usd": 36105,
+    "perd_media": -111.7,
+    "peor_racha": -3192
+   },
+   "mitad2": {
+    "n": 808,
+    "por_mes": 67.3,
+    "gana": 36.5,
+    "obj1": 15,
+    "usd_op": 7.8,
+    "usd": 6289,
+    "perd_media": -107,
+    "peor_racha": -5845
+   },
+   "año": {
+    "n": 808,
+    "por_mes": 67.3,
+    "gana": 36.5,
+    "obj1": 15,
+    "usd_op": 7.8,
+    "usd": 6289,
+    "perd_media": -107,
+    "peor_racha": -5845
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 2084,
+    "por_mes": 86.8,
+    "gana": 57.4,
+    "obj1": 51.5,
+    "usd_op": 18.7,
+    "usd": 38910,
+    "perd_media": -104,
+    "peor_racha": -1714
+   },
+   "mitad1": {
+    "n": 1094,
+    "por_mes": 91.1,
+    "gana": 54.5,
+    "obj1": 49.2,
+    "usd_op": 5.5,
+    "usd": 6019,
+    "perd_media": -106.9,
+    "peor_racha": -1714
+   },
+   "mitad2": {
+    "n": 990,
+    "por_mes": 82.5,
+    "gana": 60.7,
+    "obj1": 54.1,
+    "usd_op": 33.2,
+    "usd": 32890,
+    "perd_media": -100.4,
+    "peor_racha": -1031
+   },
+   "año": {
+    "n": 990,
+    "por_mes": 82.5,
+    "gana": 60.7,
+    "obj1": 54.1,
+    "usd_op": 33.2,
+    "usd": 32890,
+    "perd_media": -100.4,
+    "peor_racha": -1031
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 1543,
+    "por_mes": 64.3,
+    "gana": 37.7,
+    "obj1": 16.7,
+    "usd_op": 15,
+    "usd": 23070,
+    "perd_media": -109.2,
+    "peor_racha": -6379
+   },
+   "mitad1": {
+    "n": 812,
+    "por_mes": 67.6,
+    "gana": 41.6,
+    "obj1": 19.1,
+    "usd_op": 28.3,
+    "usd": 22996,
+    "perd_media": -109.8,
+    "peor_racha": -3806
+   },
+   "mitad2": {
+    "n": 731,
+    "por_mes": 60.9,
+    "gana": 33.2,
+    "obj1": 14,
+    "usd_op": 0.1,
+    "usd": 74,
+    "perd_media": -108.7,
+    "peor_racha": -6379
+   },
+   "año": {
+    "n": 731,
+    "por_mes": 60.9,
+    "gana": 33.2,
+    "obj1": 14,
+    "usd_op": 0.1,
+    "usd": 74,
+    "perd_media": -108.7,
+    "peor_racha": -6379
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 1652,
+    "por_mes": 68.8,
+    "gana": 56.2,
+    "obj1": 50.4,
+    "usd_op": 14.7,
+    "usd": 24310,
+    "perd_media": -104.5,
+    "peor_racha": -1486
+   },
+   "mitad1": {
+    "n": 812,
+    "por_mes": 67.6,
+    "gana": 55.8,
+    "obj1": 49.9,
+    "usd_op": 8.9,
+    "usd": 7194,
+    "perd_media": -105.1,
+    "peor_racha": -1270
+   },
+   "mitad2": {
+    "n": 840,
+    "por_mes": 70,
+    "gana": 56.5,
+    "obj1": 50.8,
+    "usd_op": 20.4,
+    "usd": 17116,
+    "perd_media": -103.8,
+    "peor_racha": -1486
+   },
+   "año": {
+    "n": 840,
+    "por_mes": 70,
+    "gana": 56.5,
+    "obj1": 50.8,
+    "usd_op": 20.4,
+    "usd": 17116,
+    "perd_media": -103.8,
+    "peor_racha": -1486
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 1291,
+    "por_mes": 53.8,
+    "gana": 33.5,
+    "obj1": 14.1,
+    "usd_op": -2.3,
+    "usd": -3008,
+    "perd_media": -109.3,
+    "peor_racha": -6379
+   },
+   "mitad1": {
+    "n": 603,
+    "por_mes": 50.2,
+    "gana": 35.5,
+    "obj1": 15.6,
+    "usd_op": 3.3,
+    "usd": 1997,
+    "perd_media": -109.5,
+    "peor_racha": -3231
+   },
+   "mitad2": {
+    "n": 688,
+    "por_mes": 57.3,
+    "gana": 31.7,
+    "obj1": 12.8,
+    "usd_op": -7.3,
+    "usd": -5005,
+    "perd_media": -109.2,
+    "peor_racha": -6379
+   },
+   "año": {
+    "n": 688,
+    "por_mes": 57.3,
+    "gana": 31.7,
+    "obj1": 12.8,
+    "usd_op": -7.3,
+    "usd": -5005,
+    "perd_media": -109.2,
+    "peor_racha": -6379
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 1400,
+    "por_mes": 58.3,
+    "gana": 53.6,
+    "obj1": 48,
+    "usd_op": 10.9,
+    "usd": 15310,
+    "perd_media": -104.2,
+    "peor_racha": -1486
+   },
+   "mitad1": {
+    "n": 603,
+    "por_mes": 50.2,
+    "gana": 51.1,
+    "obj1": 45.1,
+    "usd_op": 2.5,
+    "usd": 1497,
+    "perd_media": -104,
+    "peor_racha": -1270
+   },
+   "mitad2": {
+    "n": 797,
+    "por_mes": 66.4,
+    "gana": 55.5,
+    "obj1": 50.2,
+    "usd_op": 17.3,
+    "usd": 13812,
+    "perd_media": -104.4,
+    "peor_racha": -1486
+   },
+   "año": {
+    "n": 797,
+    "por_mes": 66.4,
+    "gana": 55.5,
+    "obj1": 50.2,
+    "usd_op": 17.3,
+    "usd": 13812,
+    "perd_media": -104.4,
+    "peor_racha": -1486
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 300,
+    "por_mes": 12.5,
+    "gana": 31.3,
+    "obj1": 13.7,
+    "usd_op": -6.5,
+    "usd": -1961,
+    "perd_media": -113.4,
+    "peor_racha": -2214
+   },
+   "mitad1": {
+    "n": 149,
+    "por_mes": 12.4,
+    "gana": 31.5,
+    "obj1": 13.4,
+    "usd_op": -5.4,
+    "usd": -808,
+    "perd_media": -112.4,
+    "peor_racha": -1657
+   },
+   "mitad2": {
+    "n": 151,
+    "por_mes": 12.6,
+    "gana": 31.1,
+    "obj1": 13.9,
+    "usd_op": -7.6,
+    "usd": -1153,
+    "perd_media": -114.4,
+    "peor_racha": -2214
+   },
+   "año": {
+    "n": 151,
+    "por_mes": 12.6,
+    "gana": 31.1,
+    "obj1": 13.9,
+    "usd_op": -7.6,
+    "usd": -1153,
+    "perd_media": -114.4,
+    "peor_racha": -2214
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 308,
+    "por_mes": 12.8,
+    "gana": 48.1,
+    "obj1": 42.9,
+    "usd_op": -9,
+    "usd": -2762,
+    "perd_media": -108.7,
+    "peor_racha": -1094
+   },
+   "mitad1": {
+    "n": 149,
+    "por_mes": 12.4,
+    "gana": 45,
+    "obj1": 39.6,
+    "usd_op": -16,
+    "usd": -2390,
+    "perd_media": -106.7,
+    "peor_racha": -1094
+   },
+   "mitad2": {
+    "n": 159,
+    "por_mes": 13.2,
+    "gana": 50.9,
+    "obj1": 45.9,
+    "usd_op": -2.3,
+    "usd": -373,
+    "perd_media": -110.7,
+    "peor_racha": -928
+   },
+   "año": {
+    "n": 159,
+    "por_mes": 13.3,
+    "gana": 50.9,
+    "obj1": 45.9,
+    "usd_op": -2.3,
+    "usd": -373,
+    "perd_media": -110.7,
+    "peor_racha": -928
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 650,
+    "por_mes": 27.1,
+    "gana": 35.5,
+    "obj1": 15.4,
+    "usd_op": 7,
+    "usd": 4541,
+    "perd_media": -110.2,
+    "peor_racha": -6143
+   },
+   "mitad1": {
+    "n": 345,
+    "por_mes": 28.7,
+    "gana": 37.4,
+    "obj1": 16.8,
+    "usd_op": 10.7,
+    "usd": 3705,
+    "perd_media": -108.5,
+    "peor_racha": -2693
+   },
+   "mitad2": {
+    "n": 305,
+    "por_mes": 25.4,
+    "gana": 33.4,
+    "obj1": 13.8,
+    "usd_op": 2.7,
+    "usd": 836,
+    "perd_media": -112,
+    "peor_racha": -6143
+   },
+   "año": {
+    "n": 305,
+    "por_mes": 25.4,
+    "gana": 33.4,
+    "obj1": 13.8,
+    "usd_op": 2.7,
+    "usd": 836,
+    "perd_media": -112,
+    "peor_racha": -6143
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 682,
+    "por_mes": 28.4,
+    "gana": 54.8,
+    "obj1": 49.7,
+    "usd_op": 8.6,
+    "usd": 5843,
+    "perd_media": -105,
+    "peor_racha": -1149
+   },
+   "mitad1": {
+    "n": 345,
+    "por_mes": 28.7,
+    "gana": 53.6,
+    "obj1": 47.8,
+    "usd_op": 3.2,
+    "usd": 1088,
+    "perd_media": -107.1,
+    "peor_racha": -1149
+   },
+   "mitad2": {
+    "n": 337,
+    "por_mes": 28.1,
+    "gana": 56.1,
+    "obj1": 51.6,
+    "usd_op": 14.1,
+    "usd": 4755,
+    "perd_media": -102.7,
+    "peor_racha": -849
+   },
+   "año": {
+    "n": 337,
+    "por_mes": 28.1,
+    "gana": 56.1,
+    "obj1": 51.6,
+    "usd_op": 14.1,
+    "usd": 4755,
+    "perd_media": -102.7,
+    "peor_racha": -849
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 281,
+    "por_mes": 11.7,
+    "gana": 31.7,
+    "obj1": 13.5,
+    "usd_op": -4.6,
+    "usd": -1287,
+    "perd_media": -111.8,
+    "peor_racha": -1986
+   },
+   "mitad1": {
+    "n": 141,
+    "por_mes": 11.7,
+    "gana": 31.9,
+    "obj1": 12.8,
+    "usd_op": -5.6,
+    "usd": -789,
+    "perd_media": -109.8,
+    "peor_racha": -1958
+   },
+   "mitad2": {
+    "n": 140,
+    "por_mes": 11.7,
+    "gana": 31.4,
+    "obj1": 14.3,
+    "usd_op": -3.6,
+    "usd": -498,
+    "perd_media": -113.7,
+    "peor_racha": -1986
+   },
+   "año": {
+    "n": 140,
+    "por_mes": 11.7,
+    "gana": 31.4,
+    "obj1": 14.3,
+    "usd_op": -3.6,
+    "usd": -498,
+    "perd_media": -113.7,
+    "peor_racha": -1986
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 289,
+    "por_mes": 12,
+    "gana": 49.8,
+    "obj1": 43.6,
+    "usd_op": -4.9,
+    "usd": -1402,
+    "perd_media": -108.8,
+    "peor_racha": -967
+   },
+   "mitad1": {
+    "n": 141,
+    "por_mes": 11.7,
+    "gana": 46.8,
+    "obj1": 39.7,
+    "usd_op": -12.7,
+    "usd": -1787,
+    "perd_media": -106.5,
+    "peor_racha": -967
+   },
+   "mitad2": {
+    "n": 148,
+    "por_mes": 12.3,
+    "gana": 52.7,
+    "obj1": 47.3,
+    "usd_op": 2.6,
+    "usd": 385,
+    "perd_media": -111.3,
+    "peor_racha": -818
+   },
+   "año": {
+    "n": 148,
+    "por_mes": 12.3,
+    "gana": 52.7,
+    "obj1": 47.3,
+    "usd_op": 2.6,
+    "usd": 385,
+    "perd_media": -111.3,
+    "peor_racha": -818
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 482,
+    "por_mes": 20.1,
+    "gana": 30.9,
+    "obj1": 12.9,
+    "usd_op": -9.5,
+    "usd": -4555,
+    "perd_media": -109.2,
+    "peor_racha": -5782
+   },
+   "mitad1": {
+    "n": 235,
+    "por_mes": 19.6,
+    "gana": 30.6,
+    "obj1": 11.9,
+    "usd_op": -16.8,
+    "usd": -3945,
+    "perd_media": -107.3,
+    "peor_racha": -2959
+   },
+   "mitad2": {
+    "n": 247,
+    "por_mes": 20.6,
+    "gana": 31.2,
+    "obj1": 13.8,
+    "usd_op": -2.5,
+    "usd": -610,
+    "perd_media": -111.1,
+    "peor_racha": -5782
+   },
+   "año": {
+    "n": 247,
+    "por_mes": 20.6,
+    "gana": 31.2,
+    "obj1": 13.8,
+    "usd_op": -2.5,
+    "usd": -610,
+    "perd_media": -111.1,
+    "peor_racha": -5782
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 512,
+    "por_mes": 21.3,
+    "gana": 49.4,
+    "obj1": 43.8,
+    "usd_op": -3.6,
+    "usd": -1855,
+    "perd_media": -105.4,
+    "peor_racha": -1250
+   },
+   "mitad1": {
+    "n": 235,
+    "por_mes": 19.6,
+    "gana": 44.3,
+    "obj1": 37.9,
+    "usd_op": -17.1,
+    "usd": -4008,
+    "perd_media": -106.7,
+    "peor_racha": -660
+   },
+   "mitad2": {
+    "n": 277,
+    "por_mes": 23.1,
+    "gana": 53.8,
+    "obj1": 48.7,
+    "usd_op": 7.8,
+    "usd": 2153,
+    "perd_media": -104.1,
+    "peor_racha": -1250
+   },
+   "año": {
+    "n": 277,
+    "por_mes": 23.1,
+    "gana": 53.8,
+    "obj1": 48.7,
+    "usd_op": 7.8,
+    "usd": 2153,
+    "perd_media": -104.1,
+    "peor_racha": -1250
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 202,
+    "por_mes": 8.4,
+    "gana": 27.7,
+    "obj1": 13.9,
+    "usd_op": -13.2,
+    "usd": -2672,
+    "perd_media": -110.9,
+    "peor_racha": -1753
+   },
+   "mitad1": {
+    "n": 99,
+    "por_mes": 8.2,
+    "gana": 27.3,
+    "obj1": 12.1,
+    "usd_op": -18.8,
+    "usd": -1861,
+    "perd_media": -109.2,
+    "peor_racha": -1339
+   },
+   "mitad2": {
+    "n": 103,
+    "por_mes": 8.6,
+    "gana": 28.2,
+    "obj1": 15.5,
+    "usd_op": -7.9,
+    "usd": -812,
+    "perd_media": -112.5,
+    "peor_racha": -1753
+   },
+   "año": {
+    "n": 103,
+    "por_mes": 8.6,
+    "gana": 28.2,
+    "obj1": 15.5,
+    "usd_op": -7.9,
+    "usd": -812,
+    "perd_media": -112.5,
+    "peor_racha": -1753
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 210,
+    "por_mes": 8.7,
+    "gana": 42.9,
+    "obj1": 38.1,
+    "usd_op": -17.7,
+    "usd": -3715,
+    "perd_media": -107.8,
+    "peor_racha": -1515
+   },
+   "mitad1": {
+    "n": 99,
+    "por_mes": 8.2,
+    "gana": 37.4,
+    "obj1": 32.3,
+    "usd_op": -29.6,
+    "usd": -2934,
+    "perd_media": -106.5,
+    "peor_racha": -1515
+   },
+   "mitad2": {
+    "n": 111,
+    "por_mes": 9.2,
+    "gana": 47.7,
+    "obj1": 43.2,
+    "usd_op": -7,
+    "usd": -781,
+    "perd_media": -109.2,
+    "peor_racha": -707
+   },
+   "año": {
+    "n": 111,
+    "por_mes": 9.3,
+    "gana": 47.7,
+    "obj1": 43.2,
+    "usd_op": -7,
+    "usd": -781,
+    "perd_media": -109.2,
+    "peor_racha": -707
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1d · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 2109,
+    "por_mes": 43.9,
+    "gana": 44.6,
+    "obj1": 6.7,
+    "usd_op": 9.9,
+    "usd": 20870,
+    "perd_media": -95,
+    "peor_racha": -5884
+   },
+   "mitad1": {
+    "n": 1020,
+    "por_mes": 42.5,
+    "gana": 47.5,
+    "obj1": 7.3,
+    "usd_op": 17.9,
+    "usd": 18262,
+    "perd_media": -96.5,
+    "peor_racha": -3643
+   },
+   "mitad2": {
+    "n": 1089,
+    "por_mes": 45.4,
+    "gana": 41.9,
+    "obj1": 6.2,
+    "usd_op": 2.4,
+    "usd": 2608,
+    "perd_media": -93.7,
+    "peor_racha": -5884
+   },
+   "año": {
+    "n": 593,
+    "por_mes": 49.4,
+    "gana": 41,
+    "obj1": 5.7,
+    "usd_op": 0.7,
+    "usd": 394,
+    "perd_media": -91.2,
+    "peor_racha": -5884
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 2253,
+    "por_mes": 46.9,
+    "gana": 55.3,
+    "obj1": 35.9,
+    "usd_op": 11,
+    "usd": 24884,
+    "perd_media": -82.1,
+    "peor_racha": -1712
+   },
+   "mitad1": {
+    "n": 1020,
+    "por_mes": 42.5,
+    "gana": 56.2,
+    "obj1": 36.6,
+    "usd_op": 10.8,
+    "usd": 11059,
+    "perd_media": -82,
+    "peor_racha": -1712
+   },
+   "mitad2": {
+    "n": 1233,
+    "por_mes": 51.3,
+    "gana": 54.7,
+    "obj1": 35.4,
+    "usd_op": 11.2,
+    "usd": 13825,
+    "perd_media": -82.2,
+    "peor_racha": -1124
+   },
+   "año": {
+    "n": 737,
+    "por_mes": 61.4,
+    "gana": 57.8,
+    "obj1": 37.7,
+    "usd_op": 20.9,
+    "usd": 15396,
+    "perd_media": -80.9,
+    "peor_racha": -883
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 398,
+    "por_mes": 8.3,
+    "gana": 44.2,
+    "obj1": 5.5,
+    "usd_op": 6.5,
+    "usd": 2596,
+    "perd_media": -101,
+    "peor_racha": -1904
+   },
+   "mitad1": {
+    "n": 202,
+    "por_mes": 8.4,
+    "gana": 48,
+    "obj1": 5.9,
+    "usd_op": 14.4,
+    "usd": 2904,
+    "perd_media": -101,
+    "peor_racha": -1904
+   },
+   "mitad2": {
+    "n": 196,
+    "por_mes": 8.2,
+    "gana": 40.3,
+    "obj1": 5.1,
+    "usd_op": -1.6,
+    "usd": -307,
+    "perd_media": -100.9,
+    "peor_racha": -1787
+   },
+   "año": {
+    "n": 92,
+    "por_mes": 7.7,
+    "gana": 45.7,
+    "obj1": 5.4,
+    "usd_op": 11.9,
+    "usd": 1094,
+    "perd_media": -96.9,
+    "peor_racha": -937
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 410,
+    "por_mes": 8.5,
+    "gana": 50.7,
+    "obj1": 36.3,
+    "usd_op": 6.2,
+    "usd": 2528,
+    "perd_media": -84.2,
+    "peor_racha": -920
+   },
+   "mitad1": {
+    "n": 202,
+    "por_mes": 8.4,
+    "gana": 55.4,
+    "obj1": 39.1,
+    "usd_op": 17.5,
+    "usd": 3540,
+    "perd_media": -82.1,
+    "peor_racha": -725
+   },
+   "mitad2": {
+    "n": 208,
+    "por_mes": 8.7,
+    "gana": 46.2,
+    "obj1": 33.7,
+    "usd_op": -4.9,
+    "usd": -1013,
+    "perd_media": -85.8,
+    "peor_racha": -920
+   },
+   "año": {
+    "n": 104,
+    "por_mes": 8.7,
+    "gana": 54.8,
+    "obj1": 36.5,
+    "usd_op": 14.2,
+    "usd": 1476,
+    "perd_media": -84.5,
+    "peor_racha": -599
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 999,
+    "por_mes": 20.8,
+    "gana": 45.9,
+    "obj1": 7.8,
+    "usd_op": 15.6,
+    "usd": 15609,
+    "perd_media": -99.3,
+    "peor_racha": -3518
+   },
+   "mitad1": {
+    "n": 470,
+    "por_mes": 19.6,
+    "gana": 48.3,
+    "obj1": 8.9,
+    "usd_op": 22.6,
+    "usd": 10628,
+    "perd_media": -101,
+    "peor_racha": -1448
+   },
+   "mitad2": {
+    "n": 529,
+    "por_mes": 22,
+    "gana": 43.9,
+    "obj1": 6.8,
+    "usd_op": 9.4,
+    "usd": 4981,
+    "perd_media": -97.9,
+    "peor_racha": -3518
+   },
+   "año": {
+    "n": 244,
+    "por_mes": 20.3,
+    "gana": 46.7,
+    "obj1": 7.8,
+    "usd_op": 19.8,
+    "usd": 4837,
+    "perd_media": -94.3,
+    "peor_racha": -3518
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 1044,
+    "por_mes": 21.7,
+    "gana": 54.9,
+    "obj1": 36.9,
+    "usd_op": 10,
+    "usd": 10474,
+    "perd_media": -84.9,
+    "peor_racha": -1384
+   },
+   "mitad1": {
+    "n": 470,
+    "por_mes": 19.6,
+    "gana": 56.2,
+    "obj1": 37.4,
+    "usd_op": 14.2,
+    "usd": 6681,
+    "perd_media": -86.1,
+    "peor_racha": -1384
+   },
+   "mitad2": {
+    "n": 574,
+    "por_mes": 23.9,
+    "gana": 53.8,
+    "obj1": 36.4,
+    "usd_op": 6.6,
+    "usd": 3793,
+    "perd_media": -83.9,
+    "peor_racha": -976
+   },
+   "año": {
+    "n": 289,
+    "por_mes": 24.1,
+    "gana": 58.5,
+    "obj1": 38.4,
+    "usd_op": 20.6,
+    "usd": 5968,
+    "perd_media": -79,
+    "peor_racha": -976
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 369,
+    "por_mes": 7.7,
+    "gana": 46.1,
+    "obj1": 6.5,
+    "usd_op": 11,
+    "usd": 4046,
+    "perd_media": -103.4,
+    "peor_racha": -1878
+   },
+   "mitad1": {
+    "n": 184,
+    "por_mes": 7.7,
+    "gana": 49.5,
+    "obj1": 7.1,
+    "usd_op": 18.4,
+    "usd": 3394,
+    "perd_media": -103.9,
+    "peor_racha": -1670
+   },
+   "mitad2": {
+    "n": 185,
+    "por_mes": 7.7,
+    "gana": 42.7,
+    "obj1": 5.9,
+    "usd_op": 3.5,
+    "usd": 652,
+    "perd_media": -102.9,
+    "peor_racha": -1878
+   },
+   "año": {
+    "n": 85,
+    "por_mes": 7.1,
+    "gana": 47.1,
+    "obj1": 7.1,
+    "usd_op": 15.4,
+    "usd": 1308,
+    "perd_media": -102.3,
+    "peor_racha": -937
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 381,
+    "por_mes": 7.9,
+    "gana": 51.4,
+    "obj1": 36.7,
+    "usd_op": 8.1,
+    "usd": 3093,
+    "perd_media": -84.3,
+    "peor_racha": -637
+   },
+   "mitad1": {
+    "n": 184,
+    "por_mes": 7.7,
+    "gana": 55.4,
+    "obj1": 38.6,
+    "usd_op": 18.1,
+    "usd": 3330,
+    "perd_media": -84.7,
+    "peor_racha": -564
+   },
+   "mitad2": {
+    "n": 197,
+    "por_mes": 8.2,
+    "gana": 47.7,
+    "obj1": 35,
+    "usd_op": -1.2,
+    "usd": -238,
+    "perd_media": -84,
+    "peor_racha": -599
+   },
+   "año": {
+    "n": 97,
+    "por_mes": 8.1,
+    "gana": 54.6,
+    "obj1": 37.1,
+    "usd_op": 15.2,
+    "usd": 1475,
+    "perd_media": -84.6,
+    "peor_racha": -599
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 560,
+    "por_mes": 11.7,
+    "gana": 42.3,
+    "obj1": 6.4,
+    "usd_op": 3.1,
+    "usd": 1742,
+    "perd_media": -99.6,
+    "peor_racha": -2247
+   },
+   "mitad1": {
+    "n": 285,
+    "por_mes": 11.9,
+    "gana": 45.3,
+    "obj1": 7.4,
+    "usd_op": 12.6,
+    "usd": 3588,
+    "perd_media": -101.8,
+    "peor_racha": -1029
+   },
+   "mitad2": {
+    "n": 275,
+    "por_mes": 11.5,
+    "gana": 39.3,
+    "obj1": 5.5,
+    "usd_op": -6.7,
+    "usd": -1846,
+    "perd_media": -97.6,
+    "peor_racha": -2247
+   },
+   "año": {
+    "n": 144,
+    "por_mes": 12,
+    "gana": 41.7,
+    "obj1": 6.3,
+    "usd_op": 1.6,
+    "usd": 224,
+    "perd_media": -97.2,
+    "peor_racha": -2247
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 576,
+    "por_mes": 12,
+    "gana": 51.2,
+    "obj1": 31.3,
+    "usd_op": 1.1,
+    "usd": 638,
+    "perd_media": -84.6,
+    "peor_racha": -932
+   },
+   "mitad1": {
+    "n": 285,
+    "por_mes": 11.9,
+    "gana": 55.1,
+    "obj1": 35.4,
+    "usd_op": 10.9,
+    "usd": 3115,
+    "perd_media": -82.6,
+    "peor_racha": -724
+   },
+   "mitad2": {
+    "n": 291,
+    "por_mes": 12.1,
+    "gana": 47.4,
+    "obj1": 27.1,
+    "usd_op": -8.5,
+    "usd": -2477,
+    "perd_media": -86.3,
+    "peor_racha": -932
+   },
+   "año": {
+    "n": 160,
+    "por_mes": 13.3,
+    "gana": 50,
+    "obj1": 28.8,
+    "usd_op": -3.5,
+    "usd": -560,
+    "perd_media": -86,
+    "peor_racha": -898
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 768,
+    "por_mes": 16,
+    "gana": 43,
+    "obj1": 6.3,
+    "usd_op": 5,
+    "usd": 3867,
+    "perd_media": -98.6,
+    "peor_racha": -3072
+   },
+   "mitad1": {
+    "n": 383,
+    "por_mes": 15.9,
+    "gana": 43.6,
+    "obj1": 6.3,
+    "usd_op": 6.6,
+    "usd": 2529,
+    "perd_media": -100.1,
+    "peor_racha": -1338
+   },
+   "mitad2": {
+    "n": 385,
+    "por_mes": 16,
+    "gana": 42.3,
+    "obj1": 6.2,
+    "usd_op": 3.5,
+    "usd": 1338,
+    "perd_media": -97.1,
+    "peor_racha": -3072
+   },
+   "año": {
+    "n": 194,
+    "por_mes": 16.2,
+    "gana": 45.4,
+    "obj1": 7.2,
+    "usd_op": 13.2,
+    "usd": 2553,
+    "perd_media": -95.3,
+    "peor_racha": -3072
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 806,
+    "por_mes": 16.8,
+    "gana": 51.6,
+    "obj1": 33,
+    "usd_op": 4.8,
+    "usd": 3869,
+    "perd_media": -82.8,
+    "peor_racha": -1194
+   },
+   "mitad1": {
+    "n": 383,
+    "por_mes": 15.9,
+    "gana": 52.5,
+    "obj1": 35.2,
+    "usd_op": 7.2,
+    "usd": 2776,
+    "perd_media": -84.8,
+    "peor_racha": -1194
+   },
+   "mitad2": {
+    "n": 423,
+    "por_mes": 17.6,
+    "gana": 50.8,
+    "obj1": 31,
+    "usd_op": 2.6,
+    "usd": 1093,
+    "perd_media": -81,
+    "peor_racha": -1175
+   },
+   "año": {
+    "n": 232,
+    "por_mes": 19.3,
+    "gana": 56.9,
+    "obj1": 34.9,
+    "usd_op": 17.2,
+    "usd": 3987,
+    "perd_media": -77.5,
+    "peor_racha": -1085
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 276,
+    "por_mes": 5.7,
+    "gana": 45.3,
+    "obj1": 5.1,
+    "usd_op": 6.9,
+    "usd": 1916,
+    "perd_media": -101.4,
+    "peor_racha": -1546
+   },
+   "mitad1": {
+    "n": 152,
+    "por_mes": 6.3,
+    "gana": 47.4,
+    "obj1": 5.9,
+    "usd_op": 12.4,
+    "usd": 1877,
+    "perd_media": -103.8,
+    "peor_racha": -1546
+   },
+   "mitad2": {
+    "n": 124,
+    "por_mes": 5.2,
+    "gana": 42.7,
+    "obj1": 4,
+    "usd_op": 0.3,
+    "usd": 39,
+    "perd_media": -98.7,
+    "peor_racha": -937
+   },
+   "año": {
+    "n": 60,
+    "por_mes": 5,
+    "gana": 40,
+    "obj1": 1.7,
+    "usd_op": -10,
+    "usd": -601,
+    "perd_media": -96.9,
+    "peor_racha": -937
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 30 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 286,
+    "por_mes": 6,
+    "gana": 49.3,
+    "obj1": 33.9,
+    "usd_op": 5.6,
+    "usd": 1604,
+    "perd_media": -82.5,
+    "peor_racha": -743
+   },
+   "mitad1": {
+    "n": 152,
+    "por_mes": 6.3,
+    "gana": 53.3,
+    "obj1": 38.8,
+    "usd_op": 16.3,
+    "usd": 2470,
+    "perd_media": -85.3,
+    "peor_racha": -720
+   },
+   "mitad2": {
+    "n": 134,
+    "por_mes": 5.6,
+    "gana": 44.8,
+    "obj1": 28.4,
+    "usd_op": -6.5,
+    "usd": -867,
+    "perd_media": -79.8,
+    "peor_racha": -743
+   },
+   "año": {
+    "n": 70,
+    "por_mes": 5.8,
+    "gana": 50,
+    "obj1": 27.1,
+    "usd_op": -0.5,
+    "usd": -37,
+    "perd_media": -82.3,
+    "peor_racha": -599
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 771,
+    "por_mes": 16.1,
+    "gana": 47.1,
+    "obj1": 6,
+    "usd_op": 14.2,
+    "usd": 10912,
+    "perd_media": -92.1,
+    "peor_racha": -2347
+   },
+   "mitad1": {
+    "n": 356,
+    "por_mes": 14.8,
+    "gana": 51.7,
+    "obj1": 7.3,
+    "usd_op": 27.1,
+    "usd": 9631,
+    "perd_media": -93.1,
+    "peor_racha": -2347
+   },
+   "mitad2": {
+    "n": 415,
+    "por_mes": 17.3,
+    "gana": 43.1,
+    "obj1": 4.8,
+    "usd_op": 3.1,
+    "usd": 1281,
+    "perd_media": -91.4,
+    "peor_racha": -1751
+   },
+   "año": {
+    "n": 210,
+    "por_mes": 17.5,
+    "gana": 39,
+    "obj1": 3.8,
+    "usd_op": -7,
+    "usd": -1470,
+    "perd_media": -87.9,
+    "peor_racha": -1751
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 825,
+    "por_mes": 17.2,
+    "gana": 58.8,
+    "obj1": 36.8,
+    "usd_op": 16,
+    "usd": 13163,
+    "perd_media": -79.8,
+    "peor_racha": -1489
+   },
+   "mitad1": {
+    "n": 356,
+    "por_mes": 14.8,
+    "gana": 60.7,
+    "obj1": 36.2,
+    "usd_op": 14.9,
+    "usd": 5299,
+    "perd_media": -79.7,
+    "peor_racha": -1489
+   },
+   "mitad2": {
+    "n": 469,
+    "por_mes": 19.5,
+    "gana": 57.4,
+    "obj1": 37.3,
+    "usd_op": 16.8,
+    "usd": 7864,
+    "perd_media": -79.9,
+    "peor_racha": -713
+   },
+   "año": {
+    "n": 264,
+    "por_mes": 22,
+    "gana": 58,
+    "obj1": 39.8,
+    "usd_op": 26,
+    "usd": 6857,
+    "perd_media": -77.1,
+    "peor_racha": -713
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 269,
+    "por_mes": 5.6,
+    "gana": 45.7,
+    "obj1": 5.2,
+    "usd_op": 9.7,
+    "usd": 2602,
+    "perd_media": -97.3,
+    "peor_racha": -1423
+   },
+   "mitad1": {
+    "n": 115,
+    "por_mes": 4.8,
+    "gana": 53,
+    "obj1": 7.8,
+    "usd_op": 29,
+    "usd": 3336,
+    "perd_media": -103,
+    "peor_racha": -694
+   },
+   "mitad2": {
+    "n": 154,
+    "por_mes": 6.4,
+    "gana": 40.3,
+    "obj1": 3.2,
+    "usd_op": -4.8,
+    "usd": -734,
+    "perd_media": -94,
+    "peor_racha": -1423
+   },
+   "año": {
+    "n": 62,
+    "por_mes": 5.2,
+    "gana": 45.2,
+    "obj1": 3.2,
+    "usd_op": 12.9,
+    "usd": 802,
+    "perd_media": -88.6,
+    "peor_racha": -1423
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 279,
+    "por_mes": 5.8,
+    "gana": 56.3,
+    "obj1": 30.1,
+    "usd_op": 4.1,
+    "usd": 1145,
+    "perd_media": -82.8,
+    "peor_racha": -718
+   },
+   "mitad1": {
+    "n": 115,
+    "por_mes": 4.8,
+    "gana": 61.7,
+    "obj1": 33,
+    "usd_op": 11.7,
+    "usd": 1341,
+    "perd_media": -86.5,
+    "peor_racha": -704
+   },
+   "mitad2": {
+    "n": 164,
+    "por_mes": 6.8,
+    "gana": 52.4,
+    "obj1": 28,
+    "usd_op": -1.2,
+    "usd": -196,
+    "perd_media": -80.7,
+    "peor_racha": -718
+   },
+   "año": {
+    "n": 72,
+    "por_mes": 6,
+    "gana": 56.9,
+    "obj1": 33.3,
+    "usd_op": 18.8,
+    "usd": 1351,
+    "perd_media": -68.8,
+    "peor_racha": -351
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 204,
+    "por_mes": 4.2,
+    "gana": 42.2,
+    "obj1": 4.9,
+    "usd_op": -0.1,
+    "usd": -12,
+    "perd_media": -99.9,
+    "peor_racha": -1566
+   },
+   "mitad1": {
+    "n": 90,
+    "por_mes": 3.7,
+    "gana": 45.6,
+    "obj1": 5.6,
+    "usd_op": 1.9,
+    "usd": 169,
+    "perd_media": -105.4,
+    "peor_racha": -846
+   },
+   "mitad2": {
+    "n": 114,
+    "por_mes": 4.7,
+    "gana": 39.5,
+    "obj1": 4.4,
+    "usd_op": -1.6,
+    "usd": -181,
+    "perd_media": -96,
+    "peor_racha": -1566
+   },
+   "año": {
+    "n": 47,
+    "por_mes": 3.9,
+    "gana": 46.8,
+    "obj1": 4.3,
+    "usd_op": 15.8,
+    "usd": 744,
+    "perd_media": -93.4,
+    "peor_racha": -1228
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 212,
+    "por_mes": 4.4,
+    "gana": 50,
+    "obj1": 23.6,
+    "usd_op": -4.1,
+    "usd": -860,
+    "perd_media": -79.1,
+    "peor_racha": -750
+   },
+   "mitad1": {
+    "n": 90,
+    "por_mes": 3.7,
+    "gana": 51.1,
+    "obj1": 26.7,
+    "usd_op": -3.6,
+    "usd": -323,
+    "perd_media": -82.2,
+    "peor_racha": -717
+   },
+   "mitad2": {
+    "n": 122,
+    "por_mes": 5.1,
+    "gana": 49.2,
+    "obj1": 21.3,
+    "usd_op": -4.4,
+    "usd": -536,
+    "perd_media": -76.9,
+    "peor_racha": -750
+   },
+   "año": {
+    "n": 55,
+    "por_mes": 4.6,
+    "gana": 54.5,
+    "obj1": 27.3,
+    "usd_op": 15.9,
+    "usd": 875,
+    "perd_media": -65,
+    "peor_racha": -351
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 284,
+    "por_mes": 5.9,
+    "gana": 45.4,
+    "obj1": 5.3,
+    "usd_op": 9.4,
+    "usd": 2661,
+    "perd_media": -88.7,
+    "peor_racha": -1765
+   },
+   "mitad1": {
+    "n": 123,
+    "por_mes": 5.1,
+    "gana": 52,
+    "obj1": 5.7,
+    "usd_op": 32.2,
+    "usd": 3959,
+    "perd_media": -87.9,
+    "peor_racha": -927
+   },
+   "mitad2": {
+    "n": 161,
+    "por_mes": 6.7,
+    "gana": 40.4,
+    "obj1": 5,
+    "usd_op": -8.1,
+    "usd": -1298,
+    "perd_media": -89.3,
+    "peor_racha": -1765
+   },
+   "año": {
+    "n": 79,
+    "por_mes": 6.6,
+    "gana": 41.8,
+    "obj1": 5.1,
+    "usd_op": -9.3,
+    "usd": -738,
+    "perd_media": -82.2,
+    "peor_racha": -713
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 295,
+    "por_mes": 6.1,
+    "gana": 56.3,
+    "obj1": 33.6,
+    "usd_op": 7.5,
+    "usd": 2218,
+    "perd_media": -79.5,
+    "peor_racha": -1150
+   },
+   "mitad1": {
+    "n": 123,
+    "por_mes": 5.1,
+    "gana": 56.9,
+    "obj1": 31.7,
+    "usd_op": 7.8,
+    "usd": 954,
+    "perd_media": -79.8,
+    "peor_racha": -757
+   },
+   "mitad2": {
+    "n": 172,
+    "por_mes": 7.2,
+    "gana": 55.8,
+    "obj1": 34.9,
+    "usd_op": 7.3,
+    "usd": 1264,
+    "perd_media": -79.4,
+    "peor_racha": -1150
+   },
+   "año": {
+    "n": 90,
+    "por_mes": 7.5,
+    "gana": 61.1,
+    "obj1": 42.2,
+    "usd_op": 21.7,
+    "usd": 1951,
+    "perd_media": -82.1,
+    "peor_racha": -491
+   },
+   "actual_mismo_periodo": 0
+  },
+  "4h · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 326,
+    "por_mes": 13.6,
+    "gana": 30.4,
+    "obj1": 11,
+    "usd_op": -12.8,
+    "usd": -4165,
+    "perd_media": -108.7,
+    "peor_racha": -3897
+   },
+   "mitad1": {
+    "n": 164,
+    "por_mes": 13.7,
+    "gana": 31.1,
+    "obj1": 11.6,
+    "usd_op": -16.8,
+    "usd": -2760,
+    "perd_media": -106.5,
+    "peor_racha": -1413
+   },
+   "mitad2": {
+    "n": 162,
+    "por_mes": 13.5,
+    "gana": 29.6,
+    "obj1": 10.5,
+    "usd_op": -8.7,
+    "usd": -1405,
+    "perd_media": -110.8,
+    "peor_racha": -3897
+   },
+   "año": {
+    "n": 162,
+    "por_mes": 13.5,
+    "gana": 29.6,
+    "obj1": 10.5,
+    "usd_op": -8.7,
+    "usd": -1405,
+    "perd_media": -110.8,
+    "peor_racha": -3897
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 344,
+    "por_mes": 14.3,
+    "gana": 48.3,
+    "obj1": 41.9,
+    "usd_op": -7.7,
+    "usd": -2636,
+    "perd_media": -106.8,
+    "peor_racha": -1364
+   },
+   "mitad1": {
+    "n": 164,
+    "por_mes": 13.7,
+    "gana": 47,
+    "obj1": 39,
+    "usd_op": -10.1,
+    "usd": -1658,
+    "perd_media": -107.3,
+    "peor_racha": -1147
+   },
+   "mitad2": {
+    "n": 180,
+    "por_mes": 15,
+    "gana": 49.4,
+    "obj1": 44.4,
+    "usd_op": -5.4,
+    "usd": -978,
+    "perd_media": -106.3,
+    "peor_racha": -1364
+   },
+   "año": {
+    "n": 180,
+    "por_mes": 15,
+    "gana": 49.4,
+    "obj1": 44.4,
+    "usd_op": -5.4,
+    "usd": -978,
+    "perd_media": -106.3,
+    "peor_racha": -1364
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 644,
+    "por_mes": 26.8,
+    "gana": 45.8,
+    "obj1": 19.4,
+    "usd_op": 37.6,
+    "usd": 24245,
+    "perd_media": -108.4,
+    "peor_racha": -2885
+   },
+   "mitad1": {
+    "n": 396,
+    "por_mes": 33,
+    "gana": 50.3,
+    "obj1": 21.5,
+    "usd_op": 52,
+    "usd": 20599,
+    "perd_media": -111.7,
+    "peor_racha": -1498
+   },
+   "mitad2": {
+    "n": 248,
+    "por_mes": 20.7,
+    "gana": 38.7,
+    "obj1": 16.1,
+    "usd_op": 14.7,
+    "usd": 3646,
+    "perd_media": -104.2,
+    "peor_racha": -2885
+   },
+   "año": {
+    "n": 248,
+    "por_mes": 20.7,
+    "gana": 38.7,
+    "obj1": 16.1,
+    "usd_op": 14.7,
+    "usd": 3646,
+    "perd_media": -104.2,
+    "peor_racha": -2885
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 696,
+    "por_mes": 29,
+    "gana": 59.3,
+    "obj1": 52.6,
+    "usd_op": 23.4,
+    "usd": 16258,
+    "perd_media": -101.8,
+    "peor_racha": -1212
+   },
+   "mitad1": {
+    "n": 396,
+    "por_mes": 33,
+    "gana": 59.3,
+    "obj1": 51.5,
+    "usd_op": 16.4,
+    "usd": 6505,
+    "perd_media": -103.8,
+    "peor_racha": -1212
+   },
+   "mitad2": {
+    "n": 300,
+    "por_mes": 25,
+    "gana": 59.3,
+    "obj1": 54,
+    "usd_op": 32.5,
+    "usd": 9753,
+    "perd_media": -99.2,
+    "peor_racha": -691
+   },
+   "año": {
+    "n": 300,
+    "por_mes": 25,
+    "gana": 59.3,
+    "obj1": 54,
+    "usd_op": 32.5,
+    "usd": 9753,
+    "perd_media": -99.2,
+    "peor_racha": -691
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 467,
+    "por_mes": 19.4,
+    "gana": 40,
+    "obj1": 16.1,
+    "usd_op": 18.9,
+    "usd": 8808,
+    "perd_media": -106.8,
+    "peor_racha": -2864
+   },
+   "mitad1": {
+    "n": 266,
+    "por_mes": 22.2,
+    "gana": 44,
+    "obj1": 18.8,
+    "usd_op": 35.1,
+    "usd": 9348,
+    "perd_media": -107.4,
+    "peor_racha": -2619
+   },
+   "mitad2": {
+    "n": 201,
+    "por_mes": 16.7,
+    "gana": 34.8,
+    "obj1": 12.4,
+    "usd_op": -2.7,
+    "usd": -541,
+    "perd_media": -106.1,
+    "peor_racha": -2864
+   },
+   "año": {
+    "n": 201,
+    "por_mes": 16.8,
+    "gana": 34.8,
+    "obj1": 12.4,
+    "usd_op": -2.7,
+    "usd": -541,
+    "perd_media": -106.1,
+    "peor_racha": -2864
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 494,
+    "por_mes": 20.6,
+    "gana": 57.5,
+    "obj1": 50.8,
+    "usd_op": 16.1,
+    "usd": 7948,
+    "perd_media": -101.4,
+    "peor_racha": -832
+   },
+   "mitad1": {
+    "n": 266,
+    "por_mes": 22.2,
+    "gana": 61.3,
+    "obj1": 52.6,
+    "usd_op": 16.2,
+    "usd": 4322,
+    "perd_media": -101.9,
+    "peor_racha": -832
+   },
+   "mitad2": {
+    "n": 228,
+    "por_mes": 19,
+    "gana": 53.1,
+    "obj1": 48.7,
+    "usd_op": 15.9,
+    "usd": 3626,
+    "perd_media": -100.9,
+    "peor_racha": -662
+   },
+   "año": {
+    "n": 228,
+    "por_mes": 19,
+    "gana": 53.1,
+    "obj1": 48.7,
+    "usd_op": 15.9,
+    "usd": 3626,
+    "perd_media": -100.9,
+    "peor_racha": -662
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 155,
+    "por_mes": 6.5,
+    "gana": 36.8,
+    "obj1": 12.9,
+    "usd_op": 5.4,
+    "usd": 832,
+    "perd_media": -106.4,
+    "peor_racha": -1703
+   },
+   "mitad1": {
+    "n": 91,
+    "por_mes": 7.6,
+    "gana": 39.6,
+    "obj1": 12.1,
+    "usd_op": 7.7,
+    "usd": 699,
+    "perd_media": -105.6,
+    "peor_racha": -1703
+   },
+   "mitad2": {
+    "n": 64,
+    "por_mes": 5.3,
+    "gana": 32.8,
+    "obj1": 14.1,
+    "usd_op": 2.1,
+    "usd": 133,
+    "perd_media": -107.5,
+    "peor_racha": -1664
+   },
+   "año": {
+    "n": 64,
+    "por_mes": 5.3,
+    "gana": 32.8,
+    "obj1": 14.1,
+    "usd_op": 2.1,
+    "usd": 133,
+    "perd_media": -107.5,
+    "peor_racha": -1664
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 163,
+    "por_mes": 6.8,
+    "gana": 54.6,
+    "obj1": 48.5,
+    "usd_op": 5.3,
+    "usd": 857,
+    "perd_media": -102.4,
+    "peor_racha": -791
+   },
+   "mitad1": {
+    "n": 91,
+    "por_mes": 7.6,
+    "gana": 57.1,
+    "obj1": 47.3,
+    "usd_op": 2.5,
+    "usd": 231,
+    "perd_media": -106.4,
+    "peor_racha": -577
+   },
+   "mitad2": {
+    "n": 72,
+    "por_mes": 6,
+    "gana": 51.4,
+    "obj1": 50,
+    "usd_op": 8.7,
+    "usd": 626,
+    "perd_media": -97.8,
+    "peor_racha": -791
+   },
+   "año": {
+    "n": 72,
+    "por_mes": 6,
+    "gana": 51.4,
+    "obj1": 50,
+    "usd_op": 8.7,
+    "usd": 626,
+    "perd_media": -97.8,
+    "peor_racha": -791
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 381,
+    "por_mes": 15.9,
+    "gana": 34.9,
+    "obj1": 12.9,
+    "usd_op": -0.9,
+    "usd": -335,
+    "perd_media": -106.3,
+    "peor_racha": -2864
+   },
+   "mitad1": {
+    "n": 193,
+    "por_mes": 16.1,
+    "gana": 36.8,
+    "obj1": 14,
+    "usd_op": 5.3,
+    "usd": 1027,
+    "perd_media": -106.1,
+    "peor_racha": -1955
+   },
+   "mitad2": {
+    "n": 188,
+    "por_mes": 15.7,
+    "gana": 33,
+    "obj1": 11.7,
+    "usd_op": -7.2,
+    "usd": -1362,
+    "perd_media": -106.5,
+    "peor_racha": -2864
+   },
+   "año": {
+    "n": 188,
+    "por_mes": 15.7,
+    "gana": 33,
+    "obj1": 11.7,
+    "usd_op": -7.2,
+    "usd": -1362,
+    "perd_media": -106.5,
+    "peor_racha": -2864
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 408,
+    "por_mes": 17,
+    "gana": 53.9,
+    "obj1": 48.3,
+    "usd_op": 11.5,
+    "usd": 4682,
+    "perd_media": -100.1,
+    "peor_racha": -832
+   },
+   "mitad1": {
+    "n": 193,
+    "por_mes": 16.1,
+    "gana": 56.5,
+    "obj1": 48.2,
+    "usd_op": 9.6,
+    "usd": 1850,
+    "perd_media": -99.7,
+    "peor_racha": -832
+   },
+   "mitad2": {
+    "n": 215,
+    "por_mes": 17.9,
+    "gana": 51.6,
+    "obj1": 48.4,
+    "usd_op": 13.2,
+    "usd": 2832,
+    "perd_media": -100.4,
+    "peor_racha": -662
+   },
+   "año": {
+    "n": 215,
+    "por_mes": 17.9,
+    "gana": 51.6,
+    "obj1": 48.4,
+    "usd_op": 13.2,
+    "usd": 2832,
+    "perd_media": -100.4,
+    "peor_racha": -662
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 55,
+    "por_mes": 2.3,
+    "gana": 32.7,
+    "obj1": 12.7,
+    "usd_op": -8.3,
+    "usd": -459,
+    "perd_media": -115.1,
+    "peor_racha": -1591
+   },
+   "mitad1": {
+    "n": 36,
+    "por_mes": 3,
+    "gana": 33.3,
+    "obj1": 11.1,
+    "usd_op": -7.7,
+    "usd": -279,
+    "perd_media": -116,
+    "peor_racha": -1591
+   },
+   "mitad2": {
+    "n": 19,
+    "por_mes": 1.6,
+    "gana": 31.6,
+    "obj1": 15.8,
+    "usd_op": -9.5,
+    "usd": -180,
+    "perd_media": -113.4,
+    "peor_racha": -467
+   },
+   "año": {
+    "n": 19,
+    "por_mes": 1.6,
+    "gana": 31.6,
+    "obj1": 15.8,
+    "usd_op": -9.5,
+    "usd": -180,
+    "perd_media": -113.4,
+    "peor_racha": -467
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 57,
+    "por_mes": 2.4,
+    "gana": 43.9,
+    "obj1": 38.6,
+    "usd_op": -16.6,
+    "usd": -948,
+    "perd_media": -107.1,
+    "peor_racha": -854
+   },
+   "mitad1": {
+    "n": 36,
+    "por_mes": 3,
+    "gana": 50,
+    "obj1": 41.7,
+    "usd_op": -16.3,
+    "usd": -587,
+    "perd_media": -105.3,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 21,
+    "por_mes": 1.7,
+    "gana": 33.3,
+    "obj1": 33.3,
+    "usd_op": -17.2,
+    "usd": -361,
+    "perd_media": -109.5,
+    "peor_racha": -854
+   },
+   "año": {
+    "n": 21,
+    "por_mes": 1.8,
+    "gana": 33.3,
+    "obj1": 33.3,
+    "usd_op": -17.2,
+    "usd": -361,
+    "perd_media": -109.5,
+    "peor_racha": -854
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 45,
+    "por_mes": 1.9,
+    "gana": 33.3,
+    "obj1": 13.3,
+    "usd_op": -6.2,
+    "usd": -278,
+    "perd_media": -113.1,
+    "peor_racha": -1586
+   },
+   "mitad1": {
+    "n": 30,
+    "por_mes": 2.5,
+    "gana": 33.3,
+    "obj1": 10,
+    "usd_op": -11.2,
+    "usd": -337,
+    "perd_media": -112.9,
+    "peor_racha": -1586
+   },
+   "mitad2": {
+    "n": 15,
+    "por_mes": 1.2,
+    "gana": 33.3,
+    "obj1": 20,
+    "usd_op": 3.9,
+    "usd": 59,
+    "perd_media": -113.5,
+    "peor_racha": -575
+   },
+   "año": {
+    "n": 15,
+    "por_mes": 1.3,
+    "gana": 33.3,
+    "obj1": 20,
+    "usd_op": 3.9,
+    "usd": 59,
+    "perd_media": -113.5,
+    "peor_racha": -575
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 47,
+    "por_mes": 2,
+    "gana": 48.9,
+    "obj1": 42.6,
+    "usd_op": -4.1,
+    "usd": -194,
+    "perd_media": -111.2,
+    "peor_racha": -708
+   },
+   "mitad1": {
+    "n": 30,
+    "por_mes": 2.5,
+    "gana": 53.3,
+    "obj1": 43.3,
+    "usd_op": -7.9,
+    "usd": -236,
+    "perd_media": -109.5,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 17,
+    "por_mes": 1.4,
+    "gana": 41.2,
+    "obj1": 41.2,
+    "usd_op": 2.4,
+    "usd": 41,
+    "perd_media": -113.5,
+    "peor_racha": -575
+   },
+   "año": {
+    "n": 17,
+    "por_mes": 1.4,
+    "gana": 41.2,
+    "obj1": 41.2,
+    "usd_op": 2.4,
+    "usd": 41,
+    "perd_media": -113.5,
+    "peor_racha": -575
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 80,
+    "por_mes": 3.3,
+    "gana": 33.8,
+    "obj1": 10,
+    "usd_op": -6.4,
+    "usd": -508,
+    "perd_media": -103.4,
+    "peor_racha": -933
+   },
+   "mitad1": {
+    "n": 47,
+    "por_mes": 3.9,
+    "gana": 36.2,
+    "obj1": 8.5,
+    "usd_op": -12.3,
+    "usd": -576,
+    "perd_media": -100.3,
+    "peor_racha": -629
+   },
+   "mitad2": {
+    "n": 33,
+    "por_mes": 2.7,
+    "gana": 30.3,
+    "obj1": 12.1,
+    "usd_op": 2.1,
+    "usd": 68,
+    "perd_media": -107.5,
+    "peor_racha": -933
+   },
+   "año": {
+    "n": 33,
+    "por_mes": 2.8,
+    "gana": 30.3,
+    "obj1": 12.1,
+    "usd_op": 2.1,
+    "usd": 68,
+    "perd_media": -107.5,
+    "peor_racha": -933
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 83,
+    "por_mes": 3.5,
+    "gana": 50.6,
+    "obj1": 42.2,
+    "usd_op": -7.6,
+    "usd": -633,
+    "perd_media": -104.6,
+    "peor_racha": -514
+   },
+   "mitad1": {
+    "n": 47,
+    "por_mes": 3.9,
+    "gana": 53.2,
+    "obj1": 42.6,
+    "usd_op": -6.8,
+    "usd": -321,
+    "perd_media": -106.2,
+    "peor_racha": -349
+   },
+   "mitad2": {
+    "n": 36,
+    "por_mes": 3,
+    "gana": 47.2,
+    "obj1": 41.7,
+    "usd_op": -8.7,
+    "usd": -312,
+    "perd_media": -102.6,
+    "peor_racha": -514
+   },
+   "año": {
+    "n": 36,
+    "por_mes": 3,
+    "gana": 47.2,
+    "obj1": 41.7,
+    "usd_op": -8.7,
+    "usd": -312,
+    "perd_media": -102.6,
+    "peor_racha": -514
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 116,
+    "por_mes": 4.8,
+    "gana": 33.6,
+    "obj1": 12.1,
+    "usd_op": -2.8,
+    "usd": -320,
+    "perd_media": -106.3,
+    "peor_racha": -1652
+   },
+   "mitad1": {
+    "n": 65,
+    "por_mes": 5.4,
+    "gana": 33.8,
+    "obj1": 9.2,
+    "usd_op": -12.6,
+    "usd": -818,
+    "perd_media": -104.3,
+    "peor_racha": -908
+   },
+   "mitad2": {
+    "n": 51,
+    "por_mes": 4.2,
+    "gana": 33.3,
+    "obj1": 15.7,
+    "usd_op": 9.8,
+    "usd": 498,
+    "perd_media": -108.8,
+    "peor_racha": -1652
+   },
+   "año": {
+    "n": 51,
+    "por_mes": 4.3,
+    "gana": 33.3,
+    "obj1": 15.7,
+    "usd_op": 9.8,
+    "usd": 498,
+    "perd_media": -108.8,
+    "peor_racha": -1652
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 124,
+    "por_mes": 5.2,
+    "gana": 54,
+    "obj1": 48.4,
+    "usd_op": 3.4,
+    "usd": 420,
+    "perd_media": -101.6,
+    "peor_racha": -563
+   },
+   "mitad1": {
+    "n": 65,
+    "por_mes": 5.4,
+    "gana": 52.3,
+    "obj1": 43.1,
+    "usd_op": -8.6,
+    "usd": -560,
+    "perd_media": -106.5,
+    "peor_racha": -563
+   },
+   "mitad2": {
+    "n": 59,
+    "por_mes": 4.9,
+    "gana": 55.9,
+    "obj1": 54.2,
+    "usd_op": 16.6,
+    "usd": 980,
+    "perd_media": -95.8,
+    "peor_racha": -393
+   },
+   "año": {
+    "n": 59,
+    "por_mes": 4.9,
+    "gana": 55.9,
+    "obj1": 54.2,
+    "usd_op": 16.6,
+    "usd": 980,
+    "perd_media": -95.8,
+    "peor_racha": -393
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 32,
+    "por_mes": 1.3,
+    "gana": 37.5,
+    "obj1": 18.8,
+    "usd_op": 17.1,
+    "usd": 547,
+    "perd_media": -114.8,
+    "peor_racha": -1034
+   },
+   "mitad1": {
+    "n": 22,
+    "por_mes": 1.8,
+    "gana": 36.4,
+    "obj1": 13.6,
+    "usd_op": 2.1,
+    "usd": 45,
+    "perd_media": -116.4,
+    "peor_racha": -1034
+   },
+   "mitad2": {
+    "n": 10,
+    "por_mes": 0.8,
+    "gana": 40,
+    "obj1": 30,
+    "usd_op": 50.2,
+    "usd": 502,
+    "perd_media": -111.2,
+    "peor_racha": -303
+   },
+   "año": {
+    "n": 10,
+    "por_mes": 0.8,
+    "gana": 40,
+    "obj1": 30,
+    "usd_op": 50.2,
+    "usd": 502,
+    "perd_media": -111.2,
+    "peor_racha": -303
+   },
+   "actual_mismo_periodo": 1
+  },
+  "4h · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 34,
+    "por_mes": 1.4,
+    "gana": 47.1,
+    "obj1": 38.2,
+    "usd_op": -2.6,
+    "usd": -87,
+    "perd_media": -107.8,
+    "peor_racha": -708
+   },
+   "mitad1": {
+    "n": 22,
+    "por_mes": 1.8,
+    "gana": 45.5,
+    "obj1": 31.8,
+    "usd_op": -19.3,
+    "usd": -426,
+    "perd_media": -106.1,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 12,
+    "por_mes": 1,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 28.2,
+    "usd": 338,
+    "perd_media": -111.2,
+    "peor_racha": -303
+   },
+   "año": {
+    "n": 12,
+    "por_mes": 1,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 28.2,
+    "usd": 338,
+    "perd_media": -111.2,
+    "peor_racha": -303
+   },
+   "actual_mismo_periodo": 1
+  },
+  "1d · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 59,
+    "por_mes": 1.2,
+    "gana": 50.8,
+    "obj1": 3.4,
+    "usd_op": 19.5,
+    "usd": 1148,
+    "perd_media": -102.1,
+    "peor_racha": -581
+   },
+   "mitad1": {
+    "n": 27,
+    "por_mes": 1.1,
+    "gana": 59.3,
+    "obj1": 3.7,
+    "usd_op": 39.9,
+    "usd": 1076,
+    "perd_media": -103.7,
+    "peor_racha": -239
+   },
+   "mitad2": {
+    "n": 32,
+    "por_mes": 1.3,
+    "gana": 43.8,
+    "obj1": 3.1,
+    "usd_op": 2.2,
+    "usd": 72,
+    "perd_media": -101.1,
+    "peor_racha": -581
+   },
+   "año": {
+    "n": 10,
+    "por_mes": 0.8,
+    "gana": 60,
+    "obj1": 0,
+    "usd_op": 46.1,
+    "usd": 461,
+    "perd_media": -88.8,
+    "peor_racha": -239
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 60,
+    "por_mes": 1.2,
+    "gana": 58.3,
+    "obj1": 40,
+    "usd_op": 17.1,
+    "usd": 1028,
+    "perd_media": -85.3,
+    "peor_racha": -519
+   },
+   "mitad1": {
+    "n": 27,
+    "por_mes": 1.1,
+    "gana": 66.7,
+    "obj1": 44.4,
+    "usd_op": 28.8,
+    "usd": 777,
+    "perd_media": -80,
+    "peor_racha": -233
+   },
+   "mitad2": {
+    "n": 33,
+    "por_mes": 1.4,
+    "gana": 51.5,
+    "obj1": 36.4,
+    "usd_op": 7.6,
+    "usd": 252,
+    "perd_media": -88.3,
+    "peor_racha": -519
+   },
+   "año": {
+    "n": 11,
+    "por_mes": 0.9,
+    "gana": 72.7,
+    "obj1": 63.6,
+    "usd_op": 51,
+    "usd": 561,
+    "perd_media": -99.6,
+    "peor_racha": -182
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 468,
+    "por_mes": 9.7,
+    "gana": 53.6,
+    "obj1": 9.6,
+    "usd_op": 34.8,
+    "usd": 16288,
+    "perd_media": -93.3,
+    "peor_racha": -1307
+   },
+   "mitad1": {
+    "n": 176,
+    "por_mes": 7.3,
+    "gana": 51.1,
+    "obj1": 12.5,
+    "usd_op": 37.6,
+    "usd": 6622,
+    "perd_media": -93.7,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 292,
+    "por_mes": 12.2,
+    "gana": 55.1,
+    "obj1": 7.9,
+    "usd_op": 33.1,
+    "usd": 9667,
+    "perd_media": -93,
+    "peor_racha": -1307
+   },
+   "año": {
+    "n": 134,
+    "por_mes": 11.2,
+    "gana": 49.3,
+    "obj1": 5.2,
+    "usd_op": 15.1,
+    "usd": 2017,
+    "perd_media": -92.9,
+    "peor_racha": -839
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 469,
+    "por_mes": 9.8,
+    "gana": 58,
+    "obj1": 36.9,
+    "usd_op": 15.4,
+    "usd": 7208,
+    "perd_media": -76.8,
+    "peor_racha": -758
+   },
+   "mitad1": {
+    "n": 176,
+    "por_mes": 7.3,
+    "gana": 56.3,
+    "obj1": 38.6,
+    "usd_op": 12.7,
+    "usd": 2237,
+    "perd_media": -77.7,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 293,
+    "por_mes": 12.2,
+    "gana": 59,
+    "obj1": 35.8,
+    "usd_op": 17,
+    "usd": 4971,
+    "perd_media": -76.3,
+    "peor_racha": -758
+   },
+   "año": {
+    "n": 135,
+    "por_mes": 11.3,
+    "gana": 50.4,
+    "obj1": 31.9,
+    "usd_op": 2.7,
+    "usd": 365,
+    "perd_media": -75.3,
+    "peor_racha": -642
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 372,
+    "por_mes": 7.7,
+    "gana": 49.5,
+    "obj1": 9.7,
+    "usd_op": 24.7,
+    "usd": 9174,
+    "perd_media": -94.8,
+    "peor_racha": -1307
+   },
+   "mitad1": {
+    "n": 151,
+    "por_mes": 6.3,
+    "gana": 50.3,
+    "obj1": 11.3,
+    "usd_op": 29.6,
+    "usd": 4470,
+    "perd_media": -95.4,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 221,
+    "por_mes": 9.2,
+    "gana": 48.9,
+    "obj1": 8.6,
+    "usd_op": 21.3,
+    "usd": 4703,
+    "perd_media": -94.4,
+    "peor_racha": -1307
+   },
+   "año": {
+    "n": 122,
+    "por_mes": 10.2,
+    "gana": 49.2,
+    "obj1": 4.9,
+    "usd_op": 13.3,
+    "usd": 1621,
+    "perd_media": -93.6,
+    "peor_racha": -839
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 373,
+    "por_mes": 7.8,
+    "gana": 54.2,
+    "obj1": 35.4,
+    "usd_op": 9.9,
+    "usd": 3678,
+    "perd_media": -75.6,
+    "peor_racha": -758
+   },
+   "mitad1": {
+    "n": 151,
+    "por_mes": 6.3,
+    "gana": 56.3,
+    "obj1": 35.1,
+    "usd_op": 11.5,
+    "usd": 1743,
+    "perd_media": -75.8,
+    "peor_racha": -708
+   },
+   "mitad2": {
+    "n": 222,
+    "por_mes": 9.2,
+    "gana": 52.7,
+    "obj1": 35.6,
+    "usd_op": 8.7,
+    "usd": 1935,
+    "perd_media": -75.5,
+    "peor_racha": -758
+   },
+   "año": {
+    "n": 123,
+    "por_mes": 10.3,
+    "gana": 49.6,
+    "obj1": 30.1,
+    "usd_op": 0.8,
+    "usd": 94,
+    "perd_media": -73.1,
+    "peor_racha": -642
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 19,
+    "por_mes": 0.4,
+    "gana": 73.7,
+    "obj1": 5.3,
+    "usd_op": 81.5,
+    "usd": 1548,
+    "perd_media": -65.6,
+    "peor_racha": -136
+   },
+   "mitad1": {
+    "n": 8,
+    "por_mes": 0.3,
+    "gana": 87.5,
+    "obj1": 12.5,
+    "usd_op": 125,
+    "usd": 1000,
+    "perd_media": -44.5,
+    "peor_racha": -44
+   },
+   "mitad2": {
+    "n": 11,
+    "por_mes": 0.5,
+    "gana": 63.6,
+    "obj1": 0,
+    "usd_op": 49.8,
+    "usd": 548,
+    "perd_media": -70.9,
+    "peor_racha": -136
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 25,
+    "obj1": 0,
+    "usd_op": -22.4,
+    "usd": -90,
+    "perd_media": -83.6,
+    "peor_racha": -136
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 19,
+    "por_mes": 0.4,
+    "gana": 73.7,
+    "obj1": 47.4,
+    "usd_op": 59.7,
+    "usd": 1134,
+    "perd_media": -57.9,
+    "peor_racha": -172
+   },
+   "mitad1": {
+    "n": 8,
+    "por_mes": 0.3,
+    "gana": 75,
+    "obj1": 25,
+    "usd_op": 62.5,
+    "usd": 500,
+    "perd_media": -31.9,
+    "peor_racha": -52
+   },
+   "mitad2": {
+    "n": 11,
+    "por_mes": 0.5,
+    "gana": 72.7,
+    "obj1": 63.6,
+    "usd_op": 57.6,
+    "usd": 634,
+    "perd_media": -75.3,
+    "peor_racha": -172
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 13.5,
+    "usd": 54,
+    "perd_media": -85.9,
+    "peor_racha": -172
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 5,
+    "por_mes": 0.1,
+    "gana": 20,
+    "obj1": 0,
+    "usd_op": -24.9,
+    "usd": -124,
+    "perd_media": -99.1,
+    "peor_racha": -396
+   },
+   "mitad1": {
+    "n": 2,
+    "por_mes": 0.1,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 113.7,
+    "usd": 227,
+    "perd_media": -44.5,
+    "peor_racha": -44
+   },
+   "mitad2": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 0,
+    "obj1": 0,
+    "usd_op": -117.3,
+    "usd": -352,
+    "perd_media": -117.3,
+    "peor_racha": -352
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 0,
+    "obj1": 0,
+    "usd_op": -114,
+    "usd": -228,
+    "perd_media": -114,
+    "peor_racha": -228
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 5,
+    "por_mes": 0.1,
+    "gana": 40,
+    "obj1": 20,
+    "usd_op": -24.3,
+    "usd": -122,
+    "perd_media": -97.1,
+    "peor_racha": -291
+   },
+   "mitad1": {
+    "n": 2,
+    "por_mes": 0.1,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": -6.4,
+    "usd": -13,
+    "perd_media": -52.5,
+    "peor_racha": -52
+   },
+   "mitad2": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 33.3,
+    "obj1": 33.3,
+    "usd_op": -36.3,
+    "usd": -109,
+    "perd_media": -119.4,
+    "peor_racha": -239
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 7.5,
+    "usd": 15,
+    "perd_media": -115,
+    "peor_racha": -115
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 11,
+    "por_mes": 0.2,
+    "gana": 63.6,
+    "obj1": 0,
+    "usd_op": 33.2,
+    "usd": 365,
+    "perd_media": -76.4,
+    "peor_racha": -115
+   },
+   "mitad1": {
+    "n": 4,
+    "por_mes": 0.2,
+    "gana": 75,
+    "obj1": 0,
+    "usd_op": 95.2,
+    "usd": 381,
+    "perd_media": -44.5,
+    "peor_racha": -44
+   },
+   "mitad2": {
+    "n": 7,
+    "por_mes": 0.3,
+    "gana": 57.1,
+    "obj1": 0,
+    "usd_op": -2.3,
+    "usd": -16,
+    "perd_media": -87,
+    "peor_racha": -115
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": -14.6,
+    "usd": -58,
+    "perd_media": -114,
+    "peor_racha": -115
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 30 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 11,
+    "por_mes": 0.2,
+    "gana": 54.5,
+    "obj1": 27.3,
+    "usd_op": 15.5,
+    "usd": 170,
+    "perd_media": -57.9,
+    "peor_racha": -172
+   },
+   "mitad1": {
+    "n": 4,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 13.6,
+    "usd": 55,
+    "perd_media": -31.9,
+    "peor_racha": -52
+   },
+   "mitad2": {
+    "n": 7,
+    "por_mes": 0.3,
+    "gana": 57.1,
+    "obj1": 42.9,
+    "usd_op": 16.5,
+    "usd": 115,
+    "perd_media": -75.3,
+    "peor_racha": -172
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": -1,
+    "usd": -4,
+    "perd_media": -85.9,
+    "peor_racha": -172
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 131,
+    "por_mes": 2.7,
+    "gana": 57.3,
+    "obj1": 11.5,
+    "usd_op": 54.4,
+    "usd": 7122,
+    "perd_media": -86.4,
+    "peor_racha": -718
+   },
+   "mitad1": {
+    "n": 49,
+    "por_mes": 2,
+    "gana": 55.1,
+    "obj1": 12.2,
+    "usd_op": 64.4,
+    "usd": 3153,
+    "perd_media": -84.8,
+    "peor_racha": -235
+   },
+   "mitad2": {
+    "n": 82,
+    "por_mes": 3.4,
+    "gana": 58.5,
+    "obj1": 11,
+    "usd_op": 48.4,
+    "usd": 3969,
+    "perd_media": -87.5,
+    "peor_racha": -718
+   },
+   "año": {
+    "n": 37,
+    "por_mes": 3.1,
+    "gana": 48.6,
+    "obj1": 8.1,
+    "usd_op": 17.9,
+    "usd": 663,
+    "perd_media": -82.4,
+    "peor_racha": -718
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 133,
+    "por_mes": 2.8,
+    "gana": 66.2,
+    "obj1": 45.9,
+    "usd_op": 31.6,
+    "usd": 4201,
+    "perd_media": -72.3,
+    "peor_racha": -240
+   },
+   "mitad1": {
+    "n": 49,
+    "por_mes": 2,
+    "gana": 61.2,
+    "obj1": 46.9,
+    "usd_op": 28.6,
+    "usd": 1401,
+    "perd_media": -80,
+    "peor_racha": -190
+   },
+   "mitad2": {
+    "n": 84,
+    "por_mes": 3.5,
+    "gana": 69,
+    "obj1": 45.2,
+    "usd_op": 33.3,
+    "usd": 2801,
+    "perd_media": -66.7,
+    "peor_racha": -240
+   },
+   "año": {
+    "n": 39,
+    "por_mes": 3.3,
+    "gana": 64.1,
+    "obj1": 35.9,
+    "usd_op": 26.7,
+    "usd": 1040,
+    "perd_media": -71,
+    "peor_racha": -240
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 109,
+    "por_mes": 2.3,
+    "gana": 53.2,
+    "obj1": 9.2,
+    "usd_op": 35.2,
+    "usd": 3834,
+    "perd_media": -91.6,
+    "peor_racha": -735
+   },
+   "mitad1": {
+    "n": 38,
+    "por_mes": 1.6,
+    "gana": 55.3,
+    "obj1": 13.2,
+    "usd_op": 66,
+    "usd": 2508,
+    "perd_media": -92.9,
+    "peor_racha": -372
+   },
+   "mitad2": {
+    "n": 71,
+    "por_mes": 3,
+    "gana": 52.1,
+    "obj1": 7,
+    "usd_op": 18.7,
+    "usd": 1326,
+    "perd_media": -90.9,
+    "peor_racha": -735
+   },
+   "año": {
+    "n": 31,
+    "por_mes": 2.6,
+    "gana": 48.4,
+    "obj1": 6.5,
+    "usd_op": 10.6,
+    "usd": 329,
+    "perd_media": -94.8,
+    "peor_racha": -735
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 109,
+    "por_mes": 2.3,
+    "gana": 58.7,
+    "obj1": 37.6,
+    "usd_op": 12.9,
+    "usd": 1404,
+    "perd_media": -82.1,
+    "peor_racha": -504
+   },
+   "mitad1": {
+    "n": 38,
+    "por_mes": 1.6,
+    "gana": 50,
+    "obj1": 44.7,
+    "usd_op": 15.4,
+    "usd": 584,
+    "perd_media": -75.2,
+    "peor_racha": -381
+   },
+   "mitad2": {
+    "n": 71,
+    "por_mes": 3,
+    "gana": 63.4,
+    "obj1": 33.8,
+    "usd_op": 11.5,
+    "usd": 820,
+    "perd_media": -87.2,
+    "peor_racha": -422
+   },
+   "año": {
+    "n": 31,
+    "por_mes": 2.6,
+    "gana": 58.1,
+    "obj1": 35.5,
+    "usd_op": 4.3,
+    "usd": 133,
+    "perd_media": -88.5,
+    "peor_racha": -422
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 133,
+    "por_mes": 2.8,
+    "gana": 43.6,
+    "obj1": 6,
+    "usd_op": 6.9,
+    "usd": 916,
+    "perd_media": -101.2,
+    "peor_racha": -1140
+   },
+   "mitad1": {
+    "n": 60,
+    "por_mes": 2.5,
+    "gana": 53.3,
+    "obj1": 5,
+    "usd_op": 28.9,
+    "usd": 1731,
+    "perd_media": -102.5,
+    "peor_racha": -577
+   },
+   "mitad2": {
+    "n": 73,
+    "por_mes": 3,
+    "gana": 35.6,
+    "obj1": 6.8,
+    "usd_op": -11.2,
+    "usd": -815,
+    "perd_media": -100.4,
+    "peor_racha": -1140
+   },
+   "año": {
+    "n": 29,
+    "por_mes": 2.4,
+    "gana": 37.9,
+    "obj1": 6.9,
+    "usd_op": 1.2,
+    "usd": 34,
+    "perd_media": -94.2,
+    "peor_racha": -655
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 137,
+    "por_mes": 2.9,
+    "gana": 48.9,
+    "obj1": 22.6,
+    "usd_op": -4.4,
+    "usd": -602,
+    "perd_media": -77.1,
+    "peor_racha": -512
+   },
+   "mitad1": {
+    "n": 60,
+    "por_mes": 2.5,
+    "gana": 55,
+    "obj1": 30,
+    "usd_op": 8.5,
+    "usd": 507,
+    "perd_media": -71.6,
+    "peor_racha": -497
+   },
+   "mitad2": {
+    "n": 77,
+    "por_mes": 3.2,
+    "gana": 44.2,
+    "obj1": 16.9,
+    "usd_op": -14.4,
+    "usd": -1109,
+    "perd_media": -80.6,
+    "peor_racha": -512
+   },
+   "año": {
+    "n": 33,
+    "por_mes": 2.8,
+    "gana": 45.5,
+    "obj1": 21.2,
+    "usd_op": -7.6,
+    "usd": -252,
+    "perd_media": -78,
+    "peor_racha": -340
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 205,
+    "por_mes": 4.3,
+    "gana": 43.4,
+    "obj1": 4.4,
+    "usd_op": 7.4,
+    "usd": 1511,
+    "perd_media": -87.8,
+    "peor_racha": -1489
+   },
+   "mitad1": {
+    "n": 90,
+    "por_mes": 3.7,
+    "gana": 52.2,
+    "obj1": 6.7,
+    "usd_op": 35.2,
+    "usd": 3168,
+    "perd_media": -86.7,
+    "peor_racha": -890
+   },
+   "mitad2": {
+    "n": 115,
+    "por_mes": 4.8,
+    "gana": 36.5,
+    "obj1": 2.6,
+    "usd_op": -14.4,
+    "usd": -1657,
+    "perd_media": -88.5,
+    "peor_racha": -1489
+   },
+   "año": {
+    "n": 59,
+    "por_mes": 4.9,
+    "gana": 33.9,
+    "obj1": 3.4,
+    "usd_op": -16,
+    "usd": -946,
+    "perd_media": -80.3,
+    "peor_racha": -575
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 210,
+    "por_mes": 4.4,
+    "gana": 58.1,
+    "obj1": 32.4,
+    "usd_op": 6.3,
+    "usd": 1315,
+    "perd_media": -84.2,
+    "peor_racha": -846
+   },
+   "mitad1": {
+    "n": 90,
+    "por_mes": 3.7,
+    "gana": 62.2,
+    "obj1": 33.3,
+    "usd_op": 11.7,
+    "usd": 1050,
+    "perd_media": -84,
+    "peor_racha": -715
+   },
+   "mitad2": {
+    "n": 120,
+    "por_mes": 5,
+    "gana": 55,
+    "obj1": 31.7,
+    "usd_op": 2.2,
+    "usd": 265,
+    "perd_media": -84.4,
+    "peor_racha": -846
+   },
+   "año": {
+    "n": 64,
+    "por_mes": 5.3,
+    "gana": 60.9,
+    "obj1": 35.9,
+    "usd_op": 18.5,
+    "usd": 1181,
+    "perd_media": -78.6,
+    "peor_racha": -352
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 170,
+    "por_mes": 3.5,
+    "gana": 43.5,
+    "obj1": 2.9,
+    "usd_op": 3.6,
+    "usd": 604,
+    "perd_media": -85.6,
+    "peor_racha": -890
+   },
+   "mitad1": {
+    "n": 75,
+    "por_mes": 3.1,
+    "gana": 50.7,
+    "obj1": 2.7,
+    "usd_op": 19.8,
+    "usd": 1488,
+    "perd_media": -83.6,
+    "peor_racha": -890
+   },
+   "mitad2": {
+    "n": 95,
+    "por_mes": 4,
+    "gana": 37.9,
+    "obj1": 3.2,
+    "usd_op": -9.3,
+    "usd": -883,
+    "perd_media": -86.9,
+    "peor_racha": -575
+   },
+   "año": {
+    "n": 54,
+    "por_mes": 4.5,
+    "gana": 33.3,
+    "obj1": 3.7,
+    "usd_op": -14.8,
+    "usd": -801,
+    "perd_media": -81.4,
+    "peor_racha": -575
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 175,
+    "por_mes": 3.6,
+    "gana": 59.4,
+    "obj1": 33.1,
+    "usd_op": 9.3,
+    "usd": 1619,
+    "perd_media": -80.3,
+    "peor_racha": -715
+   },
+   "mitad1": {
+    "n": 75,
+    "por_mes": 3.1,
+    "gana": 62.7,
+    "obj1": 32,
+    "usd_op": 11,
+    "usd": 824,
+    "perd_media": -79.7,
+    "peor_racha": -715
+   },
+   "mitad2": {
+    "n": 100,
+    "por_mes": 4.2,
+    "gana": 57,
+    "obj1": 34,
+    "usd_op": 8,
+    "usd": 796,
+    "perd_media": -80.8,
+    "peor_racha": -358
+   },
+   "año": {
+    "n": 59,
+    "por_mes": 4.9,
+    "gana": 61,
+    "obj1": 39,
+    "usd_op": 20.2,
+    "usd": 1193,
+    "perd_media": -79.1,
+    "peor_racha": -352
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 85,
+    "por_mes": 1.8,
+    "gana": 50.6,
+    "obj1": 5.9,
+    "usd_op": 25.7,
+    "usd": 2184,
+    "perd_media": -90.1,
+    "peor_racha": -616
+   },
+   "mitad1": {
+    "n": 32,
+    "por_mes": 1.3,
+    "gana": 53.1,
+    "obj1": 6.3,
+    "usd_op": 38.3,
+    "usd": 1226,
+    "perd_media": -93.1,
+    "peor_racha": -372
+   },
+   "mitad2": {
+    "n": 53,
+    "por_mes": 2.2,
+    "gana": 49.1,
+    "obj1": 5.7,
+    "usd_op": 18.1,
+    "usd": 958,
+    "perd_media": -88.4,
+    "peor_racha": -616
+   },
+   "año": {
+    "n": 27,
+    "por_mes": 2.3,
+    "gana": 51.9,
+    "obj1": 7.4,
+    "usd_op": 21.2,
+    "usd": 571,
+    "perd_media": -92.8,
+    "peor_racha": -616
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 25 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 85,
+    "por_mes": 1.8,
+    "gana": 56.5,
+    "obj1": 40,
+    "usd_op": 10.3,
+    "usd": 879,
+    "perd_media": -80.8,
+    "peor_racha": -504
+   },
+   "mitad1": {
+    "n": 32,
+    "por_mes": 1.3,
+    "gana": 46.9,
+    "obj1": 40.6,
+    "usd_op": 2.5,
+    "usd": 79,
+    "perd_media": -73.3,
+    "peor_racha": -381
+   },
+   "mitad2": {
+    "n": 53,
+    "por_mes": 2.2,
+    "gana": 62.3,
+    "obj1": 39.6,
+    "usd_op": 15.1,
+    "usd": 800,
+    "perd_media": -87.2,
+    "peor_racha": -382
+   },
+   "año": {
+    "n": 27,
+    "por_mes": 2.3,
+    "gana": 63,
+    "obj1": 37,
+    "usd_op": 15.4,
+    "usd": 414,
+    "perd_media": -83.9,
+    "peor_racha": -302
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 57,
+    "por_mes": 1.2,
+    "gana": 52.6,
+    "obj1": 3.5,
+    "usd_op": 19.4,
+    "usd": 1106,
+    "perd_media": -103.3,
+    "peor_racha": -466
+   },
+   "mitad1": {
+    "n": 26,
+    "por_mes": 1.1,
+    "gana": 65.4,
+    "obj1": 3.8,
+    "usd_op": 48.2,
+    "usd": 1253,
+    "perd_media": -100.8,
+    "peor_racha": -233
+   },
+   "mitad2": {
+    "n": 31,
+    "por_mes": 1.3,
+    "gana": 41.9,
+    "obj1": 3.2,
+    "usd_op": -4.8,
+    "usd": -148,
+    "perd_media": -104.5,
+    "peor_racha": -466
+   },
+   "año": {
+    "n": 11,
+    "por_mes": 0.9,
+    "gana": 63.6,
+    "obj1": 0,
+    "usd_op": 47.1,
+    "usd": 518,
+    "perd_media": -104.9,
+    "peor_racha": -121
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 58,
+    "por_mes": 1.2,
+    "gana": 56.9,
+    "obj1": 39.7,
+    "usd_op": 11.8,
+    "usd": 683,
+    "perd_media": -88.2,
+    "peor_racha": -404
+   },
+   "mitad1": {
+    "n": 26,
+    "por_mes": 1.1,
+    "gana": 69.2,
+    "obj1": 46.2,
+    "usd_op": 30.4,
+    "usd": 791,
+    "perd_media": -85.1,
+    "peor_racha": -233
+   },
+   "mitad2": {
+    "n": 32,
+    "por_mes": 1.3,
+    "gana": 46.9,
+    "obj1": 34.4,
+    "usd_op": -3.4,
+    "usd": -108,
+    "perd_media": -89.7,
+    "peor_racha": -404
+   },
+   "año": {
+    "n": 12,
+    "por_mes": 1,
+    "gana": 66.7,
+    "obj1": 58.3,
+    "usd_op": 34.4,
+    "usd": 413,
+    "perd_media": -104.9,
+    "peor_racha": -121
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 35,
+    "por_mes": 0.7,
+    "gana": 45.7,
+    "obj1": 5.7,
+    "usd_op": 7.9,
+    "usd": 275,
+    "perd_media": -108,
+    "peor_racha": -581
+   },
+   "mitad1": {
+    "n": 14,
+    "por_mes": 0.6,
+    "gana": 57.1,
+    "obj1": 7.1,
+    "usd_op": 25.8,
+    "usd": 362,
+    "perd_media": -116.7,
+    "peor_racha": -233
+   },
+   "mitad2": {
+    "n": 21,
+    "por_mes": 0.9,
+    "gana": 38.1,
+    "obj1": 4.8,
+    "usd_op": -4.1,
+    "usd": -87,
+    "perd_media": -104,
+    "peor_racha": -581
+   },
+   "año": {
+    "n": 6,
+    "por_mes": 0.5,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 55.1,
+    "usd": 331,
+    "perd_media": -99.6,
+    "peor_racha": -182
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 25 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 36,
+    "por_mes": 0.7,
+    "gana": 44.4,
+    "obj1": 30.6,
+    "usd_op": -2.8,
+    "usd": -102,
+    "perd_media": -89.8,
+    "peor_racha": -520
+   },
+   "mitad1": {
+    "n": 14,
+    "por_mes": 0.6,
+    "gana": 50,
+    "obj1": 35.7,
+    "usd_op": 4.6,
+    "usd": 65,
+    "perd_media": -96.3,
+    "peor_racha": -267
+   },
+   "mitad2": {
+    "n": 22,
+    "por_mes": 0.9,
+    "gana": 40.9,
+    "obj1": 27.3,
+    "usd_op": -7.6,
+    "usd": -167,
+    "perd_media": -86.3,
+    "peor_racha": -520
+   },
+   "año": {
+    "n": 7,
+    "por_mes": 0.6,
+    "gana": 57.1,
+    "obj1": 57.1,
+    "usd_op": 40.3,
+    "usd": 282,
+    "perd_media": -99.6,
+    "peor_racha": -182
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión actual": {
+   "todo": {
+    "n": 18,
+    "por_mes": 0.4,
+    "gana": 72.2,
+    "obj1": 0,
+    "usd_op": 48.1,
+    "usd": 866,
+    "perd_media": -82.6,
+    "peor_racha": -118
+   },
+   "mitad1": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 66.7,
+    "obj1": 0,
+    "usd_op": 42.4,
+    "usd": 255,
+    "perd_media": -92.4,
+    "peor_racha": -94
+   },
+   "mitad2": {
+    "n": 12,
+    "por_mes": 0.5,
+    "gana": 75,
+    "obj1": 0,
+    "usd_op": 50.9,
+    "usd": 611,
+    "perd_media": -76,
+    "peor_racha": -118
+   },
+   "año": {
+    "n": 5,
+    "por_mes": 0.4,
+    "gana": 80,
+    "obj1": 0,
+    "usd_op": 74,
+    "usd": 370,
+    "perd_media": -15,
+    "peor_racha": -15
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · solo RSI (entra apenas toca) · gestión corta": {
+   "todo": {
+    "n": 18,
+    "por_mes": 0.4,
+    "gana": 72.2,
+    "obj1": 55.6,
+    "usd_op": 61.2,
+    "usd": 1102,
+    "perd_media": -68.9,
+    "peor_racha": -103
+   },
+   "mitad1": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 66.7,
+    "obj1": 50,
+    "usd_op": 25.6,
+    "usd": 154,
+    "perd_media": -92.4,
+    "peor_racha": -94
+   },
+   "mitad2": {
+    "n": 12,
+    "por_mes": 0.5,
+    "gana": 75,
+    "obj1": 58.3,
+    "usd_op": 79,
+    "usd": 949,
+    "perd_media": -53.3,
+    "peor_racha": -103
+   },
+   "año": {
+    "n": 5,
+    "por_mes": 0.4,
+    "gana": 100,
+    "obj1": 80,
+    "usd_op": 116,
+    "usd": 580,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión actual": {
+   "todo": {
+    "n": 14,
+    "por_mes": 0.3,
+    "gana": 71.4,
+    "obj1": 0,
+    "usd_op": 46.8,
+    "usd": 655,
+    "perd_media": -56.2,
+    "peor_racha": -114
+   },
+   "mitad1": {
+    "n": 5,
+    "por_mes": 0.2,
+    "gana": 60,
+    "obj1": 0,
+    "usd_op": 48,
+    "usd": 240,
+    "perd_media": -30.3,
+    "peor_racha": -60
+   },
+   "mitad2": {
+    "n": 9,
+    "por_mes": 0.4,
+    "gana": 77.8,
+    "obj1": 0,
+    "usd_op": 46.1,
+    "usd": 415,
+    "perd_media": -82.2,
+    "peor_racha": -114
+   },
+   "año": {
+    "n": 5,
+    "por_mes": 0.4,
+    "gana": 80,
+    "obj1": 0,
+    "usd_op": 64.3,
+    "usd": 321,
+    "perd_media": -50.7,
+    "peor_racha": -51
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · RSI + gira (vela verde y RSI subiendo) · gestión corta": {
+   "todo": {
+    "n": 14,
+    "por_mes": 0.3,
+    "gana": 64.3,
+    "obj1": 42.9,
+    "usd_op": 37.6,
+    "usd": 527,
+    "perd_media": -34.4,
+    "peor_racha": -114
+   },
+   "mitad1": {
+    "n": 5,
+    "por_mes": 0.2,
+    "gana": 60,
+    "obj1": 20,
+    "usd_op": 22.9,
+    "usd": 114,
+    "perd_media": -12,
+    "peor_racha": -23
+   },
+   "mitad2": {
+    "n": 9,
+    "por_mes": 0.4,
+    "gana": 66.7,
+    "obj1": 55.6,
+    "usd_op": 45.8,
+    "usd": 413,
+    "perd_media": -49.3,
+    "peor_racha": -114
+   },
+   "año": {
+    "n": 5,
+    "por_mes": 0.4,
+    "gana": 80,
+    "obj1": 80,
+    "usd_op": 73.5,
+    "usd": 368,
+    "perd_media": -22.8,
+    "peor_racha": -23
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión actual": {
+   "todo": {
+    "n": 40,
+    "por_mes": 0.8,
+    "gana": 55,
+    "obj1": 5,
+    "usd_op": 15.9,
+    "usd": 638,
+    "perd_media": -94.2,
+    "peor_racha": -327
+   },
+   "mitad1": {
+    "n": 17,
+    "por_mes": 0.7,
+    "gana": 58.8,
+    "obj1": 5.9,
+    "usd_op": 35.4,
+    "usd": 602,
+    "perd_media": -91.8,
+    "peor_racha": -327
+   },
+   "mitad2": {
+    "n": 23,
+    "por_mes": 1,
+    "gana": 52.2,
+    "obj1": 4.3,
+    "usd_op": 1.6,
+    "usd": 36,
+    "perd_media": -95.7,
+    "peor_racha": -202
+   },
+   "año": {
+    "n": 10,
+    "por_mes": 0.8,
+    "gana": 40,
+    "obj1": 10,
+    "usd_op": 9.5,
+    "usd": 95,
+    "perd_media": -89.5,
+    "peor_racha": -202
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + año a favor (sube en 12 meses) · gestión corta": {
+   "todo": {
+    "n": 42,
+    "por_mes": 0.9,
+    "gana": 61.9,
+    "obj1": 28.6,
+    "usd_op": 12.7,
+    "usd": 534,
+    "perd_media": -77,
+    "peor_racha": -481
+   },
+   "mitad1": {
+    "n": 17,
+    "por_mes": 0.7,
+    "gana": 64.7,
+    "obj1": 23.5,
+    "usd_op": 14.7,
+    "usd": 250,
+    "perd_media": -80.2,
+    "peor_racha": -481
+   },
+   "mitad2": {
+    "n": 25,
+    "por_mes": 1,
+    "gana": 60,
+    "obj1": 32,
+    "usd_op": 11.4,
+    "usd": 284,
+    "perd_media": -75,
+    "peor_racha": -115
+   },
+   "año": {
+    "n": 12,
+    "por_mes": 1,
+    "gana": 58.3,
+    "obj1": 41.7,
+    "usd_op": 32.4,
+    "usd": 389,
+    "perd_media": -67.1,
+    "peor_racha": -110
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 13,
+    "por_mes": 0.3,
+    "gana": 61.5,
+    "obj1": 7.7,
+    "usd_op": 36.4,
+    "usd": 474,
+    "perd_media": -99.8,
+    "peor_racha": -281
+   },
+   "mitad1": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 15.7,
+    "usd": 94,
+    "perd_media": -93.6,
+    "peor_racha": -281
+   },
+   "mitad2": {
+    "n": 7,
+    "por_mes": 0.3,
+    "gana": 71.4,
+    "obj1": 14.3,
+    "usd_op": 54.2,
+    "usd": 379,
+    "perd_media": -109.2,
+    "peor_racha": -115
+   },
+   "año": {
+    "n": 3,
+    "por_mes": 0.3,
+    "gana": 66.7,
+    "obj1": 33.3,
+    "usd_op": 94.3,
+    "usd": 283,
+    "perd_media": -103.4,
+    "peor_racha": -103
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + rompe el máximo de la vela anterior + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 13,
+    "por_mes": 0.3,
+    "gana": 61.5,
+    "obj1": 23.1,
+    "usd_op": 20.7,
+    "usd": 269,
+    "perd_media": -59.4,
+    "peor_racha": -115
+   },
+   "mitad1": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 66.7,
+    "obj1": 16.7,
+    "usd_op": 14.9,
+    "usd": 89,
+    "perd_media": -52.2,
+    "peor_racha": -91
+   },
+   "mitad2": {
+    "n": 7,
+    "por_mes": 0.3,
+    "gana": 57.1,
+    "obj1": 28.6,
+    "usd_op": 25.7,
+    "usd": 180,
+    "perd_media": -64.2,
+    "peor_racha": -115
+   },
+   "año": {
+    "n": 3,
+    "por_mes": 0.3,
+    "gana": 66.7,
+    "obj1": 33.3,
+    "usd_op": 49.2,
+    "usd": 148,
+    "perd_media": -56.5,
+    "peor_racha": -57
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 29,
+    "por_mes": 0.6,
+    "gana": 58.6,
+    "obj1": 6.9,
+    "usd_op": 30.5,
+    "usd": 883,
+    "perd_media": -104.1,
+    "peor_racha": -327
+   },
+   "mitad1": {
+    "n": 14,
+    "por_mes": 0.6,
+    "gana": 57.1,
+    "obj1": 7.1,
+    "usd_op": 35.3,
+    "usd": 494,
+    "perd_media": -103.7,
+    "peor_racha": -327
+   },
+   "mitad2": {
+    "n": 15,
+    "por_mes": 0.6,
+    "gana": 60,
+    "obj1": 6.7,
+    "usd_op": 25.9,
+    "usd": 389,
+    "perd_media": -104.6,
+    "peor_racha": -214
+   },
+   "año": {
+    "n": 7,
+    "por_mes": 0.6,
+    "gana": 57.1,
+    "obj1": 14.3,
+    "usd_op": 52.6,
+    "usd": 368,
+    "perd_media": -108.3,
+    "peor_racha": -119
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + MACD sube + año a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 30,
+    "por_mes": 0.6,
+    "gana": 60,
+    "obj1": 30,
+    "usd_op": 17.5,
+    "usd": 524,
+    "perd_media": -73.3,
+    "peor_racha": -481
+   },
+   "mitad1": {
+    "n": 14,
+    "por_mes": 0.6,
+    "gana": 57.1,
+    "obj1": 28.6,
+    "usd_op": 11.3,
+    "usd": 159,
+    "perd_media": -80.2,
+    "peor_racha": -481
+   },
+   "mitad2": {
+    "n": 16,
+    "por_mes": 0.7,
+    "gana": 62.5,
+    "obj1": 31.3,
+    "usd_op": 22.8,
+    "usd": 365,
+    "perd_media": -66.4,
+    "peor_racha": -214
+   },
+   "año": {
+    "n": 8,
+    "por_mes": 0.7,
+    "gana": 75,
+    "obj1": 50,
+    "usd_op": 63.4,
+    "usd": 507,
+    "perd_media": -47.7,
+    "peor_racha": -67
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 11,
+    "por_mes": 0.2,
+    "gana": 63.6,
+    "obj1": 0,
+    "usd_op": 51.8,
+    "usd": 570,
+    "perd_media": -56.2,
+    "peor_racha": -114
+   },
+   "mitad1": {
+    "n": 5,
+    "por_mes": 0.2,
+    "gana": 60,
+    "obj1": 0,
+    "usd_op": 48,
+    "usd": 240,
+    "perd_media": -30.3,
+    "peor_racha": -60
+   },
+   "mitad2": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 66.7,
+    "obj1": 0,
+    "usd_op": 55,
+    "usd": 330,
+    "perd_media": -82.2,
+    "peor_racha": -114
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 75,
+    "obj1": 0,
+    "usd_op": 63.2,
+    "usd": 253,
+    "perd_media": -50.7,
+    "peor_racha": -51
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1w · RSI ≤ 20 · RSI + gira + S&P 500 sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 11,
+    "por_mes": 0.2,
+    "gana": 63.6,
+    "obj1": 45.5,
+    "usd_op": 45.3,
+    "usd": 498,
+    "perd_media": -40.1,
+    "peor_racha": -114
+   },
+   "mitad1": {
+    "n": 5,
+    "por_mes": 0.2,
+    "gana": 60,
+    "obj1": 20,
+    "usd_op": 22.9,
+    "usd": 114,
+    "perd_media": -12,
+    "peor_racha": -23
+   },
+   "mitad2": {
+    "n": 6,
+    "por_mes": 0.2,
+    "gana": 66.7,
+    "obj1": 66.7,
+    "usd_op": 63.9,
+    "usd": 384,
+    "perd_media": -68.2,
+    "peor_racha": -114
+   },
+   "año": {
+    "n": 4,
+    "por_mes": 0.3,
+    "gana": 75,
+    "obj1": 75,
+    "usd_op": 84.3,
+    "usd": 337,
+    "perd_media": -22.8,
+    "peor_racha": -23
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión actual": {
+   "todo": {
+    "n": 2,
+    "por_mes": 0,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 70.4,
+    "usd": 141,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 2,
+    "por_mes": 0.1,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 70.4,
+    "usd": 141,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 70.4,
+    "usd": 141,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + acción sobre su media de 200 · gestión corta": {
+   "todo": {
+    "n": 2,
+    "por_mes": 0,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 51.4,
+    "usd": 103,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 2,
+    "por_mes": 0.1,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 51.4,
+    "usd": 103,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 51.4,
+    "usd": 103,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión actual": {
+   "todo": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 66.7,
+    "obj1": 0,
+    "usd_op": 84.5,
+    "usd": 253,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 66.7,
+    "obj1": 0,
+    "usd_op": 84.5,
+    "usd": 253,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 0,
+    "usd_op": 70.4,
+    "usd": 141,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · RSI + gira + año a favor + sobre su media de 10 meses · gestión corta": {
+   "todo": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 66.7,
+    "obj1": 33.3,
+    "usd_op": 58.2,
+    "usd": 175,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 3,
+    "por_mes": 0.1,
+    "gana": 66.7,
+    "obj1": 33.3,
+    "usd_op": 58.2,
+    "usd": 175,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "año": {
+    "n": 2,
+    "por_mes": 0.2,
+    "gana": 50,
+    "obj1": 50,
+    "usd_op": 51.4,
+    "usd": 103,
+    "perd_media": -91.2,
+    "peor_racha": -91
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión actual": {
+   "todo": {
+    "n": 1,
+    "por_mes": 0,
+    "gana": 100,
+    "obj1": 0,
+    "usd_op": 232.1,
+    "usd": 232,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 1,
+    "por_mes": 0,
+    "gana": 100,
+    "obj1": 0,
+    "usd_op": 232.1,
+    "usd": 232,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "año": {
+    "n": 1,
+    "por_mes": 0.1,
+    "gana": 100,
+    "obj1": 0,
+    "usd_op": 232.1,
+    "usd": 232,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "actual_mismo_periodo": 0
+  },
+  "1d · RSI ≤ 20 · TODO: gira + MACD sube + sobre media 200 + año y 10 meses a favor + S&P 500 ok · gestión corta": {
+   "todo": {
+    "n": 1,
+    "por_mes": 0,
+    "gana": 100,
+    "obj1": 100,
+    "usd_op": 194,
+    "usd": 194,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "mitad1": {
+    "n": 0
+   },
+   "mitad2": {
+    "n": 1,
+    "por_mes": 0,
+    "gana": 100,
+    "obj1": 100,
+    "usd_op": 194,
+    "usd": 194,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "año": {
+    "n": 1,
+    "por_mes": 0.1,
+    "gana": 100,
+    "obj1": 100,
+    "usd_op": 194,
+    "usd": 194,
+    "perd_media": 0,
+    "peor_racha": 0
+   },
+   "actual_mismo_periodo": 0
+  },
+  "ACTUAL (c-reb / c-rup) · gestión actual · 2 años": {
+   "todo": {
+    "n": 2260,
+    "por_mes": 94.2,
+    "gana": 41.5,
+    "obj1": 10.4,
+    "usd_op": 11.7,
+    "usd": 26530,
+    "perd_media": -98.9,
+    "peor_racha": -5005
+   },
+   "mitad1": {
+    "n": 1196,
+    "por_mes": 99.7,
+    "gana": 40.8,
+    "obj1": 10,
+    "usd_op": 7.8,
+    "usd": 9298,
+    "perd_media": -99.3,
+    "peor_racha": -1452
+   },
+   "mitad2": {
+    "n": 1064,
+    "por_mes": 88.7,
+    "gana": 42.4,
+    "obj1": 10.9,
+    "usd_op": 16.2,
+    "usd": 17232,
+    "perd_media": -98.4,
+    "peor_racha": -5005
+   },
+   "año": {
+    "n": 1064,
+    "por_mes": 88.7,
+    "gana": 42.4,
+    "obj1": 10.9,
+    "usd_op": 16.2,
+    "usd": 17232,
+    "perd_media": -98.4,
+    "peor_racha": -5005
+   }
+  },
+  "ACTUAL (c-reb / c-rup) · gestión corta · 2 años": {
+   "todo": {
+    "n": 2277,
+    "por_mes": 94.9,
+    "gana": 53,
+    "obj1": 48.9,
+    "usd_op": 7.1,
+    "usd": 16131,
+    "perd_media": -103,
+    "peor_racha": -1913
+   },
+   "mitad1": {
+    "n": 1196,
+    "por_mes": 99.7,
+    "gana": 52.1,
+    "obj1": 48.3,
+    "usd_op": 4.9,
+    "usd": 5803,
+    "perd_media": -102.8,
+    "peor_racha": -1204
+   },
+   "mitad2": {
+    "n": 1081,
+    "por_mes": 90.1,
+    "gana": 54,
+    "obj1": 49.5,
+    "usd_op": 9.6,
+    "usd": 10328,
+    "perd_media": -103.3,
+    "peor_racha": -1913
+   },
+   "año": {
+    "n": 1081,
+    "por_mes": 90.1,
+    "gana": 54,
+    "obj1": 49.5,
+    "usd_op": 9.6,
+    "usd": 10328,
+    "perd_media": -103.3,
+    "peor_racha": -1913
+   }
+  },
+  "COMBINADA: actuales + RSI diario ≤ 25 (gestión corta) · 2 años": {
+   "todo": {
+    "n": 2884,
+    "por_mes": 120.2,
+    "gana": 45,
+    "obj1": 17.6,
+    "usd_op": 11.8,
+    "usd": 34113,
+    "perd_media": -95.6,
+    "peor_racha": -2585
+   },
+   "mitad1": {
+    "n": 1528,
+    "por_mes": 127.3,
+    "gana": 44,
+    "obj1": 17,
+    "usd_op": 7.5,
+    "usd": 11513,
+    "perd_media": -95.8,
+    "peor_racha": -1638
+   },
+   "mitad2": {
+    "n": 1356,
+    "por_mes": 113,
+    "gana": 46.1,
+    "obj1": 18.2,
+    "usd_op": 16.7,
+    "usd": 22600,
+    "perd_media": -95.3,
+    "peor_racha": -2585
+   },
+   "año": {
+    "n": 1356,
+    "por_mes": 113,
+    "gana": 46.1,
+    "obj1": 18.2,
+    "usd_op": 16.7,
+    "usd": 22600,
+    "perd_media": -95.3,
+    "peor_racha": -2585
+   }
+  },
+  "COMBINADA · solo las de RSI · 2 años": {
+   "todo": {
+    "n": 703,
+    "por_mes": 29.3,
+    "gana": 57,
+    "obj1": 39.3,
+    "usd_op": 14.8,
+    "usd": 10433,
+    "perd_media": -80.3,
+    "peor_racha": -1129
+   },
+   "mitad1": {
+    "n": 374,
+    "por_mes": 31.2,
+    "gana": 56.1,
+    "obj1": 38.2,
+    "usd_op": 9.5,
+    "usd": 3553,
+    "perd_media": -81.9,
+    "peor_racha": -1129
+   },
+   "mitad2": {
+    "n": 329,
+    "por_mes": 27.4,
+    "gana": 58.1,
+    "obj1": 40.4,
+    "usd_op": 20.9,
+    "usd": 6880,
+    "perd_media": -78.4,
+    "peor_racha": -845
+   },
+   "año": {
+    "n": 329,
+    "por_mes": 27.4,
+    "gana": 58.1,
+    "obj1": 40.4,
+    "usd_op": 20.9,
+    "usd": 6880,
+    "perd_media": -78.4,
+    "peor_racha": -845
+   }
+  }
+ }
+}
