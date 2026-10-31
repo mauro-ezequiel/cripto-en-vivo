@@ -3623,7 +3623,7 @@ const rsiArr=cl=>{let g=0,l=0,o=null;for(let i=1;i<cl.length;i++){const d=cl[i]-
 async function rsiCxLoad(){const tf=RSICX.tf,D=RSICX.d[tf]=RSICX.d[tf]||{t:0,v:{}};if(RSICX.busy||Date.now()-D.t<18e4)return;const box=$('rsiCx');if(!box||box.hidden||document.hidden)return;
   const r=box.getBoundingClientRect();if(r.bottom<-200||r.top>innerHeight+600)return;RSICX.busy=true;
   try{const L=Object.values(RSICX_G).flat().map(x=>x+'USDT').filter(s=>tickers[s]);if(L.length<10)return; /* todavía no llegaron los precios: se reintenta en el próximo minuto */let q=0;
-    await Promise.all(Array.from({length:6},async()=>{while(q<L.length){const s=L[q++];try{const k=await kl(s,tf,120);const cl=k.map(b=>b.close);D.v[s]=[rsiArr(cl),cl.length>1?(cl.at(-1)/cl[cl.length-2]-1)*100:null];}catch(e){}}}));
+    await Promise.all(Array.from({length:6},async()=>{while(q<L.length){const s=L[q++];try{const k=await kl(s,tf,120);const cl=k.map(b=>b.close);D.v[s]=[rsiArr(cl),cl.length>1?(cl.at(-1)/cl[cl.length-2]-1)*100:null];}catch(e){RSICX.err=(s+': '+(e&&e.message||e)).slice(0,120);RSICX.nerr=(RSICX.nerr||0)+1;}}}));
     /* si fallaron muchas (conexión), se guarda lo que llegó pero se reintenta en 30 s en vez de esperar 3 min */
     D.t=Object.keys(D.v).length>=L.length*.6?Date.now():Date.now()-15e4;try{rsiAlCheck('c',tf,Object.entries(D.v).map(([s,x])=>[s,x[0]]));}catch(e){}}finally{RSICX.busy=false;}rsiCxRender();}
 async function fngLoad(){if(Date.now()-RSICX.fngT<30*6e4)return;RSICX.fngT=Date.now();try{const j=await getJ('https://api.alternative.me/fng/?limit=31');if(j&&Array.isArray(j.data))RSICX.fng=j.data.map(x=>[+x.value,x.value_classification]);}catch(e){}rsiCxRender();}
