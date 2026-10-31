@@ -30,7 +30,7 @@ const GEOM = { medio: { a: 3, r: .75, maxSl: .036 }, x: { a: 4, r: .25, maxSl: .
 const MINVOL = 5e6, /* octubre 2026: 5 millones (antes 10) */ WILD_MAX = 0, WILDC = {};
 async function wildOK(s, hc) { if (!WILD_MAX) return true; const c = WILDC[s]; if (!hc && c && Date.now() - c.t < 36e5) return c.ok;
   try { const b = (hc && hc.length >= 169 ? hc : await kl(s, '1h', 170)).slice(0, -1).slice(-168); if (b.length < 100) return true; const v = b.reduce((a, x) => a + (x.high - x.low) / x.close, 0) / b.length * 100; WILDC[s] = { t: Date.now(), ok: v <= WILD_MAX }; return v <= WILD_MAX; } catch (e) { return true; } }
-const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 }, tx: { p: 92, p3: 32, n: 93 } };
+const CAL = { medio: { p: 81, p3: 30, n: 140 }, x: { p: 71, p3: 17, n: 70 }, tx: { p: 88, p3: 30, n: 170 } };
 const CALSET = { 't-pb': 86, 'tp-r55': 79, 'tp-u80': 72, 'sh-r': 71, 'sh-c': 77 };
 const MINCERT = { medio: 62, x: 56, tx: 62 };
 const LLTH = .65;
@@ -91,13 +91,14 @@ function evalShooter(cs, hc, mins = 15) { const cc = cs.slice(0, -1), back = Mat
    4 años de simulación: los shorts en las fases de subida (2022-11 → 2025-10) daban −3,9 % y −7,2 % del margen por operación con 55–59 % ganadas;
    en la caída, +13,5 % y 72 %. Sin ellos: 64 → 69 % ganadas y +3.884 → +6.597 USD en 4 años (mejoró en las dos mitades). Los longs no cambian. */
 const CYC_TOPS = ['2013-12-04', '2017-12-17', '2021-11-10', '2025-10-06'].map(d => Date.parse(d + 'T00:00:00Z')), cycFall = t => CYC_TOPS.some(a => t >= a && t < a + 400 * 864e5);
-function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
+/* sc: escala del ATR para otras temporalidades (raíz de horas ÷ 4), como en la simulación */
+function evalTrading(cs, hc, rank = 0, sc = 1) { const cc = cs.slice(0, -1);
   return withCandles(cc, () => { const i = cc.length - 1, cl = closes(), c = cs[cs.length - 1].close, cb = cc[i].close, atr = wilder(trArr(), 14)[i], atrP = atr / cb;
     const st = calcST(10, 3).dir[i], e21 = emaArr(cl, 21)[i], e50 = emaArr(cl, 50)[i], e200 = emaArr(cl, 200)[i], r14 = calcRSI(14)[i], htf = htfTrend(hc), L = lastBarStats(cc, i);
     const out = { dir: 0, c, atr, reasons: [], setup: null };
     if (e200 == null || r14 == null) return out;
     const dir = st === 1 && e21 > e50 && cb > e200 ? 1 : st === -1 && e21 < e50 && cb < e200 ? -1 : 0;
-    if (!dir || L.vr >= 1 || !(atrP > .01 && atrP <= .05 / 3)) return out;
+    if (!dir || L.vr >= 1 || !(atrP > .01 * sc && atrP <= .05 / 3 * sc)) return out;
     if (dir < 0 && !cycFall(Date.now())) return out; // shorts solo en la fase de caída del ciclo del halving
     if (dir * (cb / e200 - 1) * 100 > 8) return out; // octubre 2026 v7: no entrar si el precio ya se alejó más de 8 % de la EMA 200
     const pull = dir > 0 ? r14 < 50 : r14 > 50, soft = dir > 0 ? r14 < 55 : r14 > 45, adx = calcADX(14).adx[i];
@@ -109,6 +110,9 @@ function evalTrading(cs, hc, rank = 0) { const cc = cs.slice(0, -1);
     if (Math.sign(htf) === dir) out.reasons.push('tendencia diaria a favor');
     return out; }); }
 
+/* velas de 3 h armadas con las de 1 h (Binance no tiene 3 h); la última es la que está en curso */
+function agg3h(b) { const o = []; for (const x of b) { const k = Math.floor(x.t / (3 * 36e5)) * 3 * 36e5, l = o[o.length - 1];
+    if (l && l.t === k) { l.high = Math.max(l.high, x.high); l.low = Math.min(l.low, x.low); l.close = x.close; l.v += x.v; l.tb = (l.tb || 0) + (x.tb || 0); } else o.push({ ...x, t: k }); } return o; }
 /* ---------- datos ---------- */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function getJ(url, tries = 3) { for (let k = 0; k < tries; k++) { try { const r = await fetch(url); if (r.ok) return await r.json(); if (r.status === 429 || r.status >= 500) { await sleep(2000 * (k + 1)); continue; } throw new Error(r.status + ' ' + url); } catch (e) { if (k === tries - 1) throw e; await sleep(1500); } } }
@@ -146,7 +150,7 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
    1 stop · 3 volvió a la entrada tras un objetivo · 4 los 3 objetivos · 5 venció el plazo; objetivos tocados, precio y % del margen con comisión).
    Nunca se borra nada: la IA la estudia todos los días junto con la simulación. */
 const DVL = require('./herramientas/dvol-lib.js');
-const VER = { medio: 'v8', x: 'v11', tx: 'v1' }; // SHOOTER v11 (octubre 2026): solo con BTC sobre su EMA 200 de 4 h // TRADING v8 (octubre 2026): + no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h
+const VER = { medio: 'v8', x: 'v11', tx: 'v2' }; // TRADING X v2 (octubre 2026): además de 4 h, busca en velas de 3 h y de 12 h // SHOOTER v11 (octubre 2026): solo con BTC sobre su EMA 200 de 4 h // TRADING v8 (octubre 2026): + no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h
 // // SHOOTER v10 (octubre 2026): + no entra con el DVOL de Deribit bajo 35
 // // SHOOTER v9 (octubre 2026): + salida después del objetivo 1 con 6 de 8 señales en contra (velas de la señal)
  // TRADING v7 (octubre 2026): + salida anticipada con 5 de 8 señales en contra
@@ -320,8 +324,14 @@ async function main() {
           e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue;
           { const dv = await DVL.ahora(now); if (dv != null && dv < DVL.SHOOTER_DVMIN) { S.dvSkip = (S.dvSkip || 0) + 1; continue; } if (dv != null) e.reasons.push('DVOL ' + dv.toFixed(0) + ' (mercado despierto)'); } }
         else { if (EVC[s]) e = Object.assign({}, EVC[s], { reasons: EVC[s].reasons.slice() }); else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
-            e = evalTrading(cs, hc, rankOf[s]); EVC[s] = Object.assign({}, e, { reasons: (e.reasons || []).slice() }); } if (!e.dir || !(await wildOK(s))) continue; }
-        const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr) continue;
+            e = evalTrading(cs, hc, rankOf[s]); EVC[s] = Object.assign({}, e, { reasons: (e.reasons || []).slice(), hc }); }
+          /* TRADING X v2: si en 4 h no hay señal, busca en 12 h y en 3 h (solo en los primeros 20 min después de que cierra cada vela) */
+          if (m === 'tx' && !e.dir) { const hc = EVC[s] && EVC[s].hc ? EVC[s].hc : await kl(s, cfg.htf, 120);
+            for (const [tf2, hh] of [['12h', 12], ['3h', 3]]) { const ms2 = hh * 36e5; if (now - Math.floor(now / ms2) * ms2 > 20 * 6e4) continue;
+              const cs2 = tf2 === '3h' ? agg3h(await kl(s, '1h', 900)) : await kl(s, '12h', 300); if (cs2.length < 220) continue;
+              const e2 = evalTrading(cs2, hc, rankOf[s], Math.sqrt(hh / 4)); if (e2.dir) { e = e2; tfx = tf2; e.atrSc = Math.sqrt(hh / 4); e.reasons.push('velas de ' + tf2.replace('h', ' h')); break; } } }
+          if (!e.dir || !(await wildOK(s))) continue; }
+        const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr * (e.atrSc || 1)) continue;
         const d = e.dir, setup = e.setup || (m !== 'x' ? 't-pb' : 'sh-r'); let conf = m === 'tx' ? CAL.tx.p : CALSET[setup] || CAL[m].p;
         if (m !== 'x') { if (btcDir !== d) continue; if (btcAdx != null && btcAdx < 24) continue; conf += 2; e.reasons.push('BTC a favor y con fuerza (ADX ' + btcAdx.toFixed(0) + ')'); }
         if (m !== 'x') { const dv = await DVL.estado(now); if (DVL.txBloquea(dv.v, dv.v24)) { S.txSkip = (S.txSkip || 0) + 1; continue; } if (dv.v != null) e.reasons.push('DVOL ' + dv.v.toFixed(0) + (dv.v24 != null ? ` (${dv.v24 >= 0 ? '+' : ''}${(dv.v24 * 100).toFixed(0)} % en 24 h)` : '')); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)

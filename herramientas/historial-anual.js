@@ -233,6 +233,7 @@ const slOf = (g, atrP) => Math.min(g.cap, Math.max(g.floor, g.a * atrP));
 
 /* ---------- recorrido ---------- */
 const CANDS = [], RAND = { medio: [], x: [] };
+const TXTFS = process.env.TX_TFS != null ? process.env.TX_TFS : '3h,12h';
 let BTC4 = null, BTC1 = null, BTC4E200 = null;
 /* SHOOTER v11: BTC sobre su EMA 200 de 4 h (última vela de 4 h cerrada antes de t) */
 function btcSobre200(t) { if (!BTC4) return true; if (!BTC4E200) BTC4E200 = emaArr(BTC4.b.map(x => x.close), 200); const B = BTC4.b; let lo = 0, hi = B.length; while (lo < hi) { const m = (lo + hi) >> 1; if (B[m].t + 144e5 <= t) lo = m + 1; else hi = m; } const i = lo - 1; return !(i >= 0 && BTC4E200[i] != null && B[i].close < BTC4E200[i]); }
@@ -266,7 +267,8 @@ async function run4h(s, rank) {
     /* TRADING X: la misma entrada con objetivos 0,4 × stop, si el DVOL lo permite (no > 55 ni cayendo > 10 % en 24 h). Se elige aparte de TRADING. */
     if (!process.env.SIN_TX) { { const gx = GEO.tx, slx = slOf(gx, c.atrP);
       CANDS.push({ m: 'tx', setup: c.setup, s, t: t + 1, dir: c.dir, sl: slx, entry, r: gx.r, L: gx.L, cool: T4.cool, margin: gx.margin, ...sim(rb, T4.resMs, T4.maxAge, j0, entry, c.dir, slx, gx.r, gx.L, gx.ex, gx.ll ? llConf : null, t, null, process.env.SIN_V7 ? null : Object.assign({ tb }, SXV7)) }); } } }
-  if (process.env.TX_TFS) for (const tfx of process.env.TX_TFS.split(',').filter(x => x && x !== T4.tf)) await txExtra(s, rank, rb, W1, tfx);
+  /* TRADING X v2 (octubre 2026): además de 4 h, velas de 3 h y 12 h (TX_TFS= vacío para la v1) */
+  if (TXTFS) for (const tfx of TXTFS.split(',').filter(x => x && x !== T4.tf)) await txExtra(s, rank, rb, W1, tfx);
   return { rb, tb, llConf }; }
 /* TX_TFS=4h,3h,12h (investigación octubre 2026): TRADING X mirando también otras temporalidades. Misma regla (límites de ATR escalados),
    mismos filtros (BTC a favor y con fuerza, DVOL), seguimiento con velas de 1 h. Una operación por moneda a la vez entre todas. */
@@ -554,10 +556,10 @@ async function main() { const t0 = Date.now();
         for (const fs_ of combos) { const L = pick(pool.filter(c => !fs_.some(k => F[m][k](c)))); R.push({ re, f: fs_, a: st4(L), m1: st4(L.filter(o => o.t < mid)), m2: st4(L.filter(o => o.t >= mid)) }); } }
       out.filtros.modos[m] = R; }
     console.log('filtros', Object.keys(out.filtros.modos).map(m => m + ' ' + out.filtros.modos[m].length).join(' '), JSON.stringify(out.filtros.viejas)); }
-  if (process.env.TX_TFS) { const mid = FROM + SPAN / 2, st5 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
+  if (TXTFS) { const mid = FROM + SPAN / 2, st5 = L => { const D = L.filter(o => !o.open), n = D.length; if (!n) return { n: 0 }; const u = D.map(o => o.pct * 3), lo = u.filter(x => x < 0);
       return { n, gana: +(100 * (n - lo.length) / n).toFixed(1), usd_op: +(u.reduce((a, x) => a + x, 0) / n).toFixed(1), usd: Math.round(u.reduce((a, x) => a + x, 0)), perd_media: lo.length ? +(lo.reduce((a, x) => a + x, 0) / lo.length).toFixed(1) : 0, stops: D.filter(o => o.kind === 1).length }; };
     const T = ops.filter(o => o.m === 'tx'), by = {}; for (const o of T) (by[o.tfx || T4.tf] = by[o.tfx || T4.tf] || []).push(o);
-    out.tx_tfs = { tfs: process.env.TX_TFS, todas: { año: st5(T), mitad1: st5(T.filter(o => o.t < mid)), mitad2: st5(T.filter(o => o.t >= mid)) }, por_tf: Object.fromEntries(Object.entries(by).map(([k, L]) => [k, st5(L)])) };
+    out.tx_tfs = { tfs: TXTFS, todas: { año: st5(T), mitad1: st5(T.filter(o => o.t < mid)), mitad2: st5(T.filter(o => o.t >= mid)) }, por_tf: Object.fromEntries(Object.entries(by).map(([k, L]) => [k, st5(L)])) };
     console.log('tx_tfs', JSON.stringify(out.tx_tfs)); }
   if (SALIDA) out.salida_x = null;
   if (SALIDA) for (const [MM, VL] of [['medio', SV], ['x', SVX]]) { const mid = FROM + SPAN / 2, MED = CANDS.filter(c => c.m === MM && c.setup !== 'tp-x' && c.sal);

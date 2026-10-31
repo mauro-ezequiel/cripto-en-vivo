@@ -3079,7 +3079,7 @@ setInterval(checkSignals,2000);
    SHOOTER: 50 USD × 25 (posición de 1.250 USD), stop/liquidación al 2,5 % en contra (−31,25 USD); el exchange liquidaría cerca del 3,5 %.
    ACCIONES: se mantiene × 10 porque los huecos de apertura pueden saltar el stop.
    Al tocar un objetivo, el stop pasa a la entrada: si el precio vuelve, se cierra con el último objetivo alcanzado. */
-CAL.tx=Object.fromEntries(Object.entries(CAL.medio).map(([k,v])=>[k,Object.assign({},v,{p:92,p3:32,n:93})])); // TRADING X: simulación del último año (92,5 % al objetivo 1)
+CAL.tx=Object.fromEntries(Object.entries(CAL.medio).map(([k,v])=>[k,Object.assign({},v,{p:88,p3:30,n:170})])); // TRADING X v2: velas de 4 h, 3 h y 12 h (último año 88 % al objetivo 1)
 const SIM={medio:{margin:350,lev:10,maxLoss:126,maxAge:7*864e5,kl:'1h',klMs:36e5,label:'350 USD × 10 · stop 3 × ATR (máx. 3,6 % = −126 USD) · objetivos 0,75 / 1,5 / 2,25 × stop · salvavidas 175 USD · sale antes con ganancia si 5 de 8 señales se dan vuelta · no entra con el DVOL > 55 ni cayendo > 10 % en 24 h'},
            x:{margin:50,lev:15,maxLoss:38,maxAge:12*36e5,kl:'15m',klMs:9e5,label:'50 USD × 15 · stop 4 × ATR con tope 5 % (−37,5 USD) · objetivos 0,25 / 0,5 / 0,75 × stop · sin salvavidas · después del objetivo 1 sale antes si 6 de 8 señales se dan vuelta · no entra con el DVOL bajo 35'}};
 SIM.p={...SIM.medio};
@@ -4686,7 +4686,7 @@ function ledHTML(){const m=mode;if(VERSEL&&HSRC==='live'&&VERD){const h=verDetai
    Cuenta las operaciones reales (como pasaron, sin rehacer) abiertas mientras regía cada versión. Verde = ganó plata por operación con
    60 % o más ganadas · amarillo = ganó plata con menos acierto · rojo = perdió plata · gris = sin operaciones cerradas. */
 const VERS={
-  tx:[['v1','2026-10-22T04:00:00+02:00','mismas entradas que TRADING, objetivos 0,4 × stop, no entra con DVOL > 55 ni cayendo > 10 % en 24 h']],
+  tx:[['v1','2026-10-22T04:00:00+02:00','mismas entradas que TRADING, objetivos 0,4 × stop, no entra con DVOL > 55 ni cayendo > 10 % en 24 h'],['v2','2026-10-31T04:00:00-03:00','+ también busca en velas de 3 h y de 12 h (casi el doble de señales)']],
   medio:[['v1','2026-10-07T12:53:00+02:00','tendencia alineada y retroceso; stop 3 ATR, objetivos 0,5 × stop'],['v2','2026-10-07T14:45:00+02:00','+ solo a favor de BTC'],['v3','2026-10-08T14:57:00+02:00','+ el retroceso frena antes de la EMA 50'],
     ['v4','2026-10-12T19:57:00+02:00','+ EMA 200 a menos de 8 %, objetivos 0,75 × stop, con salvavidas'],['v5','2026-10-13T23:57:00+02:00','+ shorts solo en la fase de caída del ciclo'],['v6','2026-10-17T00:30:00+02:00','+ solo si la tendencia de BTC tiene fuerza (ADX 4 h ≥ 24)'],['v7','2026-10-19T12:00:00+02:00','+ salida anticipada con 5 de 8 señales en contra y monedas desde 5 M de volumen'],['v8','2026-10-22T04:00:00+02:00','+ no entra con el DVOL > 55 ni con el DVOL cayendo > 10 % en 24 h']],
   x:[['v1','2026-10-07T12:53:00+02:00','5 min: Bollinger ±2 y RSI 7, LONG y SHORT'],['v2','2026-10-07T15:16:00+02:00','+ RSI 7 extremo y a favor de BTC'],['v3','2026-10-08T15:08:00+02:00','3 min: rebote tras caer 3 % en 1 h'],['v4','2026-10-08T17:02:00+02:00','15 y 30 min, las 30 con más volumen'],
