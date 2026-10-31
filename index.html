@@ -1003,7 +1003,9 @@ const chart = LightweightCharts.createChart($('chart'), {
   grid:{vertLines:{color:'#1b1f29'},horzLines:{color:'#1b1f29'}},
   crosshair:{mode:LightweightCharts.CrosshairMode.Normal},
   rightPriceScale:{borderColor:'#262b36'},
-  timeScale:{borderColor:'#262b36',timeVisible:true,secondsVisible:false,rightOffset:8},
+  timeScale:{borderColor:'#262b36',timeVisible:true,secondsVisible:false,rightOffset:8,minBarSpacing:.02,
+    /* abajo: años al alejar, meses y días al acercar, horas al acercar más (en español) */
+    tickMarkFormatter:(t,type)=>{const d=new Date(t*1000),M=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];return type===0?String(d.getUTCFullYear()):type===1?M[d.getUTCMonth()]:type===2?String(d.getUTCDate()):d.toISOString().slice(11,16);}},
   handleScale:{axisPressedMouseMove:{time:true,price:true},axisDoubleClickReset:{time:true,price:true},mouseWheel:true,pinch:true},
   handleScroll:{mouseWheel:false,pressedMouseMove:true,horzTouchDrag:true,vertTouchDrag:true},
   kineticScroll:{touch:true,mouse:false},
@@ -1943,6 +1945,7 @@ async function loadChart(){
     series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
     if(!(same&&CHUSER)){fitView();if(HALV)hvRange();chartKicks();}
     restoreLines();setTimeout(()=>niRender(true),400);
+    if(['1d','3d','1w','1M'].includes(t))setTimeout(loadAllHistory,1500);
   }catch(e){$('loading').textContent='No se pudo cargar el gráfico';return;}
   $('loading').style.display='none';
   klineWs=new WebSocket(tickers[sym]&&tickers[sym].fut?`wss://fstream.binance.com/market/ws/${sym.toLowerCase()}@kline_${t}`:`${WS}/ws/${sym.toLowerCase()}@kline_${t}`);
@@ -1956,9 +1959,18 @@ async function loadChart(){
   klineWs.onclose=()=>setTimeout(()=>{if(sym===symbol&&t===tf)loadChart();},3000);
 }
 
-// cargar más historial al desplazarse a la izquierda
+// cargar más historial al desplazarse a la izquierda (y, en velas de 1 día o más, toda la historia de la moneda apenas abre)
+async function loadOlder(){if(loadingMore||noMore||!candles.length||mode==='a')return false;loadingMore=true;let ok=false;
+  const sym=symbol,t=tf,end=(candles[0].time-TZ)*1000-1;
+  try{const d=await (await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000&endTime=${end}`)).json();
+    if(sym===symbol&&t===tf){if(!Array.isArray(d)||!d.length)noMore=true;else{const older=d.map(toBar),n=older.length,range=chart.timeScale().getVisibleLogicalRange();
+        candles=older.concat(candles);series.setData(candles);volume.setData(candles.map(volBar));calcInd(true);
+        if(range)chart.timeScale().setVisibleLogicalRange({from:range.from+n,to:range.to+n});if(ruler){ruler.a.l+=n;ruler.b.l+=n;}ok=n>=1000;if(n<1000)noMore=true;}}}catch(e){}
+  loadingMore=false;return ok;}
+async function loadAllHistory(){const t=tf,sym=symbol;for(let k=0;k<8&&t===tf&&sym===symbol;k++){if(!(await loadOlder()))break;}}
 chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
   if(!r||r.from>20||loadingMore||noMore||!candles.length||mode==='a') return;
+  if(r.from<20){await loadOlder();return;}
   loadingMore=true;
   const sym=symbol,t=tf,end=(candles[0].time-TZ)*1000-1;
   try{

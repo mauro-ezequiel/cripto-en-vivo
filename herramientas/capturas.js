@@ -35,6 +35,10 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   /* huellas (SRI) de los scripts externos, para que el navegador rechace un archivo cambiado */
   try { const sri = await pg.evaluate(async () => { const out = {}; for (const sc of document.querySelectorAll('script[src^="https://"]')) { try { const b = await (await fetch(sc.src, { cache: 'no-store' })).arrayBuffer(); const h = await crypto.subtle.digest('SHA-384', b);
           out[sc.src] = 'sha384-' + btoa(String.fromCharCode(...new Uint8Array(h))); } catch (e) { out[sc.src] = 'error ' + e.message; } } return out; }); info.push({ sri }); } catch (e) { info.push({ sri_error: e.message }); }
+  /* historial completo en velas diarias y escala de tiempo alejada */
+  try { const r = await pg.evaluate(async () => { if (mode !== 'medio') applyMode('medio'); await new Promise(z => setTimeout(z, 1500)); if (symbol !== 'BTCUSDT') select('BTCUSDT'); await new Promise(z => setTimeout(z, 1500)); tf = '1d'; renderTfs(); await loadChart(); await new Promise(z => setTimeout(z, 12000));
+      chart.timeScale().fitContent(); await new Promise(z => setTimeout(z, 800)); return { velas: candles.length, desde: new Date((candles[0].time - TZ) * 1000).toISOString().slice(0, 10), noMore }; }); info.push({ historia: r });
+    try { await pg.locator('#chartWrap').screenshot({ path: 'capturas/historia-1d.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ historia_error: e.message.slice(0, 200) }); }
   /* planilla de RSI de cripto y miedo y codicia */
   try { const r = await pg.evaluate(async () => { if (mode !== 'medio') applyMode('medio'); if (typeof setView === 'function') setView('main'); await new Promise(z => setTimeout(z, 1500)); $('rsiCx').scrollIntoView(); await new Promise(z => setTimeout(z, 500)); RSICX.d = {}; await rsiCxLoad(); await fngLoad(); RSICX.fngT = 0; await fngLoad(); rsiCxRender();
       rsiAlPaint(); return { aviso: document.querySelector('[data-rsial="c"]').textContent, visible: !$('rsiCx').hidden, celdas: document.querySelectorAll('#rsiCxBody td:nth-child(2)').length, fng: $('fngBox').textContent }; }); info.push({ rsicx: r });
