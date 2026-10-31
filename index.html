@@ -3622,15 +3622,17 @@ var RSICX={tf:'4h',d:{},busy:false,fng:null,fngT:0};try{RSICX.tf=localStorage.ge
 const rsiArr=cl=>{let g=0,l=0,o=null;for(let i=1;i<cl.length;i++){const d=cl[i]-cl[i-1],u=Math.max(d,0),w=Math.max(-d,0);if(i<=14){g+=u;l+=w;if(i===14){g/=14;l/=14;o=l===0?100:100-100/(1+g/l);}}else{g=(g*13+u)/14;l=(l*13+w)/14;o=l===0?100:100-100/(1+g/l);}}return o;};
 async function rsiCxLoad(){const tf=RSICX.tf,D=RSICX.d[tf]=RSICX.d[tf]||{t:0,v:{}};if(RSICX.busy||Date.now()-D.t<18e4)return;const box=$('rsiCx');if(!box||box.hidden||document.hidden)return;
   const r=box.getBoundingClientRect();if(r.bottom<-200||r.top>innerHeight+600)return;RSICX.busy=true;
-  try{const L=Object.values(RSICX_G).flat().map(x=>x+'USDT').filter(s=>tickers[s]);let q=0;
+  try{const L=Object.values(RSICX_G).flat().map(x=>x+'USDT').filter(s=>tickers[s]);if(L.length<10)return; /* todavía no llegaron los precios: se reintenta en el próximo minuto */let q=0;
     await Promise.all(Array.from({length:6},async()=>{while(q<L.length){const s=L[q++];try{const k=await kl(s,tf,120);const cl=k.map(b=>b.close);D.v[s]=[rsiArr(cl),cl.length>1?(cl.at(-1)/cl[cl.length-2]-1)*100:null];}catch(e){}}}));
-    D.t=Date.now();try{rsiAlCheck('c',tf,Object.entries(D.v).map(([s,x])=>[s,x[0]]));}catch(e){}}finally{RSICX.busy=false;}rsiCxRender();}
+    /* si fallaron muchas (conexión), se guarda lo que llegó pero se reintenta en 30 s en vez de esperar 3 min */
+    D.t=Object.keys(D.v).length>=L.length*.6?Date.now():Date.now()-15e4;try{rsiAlCheck('c',tf,Object.entries(D.v).map(([s,x])=>[s,x[0]]));}catch(e){}}finally{RSICX.busy=false;}rsiCxRender();}
 async function fngLoad(){if(Date.now()-RSICX.fngT<30*6e4)return;RSICX.fngT=Date.now();try{const j=await getJ('https://api.alternative.me/fng/?limit=31');if(j&&Array.isArray(j.data))RSICX.fng=j.data.map(x=>[+x.value,x.value_classification]);}catch(e){}rsiCxRender();}
 const FNG_ES={'Extreme Fear':'miedo extremo','Fear':'miedo','Neutral':'neutral','Greed':'codicia','Extreme Greed':'codicia extrema'};
 function rsiCxRender(){const box=$('rsiCx');if(!box)return;box.hidden=!(mode==='medio'||mode==='tx'||mode==='x'||mode==='p');if(box.hidden)return;
   box.querySelectorAll('[data-rsicx]').forEach(b=>b.classList.toggle('on',b.dataset.rsicx===RSICX.tf));
   const F=RSICX.fng;if(F&&F.length){const [v,c]=F[0],w=F[7]?F[7][0]:null;$('fngBox').innerHTML=`<span title="Índice de miedo y codicia del mercado cripto (alternative.me): 0 = miedo extremo, 100 = codicia extrema. Hace una semana: ${w??'—'}" style="background:${rsiColor(100-v)}">😱 Miedo y codicia <b>${v}</b> · ${FNG_ES[c]||c}${w!=null?` <small>(hace 7 días ${w})</small>`:''}</span>`;}
   const D=RSICX.d[RSICX.tf];if(!D||!D.t){$('rsiCxBody').innerHTML='<div class="mut">Cargando…</div>';rsiCxLoad();fngLoad();return;}
+  if(!Object.keys(D.v).length){$('rsiCxBody').innerHTML='<div class="mut">Cargando los RSI…</div>';setTimeout(rsiCxLoad,1500);return;}
   const blocks=Object.entries(RSICX_G).map(([n,L])=>{const rows=L.map(x=>x+'USDT').filter(s=>D.v[s]).map(s=>{const [v,ch]=D.v[s],p=tickers[s]?.p;
       return `<tr data-rsics="${s}" title="Abrir ${s.replace('USDT','')} en el gráfico"><td>${s.replace('USDT','')}</td><td style="background:${rsiColor(v)}">${v==null?'—':iaD(Math.round(v*10)/10)}</td><td class="${(p??0)>=0?'up':'dn'}">${p==null?'—':(p>=0?'▲ ':'▼ ')+iaD(Math.abs(Math.round(p*100)/100))+' %'}</td></tr>`;}).join('');
     if(!rows)return '';const ps=L.map(x=>tickers[x+'USDT']?.p).filter(v=>v!=null&&isFinite(v)),avg=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
