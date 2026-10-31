@@ -40,7 +40,7 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       rsiAlPaint(); return { aviso: document.querySelector('[data-rsial="c"]').textContent, visible: !$('rsiCx').hidden, celdas: document.querySelectorAll('#rsiCxBody td:nth-child(2)').length, fng: $('fngBox').textContent }; }); info.push({ rsicx: r });
     try { await pg.locator('#rsiCx').screenshot({ path: 'capturas/rsi-cripto.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ rsicx_error: e.message.slice(0, 200) }); }
   /* ACCIONES v7: simulación del último año de la página con la regla c-rsi */
-  try { const r = await pg.evaluate(async () => { if (mode !== 'a') applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await new Promise(z => setTimeout(z, 500)); HIST_A = null; await histStocks();
+  try { const r = await pg.evaluate(async () => { if (mode !== 'a') applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await new Promise(z => setTimeout(z, 500)); for (let k = 0; k < 400 && histABusy; k++) await new Promise(z => setTimeout(z, 1000)); HIST_A = null; await histStocks(); for (let k = 0; k < 400 && histABusy; k++) await new Promise(z => setTimeout(z, 1000));
       const L = HIST_A || [], by = {}; for (const o of L) { const k = o.setup; by[k] = by[k] || { n: 0, g: 0, pnl: 0 }; if (o.state !== 'open') { by[k].n++; if (o.pnl > 0) by[k].g++; by[k].pnl += o.pnl; } }
       for (const k in by) { by[k].pnl = Math.round(by[k].pnl); by[k].gana = by[k].n ? Math.round(100 * by[k].g / by[k].n) : 0; } return by; }); info.push({ acciones_v7: r }); } catch (e) { info.push({ acciones_v7_error: e.message.slice(0, 200) }); }
   /* planilla de RSI de ACCIONES en cada temporalidad */
