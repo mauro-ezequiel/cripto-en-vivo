@@ -5112,11 +5112,19 @@ function hxLevels(o){const e=o.entry,st=o.ia?o.ia.stop:o.fail;if(!(e>0))return '
   const tg=T.map((v,k)=>v>0?`<span>Objetivo ${k+1}</span><b class="up">${fp(v)}${pc(v)}${k<h?' · ✓ tocado':''}</b>`:'').join('');
   const now=o.state==='open'?((tickers[o.sym]&&tickers[o.sym].c)||null):null;
   return `<span>Entrada</span><b>${fp(e)}</b>${ae?`<span>Entrada promedio</span><b>${fp(ae)} · con salvavidas</b>`:''}${now?`<span>Precio actual</span><b>${fp(now)}${pc(now)}</b>`:''}${tg}${st>0?`<span>Stop</span><b class="dn">${fp(st)}${pc(st)}${(o.hit||0)>=1?' · tras el objetivo 1 pasó a la entrada':''}</b>`:''}`;}
+/* RSI de la planilla en el momento en que entró la señal (velas que cerraron antes de la entrada) */
+var HXRSI={};
+const rsiChipsHTML=(T,v)=>T.map(([k,l])=>v[k]==null?'':`<span class="rsx sm" style="background:${rsiColor(v[k])}" title="RSI 14 de ${l}">${l} ${Math.round(v[k])}</span>`).join('')||'—';
+function hxRsiHTML(o){const c=HXRSI[o.id];if(c&&c.v)return rsiChipsHTML(c.T,c.v);if(!c){HXRSI[o.id]={};hxRsiLoad(o);}return '…';}
+async function hxRsiLoad(o){const A=o.m==='a',T=A?[['1d','1d'],['1w','1s']]:[['15m','15m'],['1h','1h'],['4h','4h'],['1d','1d'],['1w','1s']],v={};
+  try{if(A){const b=(await stkHist(o.sym)).filter(x=>x.t+864e5<=o.t);v['1d']=rsiArr(b.slice(-150).map(x=>x.close));v['1w']=rsiArr(aggBars(b,'1w').slice(-120).map(x=>x.close));}
+    else await Promise.all(T.map(async([k])=>{try{const d=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${k}&limit=120&endTime=${o.t-1}`);const cl=d.map(toBar).slice(0,-1).map(x=>x.close);if(cl.length>20)v[k]=rsiArr(cl);}catch(e){}}));}catch(e){}
+  HXRSI[o.id]={T,v};const el=document.getElementById('hxr-'+o.id);if(el)el.innerHTML=rsiChipsHTML(T,v);}
 function hxDetail(o){const c=HXC[o.id]||{},cfg=SIGCFG[o.m]||{name:o.m},v=hxVal(o),sim=o.simLab||(o.setup==='tp-x'&&o.lev===PLUSG.lev?PLUSG.label:(SIM[o.m]?SIM[o.m].label:''));
   return `<div class="hx"><div class="hx-box hx-live" id="hxl-${o.id}">${c.live||'<div class="mut">Cargando los datos del activo en tiempo real…</div>'}</div>
     <div class="hx-box hx-ent"><div id="hxe-${o.id}">${c.ent||'<div class="mut">Revisando si fue una buena entrada…</div>'}</div>
       <div class="hx-g"><span>Modo</span><b>${o.ia?'IA · ':''}${o.setup==='tp-x'?'TRADING+':cfg.name} · ${o.dir>0?'▲ LONG':'▼ SHORT'} · ${o.sym.replace('USDT','')}</b>
-        <span>Inicio de la señal</span><b>${fdate(o.t)}</b>${hxLevels(o)}<span>Objetivos</span><b>${o.hit||0}/3</b>
+        <span>Inicio de la señal</span><b>${fdate(o.t)}</b><span>RSI al entrar</span><b class="sg-rsi" id="hxr-${o.id}">${hxRsiHTML(o)}</b>${o.state==='open'?`<span>RSI ahora</span><b class="sg-rsi">${sigRsiHTML(o.sym,o.m)}</b>`:''}${hxLevels(o)}<span>Objetivos</span><b>${o.hit||0}/3</b>
         <span>Resultado</span><b class="${v.usd>=0?'up':'dn'}">${v.ok?fusd2(v.usd)+' ('+hxPct(v.pct)+' del margen)':o.state==='open'?'en curso':'—'}</b>
         <span>Simulación</span><b>${sim}</b></div>
       <button type="button" class="hx-go" data-go="${o.sym}" data-tf="${o.tf||cfg.tf||''}" data-m="${o.m}">Ver en el gráfico</button></div></div>`;}
