@@ -1,0 +1,100 @@
+{
+ "info": [
+  {
+   "rendimiento": {
+    "heap_mb": 1.8,
+    "js_s_por_min": 0,
+    "tareas_s_por_min": 0.02,
+    "layouts": 0,
+    "pedidos_por_min": 0,
+    "top": [],
+    "nodos": 624,
+    "html_kb": 876,
+    "ls_kb": 0,
+    "carga_ms": 361
+   }
+  },
+  {
+   "m": "medio",
+   "t": "4h",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "medio",
+   "t": "1h",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "medio",
+   "t": "1d",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "tx",
+   "t": "4h",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "x",
+   "t": "15m",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "x",
+   "t": "5m",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "m": "a",
+   "t": "1d",
+   "error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:24)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "paneles_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "sri": {
+    "https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js": "sha384-OK7vELvjHdhUFi31JYioPIcRHTROLdcDa6ZsNWgvgLaKj+9JqhU0Ad8g4wz3CXjA",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js": "sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js": "sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js": "sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC"
+   }
+  },
+  {
+   "historia_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "sigrsi_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "hxrsi_error": "page.evaluate: ReferenceError: hxRsiHTML is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:122)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> "
+  },
+  {
+   "rowrsi_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "rsicx_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "acciones_v7_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anon"
+  },
+  {
+   "rsi_error": "page.evaluate: ReferenceError: mode is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at Uti"
+  },
+  {
+   "pilotear_error": "page.evaluate: ReferenceError: STK is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:43)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anony"
+  },
+  {
+   "pilrsi_error": "page.evaluate: ReferenceError: pilTick is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<a"
+  },
+  {
+   "versiones_error": "page.evaluate: ReferenceError: verLoad is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:15)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  },
+  {
+   "atras_error": "page.evaluate: ReferenceError: setView is not defined\n    at eval (eval at evaluate (:234:30), <anonymous>:1:75)\n    at UtilityScript.evaluate (<anonymous>:236:17)\n    at UtilityScript.<anonymous> (<anonymous>:1:44)"
+  }
+ ],
+ "errs": [
+  "pageerror: Unexpected token 'class'"
+ ]
+}
