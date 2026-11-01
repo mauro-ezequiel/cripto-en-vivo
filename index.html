@@ -365,7 +365,7 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.rsx.xs.mut{background:#1c212b;color:var(--mut)}
+.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
 .hrow.h2{grid-template-columns:34px minmax(0,1fr) auto minmax(18px,auto);gap:8px;padding:6px 4px;align-items:center}
 .hrow.h2 .hdt{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:11px}.hrow.h2 .hpin{width:26px;height:20px;padding:0;font-size:10px;display:flex;align-items:center;justify-content:center}
 .hrow.h2 .hm{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap;overflow:hidden}.hrow.h2 .hm>*{flex:0 0 auto}.hrow.h2 .hm b{flex:0 0 auto}.hrow.h2 .hm .hh{font-size:10.5px}.hrow.h2 .hia>*{font-size:10px!important;padding:2px 5px!important;gap:3px!important}
@@ -4400,7 +4400,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('
   if(!PIL.length){el.innerHTML='<div class="mut">Todavía no estás piloteando ninguna operación.</div>';return;}
   el.innerHTML=PIL.map(p=>{const a=p.a,L=p.dir>0,pc=v=>fpct((v/p.entry-1)*100);
     const pm=a?a.usd/a.mg*100:null,op=!!p.open;
-    const bar=`<div class="pil-bar" data-a="tog" role="button" tabindex="0" aria-expanded="${op}"><span class="pil-ar">${op?'▾':'▸'}</span><b class="${L?'up':'dn'}">${L?'▲':'▼'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev}${p.mt==='cruzado'?' · cruzado':''}</span><b class="pil-bp ${pm==null?'':pm>=0?'up':'dn'}">${pm==null?'…':(pm>=0?'+':'−')+Math.abs(pm).toFixed(1).replace('.',',')+' %'}${a?`<small>${a.usd>=0?'+':'−'}${Math.abs(a.usd).toLocaleString('es-ES',{maximumFractionDigits:Math.abs(a.usd)<10?2:0})} USD</small>`:''}</b>${rsiBx(...pilRsi(p,a))}<span class="pil-bs ${a&&a.act?'act':''}">${a?pilStNm(a.st):'analizando'}</span><button type="button" class="pil-bg" data-a="go" aria-label="Ver en el gráfico">📈</button></div>`;
+    const bar=`<div class="pil-bar" data-a="tog" role="button" tabindex="0" aria-expanded="${op}"><span class="pil-ar">${op?'▾':'▸'}</span><b class="${L?'up':'dn'}">${L?'▲':'▼'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev}${p.mt==='cruzado'?' · cruzado':''}</span><b class="pil-bp ${pm==null?'':pm>=0?'up':'dn'}">${pm==null?'…':(pm>=0?'+':'−')+Math.abs(pm).toFixed(1).replace('.',',')+' %'}${a?`<small>${a.usd>=0?'+':'−'}${Math.abs(a.usd).toLocaleString('es-ES',{maximumFractionDigits:Math.abs(a.usd)<10?2:0})} USD</small>`:''}</b><span class="pil-bs ${a&&a.act?'act':''}">${a?pilStNm(a.st):'analizando'}</span><button type="button" class="pil-bg" data-a="go" aria-label="Ver en el gráfico">📈</button></div>+pilRsiHTML(p,a);
     if(!op)return `<div class="pil-c min${a&&a.act?' act':''}" data-id="${p.id}">${bar}</div>`;
     return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}">${bar}<div class="pil-h"><span class="mut">${p.bn?'<span class="bn-tag">Binance</span> ':''}${p.mk==='a'?'🏛 acción · ':''}${L?'LONG':'SHORT'} × ${p.lev} · margen ${p.margin} USD${p.extra?` + ${p.extra} USD que sumaste`:''}${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · margen ${p.mt==='cruzado'?'cruzado'+(p.cuenta>0?` (saldo libre ${p.cuenta} USD)`:' (sin saldo cargado)'):'aislado'} · desde ${fdate(p.t)}</span></div>
       <div class="pil-tfs"><span>Temporalidad</span>${PIL_TFS[p.mk==='a'?'a':'c'].map(t=>`<button type="button" data-a="tf" data-tf="${t}" class="${pilTfOf(p)===t?'on':''}">${PIL_TFN[t]}</button>`).join('')}</div>
@@ -5111,11 +5111,17 @@ function rowRsiHTML(o,noload){const tf=rowTf(o),e=RSIE[o.id],nk=o.sym+'|'+tf,n=o
   if(!noload){if(e==null&&!RSIE['_q'+o.id]){RSIE['_q'+o.id]=1;rsiQ(()=>rsiEntryLoad(o));}
     if(o.m!=='a'&&(!RSIN[nk]||Date.now()-RSIN[nk].t>18e4)&&!(RSIN[nk]&&RSIN[nk].busy)){RSIN[nk]=Object.assign(RSIN[nk]||{},{busy:1});rsiQ(()=>rsiNowLoad(o.sym,tf,o));}}
   const ch=(v,l)=>v==null||!isFinite(v)?`<span class="rsx xs mut">${l} …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf} ${l==='ini'?'cuando abrió la operación':'ahora'}">${l} ${Math.round(v)}</span>`;
-  return ch(e,'ini')+ch(n,'ahora');}
+  return '<span class="rsl">RSI:</span>'+ch(e,'ini')+ch(n,'ahora');}
 async function rsiEntryLoad(o){const tf=rowTf(o);let v=null;
-  if(o.m==='a'){const b=(await stkHist(o.sym)).filter(x=>x.t+864e5<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
+  if(o.pil&&o.m==='a'){const ms=PIL_MS[o.tf]||864e5,b=(await pilKl(o.sym,o.tf,'a',400)).filter(x=>(+x.t)+ms<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
+  else if(o.m==='a'){const b=(await stkHist(o.sym)).filter(x=>x.t+864e5<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
   else{const d=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${tf}&limit=120&endTime=${o.t-1}`);const cl=d.map(toBar).slice(0,-1).map(x=>x.close);if(cl.length>20)v=rsiArr(cl);}
-  delete RSIE['_q'+o.id];if(v!=null){RSIE[o.id]=+v.toFixed(1);const K=Object.keys(RSIE);if(K.length>800)for(const k of K.slice(0,K.length-800))delete RSIE[k];try{localStorage.setItem('cv_rsie',JSON.stringify(RSIE));}catch(e){}}rowRsiPaint(o);}
+  if(v==null)setTimeout(()=>delete RSIE['_q'+o.id],6e4);else delete RSIE['_q'+o.id];if(v!=null){RSIE[o.id]=+v.toFixed(1);const K=Object.keys(RSIE);if(K.length>800)for(const k of K.slice(0,K.length-800))delete RSIE[k];try{localStorage.setItem('cv_rsie',JSON.stringify(RSIE));}catch(e){}}if(o.pil){try{pilRender();}catch(e){}}else rowRsiPaint(o);}
+/* Pilotear: el mismo cartel "RSI: ini … ahora …" en la temporalidad del piloteo (ini = RSI de la última vela cerrada antes de abrirlo) */
+function pilRsiHTML(p,a){const tf=pilTfOf(p),o={id:'pil'+p.id+'|'+tf,sym:p.sym,t:p.t,m:p.mk==='a'?'a':'c',tf,pil:1},e=RSIE[o.id],n=pilRsi(p,a)[0];
+  if(e==null&&!RSIE['_q'+o.id]){RSIE['_q'+o.id]=1;rsiQ(()=>rsiEntryLoad(o));}
+  const ch=(v,l)=>v==null||!isFinite(v)?`<span class="rsx xs mut">${l} …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${PIL_TFN[tf]} ${l==='ini'?'cuando abriste el piloteo':'ahora'}">${l} ${Math.round(v)}</span>`;
+  return `<div class="pil-rsr"><span class="rsl">RSI:</span>${ch(e,'ini')}${ch(n,'ahora')}</div>`;}
 async function rsiNowLoad(sym,tf,o){const k=sym+'|'+tf;try{const b=await kl(sym,tf,120);RSIN[k]={t:Date.now(),v:rsiArr(b.map(x=>x.close))};}catch(e){RSIN[k]={t:Date.now()-15e4,v:RSIN[k]&&RSIN[k].v};}
   document.querySelectorAll('.hrsi').forEach(el=>{const id=el.id.slice(4),op=(window.__rowOps||{})[id];if(op&&op.sym===sym)el.innerHTML=rowRsiHTML(op,true);});}
 function hxRow(o){(window.__rowOps=window.__rowOps||{})[o.id]=o;const pn=PINS.has(String(o.id)),v=hxVal(o),d=new Date(o.t),dd=d.toLocaleDateString('es-ES',{day:'2-digit',month:'2-digit'}),hh=d.toLocaleTimeString('es-ES',{hour:'2-digit',minute:'2-digit'});
