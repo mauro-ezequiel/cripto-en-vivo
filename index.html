@@ -5107,16 +5107,26 @@ const rowTf=o=>o.m==='a'?'1d':(o.tf||(SIGCFG[o.m]&&SIGCFG[o.m].tf)||'4h');
 function rsiQ(fn){RSIQ.push(fn);rsiQRun();}
 function rsiQRun(){while(rsiQBusy<4&&RSIQ.length){const fn=RSIQ.shift();rsiQBusy++;fn().catch(()=>{}).finally(()=>{rsiQBusy--;rsiQRun();});}}
 function rowRsiPaint(o){const el=document.getElementById('hrs-'+o.id);if(el)el.innerHTML=rowRsiHTML(o,true);}
-function rowRsiHTML(o,noload){const tf=rowTf(o),e=RSIE[o.id],nk=o.sym+'|'+tf,n=o.m==='a'?(RSIX.j?rsiLive(o.sym)[tf==='1d'?'d':tf]:null):(RSIN[nk]&&RSIN[nk].v);
+function rowRsiHTML(o,noload){const tf=rowTf(o),e=RSIE[o.id],nk=o.sym+'|'+tf,fin=o.state&&o.state!=='open'&&o.closeAt>o.t&&!o.pil,fk='f'+o.id,
+    n=fin?RSIE[fk]:o.m==='a'?(RSIX.j?rsiLive(o.sym)[tf==='1d'?'d':tf]:null):(RSIN[nk]&&RSIN[nk].v);
   if(!noload){if(e==null&&!RSIE['_q'+o.id]){RSIE['_q'+o.id]=1;rsiQ(()=>rsiEntryLoad(o));}
-    if(o.m!=='a'&&(!RSIN[nk]||Date.now()-RSIN[nk].t>18e4)&&!(RSIN[nk]&&RSIN[nk].busy)){RSIN[nk]=Object.assign(RSIN[nk]||{},{busy:1});rsiQ(()=>rsiNowLoad(o.sym,tf,o));}}
-  const ch=(v,l)=>v==null||!isFinite(v)?`<span class="rsx xs mut">${l} …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf} ${l==='ini'?'cuando abrió la operación':'ahora'}">${l} ${Math.round(v)}</span>`;
-  return '<span class="rsl">RSI:</span>'+ch(e,'ini')+ch(n,'ahora');}
-async function rsiEntryLoad(o){const tf=rowTf(o);let v=null;
-  if(o.pil&&o.m==='a'){const ms=PIL_MS[o.tf]||864e5,b=(await pilKl(o.sym,o.tf,'a',400)).filter(x=>(+x.t)+ms<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
+    if(fin){if(n==null&&!RSIE['_q'+fk]){RSIE['_q'+fk]=1;rsiQ(()=>rsiEntryLoad(o,1));}}
+    else if(o.m!=='a'&&(!RSIN[nk]||Date.now()-RSIN[nk].t>18e4)&&!(RSIN[nk]&&RSIN[nk].busy)){RSIN[nk]=Object.assign(RSIN[nk]||{},{busy:1});rsiQ(()=>rsiNowLoad(o.sym,tf,o));}}
+  const T={ini:'cuando abrió la operación',ahora:'ahora',final:'cuando cerró la operación'};
+  const ch=(v,l)=>v==null||!isFinite(v)?`<span class="rsx xs mut">${l} …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf} ${T[l]}">${l} ${Math.round(v)}</span>`;
+  return '<span class="rsl">RSI:</span>'+ch(e,'ini')+ch(n,fin?'final':'ahora');}
+/* RSI de inicio (fin=0: última vela cerrada antes de abrir) o final (fin=1: velas hasta el cierre, con el precio de cierre como último dato) */
+async function rsiEntryLoad(o,fin){const tf=rowTf(o),key=fin?'f'+o.id:o.id;let v=null;
+  try{
+  if(fin){const ms=PIL_MS[tf]||864e5,at=o.closeAt;let b;
+    if(o.m==='a')b=(await stkHist(o.sym)).filter(x=>x.t<=at);
+    else{const d=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${tf}&limit=120&endTime=${at}`);b=d.map(toBar);}
+    const cl=b.slice(-150).map(x=>x.close);if(cl.length>20){if(o.px>0)cl[cl.length-1]=o.px;v=rsiArr(cl);}}
+  else if(o.pil&&o.m==='a'){const ms=PIL_MS[o.tf]||864e5,b=(await pilKl(o.sym,o.tf,'a',400)).filter(x=>(+x.t)+ms<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
   else if(o.m==='a'){const b=(await stkHist(o.sym)).filter(x=>x.t+864e5<=o.t);if(b.length>20)v=rsiArr(b.slice(-150).map(x=>x.close));}
   else{const d=await getJ(`${KLU(o.sym)}?symbol=${o.sym}&interval=${tf}&limit=120&endTime=${o.t-1}`);const cl=d.map(toBar).slice(0,-1).map(x=>x.close);if(cl.length>20)v=rsiArr(cl);}
-  if(v==null)setTimeout(()=>delete RSIE['_q'+o.id],6e4);else delete RSIE['_q'+o.id];if(v!=null){RSIE[o.id]=+v.toFixed(1);const K=Object.keys(RSIE);if(K.length>800)for(const k of K.slice(0,K.length-800))delete RSIE[k];try{localStorage.setItem('cv_rsie',JSON.stringify(RSIE));}catch(e){}}if(o.pil){try{pilRender();}catch(e){}}else rowRsiPaint(o);}
+  }catch(e){v=null;}
+  if(v==null)setTimeout(()=>delete RSIE['_q'+key],6e4);else delete RSIE['_q'+key];if(v!=null){RSIE[key]=+v.toFixed(1);const K=Object.keys(RSIE);if(K.length>1500)for(const k of K.slice(0,K.length-1500))delete RSIE[k];try{localStorage.setItem('cv_rsie',JSON.stringify(RSIE));}catch(e){}}if(o.pil){try{pilRender();}catch(e){}}else rowRsiPaint(o);}
 /* Pilotear: el mismo cartel "RSI: ini … ahora …" en la temporalidad del piloteo (ini = RSI de la última vela cerrada antes de abrirlo) */
 function pilRsiHTML(p,a){const tf=pilTfOf(p),o={id:'pil'+p.id+'|'+tf,sym:p.sym,t:p.t,m:p.mk==='a'?'a':'c',tf,pil:1},e=RSIE[o.id],n=pilRsi(p,a)[0];
   if(e==null&&!RSIE['_q'+o.id]){RSIE['_q'+o.id]=1;rsiQ(()=>rsiEntryLoad(o));}
