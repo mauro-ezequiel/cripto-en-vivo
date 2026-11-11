@@ -1,0 +1,33 @@
+name: Investigación de mejoras
+# Se corre a mano: no cambia la página ni los bots. Corre un script de herramientas/ de la rama elegida y guarda el .json en la rama invmej-<número>.
+on:
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: 'Rama con el código'
+        default: 'main'
+      script:
+        description: 'Script (sin herramientas/ ni .js)'
+        default: 'investigacion-mejoras-acciones'
+      env:
+        description: 'Variables, por ejemplo: ANIOS=4'
+        default: ''
+permissions:
+  contents: write
+jobs:
+  investigar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 240
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.ref }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: env ${{ inputs.env }} node --max-old-space-size=6500 herramientas/${{ inputs.script }}.js
+      - name: Guardar el resultado
+        if: always()
+        run: |
+          mkdir out && (cp ${{ inputs.script }}.json out/ || echo '{}' > out/${{ inputs.script }}.json) && cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "${{ inputs.script }} ${{ inputs.env }}"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:invmej-${{ github.run_id }}
