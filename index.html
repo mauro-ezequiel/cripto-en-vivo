@@ -365,7 +365,8 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}.lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
+.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}#list.wr .row,.head.wr{grid-template-columns:1fr 1fr 64px 44px}#list.wr .row .rsx,.head.wr span:last-child{justify-self:end;text-align:right}#list.wr .row .rsx{min-width:34px;text-align:center}
+.lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
 .lst-d{margin:0 0 8px}.lst-d summary .lst-n{font-size:13px}.lst-del{margin-left:auto}.lst-tf{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 2px 6px}.lst-tf select{background:var(--panel,#11141a);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:11px;padding:2px 4px}
 .lst-b{padding:2px 8px 8px}.lst-r{display:grid;grid-template-columns:1fr auto auto 26px;align-items:center;gap:6px;padding:6px 2px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
 .lst-r small{color:var(--mut);font-size:10px;margin-left:4px}.lst-r .lst-px{font-variant-numeric:tabular-nums;color:var(--mut);font-size:12px}.lst-r .rsx{min-width:58px;text-align:center}
@@ -760,7 +761,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
     </div>
     <div class="vbar-w"><div class="vbar" id="vbar"><span class="mut">Buscando monedas muy caras o baratas…</span></div><button type="button" class="i-btn" data-i="vbarInfo" title="Qué es esta barra">i</button></div><div class="i-box" id="vbarInfo" data-i="vbarInfo" style="margin:0 12px 8px" hidden></div>
     <div class="ltabs" id="ltabs"><button class="on" data-f="all">Todas</button><button data-f="fav">★ Favoritas</button></div>
-    <div class="head"><span>Par</span><span>Precio</span><span>24h</span></div>
+    <div class="head" id="lhead"><span>Par</span><span>Precio</span><span>24h</span></div>
     <div id="list"></div>
   </aside>
   <main>
@@ -2311,9 +2312,11 @@ function renderList(){
   else arr.sort((a,b)=>b.q-a.q);
   if(favOnly) arr=arr.filter(t=>favs.has(t.s));
   LISTALL=arr.length;arr=arr.slice(0,q?Math.min(400,LISTN):LISTN);
+  const rf=favOnly&&typeof lstRsi==='function',rtf=(typeof LSTTF!=='undefined'&&LSTTF.fav)||'1d';$('list').classList.toggle('wr',rf);$('lhead').classList.toggle('wr',rf);
+  $('lhead').innerHTML=`<span>Par</span><span>Precio</span><span>24h</span>${rf?`<span>RSI ${rtf==='1w'?'1 sem':rtf}</span>`:''}`;
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
     <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i><b>${t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE'):t.fut?'/USDT · perp':'/USDT'}</small></span>
-    <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span></div>`).join('')
+    <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
   ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
 }
@@ -3072,8 +3075,8 @@ function lstMerge(L){let ch=false;for(const f of L){if(!f||!f.id||!Array.isArray
 const lstIsC=s=>/USDT$/.test(s);
 function lstFolders(){return [{id:'fav',name:'★ Favoritos',syms:[...favs]}].concat(LSTS);}
 function lstRsi(s,tf){const t=LST_TF.find(x=>x[0]===tf)||LST_TF[2];
-  if(!lstIsC(s)){if(!RSIX.j){rsiLoad().then(()=>lstRender());return null;}const v=rsiLive(s)[t[2]];return v==null?null:v;}
-  const c=SIGRSI[s];if((!c||Date.now()-c.t>18e4)&&!LSTPEND.has(s)){LSTPEND.add(s);rsiQ(()=>sigRsiLoad(s).finally(()=>{LSTPEND.delete(s);clearTimeout(lstRT);lstRT=setTimeout(lstRender,250);}));}
+  if(!lstIsC(s)){if(!RSIX.j){if(!lstRsi.ld){lstRsi.ld=1;rsiLoad().then(()=>{lstRsi.ld=0;lstRender();if(favOnly)renderList();});}return null;}const v=rsiLive(s)[t[2]];return v==null?null:v;}
+  const c=SIGRSI[s];if((!c||Date.now()-c.t>18e4)&&!LSTPEND.has(s)){LSTPEND.add(s);rsiQ(()=>sigRsiLoad(s).finally(()=>{LSTPEND.delete(s);clearTimeout(lstRT);lstRT=setTimeout(()=>{lstRender();if(favOnly)renderList();},250);}));}
   return c&&c.v[tf]!=null?c.v[tf]:null;}
 function lstPx(s){if(lstIsC(s))return tickers[s]&&tickers[s].c;const q=typeof STK!=='undefined'&&STK[s];if(q&&q.c>0)return q.c;const r=RSIX.j?rsiLive(s):{};return r.c||null;}
 function lstFind(q){q=(q||'').trim().toUpperCase().replace(/\s+/g,'').replace(/\/USDT$/,'');if(!q)return null;
@@ -3106,7 +3109,7 @@ $('drwLists').addEventListener('click',e=>{const t=e.target;
   const rm=t.closest('[data-rm]');if(rm){e.stopPropagation();const s=rm.dataset.rm,fid=rm.dataset.f;if(fid==='fav'){favs.delete(s);saveFavs();try{renderList();}catch(er){}}else{const f=LSTS.find(x=>x.id===fid);if(f)f.syms=f.syms.filter(x=>x!==s);lstSave();}lstRender();return;}
   const go=t.closest('[data-go]');if(go){const s=go.dataset.go,A=!lstIsC(s);drawer(false);if(typeof setView==='function')setView('main');if(A&&mode!=='a')applyMode('a');else if(!A&&mode==='a')applyMode('medio');
     setTimeout(()=>{try{if(symbol!==s)select(s);}catch(er){}},A?400:60);try{$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}catch(er){}}});
-$('drwLists').addEventListener('change',e=>{const sel=e.target.closest('select[data-tf]');if(!sel)return;LSTTF[sel.dataset.tf]=sel.value;lstSave();lstRender();});
+$('drwLists').addEventListener('change',e=>{const sel=e.target.closest('select[data-tf]');if(!sel)return;LSTTF[sel.dataset.tf]=sel.value;lstSave();lstRender();if(sel.dataset.tf==='fav'&&favOnly)renderList();});
 $('drwLists').addEventListener('toggle',e=>{const d=e.target;if(!d.matches||!d.matches('details[data-f]'))return;const id=d.dataset.f,o=d.open;if(!!LSTOPEN[id]===o)return;if(o)LSTOPEN[id]=1;else delete LSTOPEN[id];if(o)lstRender();},true);
 $('drwLists').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const i=e.target.closest('input');if(!i)return;e.preventDefault();if(i.dataset.k==='new')lstCreate();else lstAdd(i.dataset.k.slice(4),i);});
 /* buscador vertical como el del inicio: cripto y acciones con tipo, precio y cambio del día */

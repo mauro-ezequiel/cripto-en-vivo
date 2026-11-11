@@ -101,8 +101,11 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       try { await document.fonts.ready; } catch (e) {} window.__sugShot = 1;
       await w(9000); gi.value = ''; gi.blur(); lstRender();
       const F = [...document.querySelectorAll('#drwLists details')].map(d => ({ f: d.querySelector('.lst-n').textContent, filas: [...d.querySelectorAll('.lst-r')].map(x => x.textContent.replace(/\s+/g, ' ').trim()) }));
-      return { F, msg, sug, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
-    try { await pg.locator('.drw-p').screenshot({ path: 'capturas/listas.png', timeout: 8000 }); } catch (e) {}
+      drawer(false); document.querySelector('#ltabs [data-f="fav"]').click(); await w(6000); renderList();
+      const favRows = [...document.querySelectorAll('#list .row')].map(x => x.textContent.replace(/\s+/g, ' ').trim()), favHead = document.getElementById('lhead').textContent;
+      try { window.__favShot = 1; } catch (e) {}
+      return { favHead, favRows, F, msg, sug, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
+    try { await pg.locator('#list').screenshot({ path: 'capturas/favoritas-rsi.png', timeout: 8000 }); await pg.evaluate(() => document.querySelector('#ltabs [data-f="all"], #ltabs [data-f]:not([data-f="fav"])').click()); } catch (e) {}
     await pg.evaluate(() => drawer(false)); } catch (e) { info.push({ listas_error: e.message.slice(0, 300) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
