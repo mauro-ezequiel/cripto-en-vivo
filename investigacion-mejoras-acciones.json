@@ -1,0 +1,1682 @@
+{
+ "upd": 1794416176421,
+ "acciones": 356,
+ "anios": 4,
+ "nota": "usd = 300 USD de margen por señal con la X de la página (stop ≈ 40 % del margen, máx. × 20), con comisión 0,1 % por lado. Una operación por acción a la vez.",
+ "variantes": {
+  "v7 ACTUAL": {
+   "todo": {
+    "n": 5574,
+    "por_mes": 116.1,
+    "gana": 46.6,
+    "obj1": 17,
+    "usd_op": 16.9,
+    "usd": 94426,
+    "perd_media": -96.8,
+    "peor_racha": -3823
+   },
+   "mitad1": {
+    "n": 2761,
+    "por_mes": 115,
+    "gana": 48.2,
+    "obj1": 16.6,
+    "usd_op": 22.6,
+    "usd": 62298,
+    "perd_media": -98.2,
+    "peor_racha": -3823
+   },
+   "mitad2": {
+    "n": 2813,
+    "por_mes": 117.1,
+    "gana": 45,
+    "obj1": 17.4,
+    "usd_op": 11.4,
+    "usd": 32128,
+    "perd_media": -95.5,
+    "peor_racha": -2269
+   },
+   "año": {
+    "n": 1332,
+    "por_mes": 111,
+    "gana": 45.5,
+    "obj1": 18.4,
+    "usd_op": 16.8,
+    "usd": 22325,
+    "perd_media": -95.8,
+    "peor_racha": -2269
+   },
+   "año_mitad1": {
+    "n": 774,
+    "por_mes": 129,
+    "gana": 46.9,
+    "obj1": 20.9,
+    "usd_op": 25.2,
+    "usd": 19507,
+    "perd_media": -95.1,
+    "peor_racha": -1399
+   },
+   "año_mitad2": {
+    "n": 558,
+    "por_mes": 93,
+    "gana": 43.5,
+    "obj1": 14.9,
+    "usd_op": 5,
+    "usd": 2818,
+    "perd_media": -96.6,
+    "peor_racha": -2269
+   }
+  },
+  "v7 ACTUAL · solo c-rup": {
+   "todo": {
+    "n": 2593,
+    "por_mes": 54,
+    "gana": 43.1,
+    "obj1": 12.2,
+    "usd_op": 18.5,
+    "usd": 48000,
+    "perd_media": -102,
+    "peor_racha": -3665
+   },
+   "mitad1": {
+    "n": 1423,
+    "por_mes": 59.3,
+    "gana": 45.7,
+    "obj1": 12.8,
+    "usd_op": 26.3,
+    "usd": 37476,
+    "perd_media": -102.1,
+    "peor_racha": -3665
+   },
+   "mitad2": {
+    "n": 1170,
+    "por_mes": 48.7,
+    "gana": 39.9,
+    "obj1": 11.5,
+    "usd_op": 9,
+    "usd": 10524,
+    "perd_media": -101.8,
+    "peor_racha": -3456
+   },
+   "año": {
+    "n": 529,
+    "por_mes": 44.1,
+    "gana": 40.6,
+    "obj1": 13,
+    "usd_op": 15.7,
+    "usd": 8280,
+    "perd_media": -101.3,
+    "peor_racha": -3456
+   },
+   "año_mitad1": {
+    "n": 310,
+    "por_mes": 51.7,
+    "gana": 46.8,
+    "obj1": 18.4,
+    "usd_op": 47.8,
+    "usd": 14823,
+    "perd_media": -100.5,
+    "peor_racha": -1127
+   },
+   "año_mitad2": {
+    "n": 219,
+    "por_mes": 36.5,
+    "gana": 32,
+    "obj1": 5.5,
+    "usd_op": -29.9,
+    "usd": -6543,
+    "perd_media": -102.1,
+    "peor_racha": -3456
+   }
+  },
+  "v7 ACTUAL · solo c-rsi": {
+   "todo": {
+    "n": 1211,
+    "por_mes": 25.2,
+    "gana": 57.2,
+    "obj1": 39.1,
+    "usd_op": 14.6,
+    "usd": 17705,
+    "perd_media": -81.2,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 514,
+    "por_mes": 21.4,
+    "gana": 57.2,
+    "obj1": 38.5,
+    "usd_op": 12.7,
+    "usd": 6551,
+    "perd_media": -83.6,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 697,
+    "por_mes": 29,
+    "gana": 57.2,
+    "obj1": 39.6,
+    "usd_op": 16,
+    "usd": 11154,
+    "perd_media": -79.4,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 325,
+    "por_mes": 27.1,
+    "gana": 56.9,
+    "obj1": 40,
+    "usd_op": 18.6,
+    "usd": 6057,
+    "perd_media": -79.5,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 208,
+    "por_mes": 34.7,
+    "gana": 53.8,
+    "obj1": 38.5,
+    "usd_op": 9.4,
+    "usd": 1953,
+    "perd_media": -79.8,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 117,
+    "por_mes": 19.5,
+    "gana": 62.4,
+    "obj1": 42.7,
+    "usd_op": 35.1,
+    "usd": 4103,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 50": {
+   "todo": {
+    "n": 5393,
+    "por_mes": 112.3,
+    "gana": 46.5,
+    "obj1": 17.3,
+    "usd_op": 16.5,
+    "usd": 89140,
+    "perd_media": -96.9,
+    "peor_racha": -3106
+   },
+   "mitad1": {
+    "n": 2665,
+    "por_mes": 111,
+    "gana": 48.1,
+    "obj1": 16.8,
+    "usd_op": 22.4,
+    "usd": 59689,
+    "perd_media": -98,
+    "peor_racha": -3106
+   },
+   "mitad2": {
+    "n": 2728,
+    "por_mes": 113.6,
+    "gana": 45,
+    "obj1": 17.7,
+    "usd_op": 10.8,
+    "usd": 29450,
+    "perd_media": -95.9,
+    "peor_racha": -1965
+   },
+   "año": {
+    "n": 1286,
+    "por_mes": 107.2,
+    "gana": 45.3,
+    "obj1": 18.8,
+    "usd_op": 16,
+    "usd": 20637,
+    "perd_media": -96.3,
+    "peor_racha": -1965
+   },
+   "año_mitad1": {
+    "n": 736,
+    "por_mes": 122.7,
+    "gana": 47.3,
+    "obj1": 21.7,
+    "usd_op": 26.4,
+    "usd": 19455,
+    "perd_media": -95.5,
+    "peor_racha": -1505
+   },
+   "año_mitad2": {
+    "n": 550,
+    "por_mes": 91.7,
+    "gana": 42.5,
+    "obj1": 14.9,
+    "usd_op": 2.1,
+    "usd": 1181,
+    "perd_media": -97.2,
+    "peor_racha": -1965
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 50 · solo c-rup": {
+   "todo": {
+    "n": 2619,
+    "por_mes": 54.5,
+    "gana": 42.8,
+    "obj1": 12.1,
+    "usd_op": 17.7,
+    "usd": 46297,
+    "perd_media": -102,
+    "peor_racha": -3665
+   },
+   "mitad1": {
+    "n": 1436,
+    "por_mes": 59.8,
+    "gana": 45.4,
+    "obj1": 12.7,
+    "usd_op": 25.8,
+    "usd": 37065,
+    "perd_media": -101.9,
+    "peor_racha": -3665
+   },
+   "mitad2": {
+    "n": 1183,
+    "por_mes": 49.3,
+    "gana": 39.6,
+    "obj1": 11.4,
+    "usd_op": 7.8,
+    "usd": 9232,
+    "perd_media": -102,
+    "peor_racha": -3456
+   },
+   "año": {
+    "n": 539,
+    "por_mes": 44.9,
+    "gana": 40.1,
+    "obj1": 12.8,
+    "usd_op": 13.5,
+    "usd": 7296,
+    "perd_media": -101.6,
+    "peor_racha": -3456
+   },
+   "año_mitad1": {
+    "n": 313,
+    "por_mes": 52.2,
+    "gana": 46.3,
+    "obj1": 18.2,
+    "usd_op": 46.3,
+    "usd": 14480,
+    "perd_media": -100.8,
+    "peor_racha": -1127
+   },
+   "año_mitad2": {
+    "n": 226,
+    "por_mes": 37.7,
+    "gana": 31.4,
+    "obj1": 5.3,
+    "usd_op": -31.8,
+    "usd": -7184,
+    "perd_media": -102.4,
+    "peor_racha": -3456
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 50 · solo c-rsi": {
+   "todo": {
+    "n": 1222,
+    "por_mes": 25.4,
+    "gana": 57.2,
+    "obj1": 39,
+    "usd_op": 14.6,
+    "usd": 17826,
+    "perd_media": -81.2,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 523,
+    "por_mes": 21.8,
+    "gana": 57.2,
+    "obj1": 38.4,
+    "usd_op": 12.9,
+    "usd": 6766,
+    "perd_media": -83.4,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 699,
+    "por_mes": 29.1,
+    "gana": 57.2,
+    "obj1": 39.5,
+    "usd_op": 15.8,
+    "usd": 11060,
+    "perd_media": -79.6,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 326,
+    "por_mes": 27.2,
+    "gana": 57.1,
+    "obj1": 39.9,
+    "usd_op": 18.7,
+    "usd": 6082,
+    "perd_media": -79.5,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 209,
+    "por_mes": 34.8,
+    "gana": 54.1,
+    "obj1": 38.3,
+    "usd_op": 9.5,
+    "usd": 1979,
+    "perd_media": -79.8,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 117,
+    "por_mes": 19.5,
+    "gana": 62.4,
+    "obj1": 42.7,
+    "usd_op": 35.1,
+    "usd": 4103,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 20": {
+   "todo": {
+    "n": 5345,
+    "por_mes": 111.3,
+    "gana": 46.5,
+    "obj1": 17.4,
+    "usd_op": 16.4,
+    "usd": 87719,
+    "perd_media": -96.9,
+    "peor_racha": -3476
+   },
+   "mitad1": {
+    "n": 2646,
+    "por_mes": 110.2,
+    "gana": 48.4,
+    "obj1": 17.1,
+    "usd_op": 23,
+    "usd": 60987,
+    "perd_media": -98,
+    "peor_racha": -3476
+   },
+   "mitad2": {
+    "n": 2699,
+    "por_mes": 112.4,
+    "gana": 44.8,
+    "obj1": 17.8,
+    "usd_op": 9.9,
+    "usd": 26732,
+    "perd_media": -95.8,
+    "peor_racha": -1623
+   },
+   "año": {
+    "n": 1263,
+    "por_mes": 105.3,
+    "gana": 45.1,
+    "obj1": 18.9,
+    "usd_op": 14.9,
+    "usd": 18789,
+    "perd_media": -96.2,
+    "peor_racha": -1623
+   },
+   "año_mitad1": {
+    "n": 742,
+    "por_mes": 123.7,
+    "gana": 46.9,
+    "obj1": 21.7,
+    "usd_op": 25.3,
+    "usd": 18743,
+    "perd_media": -95.5,
+    "peor_racha": -1505
+   },
+   "año_mitad2": {
+    "n": 521,
+    "por_mes": 86.8,
+    "gana": 42.6,
+    "obj1": 15,
+    "usd_op": 0.1,
+    "usd": 46,
+    "perd_media": -97.1,
+    "peor_racha": -1623
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 20 · solo c-rup": {
+   "todo": {
+    "n": 2625,
+    "por_mes": 54.7,
+    "gana": 42.8,
+    "obj1": 12.1,
+    "usd_op": 17.5,
+    "usd": 45885,
+    "perd_media": -102.1,
+    "peor_racha": -3665
+   },
+   "mitad1": {
+    "n": 1435,
+    "por_mes": 59.8,
+    "gana": 45.6,
+    "obj1": 12.8,
+    "usd_op": 25.9,
+    "usd": 37169,
+    "perd_media": -102.1,
+    "peor_racha": -3665
+   },
+   "mitad2": {
+    "n": 1190,
+    "por_mes": 49.6,
+    "gana": 39.5,
+    "obj1": 11.3,
+    "usd_op": 7.3,
+    "usd": 8716,
+    "perd_media": -102.1,
+    "peor_racha": -3456
+   },
+   "año": {
+    "n": 542,
+    "por_mes": 45.2,
+    "gana": 40,
+    "obj1": 12.7,
+    "usd_op": 13.1,
+    "usd": 7082,
+    "perd_media": -101.6,
+    "peor_racha": -3456
+   },
+   "año_mitad1": {
+    "n": 315,
+    "por_mes": 52.5,
+    "gana": 46,
+    "obj1": 18.1,
+    "usd_op": 45.2,
+    "usd": 14250,
+    "perd_media": -100.9,
+    "peor_racha": -1127
+   },
+   "año_mitad2": {
+    "n": 227,
+    "por_mes": 37.8,
+    "gana": 31.7,
+    "obj1": 5.3,
+    "usd_op": -31.6,
+    "usd": -7169,
+    "perd_media": -102.4,
+    "peor_racha": -3456
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 20 · solo c-rsi": {
+   "todo": {
+    "n": 1222,
+    "por_mes": 25.4,
+    "gana": 57.2,
+    "obj1": 39,
+    "usd_op": 14.6,
+    "usd": 17889,
+    "perd_media": -81.2,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 523,
+    "por_mes": 21.8,
+    "gana": 57.2,
+    "obj1": 38.4,
+    "usd_op": 12.9,
+    "usd": 6759,
+    "perd_media": -83.4,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 699,
+    "por_mes": 29.1,
+    "gana": 57.2,
+    "obj1": 39.5,
+    "usd_op": 15.9,
+    "usd": 11130,
+    "perd_media": -79.6,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 327,
+    "por_mes": 27.3,
+    "gana": 57.2,
+    "obj1": 40.1,
+    "usd_op": 19.3,
+    "usd": 6299,
+    "perd_media": -79.5,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 209,
+    "por_mes": 34.8,
+    "gana": 54.1,
+    "obj1": 38.3,
+    "usd_op": 9.5,
+    "usd": 1979,
+    "perd_media": -79.8,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 118,
+    "por_mes": 19.7,
+    "gana": 62.7,
+    "obj1": 43.2,
+    "usd_op": 36.6,
+    "usd": 4320,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "c-reb solo con S&P 500 en suba el último mes": {
+   "todo": {
+    "n": 5315,
+    "por_mes": 110.7,
+    "gana": 46.5,
+    "obj1": 17.4,
+    "usd_op": 16.8,
+    "usd": 89229,
+    "perd_media": -96.8,
+    "peor_racha": -4171
+   },
+   "mitad1": {
+    "n": 2636,
+    "por_mes": 109.8,
+    "gana": 48.2,
+    "obj1": 17,
+    "usd_op": 22.6,
+    "usd": 59462,
+    "perd_media": -98.3,
+    "peor_racha": -4171
+   },
+   "mitad2": {
+    "n": 2679,
+    "por_mes": 111.6,
+    "gana": 44.9,
+    "obj1": 17.9,
+    "usd_op": 11.1,
+    "usd": 29767,
+    "perd_media": -95.4,
+    "peor_racha": -2079
+   },
+   "año": {
+    "n": 1254,
+    "por_mes": 104.5,
+    "gana": 45.2,
+    "obj1": 19.1,
+    "usd_op": 16.8,
+    "usd": 21056,
+    "perd_media": -95.2,
+    "peor_racha": -2079
+   },
+   "año_mitad1": {
+    "n": 731,
+    "por_mes": 121.8,
+    "gana": 46.5,
+    "obj1": 22.2,
+    "usd_op": 26.7,
+    "usd": 19554,
+    "perd_media": -94.7,
+    "peor_racha": -1505
+   },
+   "año_mitad2": {
+    "n": 523,
+    "por_mes": 87.2,
+    "gana": 43.4,
+    "obj1": 14.9,
+    "usd_op": 2.9,
+    "usd": 1502,
+    "perd_media": -95.8,
+    "peor_racha": -2079
+   }
+  },
+  "c-reb solo con S&P 500 en suba el último mes · solo c-rup": {
+   "todo": {
+    "n": 2624,
+    "por_mes": 54.6,
+    "gana": 42.8,
+    "obj1": 12.1,
+    "usd_op": 17.4,
+    "usd": 45536,
+    "perd_media": -102.2,
+    "peor_racha": -3900
+   },
+   "mitad1": {
+    "n": 1439,
+    "por_mes": 59.9,
+    "gana": 45.4,
+    "obj1": 12.7,
+    "usd_op": 25.5,
+    "usd": 36742,
+    "perd_media": -102.2,
+    "peor_racha": -3900
+   },
+   "mitad2": {
+    "n": 1185,
+    "por_mes": 49.3,
+    "gana": 39.6,
+    "obj1": 11.4,
+    "usd_op": 7.4,
+    "usd": 8794,
+    "perd_media": -102.2,
+    "peor_racha": -3456
+   },
+   "año": {
+    "n": 535,
+    "por_mes": 44.6,
+    "gana": 40.6,
+    "obj1": 12.9,
+    "usd_op": 14.1,
+    "usd": 7562,
+    "perd_media": -101.8,
+    "peor_racha": -3456
+   },
+   "año_mitad1": {
+    "n": 309,
+    "por_mes": 51.5,
+    "gana": 46.6,
+    "obj1": 18.4,
+    "usd_op": 46.6,
+    "usd": 14415,
+    "perd_media": -101.4,
+    "peor_racha": -1127
+   },
+   "año_mitad2": {
+    "n": 226,
+    "por_mes": 37.7,
+    "gana": 32.3,
+    "obj1": 5.3,
+    "usd_op": -30.3,
+    "usd": -6852,
+    "perd_media": -102.3,
+    "peor_racha": -3456
+   }
+  },
+  "c-reb solo con S&P 500 en suba el último mes · solo c-rsi": {
+   "todo": {
+    "n": 1223,
+    "por_mes": 25.5,
+    "gana": 57.2,
+    "obj1": 39.1,
+    "usd_op": 14.8,
+    "usd": 18042,
+    "perd_media": -81.2,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 523,
+    "por_mes": 21.8,
+    "gana": 57.2,
+    "obj1": 38.4,
+    "usd_op": 12.9,
+    "usd": 6766,
+    "perd_media": -83.4,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 700,
+    "por_mes": 29.2,
+    "gana": 57.3,
+    "obj1": 39.6,
+    "usd_op": 16.1,
+    "usd": 11277,
+    "perd_media": -79.6,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 327,
+    "por_mes": 27.3,
+    "gana": 57.2,
+    "obj1": 40.1,
+    "usd_op": 19.3,
+    "usd": 6299,
+    "perd_media": -79.5,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 209,
+    "por_mes": 34.8,
+    "gana": 54.1,
+    "obj1": 38.3,
+    "usd_op": 9.5,
+    "usd": 1979,
+    "perd_media": -79.8,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 118,
+    "por_mes": 19.7,
+    "gana": 62.7,
+    "obj1": 43.2,
+    "usd_op": 36.6,
+    "usd": 4320,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "c-reb solo con RSI diario de la acción ≤ 40": {
+   "todo": {
+    "n": 4558,
+    "por_mes": 94.9,
+    "gana": 46.7,
+    "obj1": 18.6,
+    "usd_op": 15.6,
+    "usd": 70986,
+    "perd_media": -96.8,
+    "peor_racha": -3355
+   },
+   "mitad1": {
+    "n": 2301,
+    "por_mes": 95.8,
+    "gana": 47.8,
+    "obj1": 17.6,
+    "usd_op": 20.3,
+    "usd": 46810,
+    "perd_media": -98.3,
+    "peor_racha": -3355
+   },
+   "mitad2": {
+    "n": 2257,
+    "por_mes": 94,
+    "gana": 45.5,
+    "obj1": 19.6,
+    "usd_op": 10.7,
+    "usd": 24177,
+    "perd_media": -95.3,
+    "peor_racha": -1958
+   },
+   "año": {
+    "n": 1057,
+    "por_mes": 88.1,
+    "gana": 46.5,
+    "obj1": 20.5,
+    "usd_op": 16.9,
+    "usd": 17895,
+    "perd_media": -95.7,
+    "peor_racha": -1958
+   },
+   "año_mitad1": {
+    "n": 625,
+    "por_mes": 104.2,
+    "gana": 49.1,
+    "obj1": 23.8,
+    "usd_op": 30.9,
+    "usd": 19314,
+    "perd_media": -94.4,
+    "peor_racha": -937
+   },
+   "año_mitad2": {
+    "n": 432,
+    "por_mes": 72,
+    "gana": 42.8,
+    "obj1": 15.7,
+    "usd_op": -3.3,
+    "usd": -1419,
+    "perd_media": -97.5,
+    "peor_racha": -1958
+   }
+  },
+  "c-reb solo con RSI diario de la acción ≤ 40 · solo c-rup": {
+   "todo": {
+    "n": 2832,
+    "por_mes": 59,
+    "gana": 42.6,
+    "obj1": 11.9,
+    "usd_op": 16.2,
+    "usd": 45910,
+    "perd_media": -102.1,
+    "peor_racha": -3776
+   },
+   "mitad1": {
+    "n": 1538,
+    "por_mes": 64,
+    "gana": 44.9,
+    "obj1": 12.1,
+    "usd_op": 22.7,
+    "usd": 34853,
+    "perd_media": -101.9,
+    "peor_racha": -3776
+   },
+   "mitad2": {
+    "n": 1294,
+    "por_mes": 53.9,
+    "gana": 39.9,
+    "obj1": 11.7,
+    "usd_op": 8.5,
+    "usd": 11057,
+    "perd_media": -102.3,
+    "peor_racha": -3683
+   },
+   "año": {
+    "n": 593,
+    "por_mes": 49.4,
+    "gana": 40.8,
+    "obj1": 13.2,
+    "usd_op": 15.4,
+    "usd": 9131,
+    "perd_media": -102,
+    "peor_racha": -3683
+   },
+   "año_mitad1": {
+    "n": 340,
+    "por_mes": 56.7,
+    "gana": 47.4,
+    "obj1": 19.1,
+    "usd_op": 49.2,
+    "usd": 16712,
+    "perd_media": -102,
+    "peor_racha": -1015
+   },
+   "año_mitad2": {
+    "n": 253,
+    "por_mes": 42.2,
+    "gana": 32,
+    "obj1": 5.1,
+    "usd_op": -30,
+    "usd": -7581,
+    "perd_media": -102,
+    "peor_racha": -3683
+   }
+  },
+  "c-reb solo con RSI diario de la acción ≤ 40 · solo c-rsi": {
+   "todo": {
+    "n": 1211,
+    "por_mes": 25.2,
+    "gana": 57.2,
+    "obj1": 39.1,
+    "usd_op": 14.6,
+    "usd": 17705,
+    "perd_media": -81.2,
+    "peor_racha": -1192
+   },
+   "mitad1": {
+    "n": 514,
+    "por_mes": 21.4,
+    "gana": 57.2,
+    "obj1": 38.5,
+    "usd_op": 12.7,
+    "usd": 6551,
+    "perd_media": -83.6,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 697,
+    "por_mes": 29,
+    "gana": 57.2,
+    "obj1": 39.6,
+    "usd_op": 16,
+    "usd": 11154,
+    "perd_media": -79.4,
+    "peor_racha": -1129
+   },
+   "año": {
+    "n": 325,
+    "por_mes": 27.1,
+    "gana": 56.9,
+    "obj1": 40,
+    "usd_op": 18.6,
+    "usd": 6057,
+    "perd_media": -79.5,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 208,
+    "por_mes": 34.7,
+    "gana": 53.8,
+    "obj1": 38.5,
+    "usd_op": 9.4,
+    "usd": 1953,
+    "perd_media": -79.8,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 117,
+    "por_mes": 19.5,
+    "gana": 62.4,
+    "obj1": 42.7,
+    "usd_op": 35.1,
+    "usd": 4103,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "c-reb solo si la acción cerró sobre su media de 20": {
+   "todo": {
+    "n": 5018,
+    "por_mes": 104.5,
+    "gana": 46.5,
+    "obj1": 18.4,
+    "usd_op": 16.5,
+    "usd": 83009,
+    "perd_media": -97.9,
+    "peor_racha": -3353
+   },
+   "mitad1": {
+    "n": 2490,
+    "por_mes": 103.7,
+    "gana": 48,
+    "obj1": 17.8,
+    "usd_op": 22.8,
+    "usd": 56857,
+    "perd_media": -98.9,
+    "peor_racha": -3353
+   },
+   "mitad2": {
+    "n": 2528,
+    "por_mes": 105.3,
+    "gana": 44.9,
+    "obj1": 18.9,
+    "usd_op": 10.3,
+    "usd": 26152,
+    "perd_media": -97.1,
+    "peor_racha": -2078
+   },
+   "año": {
+    "n": 1196,
+    "por_mes": 99.7,
+    "gana": 45,
+    "obj1": 20.1,
+    "usd_op": 14.8,
+    "usd": 17676,
+    "perd_media": -96.8,
+    "peor_racha": -2078
+   },
+   "año_mitad1": {
+    "n": 698,
+    "por_mes": 116.3,
+    "gana": 46,
+    "obj1": 23.2,
+    "usd_op": 25.5,
+    "usd": 17804,
+    "perd_media": -96.2,
+    "peor_racha": -1123
+   },
+   "año_mitad2": {
+    "n": 498,
+    "por_mes": 83,
+    "gana": 43.6,
+    "obj1": 15.7,
+    "usd_op": -0.3,
+    "usd": -128,
+    "perd_media": -97.5,
+    "peor_racha": -2078
+   }
+  },
+  "c-reb solo si la acción cerró sobre su media de 20 · solo c-rup": {
+   "todo": {
+    "n": 2655,
+    "por_mes": 55.3,
+    "gana": 42.7,
+    "obj1": 12.1,
+    "usd_op": 17.4,
+    "usd": 46216,
+    "perd_media": -102.1,
+    "peor_racha": -3665
+   },
+   "mitad1": {
+    "n": 1457,
+    "por_mes": 60.7,
+    "gana": 45.4,
+    "obj1": 12.7,
+    "usd_op": 25.5,
+    "usd": 37104,
+    "perd_media": -102.2,
+    "peor_racha": -3665
+   },
+   "mitad2": {
+    "n": 1198,
+    "por_mes": 49.9,
+    "gana": 39.5,
+    "obj1": 11.4,
+    "usd_op": 7.6,
+    "usd": 9112,
+    "perd_media": -102.1,
+    "peor_racha": -3455
+   },
+   "año": {
+    "n": 542,
+    "por_mes": 45.2,
+    "gana": 40.4,
+    "obj1": 12.9,
+    "usd_op": 14,
+    "usd": 7612,
+    "perd_media": -101.4,
+    "peor_racha": -3455
+   },
+   "año_mitad1": {
+    "n": 312,
+    "por_mes": 52,
+    "gana": 45.8,
+    "obj1": 18.3,
+    "usd_op": 44.7,
+    "usd": 13957,
+    "perd_media": -101.6,
+    "peor_racha": -1127
+   },
+   "año_mitad2": {
+    "n": 230,
+    "por_mes": 38.3,
+    "gana": 33,
+    "obj1": 5.7,
+    "usd_op": -27.6,
+    "usd": -6345,
+    "perd_media": -101.2,
+    "peor_racha": -3455
+   }
+  },
+  "c-reb solo si la acción cerró sobre su media de 20 · solo c-rsi": {
+   "todo": {
+    "n": 1235,
+    "por_mes": 25.7,
+    "gana": 57.2,
+    "obj1": 38.9,
+    "usd_op": 14.6,
+    "usd": 18055,
+    "perd_media": -81.2,
+    "peor_racha": -1221
+   },
+   "mitad1": {
+    "n": 531,
+    "por_mes": 22.1,
+    "gana": 57.4,
+    "obj1": 38.6,
+    "usd_op": 13.9,
+    "usd": 7380,
+    "perd_media": -82.7,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 704,
+    "por_mes": 29.3,
+    "gana": 57,
+    "obj1": 39.1,
+    "usd_op": 15.2,
+    "usd": 10675,
+    "perd_media": -80.1,
+    "peor_racha": -1221
+   },
+   "año": {
+    "n": 330,
+    "por_mes": 27.5,
+    "gana": 57,
+    "obj1": 39.7,
+    "usd_op": 18.6,
+    "usd": 6129,
+    "perd_media": -79.9,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 211,
+    "por_mes": 35.2,
+    "gana": 53.6,
+    "obj1": 37.9,
+    "usd_op": 8.4,
+    "usd": 1762,
+    "perd_media": -80.4,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 119,
+    "por_mes": 19.8,
+    "gana": 63,
+    "obj1": 42.9,
+    "usd_op": 36.7,
+    "usd": 4367,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "SIN c-reb (c-rup + c-rsi)": {
+   "todo": {
+    "n": 4106,
+    "por_mes": 85.5,
+    "gana": 46.9,
+    "obj1": 19.9,
+    "usd_op": 15.3,
+    "usd": 62772,
+    "perd_media": -97,
+    "peor_racha": -3112
+   },
+   "mitad1": {
+    "n": 2089,
+    "por_mes": 87,
+    "gana": 48,
+    "obj1": 18.8,
+    "usd_op": 19.9,
+    "usd": 41584,
+    "perd_media": -98,
+    "peor_racha": -3112
+   },
+   "mitad2": {
+    "n": 2017,
+    "por_mes": 84,
+    "gana": 45.8,
+    "obj1": 21.2,
+    "usd_op": 10.5,
+    "usd": 21188,
+    "perd_media": -96,
+    "peor_racha": -1974
+   },
+   "año": {
+    "n": 934,
+    "por_mes": 77.8,
+    "gana": 46.6,
+    "obj1": 22.5,
+    "usd_op": 16.4,
+    "usd": 15327,
+    "perd_media": -95.5,
+    "peor_racha": -1508
+   },
+   "año_mitad1": {
+    "n": 557,
+    "por_mes": 92.8,
+    "gana": 49.6,
+    "obj1": 26,
+    "usd_op": 32.8,
+    "usd": 18261,
+    "perd_media": -94.3,
+    "peor_racha": -839
+   },
+   "año_mitad2": {
+    "n": 377,
+    "por_mes": 62.8,
+    "gana": 42.2,
+    "obj1": 17.2,
+    "usd_op": -7.8,
+    "usd": -2935,
+    "perd_media": -96.9,
+    "peor_racha": -1508
+   }
+  },
+  "SIN c-reb (c-rup + c-rsi) · solo c-rup": {
+   "todo": {
+    "n": 2871,
+    "por_mes": 59.8,
+    "gana": 42.5,
+    "obj1": 11.8,
+    "usd_op": 15.6,
+    "usd": 44717,
+    "perd_media": -102.1,
+    "peor_racha": -3900
+   },
+   "mitad1": {
+    "n": 1558,
+    "por_mes": 64.9,
+    "gana": 44.7,
+    "obj1": 12,
+    "usd_op": 22,
+    "usd": 34203,
+    "perd_media": -102,
+    "peor_racha": -3900
+   },
+   "mitad2": {
+    "n": 1313,
+    "por_mes": 54.7,
+    "gana": 39.8,
+    "obj1": 11.6,
+    "usd_op": 8,
+    "usd": 10514,
+    "perd_media": -102.1,
+    "peor_racha": -3683
+   },
+   "año": {
+    "n": 604,
+    "por_mes": 50.3,
+    "gana": 40.9,
+    "obj1": 13.1,
+    "usd_op": 15.2,
+    "usd": 9197,
+    "perd_media": -101.7,
+    "peor_racha": -3683
+   },
+   "año_mitad1": {
+    "n": 346,
+    "por_mes": 57.7,
+    "gana": 47.1,
+    "obj1": 18.8,
+    "usd_op": 47.7,
+    "usd": 16499,
+    "perd_media": -101.8,
+    "peor_racha": -1015
+   },
+   "año_mitad2": {
+    "n": 258,
+    "por_mes": 43,
+    "gana": 32.6,
+    "obj1": 5.4,
+    "usd_op": -28.3,
+    "usd": -7302,
+    "perd_media": -101.5,
+    "peor_racha": -3683
+   }
+  },
+  "SIN c-reb (c-rup + c-rsi) · solo c-rsi": {
+   "todo": {
+    "n": 1235,
+    "por_mes": 25.7,
+    "gana": 57.2,
+    "obj1": 38.9,
+    "usd_op": 14.6,
+    "usd": 18055,
+    "perd_media": -81.2,
+    "peor_racha": -1221
+   },
+   "mitad1": {
+    "n": 531,
+    "por_mes": 22.1,
+    "gana": 57.4,
+    "obj1": 38.6,
+    "usd_op": 13.9,
+    "usd": 7380,
+    "perd_media": -82.7,
+    "peor_racha": -1192
+   },
+   "mitad2": {
+    "n": 704,
+    "por_mes": 29.3,
+    "gana": 57,
+    "obj1": 39.1,
+    "usd_op": 15.2,
+    "usd": 10675,
+    "perd_media": -80.1,
+    "peor_racha": -1221
+   },
+   "año": {
+    "n": 330,
+    "por_mes": 27.5,
+    "gana": 57,
+    "obj1": 39.7,
+    "usd_op": 18.6,
+    "usd": 6129,
+    "perd_media": -79.9,
+    "peor_racha": -845
+   },
+   "año_mitad1": {
+    "n": 211,
+    "por_mes": 35.2,
+    "gana": 53.6,
+    "obj1": 37.9,
+    "usd_op": 8.4,
+    "usd": 1762,
+    "perd_media": -80.4,
+    "peor_racha": -845
+   },
+   "año_mitad2": {
+    "n": 119,
+    "por_mes": 19.8,
+    "gana": 63,
+    "obj1": 42.9,
+    "usd_op": 36.7,
+    "usd": 4367,
+    "perd_media": -78.8,
+    "peor_racha": -400
+   }
+  },
+  "v7 ACTUAL · solo c-reb": {
+   "todo": {
+    "n": 1770,
+    "por_mes": 36.9,
+    "gana": 44.4,
+    "obj1": 8.9,
+    "usd_op": 16.2,
+    "usd": 28722,
+    "perd_media": -97.2,
+    "peor_racha": -2202
+   },
+   "mitad1": {
+    "n": 824,
+    "por_mes": 34.3,
+    "gana": 47,
+    "obj1": 9.5,
+    "usd_op": 22.2,
+    "usd": 18272,
+    "perd_media": -98.8,
+    "peor_racha": -1537
+   },
+   "mitad2": {
+    "n": 946,
+    "por_mes": 39.4,
+    "gana": 42.2,
+    "obj1": 8.4,
+    "usd_op": 11,
+    "usd": 10450,
+    "perd_media": -96,
+    "peor_racha": -2202
+   },
+   "año": {
+    "n": 478,
+    "por_mes": 39.8,
+    "gana": 43.1,
+    "obj1": 9.6,
+    "usd_op": 16.7,
+    "usd": 7989,
+    "perd_media": -97.8,
+    "peor_racha": -2202
+   },
+   "año_mitad1": {
+    "n": 256,
+    "por_mes": 42.7,
+    "gana": 41.4,
+    "obj1": 9.8,
+    "usd_op": 10.7,
+    "usd": 2731,
+    "perd_media": -99,
+    "peor_racha": -1268
+   },
+   "año_mitad2": {
+    "n": 222,
+    "por_mes": 37,
+    "gana": 45,
+    "obj1": 9.5,
+    "usd_op": 23.7,
+    "usd": 5258,
+    "perd_media": -96.4,
+    "peor_racha": -2202
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 50 · solo c-reb": {
+   "todo": {
+    "n": 1552,
+    "por_mes": 32.3,
+    "gana": 44.5,
+    "obj1": 8.8,
+    "usd_op": 16.1,
+    "usd": 25018,
+    "perd_media": -97.6,
+    "peor_racha": -1697
+   },
+   "mitad1": {
+    "n": 706,
+    "por_mes": 29.4,
+    "gana": 46.9,
+    "obj1": 9.2,
+    "usd_op": 22.5,
+    "usd": 15859,
+    "perd_media": -98.3,
+    "peor_racha": -1696
+   },
+   "mitad2": {
+    "n": 846,
+    "por_mes": 35.2,
+    "gana": 42.4,
+    "obj1": 8.4,
+    "usd_op": 10.8,
+    "usd": 9159,
+    "perd_media": -97,
+    "peor_racha": -1697
+   },
+   "año": {
+    "n": 421,
+    "por_mes": 35.1,
+    "gana": 42.8,
+    "obj1": 10.2,
+    "usd_op": 17.2,
+    "usd": 7259,
+    "perd_media": -99,
+    "peor_racha": -1697
+   },
+   "año_mitad1": {
+    "n": 214,
+    "por_mes": 35.7,
+    "gana": 42.1,
+    "obj1": 10.7,
+    "usd_op": 14,
+    "usd": 2996,
+    "perd_media": -100.6,
+    "peor_racha": -1068
+   },
+   "año_mitad2": {
+    "n": 207,
+    "por_mes": 34.5,
+    "gana": 43.5,
+    "obj1": 9.7,
+    "usd_op": 20.6,
+    "usd": 4262,
+    "perd_media": -97.3,
+    "peor_racha": -1697
+   }
+  },
+  "c-reb solo con S&P 500 sobre su media de 20 · solo c-reb": {
+   "todo": {
+    "n": 1498,
+    "por_mes": 31.2,
+    "gana": 44.4,
+    "obj1": 9.1,
+    "usd_op": 16,
+    "usd": 23945,
+    "perd_media": -97.4,
+    "peor_racha": -1358
+   },
+   "mitad1": {
+    "n": 688,
+    "por_mes": 28.7,
+    "gana": 47.5,
+    "obj1": 9.9,
+    "usd_op": 24.8,
+    "usd": 17059,
+    "perd_media": -98.4,
+    "peor_racha": -1358
+   },
+   "mitad2": {
+    "n": 810,
+    "por_mes": 33.7,
+    "gana": 41.7,
+    "obj1": 8.5,
+    "usd_op": 8.5,
+    "usd": 6886,
+    "perd_media": -96.6,
+    "peor_racha": -1227
+   },
+   "año": {
+    "n": 394,
+    "por_mes": 32.8,
+    "gana": 42.1,
+    "obj1": 9.9,
+    "usd_op": 13.7,
+    "usd": 5408,
+    "perd_media": -98.7,
+    "peor_racha": -1227
+   },
+   "año_mitad1": {
+    "n": 218,
+    "por_mes": 36.3,
+    "gana": 41.3,
+    "obj1": 11,
+    "usd_op": 11.5,
+    "usd": 2514,
+    "perd_media": -100.1,
+    "peor_racha": -1068
+   },
+   "año_mitad2": {
+    "n": 176,
+    "por_mes": 29.3,
+    "gana": 43.2,
+    "obj1": 8.5,
+    "usd_op": 16.4,
+    "usd": 2895,
+    "perd_media": -96.9,
+    "peor_racha": -1227
+   }
+  },
+  "c-reb solo con S&P 500 en suba el último mes · solo c-reb": {
+   "todo": {
+    "n": 1468,
+    "por_mes": 30.6,
+    "gana": 44.3,
+    "obj1": 8.9,
+    "usd_op": 17.5,
+    "usd": 25650,
+    "perd_media": -96.8,
+    "peor_racha": -2133
+   },
+   "mitad1": {
+    "n": 674,
+    "por_mes": 28.1,
+    "gana": 47.2,
+    "obj1": 9.3,
+    "usd_op": 23.7,
+    "usd": 15954,
+    "perd_media": -99,
+    "peor_racha": -2133
+   },
+   "mitad2": {
+    "n": 794,
+    "por_mes": 33.1,
+    "gana": 41.9,
+    "obj1": 8.4,
+    "usd_op": 12.2,
+    "usd": 9696,
+    "perd_media": -95.1,
+    "peor_racha": -2098
+   },
+   "año": {
+    "n": 392,
+    "por_mes": 32.7,
+    "gana": 41.6,
+    "obj1": 10.2,
+    "usd_op": 18.4,
+    "usd": 7195,
+    "perd_media": -95.5,
+    "peor_racha": -2098
+   },
+   "año_mitad1": {
+    "n": 213,
+    "por_mes": 35.5,
+    "gana": 39,
+    "obj1": 11.7,
+    "usd_op": 14.8,
+    "usd": 3161,
+    "perd_media": -97.1,
+    "peor_racha": -2098
+   },
+   "año_mitad2": {
+    "n": 179,
+    "por_mes": 29.8,
+    "gana": 44.7,
+    "obj1": 8.4,
+    "usd_op": 22.5,
+    "usd": 4034,
+    "perd_media": -93.4,
+    "peor_racha": -1564
+   }
+  },
+  "c-reb solo si la acción cerró sobre su media de 20 · solo c-reb": {
+   "todo": {
+    "n": 1128,
+    "por_mes": 23.5,
+    "gana": 43.5,
+    "obj1": 10.6,
+    "usd_op": 16.6,
+    "usd": 18738,
+    "perd_media": -101.8,
+    "peor_racha": -1871
+   },
+   "mitad1": {
+    "n": 502,
+    "por_mes": 20.9,
+    "gana": 45.8,
+    "obj1": 10.8,
+    "usd_op": 24.6,
+    "usd": 12373,
+    "perd_media": -102.7,
+    "peor_racha": -1170
+   },
+   "mitad2": {
+    "n": 626,
+    "por_mes": 26.1,
+    "gana": 41.7,
+    "obj1": 10.5,
+    "usd_op": 10.2,
+    "usd": 6365,
+    "perd_media": -101.2,
+    "peor_racha": -1871
+   },
+   "año": {
+    "n": 324,
+    "por_mes": 27,
+    "gana": 40.4,
+    "obj1": 12,
+    "usd_op": 12.1,
+    "usd": 3934,
+    "perd_media": -101.4,
+    "peor_racha": -1871
+   },
+   "año_mitad1": {
+    "n": 175,
+    "por_mes": 29.2,
+    "gana": 37.1,
+    "obj1": 14.3,
+    "usd_op": 11.9,
+    "usd": 2084,
+    "perd_media": -102.1,
+    "peor_racha": -1871
+   },
+   "año_mitad2": {
+    "n": 149,
+    "por_mes": 24.8,
+    "gana": 44.3,
+    "obj1": 9.4,
+    "usd_op": 12.4,
+    "usd": 1851,
+    "perd_media": -100.5,
+    "peor_racha": -1142
+   }
+  },
+  "c-reb solo con RSI diario de la acción ≤ 40 · solo c-reb": {
+   "todo": {
+    "n": 515,
+    "por_mes": 10.7,
+    "gana": 44.5,
+    "obj1": 7.2,
+    "usd_op": 14.3,
+    "usd": 7371,
+    "perd_media": -94.7,
+    "peor_racha": -1016
+   },
+   "mitad1": {
+    "n": 249,
+    "por_mes": 10.4,
+    "gana": 47,
+    "obj1": 8.8,
+    "usd_op": 21.7,
+    "usd": 5406,
+    "perd_media": -99.5,
+    "peor_racha": -1016
+   },
+   "mitad2": {
+    "n": 266,
+    "por_mes": 11.1,
+    "gana": 42.1,
+    "obj1": 5.6,
+    "usd_op": 7.4,
+    "usd": 1965,
+    "perd_media": -90.6,
+    "peor_racha": -907
+   },
+   "año": {
+    "n": 139,
+    "por_mes": 11.6,
+    "gana": 46.8,
+    "obj1": 6.5,
+    "usd_op": 19.5,
+    "usd": 2707,
+    "perd_media": -96.6,
+    "peor_racha": -907
+   },
+   "año_mitad1": {
+    "n": 77,
+    "por_mes": 12.8,
+    "gana": 44.2,
+    "obj1": 5.2,
+    "usd_op": 8.4,
+    "usd": 649,
+    "perd_media": -95.1,
+    "peor_racha": -564
+   },
+   "año_mitad2": {
+    "n": 62,
+    "por_mes": 10.3,
+    "gana": 50,
+    "obj1": 8.1,
+    "usd_op": 33.2,
+    "usd": 2059,
+    "perd_media": -98.6,
+    "peor_racha": -907
+   }
+  }
+ }
+}
