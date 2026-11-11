@@ -365,7 +365,7 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
+.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}.rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
 .hrow.h2{grid-template-columns:34px minmax(0,1fr) auto minmax(18px,auto);gap:8px;padding:6px 4px;align-items:center}
 .hrow.h2 .hdt{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:11px}.hrow.h2 .hpin{width:26px;height:20px;padding:0;font-size:10px;display:flex;align-items:center;justify-content:center}
 .hrow.h2 .hm{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap;overflow:hidden}.hrow.h2 .hm>*{flex:0 0 auto}.hrow.h2 .hm b{flex:0 0 auto}.hrow.h2 .hm .hh{font-size:10.5px}.hrow.h2 .hia>*{font-size:10px!important;padding:2px 5px!important;gap:3px!important}
@@ -3004,7 +3004,7 @@ function buildSignalV2(m,sym,e,fd){
 /* ACCIONES también (octubre 2026): las busca un navegador del bot cada 30 min, las 24 h (herramientas/acciones-bot.js abre esta misma página con
    ?bot=acciones, así usa exactamente las mismas reglas, noticias incluidas) y las publica en datos/acciones.json. */
 const ACCBOT=/[?&]bot=acciones/.test(location.search);
-const BOTSRC=m=>m==='medio'||m==='tx'||m==='x'||(m==='a'&&!ACCBOT);var SRVCHK=0,ACCCHK=0,ACCOPS=null;
+const BOTSRC=m=>m==='medio'||m==='tx'||m==='x'||(m==='a'&&!ACCBOT);var SRVCHK=0,ACCCHK=0,ACCOPS=null,SRVEST=null;
 async function scanSignals(mm){
   if(BOTSRC(mm||mode)){lastScan[mm||mode]=Date.now();try{await ((mm||mode)==='a'?accImport():srvImport());}catch(e){}renderSignals();return;}
   if(scanBusy||((mm||mode)==='a'?!stkReady:!Object.keys(tickers).length))return;
@@ -3051,6 +3051,16 @@ function checkSignals(){
   if(ch)saveSig();renderSignals();
 }
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
+/* noviembre 2026: por qué el bot 24 h no da señales (lo publica el bot cada hora en senales.json) */
+const BOTEST_TXT={sin_setup:'ninguna moneda armó el patrón de entrada',btc_contra:'la entrada iba en contra de BTC',btc_sin_fuerza:'BTC sin fuerza (ADX menor a 24)',dvol:'volatilidad (DVOL) fuera de rango',volatil:'moneda demasiado volátil para el stop',loca:'moneda con movimientos anormales',certeza:'acierto histórico debajo del mínimo',dvol_bajo:'mercado dormido (DVOL menor a 35)'};
+function botEstHTML(m){const e=SRVEST&&SRVEST[m];if(!e||!e.t)return '';const ago=t=>{const d=(Date.now()-t)/36e5;return d<1?Math.max(1,Math.round(d*60))+' min':d<48?Math.round(d)+' h':Math.round(d/24)+' días';};
+  const L=[];const last=e.ultima||null;
+  if(e.pausa)L.push(`<b>⏸ En pausa.</b> ${esc(e.pausa)}.`);
+  else{const dv=e.dvol;if(m!=='x'&&dv&&dv.v!=null){const bl=dv.v>55||(dv.v24!=null&&dv.v24<-10);L.push(`${bl?'🚫':'✓'} DVOL ${dv.v.toFixed(0)}${dv.v24!=null?` (${dv.v24>=0?'+':''}${dv.v24.toFixed(0)} % en 24 h)`:''}${bl?': bloquea las entradas (máximo 55 y que no caiga más de 10 % en 24 h)':''}`);}
+    if(m!=='x'&&e.btc)L.push(`${e.btcAdx!=null&&e.btcAdx<24?'🚫':'✓'} BTC ${e.btc>0?'▲ alcista':'▼ bajista'}${e.btcAdx!=null?` · ADX ${e.btcAdx.toFixed(0)}`:''}: ${e.btcAdx!=null&&e.btcAdx<24?'sin fuerza, no se opera':`solo entra en ${e.btc>0?'LONG':'SHORT'}`}`);
+    const K=Object.entries(e.no||{}).filter(([k])=>BOTEST_TXT[k]).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    if(K.length)L.push('Esta hora: '+K.map(([k,v])=>`${BOTEST_TXT[k]} (${v})`).join(' · '));}
+  return `<div class="bot-est"><div class="be-h">🤖 Estado del bot ${SIGCFG[m].name} · revisado hace ${ago(e.t)}${last?` · última señal hace ${ago(last)}`:''}</div>${L.map(x=>`<div>${x}</div>`).join('')}</div>`;}
 function renderSignals(){try{iaSigRender();}catch(e){}
   const m=mode,cfg=SIGCFG[m],now=Date.now();
   if(SIGV!=='ia')$('sigHead').textContent=`Señales ${cfg.name} · movimientos de ${(cfg.min*100).toLocaleString('es-ES')} % o más · ${(m==='x'||m==='medio'||m==='tx')?'todas las líquidas menos las impredecibles':m==='a'?'acciones de NYSE con CEDEAR (NASDAQ se ve pero no da señales: la regla no ganó ahí)':'las '+cfg.n+' con más volumen'}`;
@@ -3061,7 +3071,7 @@ function renderSignals(){try{iaSigRender();}catch(e){}
   /* cada tarjeta se ve 1 hora desde que salió la señal (o hasta que la cierres con la X); la operación se sigue igual en Resultados */
   const vis=SIG[m].filter(s=>!SIGHIDE.has(s.op)&&now-(s.t||now)<SIGCARD_MS);
   const list=pinned.concat(vis.slice().sort((a,b)=>(a.state==='live'?0:1)-(b.state==='live'?0:1)||b.conf-a.conf).slice(0,Math.max(0,MAXSIG+4-pinned.length)));
-  if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} ${BOTSRC(m)?(m==='a'?'Las busca el bot 24 h cada 30 min (velas diarias: las nuevas salen con el cierre de Wall Street) y son las mismas en todas tus cuentas y dispositivos.':'Las busca el bot 24 h en cada vela y son las mismas en todas tus cuentas y dispositivos.'):`Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.`}</div>`;return;}
+  if(!list.length){$('sigList').innerHTML=`<div class="mut">${m==='p'?'Ahora ninguna moneda cumple tus ajustes con fuerza suficiente (termómetro de 80/100 o más, o de 20 o menos, a favor de la tendencia diaria).':`Ahora no hay ninguna entrada que cumpla el filtro (acierto histórico de ${MINCERT[m]} % o más).`} ${BOTSRC(m)?(m==='a'?'Las busca el bot 24 h cada 30 min (velas diarias: las nuevas salen con el cierre de Wall Street) y son las mismas en todas tus cuentas y dispositivos.':'Las busca el bot 24 h en cada vela y son las mismas en todas tus cuentas y dispositivos.'):`Se revisan las monedas cada ${Math.round(cfg.every/1000)} s.`}</div>${botEstHTML(m)}`;return;}
   $('sigList').innerHTML=list.map(s=>{const L=s.dir>0,pc=v=>fpct((v/s.entry-1)*100),p=tickers[s.sym]?.c,lost=s.state!=='live',op=OPS.find(x=>x.id===s.op);
     const pin=false;
     return `<div class="sig ${L?'long':'short'}${pin?' pin':''}${lost?' lost':''}${s.m==='p'?' nr':''}${s.plus?' plus':''}${op&&op.ll&&!LLHIDE.has(op.id)?' ll':''}" data-sym="${s.sym}" data-tf="${s.tf}" data-op="${s.op}" title="Abrir ${s.sym.replace('USDT','')} en el gráfico">
@@ -5392,7 +5402,7 @@ async function histYrLoad(){try{const j=await (await fetch(HIST_URL+'?t='+Date.n
 setTimeout(histYrLoad,2500);setInterval(histYrLoad,6*36e5);
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
 const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
-async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();
+async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();if(j.estado)SRVEST=j.estado;
   for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
@@ -5564,7 +5574,7 @@ const SRV_API='https://api.github.com/repos/mauro-ezequiel/cripto-en-vivo/conten
 let srvSeen=null,srvApiOff=0;
 async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await r.json();if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
   return await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();}
-srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();const fresh=[];
+srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();if(j.estado)SRVEST=j.estado;const fresh=[];
   for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),

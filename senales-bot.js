@@ -133,7 +133,15 @@ async function tg(text, canal = true) { if (!TOKEN || !CHAT) { console.log('[sin
   await sendTo(CHAT, text); if (canal && CANAL) await sendTo(canalId(), text); }
 
 /* ---------- publica las señales en la rama "datos" para que la página las muestre ---------- */
-async function ghPublish() { return ghPut('senales.json', JSON.stringify({ upd: Date.now(), senales: S.hist || [] }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
+/* noviembre 2026: estado de cada bot (por qué no da señales) para la página. Se acumula por hora y se publica con senales.json */
+function estBot(m, now, x) { const E = S.est = S.est || {}, h = Math.floor(now / 36e5); let e = E[m];
+  if (!e || e.h !== h) e = E[m] = { h, rev: 0, nuevas: 0, no: {}, vueltas: 0 };
+  e.t = now; e.vueltas++; e.pausa = x.pausa || null; if (x.rev) e.rev = x.rev; e.nuevas += x.nuevas || 0; if (x.btc != null) e.btc = x.btc; if (x.btcAdx !== undefined) e.btcAdx = x.btcAdx;
+  for (const [k, v] of Object.entries(x.no || {})) e.no[k] = (e.no[k] || 0) + v;
+  const lt = (S.hist || []).filter(o => o.m === m).reduce((a, o) => Math.max(a, o.t), 0); e.ultima = lt || null;
+  if (x.dvol !== undefined) e.dvol = x.dvol;
+  if (!S.estPub || now - S.estPub > 36e5) S.histDirty = true; }
+async function ghPublish() { S.estPub = Date.now(); return ghPut('senales.json', JSON.stringify({ upd: Date.now(), senales: S.hist || [], estado: S.est || null }), 'fileSha', 'Señales del servidor', (S.hist || []).length + ' señales'); }
 async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return false;
   const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json', 'User-Agent': 'cripto-live-bot' }, api = 'https://api.github.com/repos/' + repo;
   try { if (!S.brOk) { let r = await fetch(api + '/git/ref/heads/datos', { headers: H });
@@ -310,19 +318,19 @@ async function main() {
    84,8 % y +3,7 % (mejor en las dos mitades del año). Las que cayeron más de 10 % en 24 h daban 50 % ganadas y −30 % por operación. */
     if (m === 'x' && (!S.sh7 || now - S.sh7.t > 36e5)) { const avg = []; for (const t of base.slice(0, 70)) { try { const k = await getJ(`${API}/klines?symbol=${t.symbol}&interval=1d&limit=8`); const c = k.slice(0, -1).slice(-7); if (c.length >= 5) avg.push([t.symbol, c.reduce((a, x) => a + +x[7], 0) / c.length]); } catch (e) {} await sleep(40); }
       if (avg.length >= 30) S.sh7 = { t: now, set: avg.sort((a, b) => b[1] - a[1]).slice(0, 30).map(x => x[0]) }; }
-    const cfg = SIGCFG[m], U = (m === 'x' && S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; U.forEach((s, k) => rankOf[s] = k);
+    const cfg = SIGCFG[m], U = (m === 'x' && S.sh7 ? base.filter(t => S.sh7.set.includes(t.symbol) && +t.priceChangePercent > -10) : base).slice(0, cfg.n).map(t => t.symbol); let sent = 0, btcDir = 0; const rankOf = {}; const W = {}, no = k => { W[k] = (W[k] || 0) + 1; }; U.forEach((s, k) => rankOf[s] = k);
     if (m === 'x') { try { const bk = await kl('BTCUSDT', '1h', 80), cl = bk.slice(0, -1).map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; } catch (e) {} }
     /* SHOOTER v11: solo compra caídas, así que con BTC flojo pierde. Prueba: 1 año de −60 a +2.353 USD (85 % ganadas), 4 años de 13.205 a 16.337 USD */
-    if (m === 'x') { let up = true; try { const bk = (await kl('BTCUSDT', '4h', 300)).slice(0, -1), cl = bk.map(b => b.close), e2 = emaArr(cl, 200); up = !(e2[e2.length - 1] != null && cl[cl.length - 1] < e2[e2.length - 1]); } catch (e) {} S.btc200 = up ? 1 : -1; if (!up) { S.b200Skip = (S.b200Skip || 0) + 1; continue; } }
+    if (m === 'x') { let up = true; try { const bk = (await kl('BTCUSDT', '4h', 300)).slice(0, -1), cl = bk.map(b => b.close), e2 = emaArr(cl, 200); up = !(e2[e2.length - 1] != null && cl[cl.length - 1] < e2[e2.length - 1]); } catch (e) {} S.btc200 = up ? 1 : -1; if (!up) { S.b200Skip = (S.b200Skip || 0) + 1; estBot(m, now, { pausa: 'BTC está debajo de su EMA 200 de 4 h: SHOOTER compra caídas y con BTC flojo pierde, así que espera' }); continue; } }
     let btcAdx = null; if (m !== 'x') { try { const bk = await kl('BTCUSDT', '4h', 300), cc = bk.slice(0, -1), cl = cc.map(b => b.close), e = emaArr(cl, 50); btcDir = cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; btcAdx = withCandles(cc, () => calcADX(14).adx)[cc.length - 1]; } catch (e) {} }
     for (const s of U) {
-      if (S.last[m + s] && now - S.last[m + s] < cfg.cool) continue;
-      if (S.open.some(o => o.sym === s && o.m === m)) continue;
+      if (S.last[m + s] && now - S.last[m + s] < cfg.cool) { no('espera'); continue; }
+      if (S.open.some(o => o.sym === s && o.m === m)) { no('abierta'); continue; }
       try {
         let e, tfx = null;
         if (m === 'x') { const [c15, c30, hc] = await Promise.all([kl(s, '15m', 300), kl(s, '30m', 300), kl(s, '1h', 200)]); if (c15.length < 150 || hc.length < 60) continue;
-          e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir || !(await wildOK(s, hc))) continue;
-          { const dv = await DVL.ahora(now); if (dv != null && dv < DVL.SHOOTER_DVMIN) { S.dvSkip = (S.dvSkip || 0) + 1; continue; } if (dv != null) e.reasons.push('DVOL ' + dv.toFixed(0) + ' (mercado despierto)'); } }
+          e = evalShooter(c15, hc, 15); tfx = '15m'; if (!e.dir) { e = evalShooter(c30, hc, 30); tfx = '30m'; } if (!e.dir) { no('sin_setup'); continue; } if (!(await wildOK(s, hc))) { no('loca'); continue; }
+          { const dv = await DVL.ahora(now); if (dv != null && dv < DVL.SHOOTER_DVMIN) { S.dvSkip = (S.dvSkip || 0) + 1; no('dvol_bajo'); continue; } if (dv != null) e.reasons.push('DVOL ' + dv.toFixed(0) + ' (mercado despierto)'); } }
         else { if (EVC[s]) e = Object.assign({}, EVC[s], { reasons: EVC[s].reasons.slice() }); else { const [cs, hc] = await Promise.all([kl(s, cfg.tf, 300), kl(s, cfg.htf, 120)]); if (cs.length < 150 || hc.length < 30) continue;
             e = evalTrading(cs, hc, rankOf[s]); EVC[s] = Object.assign({}, e, { reasons: (e.reasons || []).slice(), hc }); }
           /* TRADING X v2: si en 4 h no hay señal, busca en 12 h y en 3 h (solo en los primeros 20 min después de que cierra cada vela) */
@@ -330,12 +338,12 @@ async function main() {
             for (const [tf2, hh] of [['12h', 12], ['3h', 3]]) { const ms2 = hh * 36e5; if (now - Math.floor(now / ms2) * ms2 > 20 * 6e4) continue;
               const cs2 = tf2 === '3h' ? agg3h(await kl(s, '1h', 900)) : await kl(s, '12h', 300); if (cs2.length < 220) continue;
               const e2 = evalTrading(cs2, hc, rankOf[s], Math.sqrt(hh / 4)); if (e2.dir) { e = e2; tfx = tf2; e.atrSc = Math.sqrt(hh / 4); e.reasons.push('velas de ' + tf2.replace('h', ' h')); break; } } }
-          if (!e.dir || !(await wildOK(s))) continue; }
-        const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr * (e.atrSc || 1)) continue;
+          if (!e.dir) { no('sin_setup'); continue; } if (!(await wildOK(s))) { no('loca'); continue; } }
+        const c = e.c, atrP = e.atr / c; if (!(atrP > 0) || atrP > cfg.maxAtr * (e.atrSc || 1)) { no('volatil'); continue; }
         const d = e.dir, setup = e.setup || (m !== 'x' ? 't-pb' : 'sh-r'); let conf = m === 'tx' ? CAL.tx.p : CALSET[setup] || CAL[m].p;
-        if (m !== 'x') { if (btcDir !== d) continue; if (btcAdx != null && btcAdx < 24) continue; conf += 2; e.reasons.push('BTC a favor y con fuerza (ADX ' + btcAdx.toFixed(0) + ')'); }
-        if (m !== 'x') { const dv = await DVL.estado(now); if (DVL.txBloquea(dv.v, dv.v24)) { S.txSkip = (S.txSkip || 0) + 1; continue; } if (dv.v != null) e.reasons.push('DVOL ' + dv.v.toFixed(0) + (dv.v24 != null ? ` (${dv.v24 >= 0 ? '+' : ''}${(dv.v24 * 100).toFixed(0)} % en 24 h)` : '')); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
-        if (conf < MINCERT[m]) continue;
+        if (m !== 'x') { if (btcDir !== d) { no('btc_contra'); continue; } if (btcAdx != null && btcAdx < 24) { no('btc_sin_fuerza'); continue; } conf += 2; e.reasons.push('BTC a favor y con fuerza (ADX ' + btcAdx.toFixed(0) + ')'); }
+        if (m !== 'x') { const dv = await DVL.estado(now); if (DVL.txBloquea(dv.v, dv.v24)) { S.txSkip = (S.txSkip || 0) + 1; no('dvol'); continue; } if (dv.v != null) e.reasons.push('DVOL ' + dv.v.toFixed(0) + (dv.v24 != null ? ` (${dv.v24 >= 0 ? '+' : ''}${(dv.v24 * 100).toFixed(0)} % en 24 h)` : '')); } // TRADING solo a favor de BTC (SHOOTER v3 no lo usa)
+        if (conf < MINCERT[m]) { no('certeza'); continue; }
         const G = GEOM[m], liqD = Math.min(G.maxSl, Math.max(.004, G.a * atrP)), tp = [1, 2, 3].map(k => c * (1 + d * k * G.r * liqD)), sl = c * (1 - d * liqD), ll = m === 'x' ? null : c * (1 - d * liqD * LLTH); // SHOOTER sin salvavidas
         const zone = c * Math.min(cfg.min * .15, atrP * .5), sym = s.replace('USDT', '');
         const tS = m === 'tx' ? now + 1 : now; // TRADING X: 1 ms después, así su identificador (moneda-hora) no se pisa con el de TRADING
@@ -348,7 +356,9 @@ async function main() {
       } catch (err) { console.log(s, err.message); }
       await sleep(80);
     }
-    console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent);
+    console.log(cfg.name, 'revisadas', U.length, 'nuevas', sent, JSON.stringify(W));
+    let dvE = null; try { const dv = await DVL.estado(now); if (dv && dv.v != null) dvE = { v: +dv.v.toFixed(1), v24: dv.v24 != null ? +(dv.v24 * 100).toFixed(1) : null }; } catch (er) {}
+    estBot(m, now, { rev: U.length, nuevas: sent, no: W, btc: btcDir, btcAdx: btcAdx != null ? +btcAdx.toFixed(1) : null, dvol: dvE });
   }
   try { VD.S = S; VD.dvol = await DVL.ahora(now); VD.dvx = await DVL.estado(now); await VERM.run(now, base, S.sh7 ? new Set(S.sh7.set) : null, VD); } catch (e) { console.log('versiones', e.message); }
   try { await semanal(now); } catch (e) { console.log('semanal', e.message); }

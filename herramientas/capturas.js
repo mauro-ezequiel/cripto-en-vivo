@@ -89,6 +89,12 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     await pg.evaluate(async () => { VERSEL = 'medio8'; renderRes(true); await new Promise(z => setTimeout(z, 800)); });
     try { await pg.locator('.ver-det').first().screenshot({ path: 'capturas/version-detalle.png', timeout: 8000 }); } catch (e) { info.push({ cap: 'detalle2', e: e.message.slice(0, 80) }); }
     await pg.evaluate(() => { VERSEL = null; renderRes(true); }); } catch (e) { info.push({ versiones_error: e.message }); }
+  /* estado del bot 24 h (por qué no hay señales) */
+  try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
+    applyMode('medio'); setView('sig'); SIG.medio = []; renderSignals(); await new Promise(z => setTimeout(z, 300)); const a = (document.querySelector('#sigList .bot-est') || {}).textContent || null;
+    applyMode('x'); SIG.x = []; renderSignals(); const b = (document.querySelector('#sigList .bot-est') || {}).textContent || null; applyMode('medio'); return { medio: a, x: b }; }); info.push({ botest: r });
+    try { await pg.evaluate(() => { SIG.medio = []; renderSignals(); }); await pg.locator('#sigBox').screenshot({ path: 'capturas/bot-estado.png', timeout: 8000 }); } catch (e) {} } catch (e) { info.push({ botest_error: e.message.slice(0, 200) }); }
+  await pg.screenshot({ path: 'capturas/pagina-completa.png', fullPage: true });
   /* botón atrás del celular: cada paso anota la pantalla y lo abierto */
   try { const st = () => pg.evaluate(() => ({ v: document.body.dataset.v, ia: !!(document.getElementById('iaPanel') && !document.getElementById('iaPanel').hidden), trn: !!(document.getElementById('trn') && !document.getElementById('trn').hidden), toast: !!document.querySelector('.trn-toast'), url: location.href.slice(-30) }));
     const at = []; await pg.evaluate(() => { document.querySelectorAll('.trn-toast').forEach(x => x.remove()); setView('main'); });
@@ -96,6 +102,5 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     await pg.evaluate(() => iaShow(true)); await pg.waitForTimeout(800); at.push(['abre IA', await st()]);
     for (let i = 0; i < 6; i++) { await pg.evaluate(() => history.back()); await pg.waitForTimeout(700); at.push(['atrás ' + (i + 1), await st().catch(e => 'salió: ' + e.message.slice(0, 60))]); }
     info.push({ atras: at }); } catch (e) { info.push({ atras_error: e.message }); }
-  await pg.screenshot({ path: 'capturas/pagina-completa.png', fullPage: true });
   fs.writeFileSync('capturas/errores.json', JSON.stringify({ info, errs }, null, 1)); console.log(JSON.stringify({ info, errs }, null, 1)); await br.close();
 })().catch(e => { console.error(e); process.exit(1); });
