@@ -49,7 +49,7 @@ const GEO = {
   sh:   { L: +(process.env.SH_LEV || 15), a: +(process.env.SH_A || 4), cap: +(process.env.SH_CAP || .05), floor: .004, r: +(process.env.SH_R || .25), ex: 'no', ll: false, margin: 50 }   // SHOOTER × 15
 };
 const SH_SKIP = (process.env.SH_CAPMODE || 'cap') === 'skip'; // por defecto el stop se recorta al tope (5 % con × 15); 'skip' no opera
-const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x' };
+const SETUP_M = { 't-pb': 'medio', 'tp-r55': 'medio', 'tp-u80': 'medio', 'tp-x': 'medio', 'sh-c': 'x', 'sh-v': 'x' };
 
 /* ---------- matemáticas (idénticas al bot) ---------- */
 let candles = [];
@@ -304,6 +304,13 @@ async function runShooter(s, rank = 0) {
       if (IAON && z <= -1.8 && r7[i] <= 35 && rnd() < .3) { // candidatas para aprender a entrar
         const g = GEO.sh, o = sim(tb, tfMs, SH.maxAge, i + 1, cb, 1, slOf(g, atrP), g.r, g.L, g.ex, null, t);
         if (!o.open) IAD.sh.ent.push([t, ...IA.entryX(P3, i, 1, btcDirAt(BTC1, 36e5, t)).map(v => +v.toFixed(3)), o.hit >= 1 ? 1 : 0, 0, +o.pct.toFixed(2), rank, 1, TFMIN[tf], ...(IAX ? metX(MX, t, 1) : [])]); }
+      /* prueba (noviembre 2026): SHOOTER espejo para mercado bajista. Con BTC bajo su EMA 200 de 4 h vende los rebotes:
+         z ≥ 1,8, RSI 7 ≥ 65, subió 3 % o más en 1 h, la moneda bajo su EMA 200 y su tendencia de 1 h en contra. Mismo stop y objetivos. */
+      if (process.env.SH_ESPEJO && z >= 1.8 && r7[i] >= 65 && (cb / tb[i - back].close - 1) * 100 >= 3 && e200s[i] != null && cb < e200s[i] && !btcSobre200(t) && !tooWild(hb, W1, t)) {
+        const k2 = lastClosed(hb, SH.htfMs, t), dvq = DVS.size ? DVL.at(DVS, t) : null;
+        if (k2 >= 0 && he[k2] != null && hb[k2].close < he[k2] && !(dvq != null && dvq < DVL.SHOOTER_DVMIN)) { const g = GEO.sh;
+          if (!(SH_SKIP && g.a * atrP > g.cap)) { const sl = slOf(g, atrP); const res = sim(tb, tfMs, SH.maxAge, i + 1, cb, -1, sl, g.r, g.L, g.ex, null, t, null, process.env.SIN_V9X ? null : Object.assign({}, SXV9X));
+            CANDS.push({ m: 'x', setup: 'sh-v', tf, s, t, dir: -1, sl, entry: cb, r: g.r, L: g.L, cool: SH.cool, margin: g.margin, ...res, ia: null }); } } }
       const drop = (cb / tb[i - back].close - 1) * 100; if (!(z <= -1.8 && r7[i] <= 35 && drop <= -3)) continue;
       const k = lastClosed(hb, SH.htfMs, t); if (!(k >= 0 && he[k] != null && hb[k].close > he[k])) continue; // tendencia de 1 h a favor
       let viejo = null;
