@@ -89,6 +89,18 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     await pg.evaluate(async () => { VERSEL = 'medio8'; renderRes(true); await new Promise(z => setTimeout(z, 800)); });
     try { await pg.locator('.ver-det').first().screenshot({ path: 'capturas/version-detalle.png', timeout: 8000 }); } catch (e) { info.push({ cap: 'detalle2', e: e.message.slice(0, 80) }); }
     await pg.evaluate(() => { VERSEL = null; renderRes(true); }); } catch (e) { info.push({ versiones_error: e.message }); }
+  /* menú lateral: Mis listas (favoritos y carpetas con RSI) */
+  try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); drawer(true); await w(300);
+      const add = (fid, v) => { const i = document.querySelector(`#drwLists input[data-k="add-${fid}"]`); i.value = v; document.querySelector(`#drwLists [data-add="${fid}"]`).click(); };
+      add('fav', 'BTC'); add('fav', 'aapl'); add('fav', 'NOEXISTE'); const msg = (document.querySelector('#drwLists details[data-f="fav"] .lst-msg:last-child') || {}).textContent;
+      document.getElementById('lstPlus').click(); const n = document.querySelector('#drwLists input[data-k="new"]'); n.value = 'Prueba'; document.querySelector('#drwLists [data-a="crear"]').click();
+      const fid = LSTS[LSTS.length - 1].id; add(fid, 'SOL'); add(fid, 'ETH'); add(fid, 'KO');
+      const sel = document.querySelector(`#drwLists select[data-tf="${fid}"]`); sel.value = '4h'; sel.dispatchEvent(new Event('change', { bubbles: true }));
+      await w(9000); lstRender();
+      const F = [...document.querySelectorAll('#drwLists details')].map(d => ({ f: d.querySelector('.lst-n').textContent, filas: [...d.querySelectorAll('.lst-r')].map(x => x.textContent.replace(/\s+/g, ' ').trim()) }));
+      return { F, msg, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
+    try { await pg.locator('.drw-p').screenshot({ path: 'capturas/listas.png', timeout: 8000 }); } catch (e) {}
+    await pg.evaluate(() => drawer(false)); } catch (e) { info.push({ listas_error: e.message.slice(0, 300) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
     applyMode('medio'); setView('sig'); SIG.medio = []; renderSignals(); await new Promise(z => setTimeout(z, 300)); const a = (document.querySelector('#sigList .bot-est') || {}).textContent || null;

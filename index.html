@@ -365,7 +365,16 @@ body.fs-on .fsbar{display:flex}
 .alr-f button{border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
-.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}.rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
+.hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}.lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
+.lst-d{margin:0 0 8px}.lst-d summary .lst-n{font-size:13px}.lst-del{margin-left:auto}.lst-tf{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 2px 6px}.lst-tf select{background:var(--panel,#11141a);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:11px;padding:2px 4px}
+.lst-b{padding:2px 8px 8px}.lst-r{display:grid;grid-template-columns:1fr auto auto 26px;align-items:center;gap:6px;padding:6px 2px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
+.lst-r small{color:var(--mut);font-size:10px;margin-left:4px}.lst-r .lst-px{font-variant-numeric:tabular-nums;color:var(--mut);font-size:12px}.lst-r .rsx{min-width:58px;text-align:center}
+.lst-x{border:0;background:none;color:var(--mut);font-size:14px;cursor:pointer;padding:2px}.lst-x:hover{color:var(--dn,#ef5350)}
+.lst-add{display:flex;gap:6px;margin-top:6px}.lst-add input{flex:1;min-width:0;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
+.lst-add button,.lst-new button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.lst-new{display:flex;gap:6px;margin-bottom:8px}.lst-new input{flex:1;min-width:0;background:var(--bg);color:var(--txt);border:1px solid var(--acc);border-radius:8px;padding:6px 8px;font:inherit}
+.lst-msg{color:var(--mut);font-size:11px;padding:4px 2px}.lst-del{border:0;background:none;color:var(--mut);cursor:pointer;font-size:12px;padding:0 2px}.lst-del.ask{color:#ef5350;font-weight:700}
+.rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
 .hrow.h2{grid-template-columns:34px minmax(0,1fr) auto minmax(18px,auto);gap:8px;padding:6px 4px;align-items:center}
 .hrow.h2 .hdt{display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--mut);font-size:11px}.hrow.h2 .hpin{width:26px;height:20px;padding:0;font-size:10px;display:flex;align-items:center;justify-content:center}
 .hrow.h2 .hm{display:flex;align-items:center;gap:7px;min-width:0;white-space:nowrap;overflow:hidden}.hrow.h2 .hm>*{flex:0 0 auto}.hrow.h2 .hm b{flex:0 0 auto}.hrow.h2 .hm .hh{font-size:10.5px}.hrow.h2 .hia>*{font-size:10px!important;padding:2px 5px!important;gap:3px!important}
@@ -843,10 +852,8 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
 </div></div>
 <div class="drw" id="drw"><div class="drw-bg" id="drwBg"></div><div class="drw-p" role="dialog" aria-label="Menú">
   <div class="drw-h"><span>CRIPTO-LIVE</span><button class="drw-x" id="drwX" aria-label="Cerrar menú">✕</button></div>
-  <section><h4>Modo de inversión</h4><div id="drwModes">
-    <button class="mcard" data-m="medio"><b>📈 TRADING</b><small>Largo plazo · stop según la volatilidad (3 × ATR, máx. 3,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 350 USD × 10, salvavidas 175 USD · solo a favor de BTC</small></button>
-    <button class="mcard" data-m="x"><b>🎯 SHOOTER</b><small>Corto plazo · de 5 min a 4 h · stop según la volatilidad (3 × ATR, máx. 7,6 %) · objetivos 0,5 / 1 / 1,5 veces el stop · simulación 50 USD × 10, sin salvavidas · RSI extremo y BTC a favor</small></button>
-    <button class="mcard" data-m="p"><b>🛠 PERSONALIZADO</b><small>Valores de TRADING con tus propios ajustes de indicadores · señales NO RECOMENDABLES</small></button>
+  <section><h4 class="lst-h">⭐ Mis listas <button class="lst-plus" id="lstPlus" type="button" title="Nueva carpeta" aria-label="Nueva carpeta">+</button></h4><div id="drwLists"></div></section>
+  <section><div id="drwModes">
     <button class="mcard" data-m="a"><b>🏛 ACCIONES</b><small>Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ) en dólares · velas diarias · rebote tras caída de 6 meses o ruptura de 20 días con volumen, con el S&P 500 sobre su media de 200 días · stop 2,5 × ATR diario · objetivos 3 / 6 / 9 veces el stop · 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen)</small></button></div>
     <button class="mcard" data-cu="1" style="text-align:center"><b>⚙ Personalizar indicadores</b><small>Colores, medidas y grosor de línea</small></button>
     <button class="mcard pil-m" id="pilDrw" type="button"><b>🧭 PILOTEAR <span id="pilCnt" class="mut"></span></b><small>Seguí tu propia operación: te aviso con notificación naranja cuándo salir, asegurar o poner un salvavidas</small></button></section>
@@ -1879,7 +1886,7 @@ function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{tr
   loadChart();
 }
 function showStart(){
-  let last='medio';try{last=localStorage.getItem('cv_mode')||'medio'}catch(e){}
+  let last='medio';try{last=localStorage.getItem('cv_mode')||'medio';if(last==='p'){last='medio';localStorage.setItem('cv_mode','medio');}}catch(e){}
   $('cards').innerHTML=Object.entries(MODES).map(([k,M])=>`<button class="card${k===last?' def':''}" data-m="${k}">
     <b>${M.name}${M.tag?`<span class="tag">${M.tag}</span>`:''}</b><small>${M.desc}</small>
     <ul>${M.info.map(i=>`<li>${i}</li>`).join('')}</ul></button>`).join('');
@@ -2374,7 +2381,7 @@ try{favs=new Set(JSON.parse(localStorage.getItem('cv_favs')||'[]'))}catch(e){}
 function saveFavs(){try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}cloudSave();}
 function readLocalLines(){try{return JSON.parse(localStorage.getItem('cv_lines')||'{}')}catch(e){return {}}}
 function cloudSave(now){if(!fbUser||!fbDb||!cloudReady)return;clearTimeout(cloudTimer);cloudTimer=setTimeout(()=>{cloudTimer=null;if(!fbUser||!cloudReady)return; // salió de la cuenta mientras esperaba
-  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),tl:(typeof TLN!=='undefined'?TLN:{}),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
+  fbDb.collection('users').doc(fbUser.uid).set({...cloudPilData(),...cloudViewData(),lines:readLocalLines(),tl:(typeof TLN!=='undefined'?TLN:{}),linesT:+(localStorage.getItem('cv_lines_t')||0),favs:[...favs],lists:(typeof LSTS!=='undefined'?LSTS:[]),ops:(typeof OPS!=='undefined'?OPS.slice(-300):[]),alr:(typeof ALR!=='undefined'&&ALR?ALR:[]),cu:(typeof CU!=='undefined'?CU:null),updated:Date.now()},{merge:true}).catch(e=>console.warn('No se pudo guardar en la nube',e));},now===true?0:800);}
 const GICON='<svg viewBox="0 0 48 48" width="14" height="14"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 3-2.3 5.5-4.8 7.2l7.7 6c4.5-4.2 6.9-10.3 6.9-17.7z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.7-6c-2.1 1.4-4.9 2.3-8.2 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>';
 /* ---------- 👑 administración, prueba gratis y planes (octubre 2026) ----------
    cuentas/{uid}: perfil e ingresos · bloqueos/{uid}: sin acceso · subs/{uid}: {plan, desde, hasta} (14 días gratis al entrar por primera vez)
@@ -2651,7 +2658,7 @@ function initCloud(){
       if(!d.linesT){merged={...local};for(const s in (d.lines||{}))merged[s]=[...new Set([...(d.lines[s]||[]),...(local[s]||[])])];}else merged=lt>d.linesT?local:(d.lines||{});
       try{localStorage.setItem('cv_lines',JSON.stringify(merged));localStorage.setItem('cv_lines_t',String(Math.max(lt,d.linesT||0)||Date.now()));}catch(e){}
       try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,true);}catch(e){}
-      (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);if(d.cu&&typeof d.cu==='object'){CU=normCu(d.cu);try{localStorage.setItem('cv_custom',JSON.stringify(CU))}catch(e){}if(mode==='p'){setNames();if(candles.length)calcInd(true);renderChips();}}try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
+      (d.favs||[]).forEach(f=>favs.add(f));if(Array.isArray(d.lists)&&typeof lstMerge==='function')lstMerge(d.lists);if(Array.isArray(d.ops))mergeOps(d.ops);if(Array.isArray(d.alr))mergeAlr(d.alr);if(d.cu&&typeof d.cu==='object'){CU=normCu(d.cu);try{localStorage.setItem('cv_custom',JSON.stringify(CU))}catch(e){}if(mode==='p'){setNames();if(candles.length)calcInd(true);renderChips();}}try{localStorage.setItem('cv_favs',JSON.stringify([...favs]))}catch(e){}
     }catch(e){console.warn('No se pudo leer la nube',e);}
     cloudReady=true;restoreLines();renderList();cloudSave();
     try{if(window.__unsubLines)window.__unsubLines();window.__unsubLines=fbDb.collection('users').doc(u.uid).onSnapshot(s=>{if(s.metadata.hasPendingWrites)return;const d=s.data()||{},lt=+(localStorage.getItem('cv_lines_t')||0);
@@ -3051,6 +3058,60 @@ function checkSignals(){
   if(ch)saveSig();renderSignals();
 }
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
+/* ---------- ⭐ MIS LISTAS (noviembre 2026) ----------
+   En el menú lateral: Favoritos (las mismas ★ de la lista de monedas, cripto y acciones) y carpetas propias.
+   Cada activo muestra su RSI 14 en la temporalidad elegida para la carpeta, con los colores de la planilla. Se guarda en el celular y en la cuenta. */
+var LSTS=[],LSTTF={},LSTOPEN={fav:1},LSTNEW=false,LSTMSG={},LSTASK=null,LSTPEND=new Set(),lstRT=0;
+try{LSTS=JSON.parse(localStorage.getItem('cv_lists')||'[]')||[];LSTTF=JSON.parse(localStorage.getItem('cv_liststf')||'{}')||{};}catch(e){}
+const LST_TF=[['1h','1h','h'],['4h','4h','4h'],['1d','1d','d'],['1w','1 sem','w']];
+function lstSave(){try{localStorage.setItem('cv_lists',JSON.stringify(LSTS));localStorage.setItem('cv_liststf',JSON.stringify(LSTTF));}catch(e){}try{cloudSave();}catch(e){}}
+function lstMerge(L){let ch=false;for(const f of L){if(!f||!f.id||!Array.isArray(f.syms))continue;const o=LSTS.find(x=>x.id===f.id);
+    if(!o){LSTS.push({id:f.id,name:String(f.name||'Carpeta').slice(0,40),syms:f.syms.slice(0,200)});ch=true;}else for(const x of f.syms)if(!o.syms.includes(x)){o.syms.push(x);ch=true;}}
+  if(ch){try{localStorage.setItem('cv_lists',JSON.stringify(LSTS));}catch(e){}lstRender();}}
+const lstIsC=s=>/USDT$/.test(s);
+function lstFolders(){return [{id:'fav',name:'★ Favoritos',syms:[...favs]}].concat(LSTS);}
+function lstRsi(s,tf){const t=LST_TF.find(x=>x[0]===tf)||LST_TF[2];
+  if(!lstIsC(s)){if(!RSIX.j){rsiLoad().then(()=>lstRender());return null;}const v=rsiLive(s)[t[2]];return v==null?null:v;}
+  const c=SIGRSI[s];if((!c||Date.now()-c.t>18e4)&&!LSTPEND.has(s)){LSTPEND.add(s);rsiQ(()=>sigRsiLoad(s).finally(()=>{LSTPEND.delete(s);clearTimeout(lstRT);lstRT=setTimeout(lstRender,250);}));}
+  return c&&c.v[tf]!=null?c.v[tf]:null;}
+function lstPx(s){if(lstIsC(s))return tickers[s]&&tickers[s].c;const q=typeof STK!=='undefined'&&STK[s];if(q&&q.c>0)return q.c;const r=RSIX.j?rsiLive(s):{};return r.c||null;}
+function lstFind(q){q=(q||'').trim().toUpperCase().replace(/\s+/g,'').replace(/\/USDT$/,'');if(!q)return null;
+  if(tickers[q+'USDT'])return q+'USDT';if(/USDT$/.test(q)&&tickers[q])return q;
+  if((typeof STK!=='undefined'&&STK[q])||(RSIX.j&&RSIX.j.d[q]))return q;return null;}
+function lstOpts(){const dl=$('lstDL');if(!dl||dl.dataset.n==Object.keys(tickers).length)return;dl.dataset.n=Object.keys(tickers).length;
+  const C=Object.values(tickers).sort((a,b)=>b.q-a.q).slice(0,400).map(t=>t.s.replace('USDT',''));const A=Object.keys(typeof STK!=='undefined'?STK:{}).concat(RSIX.j?Object.keys(RSIX.j.d):[]);
+  dl.innerHTML=[...new Set(C.concat(A))].map(x=>`<option value="${esc(x)}">`).join('');}
+function lstRender(){const el=$('drwLists');if(!el)return;if(!$('drw').classList.contains('open')&&el.dataset.done)return;el.dataset.done=1;
+  const ae=document.activeElement,keep=ae&&el.contains(ae)&&ae.tagName==='INPUT'?{k:ae.dataset.k,v:ae.value,ss:ae.selectionStart}:null;
+  let h=LSTNEW?`<div class="lst-new"><input data-k="new" maxlength="40" placeholder="Nombre de la carpeta (ej.: Para comprar)" autocomplete="off"><button type="button" data-a="crear">Crear</button><button type="button" data-a="nocrear" style="background:var(--line)">✕</button></div>`:'';
+  h+=lstFolders().map(f=>{const tf=LSTTF[f.id]||'1d',op=!!LSTOPEN[f.id];
+    const rows=f.syms.map(s=>{const c=lstIsC(s),v=op?lstRsi(s,tf):null,p=op?lstPx(s):null;
+      return `<div class="lst-r" data-go="${esc(s)}" title="Abrir ${esc(s.replace('USDT',''))} en el gráfico"><span><b>${esc(s.replace('USDT',''))}</b><small>${c?'cripto':'acción'}</small></span><span class="lst-px">${p?fp(p):''}</span>${v==null?`<span class="rsx xs mut">RSI …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf}${!c&&tf==='1h'?' (horas de mercado)':''}">RSI ${Math.round(v)}</span>`}<button class="lst-x" type="button" data-rm="${esc(s)}" data-f="${f.id}" title="Quitar de la lista" aria-label="Quitar">✕</button></div>`;}).join('');
+    return `<details class="alr-d lst-d" data-f="${f.id}"${op?' open':''}><summary><span class="lst-n">${esc(f.name)}</span> <span class="mut">${f.syms.length}</span>${f.id==='fav'?'':`<button class="lst-del${LSTASK===f.id?' ask':''}" type="button" data-delf="${f.id}" title="Borrar carpeta">${LSTASK===f.id?'¿Borrar? Sí':'🗑'}</button>`}</summary>
+      <div class="lst-b"><div class="lst-tf"><span class="mut">RSI 14 de</span><select data-tf="${f.id}" aria-label="Temporalidad del RSI">${LST_TF.map(([k,l])=>`<option value="${k}"${k===tf?' selected':''}>${l}</option>`).join('')}</select></div>${rows||`<div class="lst-msg">${f.id==='fav'?'Vacía: agregá abajo o tocá la ★ en la lista de monedas y acciones.':'Vacía: agregá cripto o acciones abajo.'}</div>`}
+      <div class="lst-add"><input data-k="add-${f.id}" list="lstDL" placeholder="Agregar: BTC, SOL, AAPL…" autocomplete="off" autocapitalize="characters"><button type="button" data-add="${f.id}">Agregar</button></div>${LSTMSG[f.id]?`<div class="lst-msg">${esc(LSTMSG[f.id])}</div>`:''}</div></details>`;}).join('');
+  el.innerHTML=h+'<datalist id="lstDL"></datalist>';
+  if(keep){const i=el.querySelector(`input[data-k="${keep.k}"]`);if(i){i.value=keep.v;i.focus();try{i.setSelectionRange(keep.ss,keep.ss);}catch(e){}}}
+  else if(LSTNEW){const i=el.querySelector('input[data-k="new"]');if(i)i.focus();}}
+function lstAdd(fid,inp){const s=lstFind(inp&&inp.value);if(!s){LSTMSG[fid]=inp&&inp.value.trim()?`No encontré "${inp.value.trim()}". Escribí el código, por ejemplo BTC o AAPL.`:'';lstRender();return;}
+  LSTMSG[fid]='';if(fid==='fav'){favs.add(s);saveFavs();try{renderList();}catch(e){}}else{const f=LSTS.find(x=>x.id===fid);if(f&&!f.syms.includes(s))f.syms.push(s);lstSave();}
+  LSTOPEN[fid]=1;if(inp)inp.value='';lstRender();}
+function lstCreate(){const i=document.querySelector('#drwLists input[data-k="new"]'),n=(i&&i.value||'').trim().slice(0,40);if(!n){if(i)i.focus();return;}
+  const id='l'+Date.now().toString(36);LSTS.push({id,name:n,syms:[]});LSTOPEN[id]=1;LSTNEW=false;lstSave();lstRender();}
+$('lstPlus').onclick=e=>{e.preventDefault();LSTNEW=!LSTNEW;lstRender();};
+$('drwLists').addEventListener('click',e=>{const t=e.target;
+  if(t.closest('select'))return;
+  const dl=t.closest('[data-delf]');if(dl){e.preventDefault();const id=dl.dataset.delf;if(LSTASK===id){LSTS=LSTS.filter(x=>x.id!==id);LSTASK=null;lstSave();}else{LSTASK=id;setTimeout(()=>{if(LSTASK===id){LSTASK=null;lstRender();}},4000);}lstRender();return;}
+  const a=t.closest('[data-a]');if(a){if(a.dataset.a==='crear')lstCreate();else{LSTNEW=false;lstRender();}return;}
+  const ad=t.closest('[data-add]');if(ad){lstAdd(ad.dataset.add,ad.parentNode.querySelector('input'));return;}
+  const rm=t.closest('[data-rm]');if(rm){e.stopPropagation();const s=rm.dataset.rm,fid=rm.dataset.f;if(fid==='fav'){favs.delete(s);saveFavs();try{renderList();}catch(er){}}else{const f=LSTS.find(x=>x.id===fid);if(f)f.syms=f.syms.filter(x=>x!==s);lstSave();}lstRender();return;}
+  const go=t.closest('[data-go]');if(go){const s=go.dataset.go,A=!lstIsC(s);drawer(false);if(typeof setView==='function')setView('main');if(A&&mode!=='a')applyMode('a');else if(!A&&mode==='a')applyMode('medio');
+    setTimeout(()=>{try{if(symbol!==s)select(s);}catch(er){}},A?400:60);try{$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});}catch(er){}}});
+$('drwLists').addEventListener('change',e=>{const sel=e.target.closest('select[data-tf]');if(!sel)return;LSTTF[sel.dataset.tf]=sel.value;lstSave();lstRender();});
+$('drwLists').addEventListener('toggle',e=>{const d=e.target;if(!d.matches||!d.matches('details[data-f]'))return;const id=d.dataset.f,o=d.open;if(!!LSTOPEN[id]===o)return;if(o)LSTOPEN[id]=1;else delete LSTOPEN[id];if(o)lstRender();},true);
+$('drwLists').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const i=e.target.closest('input');if(!i)return;e.preventDefault();if(i.dataset.k==='new')lstCreate();else lstAdd(i.dataset.k.slice(4),i);});
+$('drwLists').addEventListener('focusin',()=>{try{lstOpts();}catch(e){}});
+setInterval(()=>{if($('drw').classList.contains('open')&&!($('drwLists').contains(document.activeElement)&&document.activeElement.tagName==='INPUT'))lstRender();},15e3);
 /* noviembre 2026: por qué el bot 24 h no da señales (lo publica el bot cada hora en senales.json) */
 const BOTEST_TXT={sin_setup:'ninguna moneda armó el patrón de entrada',btc_contra:'la entrada iba en contra de BTC',btc_sin_fuerza:'BTC sin fuerza (ADX menor a 24)',dvol:'volatilidad (DVOL) fuera de rango',volatil:'moneda demasiado volátil para el stop',loca:'moneda con movimientos anormales',certeza:'acierto histórico debajo del mínimo',dvol_bajo:'mercado dormido (DVOL menor a 35)'};
 function botEstHTML(m){const e=SRVEST&&SRVEST[m];if(!e||!e.t)return '';const ago=t=>{const d=(Date.now()-t)/36e5;return d<1?Math.max(1,Math.round(d*60))+' min':d<48?Math.round(d)+' h':Math.round(d/24)+' días';};
@@ -3382,7 +3443,7 @@ function mergeAlr(arr){const have=new Map(ALR.map(a=>[a.id,a]));for(const a of a
   ALR.sort((a,b)=>a.t-b.t);if(ALR.length>MAXALR)ALR=ALR.slice(-MAXALR);try{localStorage.setItem('cv_alr',JSON.stringify(ALR))}catch(e){}}
 const permOK=()=>canNotify&&Notification.permission==='granted';
 const fdur=ms=>{const m=Math.max(0,Math.round(ms/6e4));return m<60?m+' min':m<1440?Math.floor(m/60)+' h '+(m%60)+' min':Math.floor(m/1440)+' d '+Math.floor(m%1440/60)+' h';};
-function drawer(open){$('drw').classList.toggle('open',open);if(open)renderDrw();}
+function drawer(open){$('drw').classList.toggle('open',open);if(open){renderDrw();try{lstRender();}catch(e){}}}
 $('hamb').onclick=()=>drawer(true);$('drwBg').onclick=$('drwX').onclick=()=>drawer(false);
 addEventListener('keydown',e=>{if(e.key==='Escape'&&$('drw').classList.contains('open'))drawer(false);});
 function renderDrw(){
