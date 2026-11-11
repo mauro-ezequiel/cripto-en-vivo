@@ -96,9 +96,12 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       document.getElementById('lstPlus').click(); const n = document.querySelector('#drwLists input[data-k="new"]'); n.value = 'Prueba'; document.querySelector('#drwLists [data-a="crear"]').click();
       const fid = LSTS[LSTS.length - 1].id; add(fid, 'SOL'); add(fid, 'ETH'); add(fid, 'KO');
       const sel = document.querySelector(`#drwLists select[data-tf="${fid}"]`); sel.value = '4h'; sel.dispatchEvent(new Event('change', { bubbles: true }));
-      await w(9000); lstRender();
+      const gi = document.querySelector('#drwLists input[data-k="add-fav"]'); gi.focus(); gi.value = 'GOOG'; gi.dispatchEvent(new Event('input', { bubbles: true })); await w(300);
+      const sug = [...document.querySelectorAll('#drwLists .lst-sug[data-sug="fav"] .row')].map(x => x.textContent.replace(/\s+/g, ' ').trim());
+      try { await document.fonts.ready; } catch (e) {} window.__sugShot = 1;
+      await w(9000); gi.value = ''; gi.blur(); lstRender();
       const F = [...document.querySelectorAll('#drwLists details')].map(d => ({ f: d.querySelector('.lst-n').textContent, filas: [...d.querySelectorAll('.lst-r')].map(x => x.textContent.replace(/\s+/g, ' ').trim()) }));
-      return { F, msg, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
+      return { F, msg, sug, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
     try { await pg.locator('.drw-p').screenshot({ path: 'capturas/listas.png', timeout: 8000 }); } catch (e) {}
     await pg.evaluate(() => drawer(false)); } catch (e) { info.push({ listas_error: e.message.slice(0, 300) }); }
   /* estado del bot 24 h (por qué no hay señales) */

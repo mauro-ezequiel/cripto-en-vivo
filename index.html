@@ -372,6 +372,7 @@ body.fs-on .fsbar{display:flex}
 .lst-x{border:0;background:none;color:var(--mut);font-size:14px;cursor:pointer;padding:2px}.lst-x:hover{color:var(--dn,#ef5350)}
 .lst-add{display:flex;gap:6px;margin-top:6px}.lst-add input{flex:1;min-width:0;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:6px 8px;font:inherit;font-size:13px}
 .lst-add button,.lst-new button{background:var(--acc);color:#fff;border:0;border-radius:8px;padding:6px 10px;font:inherit;font-size:12px;font-weight:700;cursor:pointer}
+.lst-sug{margin-top:4px;border-radius:8px;overflow:hidden;background:var(--bg)}.lst-sug:empty{display:none}.lst-sug .row.lst-sr{grid-template-columns:1.4fr 1fr 64px;padding:8px 10px;font-size:13px;border-left:0;border-top:1px solid var(--line)}.lst-sug .row.lst-sr span:nth-child(2),.lst-sug .row.lst-sr span:nth-child(3){text-align:right}.lst-sug .row small{color:var(--mut);font-size:10px;margin-left:4px}
 .lst-new{display:flex;gap:6px;margin-bottom:8px}.lst-new input{flex:1;min-width:0;background:var(--bg);color:var(--txt);border:1px solid var(--acc);border-radius:8px;padding:6px 8px;font:inherit}
 .lst-msg{color:var(--mut);font-size:11px;padding:4px 2px}.lst-del{border:0;background:none;color:var(--mut);cursor:pointer;font-size:12px;padding:0 2px}.lst-del.ask{color:#ef5350;font-weight:700}
 .rsx.xs.mut{background:#1c212b;color:var(--mut)}.rsl{font-size:10px;font-weight:700;color:var(--mut);line-height:16px}.pil-rsr{display:flex;align-items:center;gap:4px;padding:0 2px 6px 22px}
@@ -3078,22 +3079,19 @@ function lstPx(s){if(lstIsC(s))return tickers[s]&&tickers[s].c;const q=typeof ST
 function lstFind(q){q=(q||'').trim().toUpperCase().replace(/\s+/g,'').replace(/\/USDT$/,'');if(!q)return null;
   if(tickers[q+'USDT'])return q+'USDT';if(/USDT$/.test(q)&&tickers[q])return q;
   if((typeof STK!=='undefined'&&STK[q])||(RSIX.j&&RSIX.j.d[q]))return q;return null;}
-function lstOpts(){const dl=$('lstDL');if(!dl||dl.dataset.n==Object.keys(tickers).length)return;dl.dataset.n=Object.keys(tickers).length;
-  const C=Object.values(tickers).sort((a,b)=>b.q-a.q).slice(0,400).map(t=>t.s.replace('USDT',''));const A=Object.keys(typeof STK!=='undefined'?STK:{}).concat(RSIX.j?Object.keys(RSIX.j.d):[]);
-  dl.innerHTML=[...new Set(C.concat(A))].map(x=>`<option value="${esc(x)}">`).join('');}
 function lstRender(){const el=$('drwLists');if(!el)return;if(!$('drw').classList.contains('open')&&el.dataset.done)return;el.dataset.done=1;
   const ae=document.activeElement,keep=ae&&el.contains(ae)&&ae.tagName==='INPUT'?{k:ae.dataset.k,v:ae.value,ss:ae.selectionStart}:null;
   let h=LSTNEW?`<div class="lst-new"><input data-k="new" maxlength="40" placeholder="Nombre de la carpeta (ej.: Para comprar)" autocomplete="off"><button type="button" data-a="crear">Crear</button><button type="button" data-a="nocrear" style="background:var(--line)">✕</button></div>`:'';
   h+=lstFolders().map(f=>{const tf=LSTTF[f.id]||'1d',op=!!LSTOPEN[f.id];
     const rows=f.syms.map(s=>{const c=lstIsC(s),v=op?lstRsi(s,tf):null,p=op?lstPx(s):null;
-      return `<div class="lst-r" data-go="${esc(s)}" title="Abrir ${esc(s.replace('USDT',''))} en el gráfico"><span><b>${esc(s.replace('USDT',''))}</b><small>${c?'cripto':'acción'}</small></span><span class="lst-px">${p?(c?fp(p):p.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})):''}</span>${v==null?`<span class="rsx xs mut">RSI …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf}${!c&&tf==='1h'?' (horas de mercado)':''}">RSI ${Math.round(v)}</span>`}<button class="lst-x" type="button" data-rm="${esc(s)}" data-f="${f.id}" title="Quitar de la lista" aria-label="Quitar">✕</button></div>`;}).join('');
+      return `<div class="lst-r" data-go="${esc(s)}" title="Abrir ${esc(s.replace('USDT',''))} en el gráfico"><span><b>${esc(s.replace('USDT',''))}</b><small>${c?(tickers[s]&&tickers[s].fut?'cripto · perp':'cripto'):'acción'}</small></span><span class="lst-px">${p?(c?fp(p):p.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})):''}</span>${v==null?`<span class="rsx xs mut">RSI …</span>`:`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${tf}${!c&&tf==='1h'?' (horas de mercado)':''}">RSI ${Math.round(v)}</span>`}<button class="lst-x" type="button" data-rm="${esc(s)}" data-f="${f.id}" title="Quitar de la lista" aria-label="Quitar">✕</button></div>`;}).join('');
     return `<details class="alr-d lst-d" data-f="${f.id}"${op?' open':''}><summary><span class="lst-n">${esc(f.name)}</span> <span class="mut">${f.syms.length}</span>${f.id==='fav'?'':`<button class="lst-del${LSTASK===f.id?' ask':''}" type="button" data-delf="${f.id}" title="Borrar carpeta">${LSTASK===f.id?'¿Borrar? Sí':'🗑'}</button>`}</summary>
       <div class="lst-b"><div class="lst-tf"><span class="mut">RSI 14 de</span><select data-tf="${f.id}" aria-label="Temporalidad del RSI">${LST_TF.map(([k,l])=>`<option value="${k}"${k===tf?' selected':''}>${l}</option>`).join('')}</select></div>${rows||`<div class="lst-msg">${f.id==='fav'?'Vacía: agregá abajo o tocá la ★ en la lista de monedas y acciones.':'Vacía: agregá cripto o acciones abajo.'}</div>`}
-      <div class="lst-add"><input data-k="add-${f.id}" list="lstDL" placeholder="Agregar: BTC, SOL, AAPL…" autocomplete="off" autocapitalize="characters"><button type="button" data-add="${f.id}">Agregar</button></div>${LSTMSG[f.id]?`<div class="lst-msg">${esc(LSTMSG[f.id])}</div>`:''}</div></details>`;}).join('');
-  el.innerHTML=h+'<datalist id="lstDL"></datalist>';
+      <div class="lst-add"><input data-k="add-${f.id}" placeholder="Buscar: BTC, SOL, AAPL…" autocomplete="off" autocapitalize="characters" spellcheck="false"><button type="button" data-add="${f.id}">Agregar</button></div><div class="lst-sug" data-sug="${f.id}"></div>${LSTMSG[f.id]?`<div class="lst-msg">${esc(LSTMSG[f.id])}</div>`:''}</div></details>`;}).join('');
+  el.innerHTML=h;
   if(keep){const i=el.querySelector(`input[data-k="${keep.k}"]`);if(i){i.value=keep.v;i.focus();try{i.setSelectionRange(keep.ss,keep.ss);}catch(e){}}}
   else if(LSTNEW){const i=el.querySelector('input[data-k="new"]');if(i)i.focus();}}
-function lstAdd(fid,inp){const s=lstFind(inp&&inp.value);if(!s){LSTMSG[fid]=inp&&inp.value.trim()?`No encontré "${inp.value.trim()}". Escribí el código, por ejemplo BTC o AAPL.`:'';lstRender();return;}
+function lstAdd(fid,inp,exact){const s=exact||(()=>{const L=lstCands(inp&&inp.value);return L.length?L[0].s:lstFind(inp&&inp.value);})();if(!s){LSTMSG[fid]=inp&&inp.value.trim()?`No encontré "${inp.value.trim()}". Escribí el código, por ejemplo BTC o AAPL.`:'';lstRender();return;}
   LSTMSG[fid]='';if(fid==='fav'){favs.add(s);saveFavs();try{renderList();}catch(e){}}else{const f=LSTS.find(x=>x.id===fid);if(f&&!f.syms.includes(s))f.syms.push(s);lstSave();}
   LSTOPEN[fid]=1;if(inp)inp.value='';lstRender();}
 function lstCreate(){const i=document.querySelector('#drwLists input[data-k="new"]'),n=(i&&i.value||'').trim().slice(0,40);if(!n){if(i)i.focus();return;}
@@ -3103,6 +3101,7 @@ $('drwLists').addEventListener('click',e=>{const t=e.target;
   if(t.closest('select'))return;
   const dl=t.closest('[data-delf]');if(dl){e.preventDefault();const id=dl.dataset.delf;if(LSTASK===id){LSTS=LSTS.filter(x=>x.id!==id);LSTASK=null;lstSave();}else{LSTASK=id;setTimeout(()=>{if(LSTASK===id){LSTASK=null;lstRender();}},4000);}lstRender();return;}
   const a=t.closest('[data-a]');if(a){if(a.dataset.a==='crear')lstCreate();else{LSTNEW=false;lstRender();}return;}
+  const pk=t.closest('[data-pick]');if(pk){const fid=pk.dataset.f,inp=document.querySelector(`#drwLists input[data-k="add-${fid}"]`);if(inp)inp.value=pk.dataset.pick;lstAdd(fid,inp,pk.dataset.pick);return;}
   const ad=t.closest('[data-add]');if(ad){lstAdd(ad.dataset.add,ad.parentNode.querySelector('input'));return;}
   const rm=t.closest('[data-rm]');if(rm){e.stopPropagation();const s=rm.dataset.rm,fid=rm.dataset.f;if(fid==='fav'){favs.delete(s);saveFavs();try{renderList();}catch(er){}}else{const f=LSTS.find(x=>x.id===fid);if(f)f.syms=f.syms.filter(x=>x!==s);lstSave();}lstRender();return;}
   const go=t.closest('[data-go]');if(go){const s=go.dataset.go,A=!lstIsC(s);drawer(false);if(typeof setView==='function')setView('main');if(A&&mode!=='a')applyMode('a');else if(!A&&mode==='a')applyMode('medio');
@@ -3110,7 +3109,18 @@ $('drwLists').addEventListener('click',e=>{const t=e.target;
 $('drwLists').addEventListener('change',e=>{const sel=e.target.closest('select[data-tf]');if(!sel)return;LSTTF[sel.dataset.tf]=sel.value;lstSave();lstRender();});
 $('drwLists').addEventListener('toggle',e=>{const d=e.target;if(!d.matches||!d.matches('details[data-f]'))return;const id=d.dataset.f,o=d.open;if(!!LSTOPEN[id]===o)return;if(o)LSTOPEN[id]=1;else delete LSTOPEN[id];if(o)lstRender();},true);
 $('drwLists').addEventListener('keydown',e=>{if(e.key!=='Enter')return;const i=e.target.closest('input');if(!i)return;e.preventDefault();if(i.dataset.k==='new')lstCreate();else lstAdd(i.dataset.k.slice(4),i);});
-$('drwLists').addEventListener('focusin',()=>{try{lstOpts();}catch(e){}});
+/* buscador vertical como el del inicio: cripto y acciones con tipo, precio y cambio del día */
+function lstCands(q){q=(q||'').trim().toUpperCase().replace(/\s+/g,'').replace(/\/?USDT$/,'');if(!q)return [];const out=[],seen=new Set();
+  for(const t of Object.values(tickers)){const b=t.s.replace('USDT','');if(!b.includes(q))continue;out.push({s:t.s,b,c:true,px:t.c,ch:t.p,q:t.q||0,fut:t.fut});seen.add(t.s);}
+  const SK=new Set(Object.keys(typeof STK!=='undefined'?STK:{}).concat(RSIX.j?Object.keys(RSIX.j.d):[]));
+  for(const k of SK){if(!k.includes(q)||seen.has(k))continue;const st=typeof STK!=='undefined'&&STK[k],r=RSIX.j?rsiLive(k):{};if(st&&st.kind==='ETF')continue;
+    out.push({s:k,b:k,c:false,px:(st&&st.c>0?st.c:r.c)||null,ch:st&&isFinite(st.p)?st.p:r.chg,q:5e8,ex:st&&st.ex});}
+  const sc=x=>(x.b===q?0:x.b.startsWith(q)?1:2);return out.sort((a,b)=>sc(a)-sc(b)||b.q-a.q).slice(0,8);}
+function lstSug(inp){const fid=inp.dataset.k.slice(4),box=document.querySelector(`#drwLists .lst-sug[data-sug="${fid}"]`);if(!box)return;const L=lstCands(inp.value);
+  box.innerHTML=L.map(x=>`<div class="row lst-sr" data-pick="${esc(x.s)}" data-f="${fid}"><span><b>${esc(x.b)}</b><small>${x.c?(x.fut?' cripto · perp':' cripto'):' acción · '+esc(x.ex||'EE. UU.')}</small></span><span>${x.px?(x.c?fp(x.px):x.px.toLocaleString('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2})):''}</span><span class="${x.ch>=0?'up':'dn'}">${isFinite(x.ch)?fpct(x.ch):''}</span></div>`).join('')
+    ||(inp.value.trim()?'<div class="lst-msg">Sin resultados</div>':'');}
+$('drwLists').addEventListener('input',e=>{const i=e.target.closest('input[data-k^="add-"]');if(i)lstSug(i);});
+$('drwLists').addEventListener('focusin',e=>{if(!RSIX.j)try{rsiLoad();}catch(er){}const i=e.target.closest('input[data-k^="add-"]');if(i&&i.value)lstSug(i);});
 setInterval(()=>{if($('drw').classList.contains('open')&&!($('drwLists').contains(document.activeElement)&&document.activeElement.tagName==='INPUT'))lstRender();},15e3);
 /* noviembre 2026: por qué el bot 24 h no da señales (lo publica el bot cada hora en senales.json) */
 const BOTEST_TXT={sin_setup:'ninguna moneda armó el patrón de entrada',btc_contra:'la entrada iba en contra de BTC',btc_sin_fuerza:'BTC sin fuerza (ADX menor a 24)',dvol:'volatilidad (DVOL) fuera de rango',volatil:'moneda demasiado volátil para el stop',loca:'moneda con movimientos anormales',certeza:'acierto histórico debajo del mínimo',dvol_bajo:'mercado dormido (DVOL menor a 35)'};
