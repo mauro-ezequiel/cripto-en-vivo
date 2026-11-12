@@ -3141,7 +3141,8 @@ async function datStockPerf(s){try{const b=await stkHist(s);if(!b||b.length<30)r
 var DATCUR=null;
 async function datShow(){const s=symbol;if(!s||!$('datBody'))return;DATCUR=s;const isC=/USDT$/.test(s),D=DAT[s]=DAT[s]||{};
   $('datHead').textContent=`📋 Datos ${isC?'del activo':'de la empresa'} · ${s.replace('USDT','')}`;datPaint();
-  try{if(!D.p||Date.now()-D.t>3*864e5){$('datSub').textContent=' · cargando…';const p=isC?await datProfCrypto(s):await datProfStock(s);if(p){D.p=p;D.t=Date.now();}else D.p=D.p||{none:1};datSave();}}catch(e){D.p=D.p||{err:1};}
+  try{if(!D.t||Date.now()-D.t>3*864e5){$('datSub').textContent=' · cargando…';let p=null;for(let k=0;k<2&&!p;k++){try{p=isC?await datProfCrypto(s):await datProfStock(s);}catch(e){}if(!p&&k===0)await new Promise(z=>setTimeout(z,2500));}
+    if(p){D.p=p;D.t=Date.now();datSave();}else if(!D.p||D.p.none||D.p.err)D.p={none:1};}}catch(e){D.p=D.p||{err:1};}
   if(!isC)try{D.perf=await datStockPerf(s);}catch(e){}else try{await sigRsiLoad(s);}catch(e){}
   if(DATCUR!==s)return;datPaint();
   try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC,s.replace('USDT',''),s);D.nt=Date.now();datSave();}}catch(e){}

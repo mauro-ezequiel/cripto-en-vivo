@@ -125,7 +125,7 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         return { titulo: document.getElementById('datHead').textContent, chips: [...b.querySelectorAll('.ad-c')].map(x => x.textContent), resumen: (b.querySelector('.ad-res') || {}).textContent, desc: ((b.querySelector('.ad-desc') || {}).textContent || '').slice(0, 220),
           ultimo: ((b.querySelector('.ad-last') || {}).textContent || '').slice(0, 160), ficha: [...b.querySelectorAll('.ad-ficha span')].map(x => x.textContent).join(' | ').slice(0, 300), noticias: b.querySelectorAll('.ad-news li').length,
           icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length, nerr: DATNERR }; }, [m, sy]); out[sy] = r;
-      try { await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 8000 }); } catch (e) {} }
+      try { await pg.evaluate(() => document.getElementById('datBox').scrollIntoView()); await pg.waitForTimeout(500); await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 15000 }); } catch (e) { info.push({ datos_shot: e.message.slice(0, 150) }); } }
     info.push({ datos: out }); await pg.evaluate(() => applyMode('medio')); } catch (e) { info.push({ datos_error: e.message.slice(0, 200) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
