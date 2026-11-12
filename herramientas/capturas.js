@@ -108,7 +108,7 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     try { await pg.locator('#list').screenshot({ path: 'capturas/favoritas-rsi.png', timeout: 8000 }); await pg.evaluate(() => document.querySelector('#ltabs [data-f="all"], #ltabs [data-f]:not([data-f="fav"])').click()); } catch (e) {}
     await pg.evaluate(() => drawer(false)); } catch (e) { info.push({ listas_error: e.message.slice(0, 300) }); }
   /* planilla de acciones ordenada por oportunidad: página 1 los extremos, la última los neutrales */
-  try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); await rsiLoad(); RSIX.tf = '1d'; RSIX.pg = 0; rsiRender(); await w(400);
+  try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); await rsiLoad(); RSIX.tf = 'd'; RSIX.pg = 0; rsiRender(); await w(400);
       const col = () => [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => parseFloat(x.textContent.replace(',', '.'))).filter(isFinite);
       const p1 = col(), lab1 = document.getElementById('rsiPg').textContent; RSIX.pg = 99; rsiRender(); await w(300); const pl = col(), labL = document.getElementById('rsiPg').textContent;
       const ext = L => L.length ? +(L.reduce((a, v) => a + Math.abs(v - 50), 0) / L.length).toFixed(1) : null; RSIX.pg = 0; rsiRender();
