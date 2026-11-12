@@ -3109,13 +3109,13 @@ async function wikiSum(title,lang){try{const j=await getJ(`https://${lang}.wikip
 async function datProfStock(s){if(ETF_ES[s])return {n:ETF_ES[s][0],tipo:'Fondo (ETF)',d:ETF_ES[s][1],src:'CRIPTO-LIVE'};
   const tk=s.replace('-','.'),q=`SELECT ?item ?itemLabel ?es ?en ?indLabel ?ctyLabel ?inc ?ceoLabel ?emp ?web ?hqLabel WHERE { ?item p:P414 ?st. ?st pq:P249 "${tk}". ?st ps:P414 ?ex. VALUES ?ex {wd:Q13677 wd:Q82059}
     OPTIONAL{?es schema:about ?item; schema:isPartOf <https://es.wikipedia.org/>} OPTIONAL{?en schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>}
-    OPTIONAL{?item wdt:P452 ?ind} OPTIONAL{?item wdt:P17 ?cty} OPTIONAL{?item wdt:P571 ?inc} OPTIONAL{?item p:P169 ?cs. ?cs ps:P169 ?ceo. FILTER NOT EXISTS{?cs pq:P582 ?fin}} OPTIONAL{?item wdt:P1128 ?emp} OPTIONAL{?item wdt:P856 ?web} OPTIONAL{?item wdt:P159 ?hq}
+    OPTIONAL{?item wdt:P452 ?ind} OPTIONAL{?item wdt:P17 ?cty} OPTIONAL{?item wdt:P571 ?inc} OPTIONAL{?item wdt:P169 ?ceo} OPTIONAL{?item wdt:P1128 ?emp} OPTIONAL{?item wdt:P856 ?web} OPTIONAL{?item wdt:P159 ?hq}
     SERVICE wikibase:label{bd:serviceParam wikibase:language "es,en".}} LIMIT 40`;
   const j=await getJ('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(q),15000);const B=(j&&j.results&&j.results.bindings)||[];if(!B.length)return null;
   const v=k=>{for(const b of B)if(b[k]&&b[k].value)return b[k].value;return null;},all=k=>[...new Set(B.map(b=>b[k]&&b[k].value).filter(Boolean))];
   const es=v('es'),en=v('en');let w=null;if(es)w=await wikiSum(decodeURIComponent(es.split('/wiki/')[1]),'es');if(!w&&en)w=await wikiSum(decodeURIComponent(en.split('/wiki/')[1]),'en');
   const emp=Math.max(0,...B.map(b=>b.emp?+b.emp.value:0));const inc=v('inc');
-  return {n:v('itemLabel'),tipo:'Empresa',ind:all('indLabel').filter(x=>!/^Q\d+$/.test(x)).slice(0,3).join(', '),pais:v('ctyLabel'),fund:inc?inc.slice(0,4):null,ceo:all('ceoLabel').filter(x=>!/^Q\d+$/.test(x))[0]||null,emp:emp||null,web:v('web'),sede:v('hqLabel'),
+  return {n:v('itemLabel'),tipo:'Empresa',ind:all('indLabel').filter(x=>!/^Q\d+$/.test(x)).slice(0,3).join(', '),pais:v('ctyLabel'),fund:inc?inc.slice(0,4):null,ceo:(L=>L.length===1?L[0]:null)(all('ceoLabel').filter(x=>!/^Q\d+$/.test(x))),emp:emp||null,web:v('web'),sede:v('hqLabel'),
     d:w?w.t:null,dlang:w?w.lang:null,wu:w?w.u:null,src:'Wikidata y Wikipedia'};}
 async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
   if(!id){const j=await getJ('https://api.coingecko.com/api/v3/search?query='+encodeURIComponent(b),10000);const c=(j&&j.coins||[]).filter(x=>String(x.symbol).toUpperCase()===b).sort((a,b)=>(a.market_cap_rank||1e9)-(b.market_cap_rank||1e9))[0];if(c)id=c.id;}
@@ -3129,7 +3129,12 @@ async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
 var DATNERR='';
 async function datRss(q){const url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
   for(let k=0;k<3;k++){try{const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),12000);if(j&&j.status==='ok')return j;DATNERR=(j&&j.message)||'sin respuesta';}catch(e){DATNERR=String(e&&e.message||e).slice(0,80);}await new Promise(z=>setTimeout(z,1500*(k+1)));}return null;}
-async function datNews(name,isC){let j=await datRss(isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`);if(!j||!(j.items||[]).length)j=await datRss(`${name} when:14d`)||j;const out=[];
+/* GDELT: noticias en español de todo el mundo, sin clave (1 pedido cada 5 s por persona) */
+async function datGdelt(q){try{const j=await getJ(`https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q+' sourcelang:spanish')}&mode=artlist&format=json&maxrecords=12&sort=datedesc&timespan=14d`,15000);
+    const A=(j&&j.articles)||[];return A.map(a=>{const m=String(a.seendate||'').match(/^(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)/);return {t:String(a.title||'').trim(),f:a.domain||'',d:m?Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5]):NaN,u:a.url||''};}).filter(x=>x.t&&!isNaN(x.d));}catch(e){DATNERR=String(e&&e.message||e).slice(0,80);return [];}}
+async function datNews(name,isC,tk){const g=await datGdelt(isC?`"${name}" (cripto OR criptomoneda OR criptomonedas OR token OR bitcoin)`:(tk&&tk.length>=3&&tk!==name.toUpperCase()?`("${name}" OR "${tk}")`:`"${name}"`)+' (acciones OR empresa OR bolsa OR Wall Street)');
+  if(g.length>=3){const seen=new Set();return g.filter(x=>{const k=x.t.toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>b.d-a.d).slice(0,8);}
+  let j=await datRss(isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`);if(!j||!(j.items||[]).length)j=await datRss(`${name} when:14d`)||j;const out=[];
   for(const it of (j&&j.items||[])){let title=String(it.title||'').trim(),src='';const m=title.match(/^(.*) - ([^-]{2,60})$/);if(m){title=m[1];src=m[2];}const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');
     if(title&&!isNaN(t))out.push({t:title,f:src,d:t,u:/^https?:\/\//.test(it.link||'')?it.link:''});}
   return out.sort((a,b)=>b.d-a.d).slice(0,8);}
@@ -3140,7 +3145,7 @@ async function datShow(){const s=symbol;if(!s||!$('datBody'))return;DATCUR=s;con
   $('datHead').textContent=`📋 Datos ${isC?'del activo':'de la empresa'} · ${s.replace('USDT','')}`;datPaint();
   try{if(!D.p||Date.now()-D.t>3*864e5){$('datSub').textContent=' · cargando…';const p=isC?await datProfCrypto(s):await datProfStock(s);if(p){D.p=p;D.t=Date.now();}else D.p=D.p||{none:1};datSave();}}catch(e){D.p=D.p||{err:1};}
   if(DATCUR!==s)return;datPaint();
-  try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC);D.nt=Date.now();datSave();}}catch(e){}
+  try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC,s.replace('USDT',''));D.nt=Date.now();datSave();}}catch(e){}
   if(!isC)try{D.perf=await datStockPerf(s);}catch(e){}else try{await sigRsiLoad(s);}catch(e){}
   if(DATCUR!==s)return;$('datSub').textContent='';datPaint();}
 function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[s]||{},p=D.p||{},pf=isC?p:Object.assign({},D.perf||{});const nm=p.n||s.replace('USDT','');
@@ -3158,7 +3163,7 @@ function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[
   if(pf.athP!=null&&pf.athP<-1)tr.push(`está ${Math.abs(Math.round(pf.athP))} % debajo de su ${pf.hiLbl||'máximo histórico'}`);
   const rsT=rs==null?'':rs<=30?' El RSI diario está en sobreventa: viene muy castigada.':rs>=70?' El RSI diario está en sobrecompra: viene muy estirada.':'';
   const que=isC?`${esc(nm)} es una criptomoneda${p.cats?` (${esc(p.cats.split(', ')[0])})`:''}`:p.tipo==='Fondo (ETF)'?`${esc(nm)} es un fondo que cotiza en bolsa`:sec&&/Argentina/.test(sec[0])?`${esc(nm)} es una empresa argentina que cotiza en EE. UU.`:`${esc(nm)} es una empresa${sec?` del sector ${esc(sec[0])}`:''}${p.pais?` de ${esc(p.pais)}`:''}`;
-  const res=`${que}.${tr.length?' '+tr.join(', ').replace(/^./,c=>c.toUpperCase())+'.':''}${rsT}`;
+  const res=`${que}${/\.$/.test(que)?'':'.'}${tr.length?' '+tr.join(', ').replace(/^./,c=>c.toUpperCase())+'.':''}${rsT}`;
   const N=D.n||[],ago=t=>{const h=(Date.now()-t)/36e5;return h<1?'hace minutos':h<24?`hace ${Math.round(h)} h`:`hace ${Math.round(h/24)} días`;},nl=x=>`${x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>`:esc(x.t)} <small>· ${esc(x.f||'')} · ${ago(x.d)}</small>`;
   const desc=p.d?(p.dlang==='en'?'<span class="ad-src">(en inglés)</span> ':'')+esc(sents(p.d,2)):p.none?'No encontré una descripción de este activo.':p.err?'No se pudo cargar la descripción (conexión). Se reintenta al volver a elegirlo.':'Cargando…';
   const F=[['Nombre',nm],['Fundada',p.fund],['CEO',p.ceo],['Empleados',p.emp?(+p.emp).toLocaleString('es-AR'):null],['Sede',p.sede],['Rubro',p.ind||p.cats],['En circulación',p.circ?big(p.circ)+(p.max?` de ${big(p.max)} máximo`:''):null],
