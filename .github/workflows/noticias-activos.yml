@@ -1,0 +1,28 @@
+name: Noticias de cada activo
+# Cada 3 h: noticias en español (Google News, últimos 14 días) de cada acción de la planilla y de las 200 cripto con más volumen.
+# Publica en la rama "activos" (se reemplaza entera cada vez). La página las muestra en "Datos del activo".
+on:
+  schedule:
+    - cron: '23 */3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency:
+  group: noticias-activos
+  cancel-in-progress: true
+jobs:
+  noticias:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - name: Traer la versión anterior
+        run: git fetch -q --depth 1 origin activos && mkdir -p prev && git --work-tree=prev checkout origin/activos -- . || echo "primera vez"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - run: node herramientas/noticias-activos.js prev
+      - name: Publicar en la rama activos
+        run: |
+          cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Noticias de cada activo"
+          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:activos
