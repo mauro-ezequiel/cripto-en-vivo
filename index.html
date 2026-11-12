@@ -3728,9 +3728,9 @@ function rsiCxRender(){const box=$('rsiCx');if(!box)return;box.hidden=!(mode==='
   const F=RSICX.fng;if(F&&F.length){const [v,c]=F[0],w=F[7]?F[7][0]:null;$('fngBox').innerHTML=`<span title="Índice de miedo y codicia del mercado cripto (alternative.me): 0 = miedo extremo, 100 = codicia extrema. Hace una semana: ${w??'—'}" style="background:${rsiColor(100-v)}">😱 Miedo y codicia <b>${v}</b> · ${FNG_ES[c]||c}${w!=null?` <small>(hace 7 días ${w})</small>`:''}</span>`;}
   const D=RSICX.d[RSICX.tf];if(!D||!D.t){$('rsiCxBody').innerHTML='<div class="mut">Cargando…</div>';rsiCxLoad();fngLoad();return;}
   if(!Object.keys(D.v).length){$('rsiCxBody').innerHTML='<div class="mut">Cargando los RSI…</div>';setTimeout(rsiCxLoad,1500);return;}
-  const blocks=Object.entries(RSICX_G).map(([n,L])=>{const rows=L.map(x=>x+'USDT').filter(s=>D.v[s]).map(s=>{const [v,ch]=D.v[s],p=tickers[s]?.p;
+  const blocks=Object.entries(RSICX_G).map(([n,L])=>[n,L.map(x=>x+'USDT').filter(s=>D.v[s]).sort((a,b)=>rsiPri(D.v[a][0])-rsiPri(D.v[b][0]))]).sort((a,b)=>rsiPri(a[1][0]&&D.v[a[1][0]][0])-rsiPri(b[1][0]&&D.v[b[1][0]][0])).map(([n,L])=>{const rows=L.map(s=>{const [v,ch]=D.v[s],p=tickers[s]?.p;
       return `<tr data-rsics="${s}" title="Abrir ${s.replace('USDT','')} en el gráfico"><td>${s.replace('USDT','')}</td><td style="background:${rsiColor(v)}">${v==null?'—':iaD(Math.round(v*10)/10)}</td><td class="${(p??0)>=0?'up':'dn'}">${p==null?'—':(p>=0?'▲ ':'▼ ')+iaD(Math.abs(Math.round(p*100)/100))+' %'}</td></tr>`;}).join('');
-    if(!rows)return '';const ps=L.map(x=>tickers[x+'USDT']?.p).filter(v=>v!=null&&isFinite(v)),avg=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
+    if(!rows)return '';const ps=L.map(x=>tickers[x]?.p).filter(v=>v!=null&&isFinite(v)),avg=ps.length?ps.reduce((a,b)=>a+b,0)/ps.length:null;
     return `<div class="rsi-b"><div class="rsi-bh"><b>${esc(n)}</b>${avg!=null?`<span class="${avg>=0?'up':'dn'}">${avg>=0?'▲':'▼'} ${iaD(Math.abs(Math.round(avg*100)/100))} %</span>`:''}</div><table><tr><th></th><th>RSI</th><th>24 h</th></tr>${rows}</table></div>`;}).join('');
   $('rsiCxBody').innerHTML=`<div class="rsi-g">${blocks}</div><div class="rsi-leg"><span>Sobreventa</span><i></i><span>Sobrecompra</span><small>RSI 14 de ${({'15m':'15 min','1h':'1 h','4h':'4 h','1d':'1 día','1w':'1 semana'})[RSICX.tf]} con la vela en curso · actualizado ${new Date(D.t).toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})} · tocá una moneda para verla en el gráfico</small></div>`;}
 document.addEventListener('click',e=>{const r=e.target.closest('[data-rsics]');if(r){if(mode==='a')applyMode('medio');select(r.dataset.rsics);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}
@@ -3745,17 +3745,20 @@ function rsiAlCheck(k,tf,vals){if(!RSIAL[k])return;const key=k+tf,S=RSIAL.seen[k
   RSIAL.armed=RSIAL.armed||{};RSIAL.armed[key]=true;}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-rsial]');if(!b)return;const k=b.dataset.rsial;RSIAL[k]=!RSIAL[k];RSIAL.seen={};RSIAL.armed={};rsiAlSave();rsiAlPaint();if(RSIAL[k]&&typeof ntfAny==='function'&&!ntfAny()&&typeof askNotif==='function')askNotif();});
 setTimeout(rsiAlPaint,3000);
+/* noviembre 2026: orden de la planilla por oportunidad. Primero los más verdes (RSI ≤ 30, del más bajo), después los más rojos (≥ 65, del más alto),
+   después 30–40, después 60–65 y al final los neutrales (40–60). La página 1 junta lo mejor de cada sector y las últimas quedan con los neutrales. */
+const rsiPri=v=>v==null||!isFinite(v)?1e3:v<=30?v:v>=65?100+(100-v):v<=40?200+v:v>=60?300+(100-v):400+(10-Math.abs(v-50));
 function rsiRender(){try{rsiCxRender();}catch(e){}const box=$('rsiBox');if(!box)return;box.hidden=mode!=='a';if(mode!=='a')return;const el=$('rsiBody');
   if(!RSIX.j){el.innerHTML='<div class="mut">Cargando la planilla… (se arma en GitHub cada 30 min con el mercado abierto)</div>';rsiLoad().then(()=>{if(RSIX.j)rsiRender();});return;}
-  const S=Object.entries(RSIX.j.sectores).map(([n,L])=>[n,L.filter(s=>RSIX.j.d[s])]).filter(([,L])=>L.length);
+  const S=Object.entries(RSIX.j.sectores).map(([n,L])=>[n,L.filter(s=>RSIX.j.d[s]).map(s=>[s,rsiPri(rsiLive(s)[RSIX.tf])]).sort((a,b)=>a[1]-b[1]).map(x=>x[0])]).filter(([,L])=>L.length);
   try{rsiAlCheck('a',RSIX.tf,[...new Set(S.flatMap(([,L])=>L))].map(s=>[s,rsiLive(s)[RSIX.tf]]));}catch(e){}
   const pages=Math.max(1,...S.map(([,L])=>1+Math.ceil(Math.max(0,L.length-RSI_K)/RSI_K)));RSIX.pg=Math.min(RSIX.pg,pages-1);const p=RSIX.pg;
-  const blocks=S.map(([n,L])=>{const sl=L.slice(p*RSI_K,(p+1)*RSI_K);if(!sl.length)return '';const rows=sl.map(s=>{const x=rsiLive(s),v=x[RSIX.tf];
+  const blocks=S.map(([n,L])=>[n,L,rsiPri(rsiLive(L[p*RSI_K]||'')[RSIX.tf])]).filter(([,L])=>L.length>p*RSI_K).sort((a,b)=>a[2]-b[2]).map(([n,L])=>{const sl=L.slice(p*RSI_K,(p+1)*RSI_K);if(!sl.length)return '';const rows=sl.map(s=>{const x=rsiLive(s),v=x[RSIX.tf];
       return `<tr data-rsis="${s}" title="Abrir ${s} en el gráfico"><td>${s}</td><td style="background:${rsiColor(v)}">${v==null?'—':iaD(Math.round(v*10)/10)}</td><td class="${x.chg>=0?'up':'dn'}">${x.chg==null?'—':(x.chg>=0?'▲ ':'▼ ')+iaD(Math.abs(Math.round(x.chg*100)/100))+' %'}</td></tr>`;}).join('');
     const all=L.map(s=>rsiLive(s).chg).filter(v=>v!=null&&isFinite(v)),avg=all.length?all.reduce((a,b)=>a+b,0)/all.length:null;
     return `<div class="rsi-b"><div class="rsi-bh"><b>${esc(n)}</b>${avg!=null?`<span class="${avg>=0?'up':'dn'}">${avg>=0?'▲':'▼'} ${iaD(Math.abs(Math.round(avg*100)/100))} %</span>`:''}</div><table><tr><th></th><th>RSI</th><th>%</th></tr>${rows}</table></div>`;}).join('');
   const up=new Date(RSIX.j.upd);
-  $('rsiPg').textContent=`${p===0?'Principales':'Página '+(p+1)} · ${p+1} de ${pages}`;$('rsiPrev').disabled=p===0;$('rsiNext').disabled=p>=pages-1;
+  $('rsiPg').textContent=`${p===0?'Mejores':p===pages-1?'Neutrales':'Página '+(p+1)} · ${p+1} de ${pages}`;$('rsiPrev').disabled=p===0;$('rsiNext').disabled=p>=pages-1;
   el.innerHTML=`<div class="rsi-g">${blocks}</div><div class="rsi-leg"><span>Sobreventa</span><i></i><span>Sobrecompra</span><small>RSI ${RSI_TFN[RSIX.tf]||''}${/h$/.test(RSIX.tf)?' (velas de 15 min agrupadas, se actualiza cada 30 min)':''} · actualizado ${up.toLocaleString('es-AR',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})} · tocá una acción para verla en el gráfico</small></div>`;
   box.querySelectorAll('[data-rsitf]').forEach(b=>b.classList.toggle('on',b.dataset.rsitf===RSIX.tf));}
 document.addEventListener('click',e=>{const r=e.target.closest('[data-rsis]');if(r){select(r.dataset.rsis);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});return;}

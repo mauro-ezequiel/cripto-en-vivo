@@ -107,6 +107,14 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       return { favHead, favRows, F, msg, sug, modos: [...document.querySelectorAll('#drwModes .mcard')].map(x => x.querySelector('b').textContent.trim()) }; }); info.push({ listas: r });
     try { await pg.locator('#list').screenshot({ path: 'capturas/favoritas-rsi.png', timeout: 8000 }); await pg.evaluate(() => document.querySelector('#ltabs [data-f="all"], #ltabs [data-f]:not([data-f="fav"])').click()); } catch (e) {}
     await pg.evaluate(() => drawer(false)); } catch (e) { info.push({ listas_error: e.message.slice(0, 300) }); }
+  /* planilla de acciones ordenada por oportunidad: página 1 los extremos, la última los neutrales */
+  try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); await rsiLoad(); RSIX.tf = '1d'; RSIX.pg = 0; rsiRender(); await w(400);
+      const col = () => [...document.querySelectorAll('#rsiBody td:nth-child(2)')].map(x => parseFloat(x.textContent.replace(',', '.'))).filter(isFinite);
+      const p1 = col(), lab1 = document.getElementById('rsiPg').textContent; RSIX.pg = 99; rsiRender(); await w(300); const pl = col(), labL = document.getElementById('rsiPg').textContent;
+      const ext = L => L.length ? +(L.reduce((a, v) => a + Math.abs(v - 50), 0) / L.length).toFixed(1) : null; RSIX.pg = 0; rsiRender();
+      const cx = (() => { applyMode('medio'); rsiCxRender(); return [...document.querySelectorAll('#rsiCxBody .rsi-b')].slice(0, 3).map(b => [...b.querySelectorAll('td:nth-child(2)')].map(x => x.textContent).join(' ')); })();
+      return { lab1, labL, p1_primeros: p1.slice(0, 16), distancia_media_a_50: { pagina1: ext(p1), ultima: ext(pl) }, ultima_primeros: pl.slice(0, 8), cripto: cx }; }); info.push({ rsiorden: r });
+    try { await pg.evaluate(() => { applyMode('a'); RSIX.pg = 0; rsiRender(); }); await pg.locator('#rsiBox').screenshot({ path: 'capturas/rsi-orden.png', timeout: 8000 }); await pg.evaluate(() => applyMode('medio')); } catch (e) {} } catch (e) { info.push({ rsiorden_error: e.message.slice(0, 200) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
     applyMode('medio'); setView('sig'); SIG.medio = []; renderSignals(); await new Promise(z => setTimeout(z, 300)); const a = (document.querySelector('#sigList .bot-est') || {}).textContent || null;
