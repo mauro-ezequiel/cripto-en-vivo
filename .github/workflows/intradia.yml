@@ -23,6 +23,9 @@ jobs:
           node-version: '20'
       - name: Bajar velas y calcular RSI
         run: node herramientas/intradia.js prev
+        env:
+          # corrida a mano: rehace también lo diario (RSI diario, semanal y mensual)
+          DIARIO: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
       - name: Publicar en la rama intradia
         run: |
           cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Velas de 30 min y RSI"
