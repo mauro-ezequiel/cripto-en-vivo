@@ -3129,11 +3129,9 @@ async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
 var DATNERR='';
 async function datRss(q){const url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
   for(let k=0;k<3;k++){try{const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),12000);if(j&&j.status==='ok')return j;DATNERR=(j&&j.message)||'sin respuesta';}catch(e){DATNERR=String(e&&e.message||e).slice(0,80);}await new Promise(z=>setTimeout(z,1500*(k+1)));}return null;}
-/* GDELT: noticias en español de todo el mundo, sin clave (1 pedido cada 5 s por persona) */
-async function datGdelt(q){try{const j=await getJ(`https://api.gdeltproject.org/api/v2/doc/doc?query=${encodeURIComponent(q+' sourcelang:spanish')}&mode=artlist&format=json&maxrecords=12&sort=datedesc&timespan=14d`,15000);
-    const A=(j&&j.articles)||[];return A.map(a=>{const m=String(a.seendate||'').match(/^(\d{4})(\d\d)(\d\d)T(\d\d)(\d\d)/);return {t:String(a.title||'').trim(),f:a.domain||'',d:m?Date.UTC(+m[1],m[2]-1,+m[3],+m[4],+m[5]):NaN,u:a.url||''};}).filter(x=>x.t&&!isNaN(x.d));}catch(e){DATNERR=String(e&&e.message||e).slice(0,80);return [];}}
-async function datNews(name,isC,tk){const g=await datGdelt(isC?`"${name}" (cripto OR criptomoneda OR criptomonedas OR token OR bitcoin)`:(tk&&tk.length>=3&&tk!==name.toUpperCase()?`("${name}" OR "${tk}")`:`"${name}"`)+' (acciones OR empresa OR bolsa OR Wall Street)');
-  if(g.length>=3){const seen=new Set();return g.filter(x=>{const k=x.t.toLowerCase().slice(0,60);if(seen.has(k))return false;seen.add(k);return true;}).sort((a,b)=>b.d-a.d).slice(0,8);}
+/* noticias: primero las que junta el robot cada 3 h (rama activos); si ese activo no está, Google News por rss2json */
+async function datNews(name,isC,tk,sym){try{const r=await fetch(`https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/activos/n/${encodeURIComponent(sym)}.json?t=${Math.floor(Date.now()/9e5)}`);
+    if(r.ok){const j=await r.json();if(j&&Array.isArray(j.n))return j.n.map(x=>({t:x[0],f:x[1],d:x[2],u:x[3]}));}}catch(e){}
   let j=await datRss(isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`);if(!j||!(j.items||[]).length)j=await datRss(`${name} when:14d`)||j;const out=[];
   for(const it of (j&&j.items||[])){let title=String(it.title||'').trim(),src='';const m=title.match(/^(.*) - ([^-]{2,60})$/);if(m){title=m[1];src=m[2];}const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');
     if(title&&!isNaN(t))out.push({t:title,f:src,d:t,u:/^https?:\/\//.test(it.link||'')?it.link:''});}
@@ -3144,9 +3142,9 @@ var DATCUR=null;
 async function datShow(){const s=symbol;if(!s||!$('datBody'))return;DATCUR=s;const isC=/USDT$/.test(s),D=DAT[s]=DAT[s]||{};
   $('datHead').textContent=`📋 Datos ${isC?'del activo':'de la empresa'} · ${s.replace('USDT','')}`;datPaint();
   try{if(!D.p||Date.now()-D.t>3*864e5){$('datSub').textContent=' · cargando…';const p=isC?await datProfCrypto(s):await datProfStock(s);if(p){D.p=p;D.t=Date.now();}else D.p=D.p||{none:1};datSave();}}catch(e){D.p=D.p||{err:1};}
-  if(DATCUR!==s)return;datPaint();
-  try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC,s.replace('USDT',''));D.nt=Date.now();datSave();}}catch(e){}
   if(!isC)try{D.perf=await datStockPerf(s);}catch(e){}else try{await sigRsiLoad(s);}catch(e){}
+  if(DATCUR!==s)return;datPaint();
+  try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC,s.replace('USDT',''),s);D.nt=Date.now();datSave();}}catch(e){}
   if(DATCUR!==s)return;$('datSub').textContent='';datPaint();}
 function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[s]||{},p=D.p||{},pf=isC?p:Object.assign({},D.perf||{});const nm=p.n||s.replace('USDT','');
   const rs=isC?(SIGRSI[s]&&SIGRSI[s].v['1d']):(RSIX.j?rsiLive(s).d:null),sec=!isC&&RSIX.j?Object.entries(RSIX.j.sectores).find(([,L])=>L.includes(s)):null;
@@ -3166,7 +3164,7 @@ function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[
   const res=`${que}${/\.$/.test(que)?'':'.'}${tr.length?' '+tr.join(', ').replace(/^./,c=>c.toUpperCase())+'.':''}${rsT}`;
   const N=D.n||[],ago=t=>{const h=(Date.now()-t)/36e5;return h<1?'hace minutos':h<24?`hace ${Math.round(h)} h`:`hace ${Math.round(h/24)} días`;},nl=x=>`${x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>`:esc(x.t)} <small>· ${esc(x.f||'')} · ${ago(x.d)}</small>`;
   const desc=p.d?(p.dlang==='en'?'<span class="ad-src">(en inglés)</span> ':'')+esc(sents(p.d,2)):p.none?'No encontré una descripción de este activo.':p.err?'No se pudo cargar la descripción (conexión). Se reintenta al volver a elegirlo.':'Cargando…';
-  const F=[['Nombre',nm],['Fundada',p.fund],['CEO',p.ceo],['Empleados',p.emp?(+p.emp).toLocaleString('es-AR'):null],['Sede',p.sede],['Rubro',p.ind||p.cats],['En circulación',p.circ?big(p.circ)+(p.max?` de ${big(p.max)} máximo`:''):null],
+  const F=[['Nombre',nm],['Fundada',p.fund],['Empleados',p.emp?(+p.emp).toLocaleString('es-AR'):null],['Sede',p.sede],['Rubro',p.ind||p.cats],['En circulación',p.circ?big(p.circ)+(p.max?` de ${big(p.max)} máximo`:''):null],
     ['Máximo histórico',p.ath?`${fp(p.ath)} USD${p.athD?' ('+new Date(p.athD).toLocaleDateString('es-AR',{month:'short',year:'numeric'})+')':''}`:null],['Web',p.web?`<a href="${esc(p.web)}" target="_blank" rel="noopener">${esc(p.web.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a>`:null]].filter(x=>x[1]);
   $('datBody').innerHTML=`<div class="ad-chips">${ch.join('')}</div><p class="ad-res">${res}</p><p class="ad-desc">${desc}</p>
     ${N.length?`<div class="ad-last">📰 <b>Lo último:</b> ${nl(N[0])}</div>`:''}
