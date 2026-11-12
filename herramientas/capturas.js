@@ -120,11 +120,11 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     try { await pg.evaluate(() => { applyMode('a'); RSIX.pg = 0; rsiRender(); }); await pg.locator('#rsiBox').screenshot({ path: 'capturas/rsi-orden.png', timeout: 8000 }); await pg.evaluate(() => applyMode('medio')); } catch (e) {} } catch (e) { info.push({ rsiorden_error: e.message.slice(0, 200) }); }
   /* datos del activo e íconos */
   try { const out = {}; for (const [m, sy] of [['medio', 'SOLUSDT'], ['a', 'NVDA'], ['a', 'YPF']]) { const r = await pg.evaluate(async ([m, sy]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode(m); await w(m === 'a' ? 2500 : 500);
-        try { select(sy); } catch (e) {} for (let k = 0; k < 40 && !(DAT[sy] && DAT[sy].p && DAT[sy].nt); k++) await w(500); await w(800); datPaint();
+        try { select(sy); } catch (e) {} for (let k = 0; k < 60 && !(DAT[sy] && DAT[sy].p && DAT[sy].nt); k++) await w(500); await w(800); datPaint();
         const b = document.getElementById('datBody'); const d = b.querySelector('details'); if (d) d.open = true;
         return { titulo: document.getElementById('datHead').textContent, chips: [...b.querySelectorAll('.ad-c')].map(x => x.textContent), resumen: (b.querySelector('.ad-res') || {}).textContent, desc: ((b.querySelector('.ad-desc') || {}).textContent || '').slice(0, 220),
           ultimo: ((b.querySelector('.ad-last') || {}).textContent || '').slice(0, 160), ficha: [...b.querySelectorAll('.ad-ficha span')].map(x => x.textContent).join(' | ').slice(0, 300), noticias: b.querySelectorAll('.ad-news li').length,
-          icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length }; }, [m, sy]); out[sy] = r;
+          icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length, nerr: DATNERR }; }, [m, sy]); out[sy] = r;
       try { await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 8000 }); } catch (e) {} }
     info.push({ datos: out }); await pg.evaluate(() => applyMode('medio')); } catch (e) { info.push({ datos_error: e.message.slice(0, 200) }); }
   /* estado del bot 24 h (por qué no hay señales) */

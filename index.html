@@ -3097,19 +3097,25 @@ const ETF_ES={SPY:['SPDR S&P 500','Fondo que copia al S&P 500: las 500 empresas 
   XLB:['Materiales S&P 500','Fondo con las empresas de materiales del S&P 500 (químicas, minería, acero).'],XLU:['Servicios públicos S&P 500','Fondo con las eléctricas y servicios públicos del S&P 500.'],
   GLD:['SPDR Gold','Fondo que sigue el precio del oro físico.'],SLV:['iShares Silver','Fondo que sigue el precio de la plata física.'],TLT:['Bonos de EE. UU. a 20+ años','Fondo de bonos del Tesoro de EE. UU. a más de 20 años: sube cuando bajan las tasas de interés.'],
   ARKK:['ARK Innovation','Fondo de gestión activa de Cathie Wood en empresas de "innovación disruptiva" (Tesla, Coinbase, Roku…). Muy volátil.'],SMH:['VanEck semiconductores','Fondo de las mayores empresas de chips (NVIDIA, TSMC, Broadcom, AMD…).']};
+const CAT_ES={'Smart Contract Platform':'Plataforma de contratos inteligentes','Layer 1 (L1)':'Capa 1 (L1)','Layer 2 (L2)':'Capa 2 (L2)','Meme':'Meme','Stablecoins':'Moneda estable','USD Stablecoin':'Moneda estable en dólares',
+  'Decentralized Finance (DeFi)':'Finanzas descentralizadas (DeFi)','Exchange-based Tokens':'Token de un exchange','Centralized Exchange (CEX) Token':'Token de un exchange','Proof of Work (PoW)':'Prueba de trabajo (PoW)','Proof of Stake (PoS)':'Prueba de participación (PoS)',
+  'Gaming (GameFi)':'Juegos (GameFi)','Artificial Intelligence (AI)':'Inteligencia artificial','Oracle':'Oráculo','Privacy Coins':'Moneda de privacidad','Payment Solutions':'Pagos','Decentralized Exchange (DEX)':'Exchange descentralizado (DEX)',
+  'Real World Assets (RWA)':'Activos del mundo real (RWA)','Storage':'Almacenamiento','Infrastructure':'Infraestructura','Governance':'Gobernanza','Lending/Borrowing Protocols':'Préstamos','Liquid Staking':'Staking líquido','Metaverse':'Metaverso','NFT':'NFT'};
+const catEs=L=>(L||[]).filter(x=>x&&!/ecosystem|portfolio|holdings|index|launchpad|alleged|binance|coinbase|made in|tokens? on/i.test(x)).map(x=>CAT_ES[x]||x);
 const stripH=h=>String(h||'').replace(/<[^>]+>/g,'').replace(/\r?\n+/g,' ').replace(/\s+/g,' ').trim();
-const sents=(t,n)=>{const m=String(t||'').match(/[^.!?]+[.!?]+(\s|$)/g);return m?m.slice(0,n).join('').trim():String(t||'').slice(0,300);};
+const sents=(t,n)=>{t=String(t||'');const out=[];let st=0;const re=/[.!?](\s+|$)/g;let m;while((m=re.exec(t))&&out.length<n){const end=m.index+1,w=(t.slice(st,end).match(/(\S+)[.!?]$/)||[])[1]||'',nx=t.slice(re.lastIndex,re.lastIndex+1);
+    if(m[1]&&(w.length<=3||/^[a-z(]/.test(nx)))continue;out.push(t.slice(st,end).trim());st=re.lastIndex;}if(!out.length)return t.slice(0,300);return out.join(' ');};
 async function wikiSum(title,lang){try{const j=await getJ(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g,'_'))}`,10000);if(j&&j.extract&&j.type!=='disambiguation')return {t:j.extract,u:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page,lang};}catch(e){}return null;}
 async function datProfStock(s){if(ETF_ES[s])return {n:ETF_ES[s][0],tipo:'Fondo (ETF)',d:ETF_ES[s][1],src:'CRIPTO-LIVE'};
   const tk=s.replace('-','.'),q=`SELECT ?item ?itemLabel ?es ?en ?indLabel ?ctyLabel ?inc ?ceoLabel ?emp ?web ?hqLabel WHERE { ?item p:P414 ?st. ?st pq:P249 "${tk}". ?st ps:P414 ?ex. VALUES ?ex {wd:Q13677 wd:Q82059}
     OPTIONAL{?es schema:about ?item; schema:isPartOf <https://es.wikipedia.org/>} OPTIONAL{?en schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>}
-    OPTIONAL{?item wdt:P452 ?ind} OPTIONAL{?item wdt:P17 ?cty} OPTIONAL{?item wdt:P571 ?inc} OPTIONAL{?item wdt:P169 ?ceo} OPTIONAL{?item wdt:P1128 ?emp} OPTIONAL{?item wdt:P856 ?web} OPTIONAL{?item wdt:P159 ?hq}
+    OPTIONAL{?item wdt:P452 ?ind} OPTIONAL{?item wdt:P17 ?cty} OPTIONAL{?item wdt:P571 ?inc} OPTIONAL{?item p:P169 ?cs. ?cs ps:P169 ?ceo. FILTER NOT EXISTS{?cs pq:P582 ?fin}} OPTIONAL{?item wdt:P1128 ?emp} OPTIONAL{?item wdt:P856 ?web} OPTIONAL{?item wdt:P159 ?hq}
     SERVICE wikibase:label{bd:serviceParam wikibase:language "es,en".}} LIMIT 40`;
   const j=await getJ('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(q),15000);const B=(j&&j.results&&j.results.bindings)||[];if(!B.length)return null;
   const v=k=>{for(const b of B)if(b[k]&&b[k].value)return b[k].value;return null;},all=k=>[...new Set(B.map(b=>b[k]&&b[k].value).filter(Boolean))];
   const es=v('es'),en=v('en');let w=null;if(es)w=await wikiSum(decodeURIComponent(es.split('/wiki/')[1]),'es');if(!w&&en)w=await wikiSum(decodeURIComponent(en.split('/wiki/')[1]),'en');
   const emp=Math.max(0,...B.map(b=>b.emp?+b.emp.value:0));const inc=v('inc');
-  return {n:v('itemLabel'),tipo:'Empresa',ind:all('indLabel').filter(x=>!/^Q\d+$/.test(x)).slice(0,3).join(', '),pais:v('ctyLabel'),fund:inc?inc.slice(0,4):null,ceo:all('ceoLabel').filter(x=>!/^Q\d+$/.test(x)).slice(-1)[0]||null,emp:emp||null,web:v('web'),sede:v('hqLabel'),
+  return {n:v('itemLabel'),tipo:'Empresa',ind:all('indLabel').filter(x=>!/^Q\d+$/.test(x)).slice(0,3).join(', '),pais:v('ctyLabel'),fund:inc?inc.slice(0,4):null,ceo:all('ceoLabel').filter(x=>!/^Q\d+$/.test(x))[0]||null,emp:emp||null,web:v('web'),sede:v('hqLabel'),
     d:w?w.t:null,dlang:w?w.lang:null,wu:w?w.u:null,src:'Wikidata y Wikipedia'};}
 async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
   if(!id){const j=await getJ('https://api.coingecko.com/api/v3/search?query='+encodeURIComponent(b),10000);const c=(j&&j.coins||[]).filter(x=>String(x.symbol).toUpperCase()===b).sort((a,b)=>(a.market_cap_rank||1e9)-(b.market_cap_rank||1e9))[0];if(c)id=c.id;}
@@ -3117,11 +3123,13 @@ async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
   const md=j.market_data||{},U=x=>x&&x.usd;let d=stripH(j.description&&j.description.es),dl='es',wu=null;
   if(d.length<60){const r=await getJ(`https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(j.name+' criptomoneda')}&srlimit=1&format=json&origin=*`,10000).catch(()=>null);const t=r&&r.query&&r.query.search&&r.query.search[0];
     const w=t?await wikiSum(t.title,'es'):null;if(w&&/cripto|blockchain|cadena de bloques|token|moneda digital/i.test(w.t)&&w.t.toLowerCase().includes(j.name.toLowerCase().split(' ')[0]))({t:d,u:wu}=w);else{d=stripH(j.description&&j.description.en);dl='en';}}
-  return {n:j.name,tipo:'Criptomoneda',cats:(j.categories||[]).filter(Boolean).slice(0,4).join(', '),fund:j.genesis_date?j.genesis_date.slice(0,4):null,web:j.links&&j.links.homepage&&j.links.homepage.find(Boolean)||null,
+  return {n:j.name,tipo:'Criptomoneda',cats:catEs(j.categories).slice(0,4).join(', '),fund:j.genesis_date?j.genesis_date.slice(0,4):null,web:j.links&&j.links.homepage&&j.links.homepage.find(Boolean)||null,
     d,dlang:dl,wu,rank:j.market_cap_rank||md.market_cap_rank||null,mcap:U(md.market_cap),ath:U(md.ath),athP:U(md.ath_change_percentage),athD:U(md.ath_date),c30:md.price_change_percentage_30d,c1y:md.price_change_percentage_1y,
     circ:md.circulating_supply,max:md.max_supply,src:'CoinGecko'+(dl==='es'&&wu?' y Wikipedia':'')};}
-async function datNews(name,isC){const q=isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`,url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
-  const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),12000);const out=[];
+var DATNERR='';
+async function datRss(q){const url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
+  for(let k=0;k<3;k++){try{const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),12000);if(j&&j.status==='ok')return j;DATNERR=(j&&j.message)||'sin respuesta';}catch(e){DATNERR=String(e&&e.message||e).slice(0,80);}await new Promise(z=>setTimeout(z,1500*(k+1)));}return null;}
+async function datNews(name,isC){let j=await datRss(isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`);if(!j||!(j.items||[]).length)j=await datRss(`${name} when:14d`)||j;const out=[];
   for(const it of (j&&j.items||[])){let title=String(it.title||'').trim(),src='';const m=title.match(/^(.*) - ([^-]{2,60})$/);if(m){title=m[1];src=m[2];}const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');
     if(title&&!isNaN(t))out.push({t:title,f:src,d:t,u:/^https?:\/\//.test(it.link||'')?it.link:''});}
   return out.sort((a,b)=>b.d-a.d).slice(0,8);}
@@ -3146,10 +3154,10 @@ function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[
   if(pf.athP!=null&&isFinite(pf.athP))ch.push(`<span class="ad-c">${pf.athP>-1?'En su máximo':`<b class="dn">${Math.round(pf.athP)} %</b> desde su ${pf.hiLbl||'máximo histórico'}`}</span>`);
   if(rs!=null&&isFinite(rs))ch.push(`<span class="ad-c" style="background:${rsiColor(rs)};border-color:transparent">RSI diario <b>${Math.round(rs)}</b></span>`);
   /* resumen en una línea */
-  const tr=[];if(pf.c1y!=null&&isFinite(pf.c1y))tr.push(`en el último año ${pf.c1y>=0?'subió':'bajó'} ${Math.abs(Math.round(pf.c1y))} %`);if(pf.c30!=null&&isFinite(pf.c30))tr.push(`en el último mes ${pf.c30>=0?'subió':'bajó'} ${Math.abs(pf.c30).toFixed(0)} %`);
+  const tr=[];if(pf.c1y!=null&&isFinite(pf.c1y))tr.push(Math.abs(pf.c1y)<1?'en el último año quedó igual':`en el último año ${pf.c1y>=0?'subió':'bajó'} ${Math.abs(Math.round(pf.c1y))} %`);if(pf.c30!=null&&isFinite(pf.c30))tr.push(Math.abs(pf.c30)<1?'en el último mes quedó igual':`en el último mes ${pf.c30>=0?'subió':'bajó'} ${Math.abs(pf.c30).toFixed(0)} %`);
   if(pf.athP!=null&&pf.athP<-1)tr.push(`está ${Math.abs(Math.round(pf.athP))} % debajo de su ${pf.hiLbl||'máximo histórico'}`);
   const rsT=rs==null?'':rs<=30?' El RSI diario está en sobreventa: viene muy castigada.':rs>=70?' El RSI diario está en sobrecompra: viene muy estirada.':'';
-  const que=isC?`${esc(nm)} es una criptomoneda${p.cats?` (${esc(p.cats.split(', ')[0])})`:''}`:p.tipo==='Fondo (ETF)'?`${esc(nm)} es un fondo que cotiza en bolsa`:`${esc(nm)} es una empresa${sec?` del sector ${esc(sec[0].replace(/ 🇦🇷/,''))}`:''}${p.pais?` de ${esc(p.pais)}`:''}`;
+  const que=isC?`${esc(nm)} es una criptomoneda${p.cats?` (${esc(p.cats.split(', ')[0])})`:''}`:p.tipo==='Fondo (ETF)'?`${esc(nm)} es un fondo que cotiza en bolsa`:sec&&/Argentina/.test(sec[0])?`${esc(nm)} es una empresa argentina que cotiza en EE. UU.`:`${esc(nm)} es una empresa${sec?` del sector ${esc(sec[0])}`:''}${p.pais?` de ${esc(p.pais)}`:''}`;
   const res=`${que}.${tr.length?' '+tr.join(', ').replace(/^./,c=>c.toUpperCase())+'.':''}${rsT}`;
   const N=D.n||[],ago=t=>{const h=(Date.now()-t)/36e5;return h<1?'hace minutos':h<24?`hace ${Math.round(h)} h`:`hace ${Math.round(h/24)} días`;},nl=x=>`${x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>`:esc(x.t)} <small>· ${esc(x.f||'')} · ${ago(x.d)}</small>`;
   const desc=p.d?(p.dlang==='en'?'<span class="ad-src">(en inglés)</span> ':'')+esc(sents(p.d,2)):p.none?'No encontré una descripción de este activo.':p.err?'No se pudo cargar la descripción (conexión). Se reintenta al volver a elegirlo.':'Cargando…';
@@ -3160,7 +3168,7 @@ function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[
     <details class="ad-more"${D.open?' open':''}><summary>Ver más ▾</summary>
       ${p.d&&sents(p.d,99).length>sents(p.d,2).length?`<div class="ad-full">${esc(p.d.length>2500?p.d.slice(0,2500)+'…':p.d)}${p.wu?` <a class="ad-src" href="${esc(p.wu)}" target="_blank" rel="noopener">Wikipedia</a>`:''}</div>`:''}
       ${F.length?`<div class="ad-ficha">${F.map(([k,v])=>`<span>${k}</span><span>${k==='Web'?v:esc(String(v))}</span>`).join('')}</div>`:''}
-      ${N.length?`<div><b>📰 Noticias de los últimos 14 días</b><ul class="ad-news">${N.map(x=>`<li>${nl(x)}</li>`).join('')}</ul></div>`:'<div class="mut">Sin noticias recientes en español.</div>'}
+      ${N.length?`<div><b>📰 Noticias de los últimos 14 días</b><ul class="ad-news">${N.map(x=>`<li>${nl(x)}</li>`).join('')}</ul></div>`:`<div class="mut">${DATNERR&&!D.n?'No se pudieron cargar las noticias ('+esc(DATNERR)+').':'Sin noticias recientes en español.'}</div>`}
       <div class="ad-src">Fuentes: ${esc(p.src||'—')} · noticias de Google News. Es información general, no una recomendación de inversión.</div></details>`;
   const dd=$('datBody').querySelector('details');if(dd)dd.ontoggle=()=>{D.open=dd.open;};}
 /* ---------- ⭐ MIS LISTAS (noviembre 2026) ----------
