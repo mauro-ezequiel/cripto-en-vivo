@@ -118,6 +118,15 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       const cx = (() => { applyMode('medio'); rsiCxRender(); return [...document.querySelectorAll('#rsiCxBody .rsi-b')].slice(0, 3).map(b => [...b.querySelectorAll('td:nth-child(2)')].map(x => x.textContent).join(' ')); })();
       return { lab1, labL, p1_primeros: p1.slice(0, 16), distancia_media_a_50: { pagina1: ext(p1), ultima: ext(pl) }, ultima_primeros: pl.slice(0, 8), cripto: cx }; }); info.push({ rsiorden: r });
     try { await pg.evaluate(() => { applyMode('a'); RSIX.pg = 0; rsiRender(); }); await pg.locator('#rsiBox').screenshot({ path: 'capturas/rsi-orden.png', timeout: 8000 }); await pg.evaluate(() => applyMode('medio')); } catch (e) {} } catch (e) { info.push({ rsiorden_error: e.message.slice(0, 200) }); }
+  /* datos del activo e íconos */
+  try { const out = {}; for (const [m, sy] of [['medio', 'SOLUSDT'], ['a', 'NVDA'], ['a', 'YPF']]) { const r = await pg.evaluate(async ([m, sy]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode(m); await w(m === 'a' ? 2500 : 500);
+        try { select(sy); } catch (e) {} for (let k = 0; k < 60 && !(DAT[sy] && DAT[sy].p && DAT[sy].nt); k++) await w(500); await w(800); datPaint();
+        const b = document.getElementById('datBody'); const d = b.querySelector('details'); if (d) d.open = true;
+        return { titulo: document.getElementById('datHead').textContent, chips: [...b.querySelectorAll('.ad-c')].map(x => x.textContent), resumen: (b.querySelector('.ad-res') || {}).textContent, desc: ((b.querySelector('.ad-desc') || {}).textContent || '').slice(0, 220),
+          ultimo: ((b.querySelector('.ad-last') || {}).textContent || '').slice(0, 160), ficha: [...b.querySelectorAll('.ad-ficha span')].map(x => x.textContent).join(' | ').slice(0, 300), noticias: b.querySelectorAll('.ad-news li').length,
+          icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length, nerr: DATNERR }; }, [m, sy]); out[sy] = r;
+      try { await pg.evaluate(() => document.getElementById('datBox').scrollIntoView()); await pg.waitForTimeout(500); await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 15000 }); } catch (e) { info.push({ datos_shot: e.message.slice(0, 150) }); } }
+    info.push({ datos: out }); await pg.evaluate(() => applyMode('medio')); } catch (e) { info.push({ datos_error: e.message.slice(0, 200) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
     applyMode('medio'); setView('sig'); SIG.medio = []; renderSignals(); await new Promise(z => setTimeout(z, 300)); const a = (document.querySelector('#sigList .bot-est') || {}).textContent || null;
