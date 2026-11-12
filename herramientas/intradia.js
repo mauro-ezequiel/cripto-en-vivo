@@ -53,6 +53,11 @@ function semanas(d1) { const out = []; let key = null; d1.t.forEach((t, i) => { 
     if (!(m && m.c.length > 20) && prev.x && prev.x[s]) { const x = X[s] = X[s] || []; for (let k = 0; k < 5; k++) x[k] = prev.x[s][k]; }
     if (d1) { const W = semanas(d1), wk = Math.floor((Date.now() / 1000 / 86400 + 3) / 7), cl = (W.length && W[W.length - 1].k === wk ? W.slice(0, -1) : W).map(w => w.c), st = rsiState(cl);
       const x = X[s] = X[s] || []; if (st) { x[5] = r2(st.rsi); x[6] = +st.g.toPrecision(6); x[7] = +st.l.toPrecision(6); x[8] = cl[cl.length - 1]; } }
+    { /* noviembre 2026: RSI mensual (velas de 1 mes de Yahoo, 10 años, sin el mes en curso). Se baja una vez por día; el resto de las corridas usa el anterior */
+      const x = X[s] = X[s] || []; let ok2 = false;
+      if (needDaily) { const mo = await yahoo(s, '1mo', '10y'); if (mo && mo.c.length > 16) { const ym = t => { const d = new Date(t * 1000); return d.getUTCFullYear() * 12 + d.getUTCMonth(); }, cur = ym(Date.now() / 1000);
+          const cl = mo.c.filter((c, i) => ym(mo.t[i]) < cur), st = rsiState(cl); if (st) { x[9] = r2(st.rsi); x[10] = +st.g.toPrecision(6); x[11] = +st.l.toPrecision(6); x[12] = cl[cl.length - 1]; ok2 = true; } } }
+      if (!ok2 && prev.x && prev.x[s] && prev.x[s][9] != null) for (let k = 9; k < 13; k++) x[k] = prev.x[s][k]; }
     if (m && m.c.length > 20) { /* RSI de 1 h con las velas de 15 min agrupadas por hora */
       const hc = []; let hk = null; m.t.forEach((t, i) => { const k = Math.floor(t / 3600); if (k !== hk) { hc.push(m.c[i]); hk = k; } else hc[hc.length - 1] = m.c[i]; });
       const h1 = rsiState(hc); row = row || []; row[4] = h1 ? r2(h1.rsi) : null; row[6] = m.c[m.c.length - 1]; }
@@ -60,7 +65,7 @@ function semanas(d1) { const out = []; let key = null; d1.t.forEach((t, i) => { 
   /* d[ACCION] = [RSI diario al cierre anterior, promedio de subas, promedio de bajas, cierre anterior, RSI 1 h, cambio del día anterior %, último precio de 30 min] */
   const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D,
     /* x[ACCION] = [RSI 1 h, 2 h, 4 h, 8 h, 12 h, RSI semanal al cierre de la semana anterior, promedio de subas, de bajas, cierre de la semana anterior] */
-    xcols: ['1h', '2h', '4h', '8h', '12h', 'rsi_s', 'g_s', 'l_s', 'cierre_s'], x: Object.keys(X).length ? X : (prev.x || {}) };
+    xcols: ['1h', '2h', '4h', '8h', '12h', 'rsi_s', 'g_s', 'l_s', 'cierre_s', 'rsi_m', 'g_m', 'l_m', 'cierre_m'], x: Object.keys(X).length ? X : (prev.x || {}) };
   fs.writeFileSync(path.join(OUT, 'rsi.json'), JSON.stringify(out));
   /* ACUMULACIÓN: velas semanales de toda la historia de los índices (una vez por día; el resto de las corridas usa las de antes) */
   { let acu = null; try { acu = JSON.parse(fs.readFileSync(path.join(PREV, 'acum.json'), 'utf8')); } catch (e) {}
