@@ -366,6 +366,12 @@ body.fs-on .fsbar{display:flex}
 .alr-f .pri{background:var(--acc);color:#fff}.alr-f .sec{background:transparent;color:var(--mut);border:1px solid var(--line)}
 .alr-f .err{color:var(--dn);font-size:12px}
 .hrow.h2:has(.hrsi) .hdt,.hrow.h2:has(.hrsi) .hia{grid-row:1/3}.hrow.h2 .hrsi{grid-column:2/4;grid-row:2;display:flex;gap:4px;margin-top:-2px}.rsx.xs{font-size:10px;padding:0 5px;border-radius:5px;color:#fff;margin-left:0;line-height:16px}.bot-est{margin-top:8px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;font-size:12px;line-height:1.5;color:var(--mut)}.bot-est .be-h{color:var(--txt);font-weight:700;margin-bottom:2px}#list.wr .row,.head.wr{grid-template-columns:1fr 1fr 64px 44px}#list.wr .row .rsx,.head.wr span:last-child{justify-self:end;text-align:right}#list.wr .row .rsx{min-width:34px;text-align:center}
+.sym .ico{width:18px;height:18px;margin-right:6px;vertical-align:-2px}.row .ico{width:14px;height:14px;margin:0 5px 0 2px;vertical-align:-2px}.ico{border-radius:50%;object-fit:contain;background:#fff1}
+.adat .ad-chips{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 8px}.adat .ad-c{font-size:12px;padding:3px 8px;border-radius:999px;background:var(--bg);border:1px solid var(--line);white-space:nowrap}.adat .ad-c b{font-weight:700}
+.adat .ad-res{font-size:14px;line-height:1.5;margin:4px 0 8px}.adat .ad-desc{font-size:13px;color:var(--mut);line-height:1.5;margin:0 0 8px}.adat .ad-last{font-size:13px;margin:0 0 8px}.adat .ad-last a,.adat .ad-news a{color:var(--txt);text-decoration:none}.adat .ad-last a:hover,.adat .ad-news a:hover{text-decoration:underline}
+.adat details.ad-more{margin-top:4px}.adat details.ad-more>summary{cursor:pointer;color:var(--acc);font-weight:700;font-size:13px;list-style:none}.adat details.ad-more>summary::-webkit-details-marker{display:none}
+.adat .ad-ficha{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:13px;margin:10px 0}.adat .ad-ficha span:nth-child(odd){color:var(--mut)}.adat .ad-full{font-size:13px;line-height:1.6;margin:8px 0}
+.adat .ad-news{list-style:none;padding:0;margin:6px 0}.adat .ad-news li{padding:6px 0;border-top:1px solid var(--line);font-size:13px}.adat .ad-news small,.adat .ad-src{color:var(--mut);font-size:11px}
 .lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
 .lst-d{margin:0 0 8px}.lst-d summary .lst-n{font-size:13px}.lst-del{margin-left:auto}.lst-tf{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 2px 6px}.lst-tf select{background:var(--panel,#11141a);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:11px;padding:2px 4px}
 .lst-b{padding:2px 8px 8px}.lst-r{display:grid;grid-template-columns:1fr auto auto 26px;align-items:center;gap:6px;padding:6px 2px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
@@ -766,7 +772,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
   </aside>
   <main>
     <div class="top">
-      <div><div class="sym" id="sym">BTC/USDT</div></div>
+      <div><div class="sym"><img id="symIco" class="ico" alt="" hidden referrerpolicy="no-referrer"><span id="sym">BTC/USDT</span></div></div>
       <div class="px" id="px">—</div>
       <span style="font-size:11px;font-weight:700;color:#fff;background:var(--dn);padding:3px 8px;border-radius:4px;letter-spacing:.05em">● EN VIVO</span>
       <div class="stat">Cambio 24h<b id="s-ch">—</b></div>
@@ -837,6 +843,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
       <div class="lqx-sum" id="lqSum"></div>
       <div class="lqx-read" id="lqRead"></div><div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span><button class="i-btn" data-i="news" type="button" aria-label="Cómo funcionan las noticias" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="news" hidden><b>Noticias</b><br>Las 5 noticias globales que más pueden mover a las criptomonedas, ordenadas por relevancia. Cada una dice si es <b>▲ alcista</b>, <b>▼ bajista</b> o <b>● neutral</b>, su impacto (alto, medio o bajo) y la fuente; las etiquetas de color indican el tema. La lista se renueva cada 8 h, pero si sale una muy importante reemplaza a la menos relevante (marcada NUEVA). El tono de las noticias de las últimas 12 h también entra como factor en el termómetro. Tocá el título para abrirla en la fuente original.</div><div id="newsList"></div></section>
+    <section class="adat" id="datBox"><div class="dt"><span id="datHead">📋 Datos del activo</span><span class="mut" id="datSub"></span></div><div id="datBody"><div class="mut">Elegí una moneda o acción para ver de qué se trata.</div></div></section>
   </main>
 </div>
 
@@ -2315,7 +2322,7 @@ function renderList(){
   const rf=favOnly&&typeof lstRsi==='function',rtf=(typeof LSTTF!=='undefined'&&LSTTF.fav)||'1d';$('list').classList.toggle('wr',rf);$('lhead').classList.toggle('wr',rf);
   $('lhead').innerHTML=`<span>Par</span><span>Precio</span><span>24h</span>${rf?`<span>RSI ${rtf==='1w'?'1 sem':rtf}</span>`:''}`;
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
-    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i><b>${t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE'):t.fut?'/USDT · perp':'/USDT'}</small></span>
+    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE'):t.fut?'/USDT · perp':'/USDT'}</small></span>
     <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
   ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
@@ -2347,7 +2354,7 @@ $('list').onclick=e=>{const st=e.target.closest('[data-star]');if(st){const s=st
 $('ltabs').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;favOnly=b.dataset.f==='fav';[...$('ltabs').children].forEach(x=>x.classList.toggle('on',x===b));renderList();};
 function select(s){
   symbol=s;document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.s===s));
-  updateTop();loadChart();
+  updateTop();loadChart();try{icoHead();datShow();}catch(e){}
 }
 function updateTop(){
   const t=tickers[symbol];if(!t)return;
@@ -3062,6 +3069,100 @@ function checkSignals(){
   if(ch)saveSig();renderSignals();
 }
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
+/* ---------- 📋 DATOS DEL ACTIVO e ÍCONOS (noviembre 2026) ----------
+   Al elegir una moneda o acción, abajo de todo: un vistazo rápido (qué es, sector, cómo viene en el mes y el año, distancia al máximo, RSI)
+   y la última noticia; con "Ver más", la descripción completa, la ficha (fundada, CEO, empleados, sede, web) y las noticias recientes en español.
+   Fuentes, todas públicas y sin clave: CoinGecko (cripto), Wikidata y Wikipedia (empresas), Google News (noticias).
+   Íconos chiquitos solo en la lista del buscador y en el activo elegido. */
+var ICO={c:{},t:0};try{ICO=JSON.parse(localStorage.getItem('cv_ico')||'null')||ICO;}catch(e){}
+const icoBase=s=>s.replace(/USDT$/,'').replace(/^1000000|^1000/,'');
+function icoUrl(s){if(!s)return null;if(!/USDT$/.test(s))return `https://financialmodelingprep.com/image-stock/${encodeURIComponent(s.replace('.','-'))}.png`;const c=ICO.c[icoBase(s)];return c?c[0]:null;}
+function icoHTML(s){const u=icoUrl(s);return u?`<img class="ico" src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:'';}
+function icoHead(){const im=$('symIco');if(!im)return;const u=icoUrl(symbol);if(!u){im.hidden=true;im.removeAttribute('src');return;}if(im.getAttribute('src')!==u){im.hidden=false;im.onerror=()=>{im.hidden=true;};im.src=u;}}
+async function icoLoad(){if(Date.now()-ICO.t<7*864e5&&Object.keys(ICO.c).length>50)return;
+  try{const P=await Promise.all([1,2].map(p=>getJ(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${p}`,15000).catch(()=>[])));const c={};
+    for(const L of P)for(const x of (Array.isArray(L)?L:[])){const k=String(x.symbol||'').toUpperCase();if(k&&!c[k]&&x.image)c[k]=[String(x.image).replace('/large/','/small/'),x.id];}
+    if(Object.keys(c).length>50){ICO={c,t:Date.now()};try{localStorage.setItem('cv_ico',JSON.stringify(ICO));}catch(e){}try{renderList();}catch(e){}icoHead();}}catch(e){}}
+setTimeout(icoLoad,2500);
+setInterval(()=>{if(symbol&&symbol!==DATCUR&&!document.hidden){try{icoHead();datShow();}catch(e){}}},3000);
+var DAT={};try{DAT=JSON.parse(localStorage.getItem('cv_dat')||'{}')||{};}catch(e){}
+function datSave(){const K=Object.keys(DAT);if(K.length>60)K.sort((a,b)=>(DAT[a].t||0)-(DAT[b].t||0)).slice(0,K.length-60).forEach(k=>delete DAT[k]);try{localStorage.setItem('cv_dat',JSON.stringify(DAT));}catch(e){}}
+const ETF_ES={SPY:['SPDR S&P 500','Fondo que copia al S&P 500: las 500 empresas más grandes de EE. UU. Es la forma más simple de invertir en "todo el mercado" estadounidense.'],
+  QQQ:['Invesco QQQ','Fondo que copia al Nasdaq 100: las 100 mayores empresas no financieras del Nasdaq, con mucho peso de tecnología (Apple, Microsoft, NVIDIA, Amazon…).'],
+  DIA:['SPDR Dow Jones','Fondo que copia al Dow Jones: 30 grandes empresas tradicionales de EE. UU.'],IWM:['iShares Russell 2000','Fondo de 2.000 empresas chicas de EE. UU. Sube y baja más que el S&P 500 y suele moverse con las tasas de interés.'],
+  EEM:['iShares mercados emergentes','Fondo de empresas de países emergentes (China, India, Taiwán, Brasil…).'],EWZ:['iShares Brasil','Fondo de las mayores empresas de Brasil (Petrobras, Vale, bancos).'],
+  XLK:['Tecnología S&P 500','Fondo con las empresas de tecnología del S&P 500.'],XLF:['Finanzas S&P 500','Fondo con los bancos, aseguradoras y financieras del S&P 500.'],XLE:['Energía S&P 500','Fondo con las petroleras y empresas de energía del S&P 500.'],
+  XLV:['Salud S&P 500','Fondo con las empresas de salud y farmacéuticas del S&P 500.'],XLI:['Industria S&P 500','Fondo con las industriales del S&P 500 (aviones, maquinaria, transporte).'],
+  XLY:['Consumo cíclico S&P 500','Fondo con las empresas de consumo no esencial del S&P 500 (Amazon, Tesla, Home Depot…).'],XLP:['Consumo defensivo S&P 500','Fondo con las empresas de consumo básico del S&P 500 (supermercados, bebidas, higiene).'],
+  XLB:['Materiales S&P 500','Fondo con las empresas de materiales del S&P 500 (químicas, minería, acero).'],XLU:['Servicios públicos S&P 500','Fondo con las eléctricas y servicios públicos del S&P 500.'],
+  GLD:['SPDR Gold','Fondo que sigue el precio del oro físico.'],SLV:['iShares Silver','Fondo que sigue el precio de la plata física.'],TLT:['Bonos de EE. UU. a 20+ años','Fondo de bonos del Tesoro de EE. UU. a más de 20 años: sube cuando bajan las tasas de interés.'],
+  ARKK:['ARK Innovation','Fondo de gestión activa de Cathie Wood en empresas de "innovación disruptiva" (Tesla, Coinbase, Roku…). Muy volátil.'],SMH:['VanEck semiconductores','Fondo de las mayores empresas de chips (NVIDIA, TSMC, Broadcom, AMD…).']};
+const stripH=h=>String(h||'').replace(/<[^>]+>/g,'').replace(/\r?\n+/g,' ').replace(/\s+/g,' ').trim();
+const sents=(t,n)=>{const m=String(t||'').match(/[^.!?]+[.!?]+(\s|$)/g);return m?m.slice(0,n).join('').trim():String(t||'').slice(0,300);};
+async function wikiSum(title,lang){try{const j=await getJ(`https://${lang}.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(title.replace(/ /g,'_'))}`,10000);if(j&&j.extract&&j.type!=='disambiguation')return {t:j.extract,u:j.content_urls&&j.content_urls.desktop&&j.content_urls.desktop.page,lang};}catch(e){}return null;}
+async function datProfStock(s){if(ETF_ES[s])return {n:ETF_ES[s][0],tipo:'Fondo (ETF)',d:ETF_ES[s][1],src:'CRIPTO-LIVE'};
+  const tk=s.replace('-','.'),q=`SELECT ?item ?itemLabel ?es ?en ?indLabel ?ctyLabel ?inc ?ceoLabel ?emp ?web ?hqLabel WHERE { ?item p:P414 ?st. ?st pq:P249 "${tk}". ?st ps:P414 ?ex. VALUES ?ex {wd:Q13677 wd:Q82059}
+    OPTIONAL{?es schema:about ?item; schema:isPartOf <https://es.wikipedia.org/>} OPTIONAL{?en schema:about ?item; schema:isPartOf <https://en.wikipedia.org/>}
+    OPTIONAL{?item wdt:P452 ?ind} OPTIONAL{?item wdt:P17 ?cty} OPTIONAL{?item wdt:P571 ?inc} OPTIONAL{?item wdt:P169 ?ceo} OPTIONAL{?item wdt:P1128 ?emp} OPTIONAL{?item wdt:P856 ?web} OPTIONAL{?item wdt:P159 ?hq}
+    SERVICE wikibase:label{bd:serviceParam wikibase:language "es,en".}} LIMIT 40`;
+  const j=await getJ('https://query.wikidata.org/sparql?format=json&query='+encodeURIComponent(q),15000);const B=(j&&j.results&&j.results.bindings)||[];if(!B.length)return null;
+  const v=k=>{for(const b of B)if(b[k]&&b[k].value)return b[k].value;return null;},all=k=>[...new Set(B.map(b=>b[k]&&b[k].value).filter(Boolean))];
+  const es=v('es'),en=v('en');let w=null;if(es)w=await wikiSum(decodeURIComponent(es.split('/wiki/')[1]),'es');if(!w&&en)w=await wikiSum(decodeURIComponent(en.split('/wiki/')[1]),'en');
+  const emp=Math.max(0,...B.map(b=>b.emp?+b.emp.value:0));const inc=v('inc');
+  return {n:v('itemLabel'),tipo:'Empresa',ind:all('indLabel').filter(x=>!/^Q\d+$/.test(x)).slice(0,3).join(', '),pais:v('ctyLabel'),fund:inc?inc.slice(0,4):null,ceo:all('ceoLabel').filter(x=>!/^Q\d+$/.test(x)).slice(-1)[0]||null,emp:emp||null,web:v('web'),sede:v('hqLabel'),
+    d:w?w.t:null,dlang:w?w.lang:null,wu:w?w.u:null,src:'Wikidata y Wikipedia'};}
+async function datProfCrypto(s){const b=icoBase(s);let id=ICO.c[b]&&ICO.c[b][1];
+  if(!id){const j=await getJ('https://api.coingecko.com/api/v3/search?query='+encodeURIComponent(b),10000);const c=(j&&j.coins||[]).filter(x=>String(x.symbol).toUpperCase()===b).sort((a,b)=>(a.market_cap_rank||1e9)-(b.market_cap_rank||1e9))[0];if(c)id=c.id;}
+  if(!id)return null;const j=await getJ(`https://api.coingecko.com/api/v3/coins/${encodeURIComponent(id)}?localization=true&tickers=false&market_data=true&community_data=false&developer_data=false&sparkline=false`,15000);if(!j||!j.id)return null;
+  const md=j.market_data||{},U=x=>x&&x.usd;let d=stripH(j.description&&j.description.es),dl='es',wu=null;
+  if(d.length<60){const r=await getJ(`https://es.wikipedia.org/w/api.php?action=query&list=search&srsearch=${encodeURIComponent(j.name+' criptomoneda')}&srlimit=1&format=json&origin=*`,10000).catch(()=>null);const t=r&&r.query&&r.query.search&&r.query.search[0];
+    const w=t?await wikiSum(t.title,'es'):null;if(w&&/cripto|blockchain|cadena de bloques|token|moneda digital/i.test(w.t)&&w.t.toLowerCase().includes(j.name.toLowerCase().split(' ')[0]))({t:d,u:wu}=w);else{d=stripH(j.description&&j.description.en);dl='en';}}
+  return {n:j.name,tipo:'Criptomoneda',cats:(j.categories||[]).filter(Boolean).slice(0,4).join(', '),fund:j.genesis_date?j.genesis_date.slice(0,4):null,web:j.links&&j.links.homepage&&j.links.homepage.find(Boolean)||null,
+    d,dlang:dl,wu,rank:j.market_cap_rank||md.market_cap_rank||null,mcap:U(md.market_cap),ath:U(md.ath),athP:U(md.ath_change_percentage),athD:U(md.ath_date),c30:md.price_change_percentage_30d,c1y:md.price_change_percentage_1y,
+    circ:md.circulating_supply,max:md.max_supply,src:'CoinGecko'+(dl==='es'&&wu?' y Wikipedia':'')};}
+async function datNews(name,isC){const q=isC?`"${name}" cripto when:14d`:`"${name}" acciones when:14d`,url=`https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=es-419&gl=AR&ceid=AR:es-419`;
+  const j=await getJ('https://api.rss2json.com/v1/api.json?rss_url='+encodeURIComponent(url),12000);const out=[];
+  for(const it of (j&&j.items||[])){let title=String(it.title||'').trim(),src='';const m=title.match(/^(.*) - ([^-]{2,60})$/);if(m){title=m[1];src=m[2];}const t=Date.parse(String(it.pubDate||'').replace(' ','T')+'Z');
+    if(title&&!isNaN(t))out.push({t:title,f:src,d:t,u:/^https?:\/\//.test(it.link||'')?it.link:''});}
+  return out.sort((a,b)=>b.d-a.d).slice(0,8);}
+async function datStockPerf(s){try{const b=await stkHist(s);if(!b||b.length<30)return {};const c=b.map(x=>x.close),n=c.length-1,live=lstPx(s)||c[n],ago=k=>n-k>=0?c[n-k]:null,hi=Math.max(...c.slice(-252));
+  return {c30:ago(21)?(live/ago(21)-1)*100:null,c1y:ago(250)?(live/ago(250)-1)*100:null,athP:(live/Math.max(hi,live)-1)*100,hiLbl:'máximo de 52 semanas'};}catch(e){return {};}}
+var DATCUR=null;
+async function datShow(){const s=symbol;if(!s||!$('datBody'))return;DATCUR=s;const isC=/USDT$/.test(s),D=DAT[s]=DAT[s]||{};
+  $('datHead').textContent=`📋 Datos ${isC?'del activo':'de la empresa'} · ${s.replace('USDT','')}`;datPaint();
+  try{if(!D.p||Date.now()-D.t>3*864e5){$('datSub').textContent=' · cargando…';const p=isC?await datProfCrypto(s):await datProfStock(s);if(p){D.p=p;D.t=Date.now();}else D.p=D.p||{none:1};datSave();}}catch(e){D.p=D.p||{err:1};}
+  if(DATCUR!==s)return;datPaint();
+  try{if(!D.n||Date.now()-D.nt>36e5){const nm=D.p&&D.p.n&&!D.p.none?D.p.n.replace(/,? (Inc|Corp|Corporation|Ltd|plc|S\.A\.|N\.V\.|Holdings?|Company|Co)\.?$/i,''):s.replace('USDT','');D.n=await datNews(nm,isC);D.nt=Date.now();datSave();}}catch(e){}
+  if(!isC)try{D.perf=await datStockPerf(s);}catch(e){}else try{await sigRsiLoad(s);}catch(e){}
+  if(DATCUR!==s)return;$('datSub').textContent='';datPaint();}
+function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[s]||{},p=D.p||{},pf=isC?p:Object.assign({},D.perf||{});const nm=p.n||s.replace('USDT','');
+  const rs=isC?(SIGRSI[s]&&SIGRSI[s].v['1d']):(RSIX.j?rsiLive(s).d:null),sec=!isC&&RSIX.j?Object.entries(RSIX.j.sectores).find(([,L])=>L.includes(s)):null;
+  const pc=v=>v==null||!isFinite(v)?null:`<b class="${v>=0?'up':'dn'}">${v>=0?'+':''}${Math.abs(v)<10?v.toFixed(1):Math.round(v)} %</b>`;
+  const big=v=>v>=1e12?(v/1e12).toFixed(2)+' billones':v>=1e9?(v/1e9).toFixed(1)+' mil millones':v>=1e6?(v/1e6).toFixed(0)+' millones':Math.round(v).toLocaleString('es-AR');
+  const ch=[];ch.push(`<span class="ad-c">${isC?'🪙':'🏢'} ${esc(p.tipo||(isC?'Criptomoneda':'Acción'))}</span>`);
+  if(sec)ch.push(`<span class="ad-c">${esc(sec[0])}</span>`);else if(p.cats)ch.push(`<span class="ad-c">${esc(p.cats.split(', ').slice(0,2).join(' · '))}</span>`);
+  if(p.pais)ch.push(`<span class="ad-c">📍 ${esc(p.pais)}</span>`);if(p.rank)ch.push(`<span class="ad-c">Puesto <b>#${p.rank}</b> por tamaño</span>`);if(p.mcap)ch.push(`<span class="ad-c">Vale <b>${big(p.mcap)} USD</b></span>`);
+  if(pc(pf.c30))ch.push(`<span class="ad-c">1 mes ${pc(pf.c30)}</span>`);if(pc(pf.c1y))ch.push(`<span class="ad-c">1 año ${pc(pf.c1y)}</span>`);
+  if(pf.athP!=null&&isFinite(pf.athP))ch.push(`<span class="ad-c">${pf.athP>-1?'En su máximo':`<b class="dn">${Math.round(pf.athP)} %</b> desde su ${pf.hiLbl||'máximo histórico'}`}</span>`);
+  if(rs!=null&&isFinite(rs))ch.push(`<span class="ad-c" style="background:${rsiColor(rs)};border-color:transparent">RSI diario <b>${Math.round(rs)}</b></span>`);
+  /* resumen en una línea */
+  const tr=[];if(pf.c1y!=null&&isFinite(pf.c1y))tr.push(`en el último año ${pf.c1y>=0?'subió':'bajó'} ${Math.abs(Math.round(pf.c1y))} %`);if(pf.c30!=null&&isFinite(pf.c30))tr.push(`en el último mes ${pf.c30>=0?'subió':'bajó'} ${Math.abs(pf.c30).toFixed(0)} %`);
+  if(pf.athP!=null&&pf.athP<-1)tr.push(`está ${Math.abs(Math.round(pf.athP))} % debajo de su ${pf.hiLbl||'máximo histórico'}`);
+  const rsT=rs==null?'':rs<=30?' El RSI diario está en sobreventa: viene muy castigada.':rs>=70?' El RSI diario está en sobrecompra: viene muy estirada.':'';
+  const que=isC?`${esc(nm)} es una criptomoneda${p.cats?` (${esc(p.cats.split(', ')[0])})`:''}`:p.tipo==='Fondo (ETF)'?`${esc(nm)} es un fondo que cotiza en bolsa`:`${esc(nm)} es una empresa${sec?` del sector ${esc(sec[0].replace(/ 🇦🇷/,''))}`:''}${p.pais?` de ${esc(p.pais)}`:''}`;
+  const res=`${que}.${tr.length?' '+tr.join(', ').replace(/^./,c=>c.toUpperCase())+'.':''}${rsT}`;
+  const N=D.n||[],ago=t=>{const h=(Date.now()-t)/36e5;return h<1?'hace minutos':h<24?`hace ${Math.round(h)} h`:`hace ${Math.round(h/24)} días`;},nl=x=>`${x.u?`<a href="${esc(x.u)}" target="_blank" rel="noopener">${esc(x.t)}</a>`:esc(x.t)} <small>· ${esc(x.f||'')} · ${ago(x.d)}</small>`;
+  const desc=p.d?(p.dlang==='en'?'<span class="ad-src">(en inglés)</span> ':'')+esc(sents(p.d,2)):p.none?'No encontré una descripción de este activo.':p.err?'No se pudo cargar la descripción (conexión). Se reintenta al volver a elegirlo.':'Cargando…';
+  const F=[['Nombre',nm],['Fundada',p.fund],['CEO',p.ceo],['Empleados',p.emp?(+p.emp).toLocaleString('es-AR'):null],['Sede',p.sede],['Rubro',p.ind||p.cats],['En circulación',p.circ?big(p.circ)+(p.max?` de ${big(p.max)} máximo`:''):null],
+    ['Máximo histórico',p.ath?`${fp(p.ath)} USD${p.athD?' ('+new Date(p.athD).toLocaleDateString('es-AR',{month:'short',year:'numeric'})+')':''}`:null],['Web',p.web?`<a href="${esc(p.web)}" target="_blank" rel="noopener">${esc(p.web.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,''))}</a>`:null]].filter(x=>x[1]);
+  $('datBody').innerHTML=`<div class="ad-chips">${ch.join('')}</div><p class="ad-res">${res}</p><p class="ad-desc">${desc}</p>
+    ${N.length?`<div class="ad-last">📰 <b>Lo último:</b> ${nl(N[0])}</div>`:''}
+    <details class="ad-more"${D.open?' open':''}><summary>Ver más ▾</summary>
+      ${p.d&&sents(p.d,99).length>sents(p.d,2).length?`<div class="ad-full">${esc(p.d.length>2500?p.d.slice(0,2500)+'…':p.d)}${p.wu?` <a class="ad-src" href="${esc(p.wu)}" target="_blank" rel="noopener">Wikipedia</a>`:''}</div>`:''}
+      ${F.length?`<div class="ad-ficha">${F.map(([k,v])=>`<span>${k}</span><span>${k==='Web'?v:esc(String(v))}</span>`).join('')}</div>`:''}
+      ${N.length?`<div><b>📰 Noticias de los últimos 14 días</b><ul class="ad-news">${N.map(x=>`<li>${nl(x)}</li>`).join('')}</ul></div>`:'<div class="mut">Sin noticias recientes en español.</div>'}
+      <div class="ad-src">Fuentes: ${esc(p.src||'—')} · noticias de Google News. Es información general, no una recomendación de inversión.</div></details>`;
+  const dd=$('datBody').querySelector('details');if(dd)dd.ontoggle=()=>{D.open=dd.open;};}
 /* ---------- ⭐ MIS LISTAS (noviembre 2026) ----------
    En el menú lateral: Favoritos (las mismas ★ de la lista de monedas, cripto y acciones) y carpetas propias.
    Cada activo muestra su RSI 14 en la temporalidad elegida para la carpeta, con los colores de la planilla. Se guarda en el celular y en la cuenta. */
