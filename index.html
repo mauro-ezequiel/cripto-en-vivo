@@ -3618,12 +3618,14 @@ const etOff=()=>{const d=new Date(),p=Object.fromEntries(new Intl.DateTimeFormat
 const artNow=()=>new Date(Date.now()+etOff()); // hora de Nueva York
 const artDay=()=>artNow().toISOString().slice(0,10);
 function mktOpen(){const d=artNow(),wd=d.getUTCDay(),m=d.getUTCHours()*60+d.getUTCMinutes();return wd>=1&&wd<=5&&m>=9*60+30&&m<=16*60+5;}
+/* noviembre 2026: empresas argentinas en EE. UU. (ADR) que no estaban en las listas: se ven en el buscador y en la planilla (las señales siguen igual) */
+const ARG_ADR={GGAL:'NASDAQ',CRESY:'NASDAQ',BIOX:'NASDAQ',CAAP:'NYSE',ARCO:'NYSE',AGRO:'NYSE'};
 async function loadStocks(){
   const [U0,A0,C]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000)),safe(getJ(D912+'/live/arg_cedears',20000))]);if(!Array.isArray(U0))return;const U=U0.concat(Array.isArray(A0)?A0:[]);
   const cv={};if(Array.isArray(C))for(const x of C)if(x.v>0)cv[x.symbol]=+x.v;const day=artDay();
   /* se ven todas las acciones de EE. UU. que tienen CEDEAR (NYSE, NASDAQ y otras); las señales siguen solo en NYSE, donde se probaron */
-  for(const x of U){const s=x.symbol;if(!(x.c>0)||!(NYSE.has(s)||NASDAQ.has(s)||cv[s]>0||s==='SPY'))continue;
-    const o=STK[s]||(STK[s]={s,kind:s==='SPY'?'ETF':'US',ex:NYSE.has(s)?'NYSE':NASDAQ.has(s)?'NASDAQ':'EE. UU.'});if(o.day!==day){o.day=day;o.h=o.l=null;}
+  for(const x of U){const s=x.symbol;if(!(x.c>0)||!(NYSE.has(s)||NASDAQ.has(s)||cv[s]>0||s==='SPY'||ARG_ADR[s]))continue;
+    const o=STK[s]||(STK[s]={s,kind:s==='SPY'?'ETF':'US',ex:NYSE.has(s)?'NYSE':NASDAQ.has(s)?'NASDAQ':ARG_ADR[s]||'EE. UU.'});if(o.day!==day){o.day=day;o.h=o.l=null;}
     o.c=+x.c;o.p=+x.pct_change||0;o.sv=+x.v||0;o.v=cv[s]||1;o.q=o.sv*o.c;o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;
     o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}
   if(Object.keys(STK).length)stkReady=true;
