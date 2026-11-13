@@ -132,7 +132,7 @@ const fs = require('fs'), { chromium } = require('playwright-core');
       for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);
       const bar = document.getElementById('semBar'); const pts = OS.rsi.rsi.data ? OS.rsi.rsi.data() : []; const cols = [...new Set(pts.slice(-300).map(x => x.color))];
       return { visible: !bar.hidden, texto: bar.textContent.replace(/\s+/g, ' ').trim(), colores_rsi: cols, boton: document.getElementById('semBtn').classList.contains('on') }; }); info.push({ semaforo: r });
-    try { document; await pg.locator('#chart').screenshot({ path: 'capturas/semaforo.png', timeout: 15000 }); } catch (e) { info.push({ sem_shot: e.message.slice(0, 120) }); }
+    try { await pg.locator('#chart').screenshot({ path: 'capturas/semaforo.png', timeout: 15000 }); } catch (e) { info.push({ sem_shot: e.message.slice(0, 120) }); }
     try { await pg.locator('#semBar').screenshot({ path: 'capturas/semaforo-barra.png', timeout: 8000 }); } catch (e) {}
     const off = await pg.evaluate(() => { semToggle(); const pts = OS.rsi.rsi.data(); return { visible: !document.getElementById('semBar').hidden, colores_rsi: [...new Set(pts.slice(-50).map(x => x.color || 'normal'))] }; }); info.push({ semaforo_off: off });
   } catch (e) { info.push({ semaforo_error: e.message.slice(0, 200) }); }
