@@ -5,6 +5,9 @@
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <link rel="preconnect" href="https://unpkg.com" crossorigin><link rel="preconnect" href="https://www.gstatic.com" crossorigin><link rel="preconnect" href="https://api.binance.com" crossorigin><link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+<link rel="preconnect" href="https://data-api.binance.vision" crossorigin>
+<link rel="preconnect" href="https://fapi.binance.com" crossorigin>
+<link rel="dns-prefetch" href="https://stream.binance.com">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>CRIPTO-LIVE</title>
 <link rel="manifest" href="manifest.json">
@@ -16,9 +19,6 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black">
 <meta name="apple-mobile-web-app-title" content="CRIPTO-LIVE">
 <script src="https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js" integrity="sha384-OK7vELvjHdhUFi31JYioPIcRHTROLdcDa6ZsNWgvgLaKj+9JqhU0Ad8g4wz3CXjA" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js" integrity="sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js" integrity="sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1" crossorigin="anonymous"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js" integrity="sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC" crossorigin="anonymous"></script>
 <script src="ia-core.js"></script>
 <script src="herramientas/macro-lib.js"></script>
 <style>
@@ -1996,10 +1996,16 @@ async function loadChart(){
   ruler=null; noMore=false;
   const sym=symbol, t=tf;
   if(MODES[mode].inds.length) loadFutures(); else {clearInterval(futTimer);closeLiqWs();FUT=null;LIQ=null;}
+  /* rapidez: dibuja ya las velas guardadas de esta moneda y temporalidad (si hay) mientras llegan las nuevas */
+  try{const K=JSON.parse(localStorage.getItem('cv_kc')||'{}'),c=K[sym+'|'+t];if(c&&Date.now()-c.t<7*864e5&&c.b.length>20&&window.LASTK!==sym+'|'+t){
+      candles=c.b.map(toBar);setPrecision(candles.at(-1).close);series.setData(candles);volume.setData(candles.map(volBar));
+      if(!CHUSER){try{chart.timeScale().setVisibleLogicalRange({from:Math.max(0,candles.length-120),to:candles.length+3});}catch(e){}}$('loading').style.display='none';}}catch(e){}
   try{
     const r=await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000`);
     const d=await r.json();
     if(sym!==symbol||t!==tf) return;
+    try{const K=JSON.parse(localStorage.getItem('cv_kc')||'{}');K[sym+'|'+t]={t:Date.now(),b:d.slice(-300).map(x=>[+x[0],+x[1],+x[2],+x[3],+x[4],+x[5],0,0,0,+x[9]])};
+      const ks=Object.keys(K).sort((a,b)=>K[b].t-K[a].t);for(const k of ks.slice(4))delete K[k];localStorage.setItem('cv_kc',JSON.stringify(K));}catch(e){}
     /* octubre 2026: la vista del halving (2016–2030) es para velas semanales. Si quedó prendida y el gráfico abre en otra temporalidad
        (al entrar o al cambiar de moneda), las velas quedaban aplastadas en una franja a la izquierda: se apaga sola */
     if(HALV&&t!=='1w'){HALV=false;HVPREV=null;try{localStorage.setItem('cv_halv','0')}catch(_){}['halvBtn','fsHalvBtn'].forEach(id=>{const b=$(id);if(b)b.classList.remove('on');});}
@@ -2011,7 +2017,7 @@ async function loadChart(){
     restoreLines();setTimeout(()=>niRender(true),400);
     if(['1d','3d','1w','1M'].includes(t))setTimeout(loadAllHistory,1500);
   }catch(e){$('loading').textContent='No se pudo cargar el gráfico';return;}
-  $('loading').style.display='none';
+  $('loading').style.display='none';if(!window.__bootOK)setTimeout(()=>{window.__bootOK=1;},2500);
   klineWs=new WebSocket(tickers[sym]&&tickers[sym].fut?`wss://fstream.binance.com/market/ws/${sym.toLowerCase()}@kline_${t}`:`${WS}/ws/${sym.toLowerCase()}@kline_${t}`);
   klineWs.onmessage=e=>{
     const k=JSON.parse(e.data).k;
@@ -2348,13 +2354,17 @@ requestAnimationFrame(draw);
 
 /* ---------- lista y buscador ---------- */
 async function loadTickers(){
+  /* rapidez: muestra al instante los precios de la última visita (se reemplazan en 1 o 2 s) */
+  try{const c=JSON.parse(localStorage.getItem('cv_tk')||'null');if(c&&Date.now()-c.t<3*864e5&&!Object.keys(tickers).length){for(const [s,c1,p,h,l,q,f] of c.d)tickers[s]={s,c:c1,p,h,l,q,...(f?{fut:true}:{})};renderList();updateTop();}}catch(e){}
   try{
     const d=await (await fetch(`${API}/ticker/24hr`)).json();
     d.filter(t=>t.symbol.endsWith('USDT')&&+t.quoteVolume>0&&!/(UP|DOWN|BULL|BEAR)USDT$/.test(t.symbol))
      .forEach(t=>tickers[t.symbol]={s:t.symbol,c:+t.lastPrice,p:+t.priceChangePercent,h:+t.highPrice,l:+t.lowPrice,q:+t.quoteVolume});
   }catch(e){$('list').innerHTML='<div style="padding:16px;color:var(--mut)">No se pudo conectar con Binance.</div>';return;}
   renderList();updateTop();connectTickers();loadFutOnly();setInterval(loadFutOnly,15000);
+  setTimeout(tkSave,20000);setInterval(tkSave,5*6e4);
 }
+function tkSave(){try{const L=Object.values(tickers).filter(t=>!t.kind).sort((a,b)=>b.q-a.q).slice(0,700).map(t=>[t.s,t.c,t.p,t.h,t.l,Math.round(t.q),t.fut?1:0]);if(L.length>50)localStorage.setItem('cv_tk',JSON.stringify({t:Date.now(),d:L}));}catch(e){}}
 /* suma las monedas que están solo en futuros perpetuos (USDT) y actualiza su precio cada 15 s */
 async function loadFutOnly(){try{const d=await getJ('https://fapi.binance.com/fapi/v1/ticker/24hr');let add=false;
   for(const t of d){const s=t.symbol;if(!/^[A-Z0-9]+USDT$/.test(s)||!(+t.quoteVolume>0))continue;const o=tickers[s];
@@ -2704,7 +2714,11 @@ function renderAcct(msg){const el=$('acct');
       catch(e){if(e&&e.code==='auth/popup-blocked'){firebase.auth().signInWithRedirect(pr);}
         else if(e&&e.code!=='auth/popup-closed-by-user'&&e.code!=='auth/cancelled-popup-request'){renderAcct('No se pudo entrar: '+(e.code||e.message));}}};}
 }
+/* rapidez (noviembre 2026): Firebase (cuentas y nube, ~400 KB) ya no frena la primera pantalla: se baja apenas la página se muestra */
+const FB_JS=[["firebase-app-compat.js", "sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9"], ["firebase-auth-compat.js", "sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1"], ["firebase-firestore-compat.js", "sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC"]];
+function fbLoad(){return FB_JS.reduce((p,[f,i])=>p.then(()=>new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://www.gstatic.com/firebasejs/10.12.2/'+f;sc.integrity=i;sc.crossOrigin='anonymous';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);})),Promise.resolve());}
 function initCloud(){
+  if(FIREBASE_CONFIG&&!window.firebase){fbLoad().then(initCloud).catch(()=>renderAcct());return;}
   if(!FIREBASE_CONFIG||!window.firebase){renderAcct();return;}
   try{firebase.initializeApp(FIREBASE_CONFIG);fbDb=firebase.firestore();}catch(e){console.warn(e);return;}
   try{fbDb.collection('config').doc('acceso').onSnapshot(s=>{ACC_CFG=Object.assign({soloCuentas:false,cobro:true},s.data()||{});accGate();subBadge();if(ADM.open)admRender();},()=>{});}catch(e){}
@@ -2724,7 +2738,7 @@ function initCloud(){
       if(d.linesT&&d.linesT>lt){try{localStorage.setItem('cv_lines',JSON.stringify(d.lines||{}));localStorage.setItem('cv_lines_t',String(d.linesT));if(d.tl){TLN=d.tl;localStorage.setItem('cv_tl',JSON.stringify(TLN));}}catch(e){}restoreLines();ovReq();}try{applyCloudPil(d);}catch(e){}try{applyCloudView(d,false);}catch(e){}});}catch(e){}});
 }
 loadTickers();window.__viewHold=true;{let v=null;try{v=JSON.parse(localStorage.getItem('cv_view')||'null')}catch(e){}
-  if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}initCloud();setInterval(()=>{if(chartVis())renderLegend();},1500); // la leyenda solo se redibuja si el gráfico se ve
+  if(v&&v.m&&v.m!=='a'&&MODES[v.m]){if(v.sym)symbol=v.sym;window.__bootTf=v.tf;applyMode(v.m);}else applyMode('medio');}setTimeout(initCloud,0);setTimeout(()=>{window.__bootOK=1;},8000);setInterval(()=>{if(chartVis())renderLegend();},1500); // la leyenda solo se redibuja si el gráfico se ve
 
 /* ---------- noticias globales (cripto, macro, regulación, geopolítica) ---------- */
 const NEWS={items:[],fng:null,upd:0};
@@ -3328,7 +3342,7 @@ $('sigList').onclick=e=>{const sx=e.target.closest('[data-sgx]');if(sx){e.stopPr
   if(tf!==c.dataset.tf){tf=c.dataset.tf;tfMark();}
   select(c.dataset.sym);$('chartWrap').scrollIntoView({behavior:'smooth',block:'start'});};
 /* escanea el modo abierto; si los avisos están activos, también los otros modos */
-setInterval(()=>{const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode))return scanSignals(mode);
+setInterval(()=>{if(!window.__bootOK)return;const due=k=>Date.now()-lastScan[k]>SIGCFG[k].every;if(due(mode))return scanSignals(mode);
   for(const k of ['medio','x','a'])if(k!==mode&&NTF.on&&NTF[k]&&due(k)){scanSignals(k);break;}},5000);
 setInterval(checkSignals,2000);
 
