@@ -127,6 +127,15 @@ const fs = require('fs'), { chromium } = require('playwright-core');
           icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length, nerr: DATNERR }; }, [m, sy]); out[sy] = r;
       try { await pg.evaluate(() => document.getElementById('datBox').scrollIntoView()); await pg.waitForTimeout(500); await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 15000 }); } catch (e) { info.push({ datos_shot: e.message.slice(0, 150) }); } }
     info.push({ datos: out }); await pg.evaluate(() => applyMode('medio')); } catch (e) { info.push({ datos_error: e.message.slice(0, 200) }); }
+  /* semáforo del gráfico */
+  try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); await w(1500);
+      for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);
+      const bar = document.getElementById('semBar'); const pts = OS.rsi.rsi.data ? OS.rsi.rsi.data() : []; const cols = [...new Set(pts.slice(-300).map(x => x.color))];
+      return { visible: !bar.hidden, texto: bar.textContent.replace(/\s+/g, ' ').trim(), colores_rsi: cols, boton: document.getElementById('semBtn').classList.contains('on') }; }); info.push({ semaforo: r });
+    try { document; await pg.locator('#chart').screenshot({ path: 'capturas/semaforo.png', timeout: 15000 }); } catch (e) { info.push({ sem_shot: e.message.slice(0, 120) }); }
+    try { await pg.locator('#semBar').screenshot({ path: 'capturas/semaforo-barra.png', timeout: 8000 }); } catch (e) {}
+    const off = await pg.evaluate(() => { semToggle(); const pts = OS.rsi.rsi.data(); return { visible: !document.getElementById('semBar').hidden, colores_rsi: [...new Set(pts.slice(-50).map(x => x.color || 'normal'))] }; }); info.push({ semaforo_off: off });
+  } catch (e) { info.push({ semaforo_error: e.message.slice(0, 200) }); }
   /* estado del bot 24 h (por qué no hay señales) */
   try { const r = await pg.evaluate(async () => { SRVEST = { medio: { t: Date.now() - 3e5, ultima: Date.now() - 9 * 864e5, btc: -1, btcAdx: 46, dvol: { v: 62, v24: 4 }, no: { sin_setup: 600, btc_contra: 3 } }, x: { t: Date.now() - 3e5, pausa: 'BTC está debajo de su EMA 200 de 4 h' } };
     applyMode('medio'); setView('sig'); SIG.medio = []; renderSignals(); await new Promise(z => setTimeout(z, 300)); const a = (document.querySelector('#sigList .bot-est') || {}).textContent || null;
