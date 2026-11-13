@@ -127,6 +127,14 @@ const fs = require('fs'), { chromium } = require('playwright-core');
           icoHead: (document.getElementById('symIco') || {}).src || null, icoLista: document.querySelectorAll('#list .row img.ico').length, nerr: DATNERR }; }, [m, sy]); out[sy] = r;
       try { await pg.evaluate(() => document.getElementById('datBox').scrollIntoView()); await pg.waitForTimeout(500); await pg.locator('#datBox').screenshot({ path: `capturas/datos-${sy}.png`, timeout: 15000 }); } catch (e) { info.push({ datos_shot: e.message.slice(0, 150) }); } }
     info.push({ datos: out }); await pg.evaluate(() => applyMode('medio')); } catch (e) { info.push({ datos_error: e.message.slice(0, 200) }); }
+  /* textos pegados al borde de la pantalla (celular) */
+  try { const r = await pg.evaluate(async () => { const out = [], W = innerWidth, seen = new Set();
+      for (const v of ['main', 'sig', 'pil', 'cic']) { setView(v); await new Promise(z => setTimeout(z, 600));
+        for (const el of document.querySelectorAll('main *, aside *')) { if (!el.childNodes.length || el.closest('#chart,canvas,svg,table,.tv-lightweight-charts,.mnav,#mnav')) continue;
+          const own = [...el.childNodes].some(n => n.nodeType === 3 && n.textContent.trim().length > 2); if (!own) continue; const b = el.getBoundingClientRect(); if (!b.width || !b.height || el.offsetParent === null) continue;
+          if (b.left < 6 || b.right > W - 6) { const k = (el.id ? '#' + el.id : el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : el.tagName) + ' @' + v; if (seen.has(k)) continue; seen.add(k);
+            out.push({ el: k, x: Math.round(b.left), r: Math.round(W - b.right), t: el.textContent.trim().slice(0, 50) }); } } }
+      setView('main'); return out.slice(0, 40); }); info.push({ bordes: r }); } catch (e) { info.push({ bordes_error: e.message.slice(0, 200) }); }
   /* semáforo del gráfico */
   try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); await w(1500);
       for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);
