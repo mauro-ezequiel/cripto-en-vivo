@@ -843,7 +843,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
         <label id="pilCtaL" hidden>Saldo libre de la cuenta (USD)<input id="pilCta" type="number" inputmode="decimal" min="0" placeholder="opcional: para estimar la liquidación"></label>
         <label>Temporalidad<select id="pilTf"><option value="5m">5 min</option><option value="15m">15 min</option><option value="1h" selected>1 h</option><option value="4h">4 h</option><option value="1d">1 día</option><option value="1w">1 semana</option></select></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
-      <div class="pil-img"><button type="button" class="pil-imgb" id="pilImgBtn">📷 Importar o actualizar desde una captura de Binance</button><input type="file" id="pilImgIn" accept="image/*" hidden><div id="pilImgOut"></div></div>
+      <div class="pil-img"><button type="button" class="pil-imgb" id="pilImgBtn">📷 Importar o actualizar desde capturas de Binance (una o varias)</button><input type="file" id="pilImgIn" accept="image/*" multiple hidden><div id="pilImgOut"></div></div>
       <div id="bnBox"></div><div id="pilCards"></div><div class="jrn" id="jrnBox"></div></section>
     <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
     <section class="lqx" id="obBox"><div class="dt"><span>📚 Libro de órdenes</span> <span class="mut" id="obSub"></span>
@@ -3158,13 +3158,17 @@ const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(local
     c.dir=c.pnl!=null&&Math.abs(c.mark-c.entry)/c.entry>1e-4&&c.pnl!==0?(Math.sign(c.pnl)===Math.sign(c.mark-c.entry)?1:-1):(c.side||1);
     if(!c.lev&&c.pnl&&c.roi)c.lev=Math.max(1,Math.round(c.size*Math.abs(c.roi)/100/Math.abs(c.pnl)));
     if(!c.lev)c.lev=Math.max(1,Math.round(qty*c.entry/c.margin));
-    c.base=+(qty*c.entry/c.lev).toFixed(2);const ex=c.margin-c.base;c.extra=ex>Math.max(1,c.base*.03)?+ex.toFixed(2):0;}
+    c.base=+(qty*c.entry/c.lev).toFixed(2);const ex=c.margin-c.base;c.extra=ex>Math.max(1,c.base*.03)?+ex.toFixed(2):0;c.mg=c.extra?c.base:c.margin;}
   return out;}/*OCRPARSE*/
 var PIO={busy:false,items:[]};
 async function ocrLib(){if(window.Tesseract)return;await new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);});}
-async function pilImgRead(file){const out=$('pilImgOut');if(PIO.busy)return;PIO.busy=true;out.innerHTML='<div class="pio">📷 Leyendo la captura… (la primera vez baja el lector, unos segundos)</div>';
-  try{await ocrLib();const w=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)out.innerHTML=`<div class="pio">📷 Leyendo la captura… ${Math.round(m.progress*100)} %</div>`;}});
-    const {data}=await w.recognize(file);await w.terminate();const P=ocrParse(data.text);pioBuild(P);}
+async function pilImgRead(files){files=[...files].slice(0,10);const out=$('pilImgOut');if(PIO.busy||!files.length)return;PIO.busy=true;out.innerHTML='<div class="pio">📷 Leyendo… (la primera vez baja el lector, unos segundos)</div>';
+  try{await ocrLib();let k=0;const w=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)out.innerHTML=`<div class="pio">📷 Leyendo ${files.length>1?`la captura ${k+1} de ${files.length}`:'la captura'}… ${Math.round(m.progress*100)} %</div>`;}});
+    let P=[];for(k=0;k<files.length;k++){const {data}=await w.recognize(files[k]);P=P.concat(ocrParse(data.text));}await w.terminate();
+    /* la misma tarjeta puede salir en dos capturas (si se superponen): queda una sola, la completa */
+    const U=[];for(const c of P){const same=U.find(u=>u.ok&&c.ok&&u.entry===c.entry&&u.size===c.size&&u.margin===c.margin);if(same){if(!same.sym&&c.sym)Object.assign(same,{sym:c.sym,mt:c.mt||same.mt});continue;}
+      if(!c.ok&&c.sym&&P.some(o=>o.ok&&o.sym===c.sym))continue;U.push(c);}
+    pioBuild(U);}
   catch(e){out.innerHTML=`<div class="pio">No se pudo leer la imagen (${esc(String(e&&e.message||e).slice(0,80))}). Probá con otra captura.</div>`;}
   finally{PIO.busy=false;}}
 function pioPx(s){return (PILMK.m&&PILMK.m[s])||(tickers[s]&&tickers[s].c)||null;}
@@ -3177,12 +3181,12 @@ function pioBuild(P){const items=[];
     if(!sym){items.push({k:'pick',c,cands,on:true});continue;}
     if(!p){items.push({k:'new',c,sym,on:true,guess:!c.sym});continue;}
     const ch=[];if(Math.abs(p.entry/c.entry-1)>5e-4)ch.push(`entrada ${fp(p.entry)} → ${fp(c.entry)}`);if(p.lev!==c.lev)ch.push(`${p.lev}x → ${c.lev}x`);
-    if(Math.abs((p.margin||0)-c.base)>Math.max(.5,c.base*.02))ch.push(`margen ${p.margin} → ${c.base} USD`);if(Math.abs((p.extra||0)-c.extra)>.5)ch.push(`margen que sumaste ${p.extra||0} → ${c.extra} USD`);
+    if(Math.abs((p.margin||0)-c.mg)>=.01)ch.push(`margen ${p.margin} → ${c.mg} USD`);if(c.liq>0&&Math.abs((p.bnLiq||pilLiqPx(p))/c.liq-1)>1e-4)ch.push(`liquidación ${fpL(p.bnLiq||pilLiqPx(p))} → ${fp(c.liq)}`);if(!p.qty||Math.abs(p.qty/c.qty-1)>1e-4)ch.push(`cantidad exacta ${(+c.qty.toPrecision(6)).toLocaleString('es-AR')}`);if(Math.abs((p.extra||0)-c.extra)>=.01)ch.push(`margen que sumaste ${p.extra||0} → ${c.extra} USD`);
     if(c.mt&&p.mt!==c.mt)ch.push(`${p.mt||'aislado'} → ${c.mt}`);
     items.push(ch.length?{k:'upd',c,sym,p,ch,on:true,guess:!c.sym}:{k:'same',c,sym,p});}
   PIO.items=items;pioRender();}
 function pioRender(){const out=$('pilImgOut'),I=PIO.items;if(!I.length){out.innerHTML='<div class="pio">No encontré operaciones en la captura. Tiene que ser la pantalla de <b>Posiciones</b> de Futuros, con las tarjetas completas.</div>';return;}
-  const nm=s=>s?s.replace('USDT',''):'?',dd=c=>`${c.dir>0?'LONG':'SHORT'} ${c.lev}x ${c.mt||'aislado'} · entrada ${fp(c.entry)} · margen ${c.margin} USD`;
+  const nm=s=>s?s.replace('USDT',''):'?',dd=c=>`${c.dir>0?'LONG':'SHORT'} ${c.lev}x ${c.mt||'aislado'} · entrada ${fp(c.entry)} · margen ${c.margin} USD${c.liq?` · liquidación ${fp(c.liq)}`:''}`;
   const rows=I.map((x,i)=>{const c=x.c;
     if(x.k==='cut')return `<div class="pio-r"><span>⚠️</span><div>Una operación quedó cortada en la captura${c.sym?` (<b>${nm(c.sym)}</b>)`:''} y no se pudo leer completa.<small>Sacá otra captura donde se vea entera (entrada, marca, tamaño y margen).</small></div></div>`;
     if(x.k==='same')return `<div class="pio-r"><span>✓</span><div><b>${nm(x.sym)}</b> ya está igual en Pilotear.<small>${dd(c)}</small></div></div>`;
@@ -3195,11 +3199,11 @@ function pioRender(){const out=$('pilImgOut'),I=PIO.items;if(!I.length){out.inne
     <small class="mut">Revisá antes de aplicar: la lectura de la imagen puede equivocarse en algún número.</small></div>`;}
 function pioApply(){let add=0,upd=0;for(const x of PIO.items){if(!x.on)continue;const c=x.c;
     if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
-    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'1h',mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.base,t:Date.now(),state:null,ll:null,closed:false});add++;}
-    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.base,extra:c.extra,mt:c.mt||x.p.mt||'aislado'});upd++;}}
+    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'1h',mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
+    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}upd++;}}
   savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}.</div>`;}
 $('pilImgBtn').onclick=()=>$('pilImgIn').click();
-$('pilImgIn').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)pilImgRead(f);e.target.value='';};
+$('pilImgIn').onchange=e=>{const f=e.target.files;if(f&&f.length)pilImgRead(f);e.target.value='';};
 $('pilImgOut').addEventListener('change',e=>{const t=e.target;if(t.dataset.pio!=null){PIO.items[+t.dataset.pio].on=t.checked;pioRender();}else if(t.dataset.pios!=null){const x=PIO.items[+t.dataset.pios];x.sym=t.value||null;pioRender();}});
 $('pilImgOut').addEventListener('click',e=>{const b=e.target.closest('[data-pioa]');if(!b)return;if(b.dataset.pioa==='1')pioApply();else{PIO.items=[];$('pilImgOut').innerHTML='';}});
 /* ---------- 📋 DATOS DEL ACTIVO e ÍCONOS (noviembre 2026) ----------
@@ -4629,13 +4633,14 @@ $('mnav').onclick=e=>{const b=e.target.closest('[data-go]');if(!b)return;const g
 let PIL=[];try{PIL=JSON.parse(localStorage.getItem('cv_pil')||'[]')||[];}catch(e){}
 const savePil=()=>{try{localStorage.setItem('cv_pil',JSON.stringify(PIL))}catch(e){}pilCloudMark();};
 const PILD={};
-const pilQty=p=>p.margin*p.lev/p.entry+(p.ll?p.ll.margin*p.lev/p.ll.px:0);
-const pilAvg=p=>(p.margin+(p.ll?p.ll.margin:0))*p.lev/pilQty(p);
+/* noviembre 2026: si la operación vino de una captura de Binance, se usan la cantidad y la liquidación exactas que muestra Binance (p.qty, p.bnLiq) */
+const pilQty=p=>(p.qty>0?p.qty:p.margin*p.lev/p.entry)+(p.ll?p.ll.margin*p.lev/p.ll.px:0);
+const pilAvg=p=>p.qty>0?(p.qty*p.entry+(p.ll?p.ll.margin*p.lev:0))/pilQty(p):(p.margin+(p.ll?p.ll.margin:0))*p.lev/pilQty(p);
 /* liquidación: margen aislado = el margen de la operación (más el que le sumaste); cruzado = además el saldo libre de la cuenta.
    Distancia hasta la liquidación = (margen que la sostiene ÷ tamaño de la posición) − margen de mantenimiento (0,5 %). */
-const pilNotl=p=>(p.margin+(p.ll?p.ll.margin:0))*p.lev;
-const pilLiqD=p=>{if(p.mt==='cruzado'&&!(p.cuenta>0))return Infinity;const m=p.margin+(p.ll?p.ll.margin:0)+(p.extra||0)+(p.mt==='cruzado'?p.cuenta:0);return Math.max(.001,m/pilNotl(p)-.005);};
-const pilLiqPx=p=>{const L=pilLiqD(p);if(!isFinite(L))return p.dir>0?-Infinity:Infinity;const x=pilAvg(p)*(1-p.dir*L);return p.dir>0&&x<=0?-Infinity:x;};
+const pilNotl=p=>p.qty>0?pilQty(p)*pilAvg(p):(p.margin+(p.ll?p.ll.margin:0))*p.lev;
+const pilLiqD=p=>{if(p.bnLiq>0&&!p.ll){const a=pilAvg(p);return Math.max(.001,Math.abs(a-p.bnLiq)/a);}if(p.mt==='cruzado'&&!(p.cuenta>0))return Infinity;const m=p.margin+(p.ll?p.ll.margin:0)+(p.extra||0)+(p.mt==='cruzado'?p.cuenta:0);return Math.max(.001,m/pilNotl(p)-.005);};
+const pilLiqPx=p=>{if(p.bnLiq>0&&!p.ll)return p.bnLiq;const L=pilLiqD(p);if(!isFinite(L))return p.dir>0?-Infinity:Infinity;const x=pilAvg(p)*(1-p.dir*L);return p.dir>0&&x<=0?-Infinity:x;};
 const fpL=v=>isFinite(v)?fp(v):'sin liquidación a la vista';
 const pilMoney=v=>(v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' USD';
 /* temporalidad de PILOTEAR (noviembre 2026): cada operación elige su temporalidad y se puede cambiar después. El análisis usa esa
@@ -4874,8 +4879,9 @@ $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;cons
   else if(b.dataset.a==='tog'){p.open=!p.open;savePil();pilRender();}
   else if(b.dataset.a==='adj'){p.adj=!p.adj;pilRender();}
   else if(b.dataset.a==='adjno'){p.adj=false;document.activeElement&&document.activeElement.blur();pilRender();}
-  else if(b.dataset.a==='adjok'){const card=b.closest('.pil-c'),v=k=>(card.querySelector(`[data-x="${k}"]`)||{}).value;{const en=parsePx(String(v('entry')||'').trim(),pilAvg(p)),lv=Math.round(+v('lev')),mg=+v('margin');if(en>0&&(Math.abs(en/pilAvg(p)-1)>1e-9||p.ll)){p.entry=en;p.ll=null;}if(lv>=1&&lv<=125)p.lev=lv;if(mg>0){p.margin=mg;p.ll=null;}}
+  else if(b.dataset.a==='adjok'){const card=b.closest('.pil-c'),v=k=>(card.querySelector(`[data-x="${k}"]`)||{}).value,snap=JSON.stringify([p.entry,p.lev,p.margin,p.extra||0,p.mt]);{const en=parsePx(String(v('entry')||'').trim(),pilAvg(p)),lv=Math.round(+v('lev')),mg=+v('margin');if(en>0&&(Math.abs(en/pilAvg(p)-1)>1e-9||p.ll)){p.entry=en;p.ll=null;}if(lv>=1&&lv<=125)p.lev=lv;if(mg>0){p.margin=mg;p.ll=null;}}
     p.extra=Math.max(0,+v('extra')||0);p.mt=v('mt')==='cruzado'?'cruzado':'aislado';p.cuenta=p.mt==='cruzado'?Math.max(0,+v('cuenta')||0):0;
+    if(!p.bn&&snap!==JSON.stringify([p.entry,p.lev,p.margin,p.extra||0,p.mt])){delete p.qty;delete p.bnLiq;}
     p.adj=false;p.plan=null;if(p.closed&&p.state==='liq'&&pilPxOf(p)&&p.dir*(pilPxOf(p)-pilLiqPx(p))>0){p.closed=false;p.state=null;}p.a=null;document.activeElement&&document.activeElement.blur();savePil();pilRender();pilTick();}
   else if(b.dataset.a==='tf'){p.tf=b.dataset.tf;p.plan=null;if(!p.closed)p.state=null;p.a=null;savePil();pilRender();pilTick();}
   else if(b.dataset.a==='ll'){const c=pilPxOf(p),t=c?{c}:null;if(t){p.ll={px:t.c,margin:p.margin/2,t:Date.now()};p.state=null;savePil();pilTick();}}
