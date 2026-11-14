@@ -377,6 +377,10 @@ body.fs-on .fsbar{display:flex}
 .sem-bar{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:6px 8px;margin:4px 0;border:1px solid var(--line);border-radius:10px;font-size:12px}
 .sem-bar .sm-t{font-weight:700;margin-right:2px}.sem-bar .sm-i{display:inline-flex;align-items:center;gap:4px;padding:2px 7px;border-radius:999px;background:var(--bg);border:1px solid var(--line);white-space:nowrap}
 .sem-bar .sm-d{width:9px;height:9px;border-radius:50%}.sem-bar .sm-sum{margin-left:auto;font-weight:700;white-space:nowrap}
+.pil-img{margin:10px 0}.pil-imgb{width:100%;padding:10px;border-radius:10px;border:1px dashed var(--acc);background:transparent;color:var(--txt);font:inherit;font-weight:700;cursor:pointer}
+.pio{margin-top:8px;border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:13px}.pio-r{display:flex;gap:8px;align-items:flex-start;padding:7px 0;border-top:1px solid var(--line)}.pio-r:first-of-type{border-top:0}
+.pio-r input[type=checkbox]{margin-top:3px}.pio-r small{color:var(--mut);display:block;font-size:11px;line-height:1.4}.pio-r select{margin-top:4px;background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:12px;padding:2px 4px}
+.pio-b{display:flex;gap:8px;margin-top:8px}.pio-b button{flex:1;padding:8px;border-radius:8px;border:0;font:inherit;font-weight:700;cursor:pointer}.pio-b .ok{background:var(--acc);color:#fff}.pio-b .no{background:var(--line);color:var(--txt)}
 .lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
 .lst-d{margin:0 0 8px}.lst-d summary .lst-n{font-size:13px}.lst-del{margin-left:auto}.lst-tf{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 2px 6px}.lst-tf select{background:var(--panel,#11141a);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:11px;padding:2px 4px}
 .lst-b{padding:2px 8px 8px}.lst-r{display:grid;grid-template-columns:1fr auto auto 26px;align-items:center;gap:6px;padding:6px 2px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
@@ -839,6 +843,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
         <label id="pilCtaL" hidden>Saldo libre de la cuenta (USD)<input id="pilCta" type="number" inputmode="decimal" min="0" placeholder="opcional: para estimar la liquidación"></label>
         <label>Temporalidad<select id="pilTf"><option value="5m">5 min</option><option value="15m">15 min</option><option value="1h" selected>1 h</option><option value="4h">4 h</option><option value="1d">1 día</option><option value="1w">1 semana</option></select></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
+      <div class="pil-img"><button type="button" class="pil-imgb" id="pilImgBtn">📷 Importar o actualizar desde una captura de Binance</button><input type="file" id="pilImgIn" accept="image/*" hidden><div id="pilImgOut"></div></div>
       <div id="bnBox"></div><div id="pilCards"></div><div class="jrn" id="jrnBox"></div></section>
     <section class="int" id="intBox"><div class="dt"><span>🧠 Inteligencia de mercado</span><span class="int-tabs" id="intTabs"><button data-t="reg" class="on">🌐 Régimen</button><button data-t="sol">🚀 Suben solas</button><button data-t="big">🐋 Órdenes grandes</button></span><button class="i-btn" data-i="int" type="button" aria-label="Cómo funciona esta pestaña" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="int" id="intInfo" hidden></div><div id="intBody"></div></section>
     <section class="lqx" id="obBox"><div class="dt"><span>📚 Libro de órdenes</span> <span class="mut" id="obSub"></span>
@@ -3131,6 +3136,72 @@ function checkSignals(){
   if(ch)saveSig();renderSignals();
 }
 const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(localStorage.getItem('cv_sighide')||'[]'));}catch(e){}
+/* ---------- 📷 PILOTEAR DESDE UNA CAPTURA DE BINANCE (noviembre 2026) ----------
+   Lee la captura de "Posiciones" de Binance Futuros en el celular (con Tesseract, todo dentro del navegador: la imagen no se sube a ningún lado),
+   arma cada operación (moneda, LONG/SHORT, X, aislado/cruzado, entrada, margen) y la compara con lo que ya pilotea:
+   nueva → se agrega · ya está pero cambió (entrada promediada, X, o margen que le sumaste) → se actualiza · igual → no se toca.
+   El margen extra se calcula: margen que muestra Binance − (cantidad × entrada ÷ X). Si una tarjeta quedó cortada en la captura, avisa y no la usa. */
+/*OCRPARSE*/function ocrParse(text){
+  const L=String(text||'').split(/\n+/).map(x=>x.replace(/[®©@]/g,' ').replace(/\s+/g,' ').trim()).filter(Boolean);
+  const nums=l=>(l.replace(/(\d),(\d{3})/g,'$1$2').match(/[-−]?\d+(?:\.\d+)?%?/g)||[]).map(x=>({v:parseFloat(x.replace('−','-')),pc:/%$/.test(x)}));
+  const nextNums=(i,k)=>{for(let j=i+1;j<Math.min(L.length,i+3);j++){const n=nums(L[j]);if(n.length>=k)return n;}return null;};
+  const out=[];let c=null;const nu=()=>{c={raw:[]};out.push(c);};
+  for(let i=0;i<L.length;i++){const l=L[i];
+    const h=l.match(/([A-Z0-9]{2,20})USDT\b/);
+    if(h&&/(aislad|cruzad|isolat|cross)/i.test(l)){nu();c.sym=h[1]+'USDT';c.mt=/(cruzad|cross)/i.test(l)?'cruzado':'aislado';const x=l.match(/(\d{1,3})\s*[xX]\b/);if(x)c.lev=+x[1];
+      if(/^\W{0,2}S\W/.test(l)||/\b(short|vender|venta)\b/i.test(l))c.side=-1;else if(/^\W{0,2}B\W/.test(l)||/\b(long|comprar|compra)\b/i.test(l))c.side=1;continue;}
+    if(/pnl/i.test(l)&&/roi/i.test(l)){const n=nextNums(i,2);if(!c||c.pnl!=null)nu();if(n){const a=n.filter(x=>!x.pc),b=n.find(x=>x.pc);if(a.length)c.pnl=a[0].v;if(b)c.roi=b.v;}continue;}
+    if(/(tama|size)/i.test(l)&&/marg/i.test(l)){const n=nextNums(i,2);if(!c||c.size!=null)nu();if(n){const a=n.filter(x=>!x.pc);if(a.length>=2){c.size=Math.abs(a[0].v);c.margin=a[1].v;}const b=n.find(x=>x.pc);if(b)c.ratio=b.v;}continue;}
+    if(/(entrada|entry)/i.test(l)&&/(marca|mark)/i.test(l)){const n=nextNums(i,2);if(!c||c.entry!=null)nu();if(n){const a=n.filter(x=>!x.pc);if(a.length>=2){c.entry=a[0].v;c.mark=a[1].v;if(a[2])c.liq=a[2].v;}}continue;}}
+  for(const c of out){delete c.raw;c.ok=c.entry>0&&c.mark>0&&c.size>0&&c.margin>0;if(!c.ok)continue;
+    const qty=c.size/c.mark;c.qty=qty;
+    c.dir=c.pnl!=null&&Math.abs(c.mark-c.entry)/c.entry>1e-4&&c.pnl!==0?(Math.sign(c.pnl)===Math.sign(c.mark-c.entry)?1:-1):(c.side||1);
+    if(!c.lev&&c.pnl&&c.roi)c.lev=Math.max(1,Math.round(c.size*Math.abs(c.roi)/100/Math.abs(c.pnl)));
+    if(!c.lev)c.lev=Math.max(1,Math.round(qty*c.entry/c.margin));
+    c.base=+(qty*c.entry/c.lev).toFixed(2);const ex=c.margin-c.base;c.extra=ex>Math.max(1,c.base*.03)?+ex.toFixed(2):0;}
+  return out;}/*OCRPARSE*/
+var PIO={busy:false,items:[]};
+async function ocrLib(){if(window.Tesseract)return;await new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);});}
+async function pilImgRead(file){const out=$('pilImgOut');if(PIO.busy)return;PIO.busy=true;out.innerHTML='<div class="pio">📷 Leyendo la captura… (la primera vez baja el lector, unos segundos)</div>';
+  try{await ocrLib();const w=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)out.innerHTML=`<div class="pio">📷 Leyendo la captura… ${Math.round(m.progress*100)} %</div>`;}});
+    const {data}=await w.recognize(file);await w.terminate();const P=ocrParse(data.text);pioBuild(P);}
+  catch(e){out.innerHTML=`<div class="pio">No se pudo leer la imagen (${esc(String(e&&e.message||e).slice(0,80))}). Probá con otra captura.</div>`;}
+  finally{PIO.busy=false;}}
+function pioPx(s){return (PILMK.m&&PILMK.m[s])||(tickers[s]&&tickers[s].c)||null;}
+function pioBuild(P){const items=[];
+  for(const c of P){if(!c.ok){items.push({k:'cut',c});continue;}
+    let sym=c.sym&&tickers[c.sym]?c.sym:null,cands=[];
+    if(!sym){cands=Object.keys(tickers).filter(s=>{const v=pioPx(s);return v&&Math.abs(v/c.mark-1)<.004;}).sort((a,b)=>Math.abs(pioPx(a)/c.mark-1)-Math.abs(pioPx(b)/c.mark-1)).slice(0,6);
+      const open=cands.filter(s=>PIL.some(p=>!p.closed&&p.sym===s&&p.dir===c.dir));if(open.length===1)sym=open[0];else if(cands.length===1)sym=cands[0];}
+    const p=sym?PIL.find(x=>!x.closed&&x.sym===sym&&x.dir===c.dir&&(x.mk||'c')!=='a'):null;
+    if(!sym){items.push({k:'pick',c,cands,on:true});continue;}
+    if(!p){items.push({k:'new',c,sym,on:true,guess:!c.sym});continue;}
+    const ch=[];if(Math.abs(p.entry/c.entry-1)>5e-4)ch.push(`entrada ${fp(p.entry)} → ${fp(c.entry)}`);if(p.lev!==c.lev)ch.push(`${p.lev}x → ${c.lev}x`);
+    if(Math.abs((p.margin||0)-c.base)>Math.max(.5,c.base*.02))ch.push(`margen ${p.margin} → ${c.base} USD`);if(Math.abs((p.extra||0)-c.extra)>.5)ch.push(`margen que sumaste ${p.extra||0} → ${c.extra} USD`);
+    if(c.mt&&p.mt!==c.mt)ch.push(`${p.mt||'aislado'} → ${c.mt}`);
+    items.push(ch.length?{k:'upd',c,sym,p,ch,on:true,guess:!c.sym}:{k:'same',c,sym,p});}
+  PIO.items=items;pioRender();}
+function pioRender(){const out=$('pilImgOut'),I=PIO.items;if(!I.length){out.innerHTML='<div class="pio">No encontré operaciones en la captura. Tiene que ser la pantalla de <b>Posiciones</b> de Futuros, con las tarjetas completas.</div>';return;}
+  const nm=s=>s?s.replace('USDT',''):'?',dd=c=>`${c.dir>0?'LONG':'SHORT'} ${c.lev}x ${c.mt||'aislado'} · entrada ${fp(c.entry)} · margen ${c.margin} USD`;
+  const rows=I.map((x,i)=>{const c=x.c;
+    if(x.k==='cut')return `<div class="pio-r"><span>⚠️</span><div>Una operación quedó cortada en la captura${c.sym?` (<b>${nm(c.sym)}</b>)`:''} y no se pudo leer completa.<small>Sacá otra captura donde se vea entera (entrada, marca, tamaño y margen).</small></div></div>`;
+    if(x.k==='same')return `<div class="pio-r"><span>✓</span><div><b>${nm(x.sym)}</b> ya está igual en Pilotear.<small>${dd(c)}</small></div></div>`;
+    const cb=`<input type="checkbox" data-pio="${i}"${x.on?' checked':''}>`;
+    if(x.k==='pick')return `<div class="pio-r">${cb}<div>Operación sin nombre en la captura (arriba de todo, cortada).<small>${dd(c)} · precio de marca ${fp(c.mark)}</small><select data-pios="${i}"><option value="">¿Qué moneda es?</option>${x.cands.map(s=>`<option value="${s}">${nm(s)} (ahora ${fp(pioPx(s))})</option>`).join('')}</select></div></div>`;
+    if(x.k==='new')return `<div class="pio-r">${cb}<div>🆕 <b>${nm(x.sym)}</b> nueva: se agrega a Pilotear${x.guess?' <small>(moneda deducida por el precio)</small>':''}.<small>${dd(c)}${c.extra?` · incluye ${c.extra} USD que sumaste`:''}</small></div></div>`;
+    return `<div class="pio-r">${cb}<div>✏️ <b>${nm(x.sym)}</b> se actualiza${x.guess?' <small>(moneda deducida por el precio)</small>':''}:<small>${x.ch.join(' · ')}</small></div></div>`;}).join('');
+  const n=I.filter(x=>x.on&&(x.k==='new'||x.k==='upd'||(x.k==='pick'&&x.sym))).length;
+  out.innerHTML=`<div class="pio"><b>📷 Lo que leí en la captura</b>${rows}<div class="pio-b"><button type="button" class="ok" data-pioa="1"${n?'':' disabled'}>Aplicar (${n})</button><button type="button" class="no" data-pioa="0">Cancelar</button></div>
+    <small class="mut">Revisá antes de aplicar: la lectura de la imagen puede equivocarse en algún número.</small></div>`;}
+function pioApply(){let add=0,upd=0;for(const x of PIO.items){if(!x.on)continue;const c=x.c;
+    if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
+    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'1h',mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.base,t:Date.now(),state:null,ll:null,closed:false});add++;}
+    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.base,extra:c.extra,mt:c.mt||x.p.mt||'aislado'});upd++;}}
+  savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}.</div>`;}
+$('pilImgBtn').onclick=()=>$('pilImgIn').click();
+$('pilImgIn').onchange=e=>{const f=e.target.files&&e.target.files[0];if(f)pilImgRead(f);e.target.value='';};
+$('pilImgOut').addEventListener('change',e=>{const t=e.target;if(t.dataset.pio!=null){PIO.items[+t.dataset.pio].on=t.checked;pioRender();}else if(t.dataset.pios!=null){const x=PIO.items[+t.dataset.pios];x.sym=t.value||null;pioRender();}});
+$('pilImgOut').addEventListener('click',e=>{const b=e.target.closest('[data-pioa]');if(!b)return;if(b.dataset.pioa==='1')pioApply();else{PIO.items=[];$('pilImgOut').innerHTML='';}});
 /* ---------- 📋 DATOS DEL ACTIVO e ÍCONOS (noviembre 2026) ----------
    Al elegir una moneda o acción, abajo de todo: un vistazo rápido (qué es, sector, cómo viene en el mes y el año, distancia al máximo, RSI)
    y la última noticia; con "Ver más", la descripción completa, la ficha (fundada, CEO, empleados, sede, web) y las noticias recientes en español.

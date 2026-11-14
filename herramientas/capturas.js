@@ -140,6 +140,22 @@ const fs = require('fs'), { chromium } = require('playwright-core');
           if (b.left < 6 || b.right > W - 6) { const k = (el.id ? '#' + el.id : el.className && typeof el.className === 'string' ? '.' + el.className.split(' ')[0] : el.tagName) + ' @' + v; if (seen.has(k)) continue; seen.add(k);
             out.push({ el: k, x: Math.round(b.left), r: Math.round(W - b.right), t: el.textContent.trim().slice(0, 50) }); } } }
       setView('main'); return out.slice(0, 40); }); info.push({ bordes: r }); } catch (e) { info.push({ bordes_error: e.message.slice(0, 200) }); }
+  /* pilotear desde una captura de Binance (imagen de prueba armada acá, con datos inventados) */
+  try { const mk = await br.newPage({ viewport: { width: 412, height: 900 }, deviceScaleFactor: 2.6 });
+    const card = (h, pnl, roi, size, mg, ratio, en, mark, liq) => `${h ? `<div class=h>${h}</div>` : ''}<div class=r><span>PnL (USDT)</span><span>ROI</span></div><div class="r v"><span class=dn>${pnl}</span><span class=dn>${roi}</span></div>
+      <div class=r><span>Tamaño (USDT)</span><span>Margin (USDT)</span><span>Tasa de margen</span></div><div class="r v"><span>${size}</span><span>${mg}</span><span class=up>${ratio}</span></div>
+      <div class=r><span>Precio de entrada (US...</span><span>Precio de marca (USD...</span><span>Precio liq. (USDT)</span></div><div class="r v"><span>${en}</span><span>${mark}</span><span>${liq}</span></div><div class=r><span>Apalancamiento</span><span>TP/SL</span><span>Cerrar</span></div>`;
+    await mk.setContent(`<style>body{background:#1e2329;color:#eaecef;font-family:Arial;margin:16px;font-size:15px}.r{display:flex;justify-content:space-between;color:#848e9c;margin:6px 0}.v{color:#eaecef;font-size:19px}.dn{color:#f6465d}.up{color:#0ecb81}.h{font-size:21px;font-weight:bold;margin:22px 0 8px}</style>
+      <div class=h>ETHUSDT Perp.</div><div class=r><span>Posiciones (2)</span><span>Pendientes</span></div>` + card('B BTCUSDT Perp. Aislado 10x', '-12.50', '-25.00%', '487.50', '80.00', '4.10%', '100000.0', '97500.0', '90500.0') + card('B XRPUSDT Perp. Aislado 5x', '+3.00', '+6.00%', '253.00', '50.00', '2.00%', '2.0000', '2.0240', '1.6200'));
+    await mk.screenshot({ path: 'capturas/binance-prueba.png' }); await mk.close();
+    await pg.evaluate(() => { setView('pil'); PIL = PIL.filter(p => !/^(BTCUSDT|XRPUSDT)-prueba/.test(p.id)); PIL.push({ id: 'BTCUSDT-prueba', sym: 'BTCUSDT', mk: 'c', tf: '1h', mt: 'aislado', cuenta: 0, extra: 0, open: true, dir: 1, entry: 100000, lev: 10, margin: 50, t: Date.now(), state: null, ll: null, closed: false }); savePil(); pilRender(); });
+    await pg.setInputFiles('#pilImgIn', 'capturas/binance-prueba.png');
+    for (let k = 0; k < 90; k++) { const t = await pg.evaluate(() => document.getElementById('pilImgOut').textContent); if (/Lo que leí|No encontré|No se pudo/.test(t)) break; await pg.waitForTimeout(1000); }
+    const pre = await pg.evaluate(() => ({ texto: document.getElementById('pilImgOut').textContent.replace(/\s+/g, ' ').slice(0, 600), items: PIO.items.map(x => ({ k: x.k, sym: x.sym, c: x.c && { dir: x.c.dir, lev: x.c.lev, entry: x.c.entry, base: x.c.base, extra: x.c.extra } })) }));
+    try { await pg.locator('#pilImgOut').screenshot({ path: 'capturas/pilotear-captura.png', timeout: 8000 }); } catch (e) {}
+    const post = await pg.evaluate(() => { const b = document.querySelector('[data-pioa="1"]'); if (b) b.click(); const r = PIL.filter(p => ['BTCUSDT', 'XRPUSDT'].includes(p.sym) && !p.closed).map(p => ({ sym: p.sym, entry: p.entry, lev: p.lev, margin: p.margin, extra: p.extra }));
+      PIL = PIL.filter(p => !(p.id === 'BTCUSDT-prueba' || (p.sym === 'XRPUSDT' && p.t > Date.now() - 6e5))); savePil(); pilRender(); return r; });
+    info.push({ pilcaptura: { pre, post } }); } catch (e) { info.push({ pilcaptura_error: e.message.slice(0, 200) }); }
   /* semáforo del gráfico */
   try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); await w(1500);
       for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);
