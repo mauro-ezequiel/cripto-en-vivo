@@ -156,8 +156,11 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     const pre = await pg.evaluate(() => ({ texto: document.getElementById('pilImgOut').textContent.replace(/\s+/g, ' ').slice(0, 600), items: PIO.items.map(x => ({ k: x.k, sym: x.sym, c: x.c && { dir: x.c.dir, lev: x.c.lev, entry: x.c.entry, base: x.c.base, extra: x.c.extra } })) }));
     try { await pg.locator('#pilImgOut').screenshot({ path: 'capturas/pilotear-captura.png', timeout: 8000 }); } catch (e) {}
     const post = await pg.evaluate(() => { const b = document.querySelector('[data-pioa="1"]'); if (b) b.click(); const r = PIL.filter(p => ['BTCUSDT', 'XRPUSDT'].includes(p.sym) && !p.closed).map(p => ({ sym: p.sym, entry: p.entry, lev: p.lev, margin: p.margin, extra: p.extra, qty: p.qty, liq: pilLiqPx(p), prom: pilAvg(p), pnl_a_97500: +(p.dir * (97500 - pilAvg(p)) * pilQty(p)).toFixed(2) }));
+      window.__pt = PIL.filter(p => p.sym === 'XRPUSDT' && p.t > Date.now() - 6e5).map(p => p.id);
       PIL = PIL.filter(p => !(p.id === 'BTCUSDT-prueba' || (p.sym === 'XRPUSDT' && p.t > Date.now() - 6e5))); savePil(); pilRender(); return r; });
-    info.push({ pilcaptura: { pre, post } }); } catch (e) { info.push({ pilcaptura_error: e.message.slice(0, 200) }); }
+    await pg.waitForTimeout(5000);
+    const tfix = await pg.evaluate(() => { const r = { form_tf: !!document.getElementById('pilTf'), def_tf: pilTfOf({ mk: 'c' }) }; const p = { id: 'XRPUSDT-t', sym: 'XRPUSDT', mk: 'c', tf: '4h', entry: 2.0, t: Date.now(), tEst: 2 }; return pioEstT('XRPUSDT', tickers.XRPUSDT ? tickers.XRPUSDT.c * 1.05 : 2).then(t => Object.assign(r, { estimado: t ? new Date(t).toISOString() : null, horas_atras: t ? Math.round((Date.now() - t) / 36e5) : null })); });
+    info.push({ pilcaptura: { pre, post, tfix } }); } catch (e) { info.push({ pilcaptura_error: e.message.slice(0, 200) }); }
   /* semáforo del gráfico */
   try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); await w(1500);
       for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);

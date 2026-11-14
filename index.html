@@ -841,7 +841,6 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
         <label>Margen (USD)<input id="pilM" type="number" inputmode="decimal" min="1" value="100"></label>
         <label>Tipo de margen<select id="pilMt"><option value="aislado">Aislado</option><option value="cruzado">Cruzado (usa el saldo de la cuenta)</option></select></label>
         <label id="pilCtaL" hidden>Saldo libre de la cuenta (USD)<input id="pilCta" type="number" inputmode="decimal" min="0" placeholder="opcional: para estimar la liquidación"></label>
-        <label>Temporalidad<select id="pilTf"><option value="5m">5 min</option><option value="15m">15 min</option><option value="1h" selected>1 h</option><option value="4h">4 h</option><option value="1d">1 día</option><option value="1w">1 semana</option></select></label>
         <button class="pri" id="pilGo">Empezar a pilotear</button></div><div class="err" id="pilErr"></div>
       <div class="pil-img"><button type="button" class="pil-imgb" id="pilImgBtn">📷 Importar o actualizar desde capturas de Binance (una o varias)</button><input type="file" id="pilImgIn" accept="image/*" multiple hidden><div id="pilImgOut"></div></div>
       <div id="bnBox"></div><div id="pilCards"></div><div class="jrn" id="jrnBox"></div></section>
@@ -3197,11 +3196,17 @@ function pioRender(){const out=$('pilImgOut'),I=PIO.items;if(!I.length){out.inne
   const n=I.filter(x=>x.on&&(x.k==='new'||x.k==='upd'||(x.k==='pick'&&x.sym))).length;
   out.innerHTML=`<div class="pio"><b>📷 Lo que leí en la captura</b>${rows}<div class="pio-b"><button type="button" class="ok" data-pioa="1"${n?'':' disabled'}>Aplicar (${n})</button><button type="button" class="no" data-pioa="0">Cancelar</button></div>
     <small class="mut">Revisá antes de aplicar: la lectura de la imagen puede equivocarse en algún número.</small></div>`;}
-function pioApply(){let add=0,upd=0;for(const x of PIO.items){if(!x.on)continue;const c=x.c;
+/* la captura no dice cuándo abriste: se estima con la última vela (1 h, hasta 41 días; si no, diaria) que pasó por el precio de entrada.
+   Con eso el "RSI ini" es el de ese momento y no el de cuando importaste. */
+async function pioEstT(sym,entry){for(const [tf,n] of [['1h',1000],['1d',1000]]){try{const b=await kl(sym,tf,n);for(let i=b.length-1;i>=0;i--)if(b[i].low<=entry&&entry<=b[i].high)return (+b[i].t)+(tf==='1h'?18e5:432e5);}catch(e){}}return null;}
+setTimeout(()=>{let i=0;for(const p of PIL)if(p.qty>0&&!p.bn&&!p.tEst&&!p.closed&&(p.mk||'c')==='c'){p.tEst=2;setTimeout(()=>pilFixT(p),(i++)*400);}},6000);
+async function pilFixT(p){const t=await pioEstT(p.sym,p.entry);if(t&&t<Date.now()){p.t=Math.min(t,Date.now()-6e4);p.tEst=1;for(const k of Object.keys(RSIE))if(k.startsWith('pil'+p.id+'|'))delete RSIE[k];savePil();pilRender();}}
+function pioApply(){let add=0,upd=0;const fix=[];for(const x of PIO.items){if(!x.on)continue;const c=x.c;
     if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
-    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'1h',mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
-    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}upd++;}}
-  savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}.</div>`;}
+    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
+    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}if(x.p.tEst)fix.push(x.p);upd++;}}
+  savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}. La hora en que abriste cada una se estima por el precio de entrada (para el RSI ini).</div>`;
+  for(const p of PIL)if(p.tEst===1&&!p.closed&&(p.mk||'c')==='c')fix.push(p);[...new Set(fix)].forEach((p,i)=>{p.tEst=2;setTimeout(()=>pilFixT(p),i*400);});}
 $('pilImgBtn').onclick=()=>$('pilImgIn').click();
 $('pilImgIn').onchange=e=>{const f=e.target.files;if(f&&f.length)pilImgRead(f);e.target.value='';};
 $('pilImgOut').addEventListener('change',e=>{const t=e.target;if(t.dataset.pio!=null){PIO.items[+t.dataset.pio].on=t.checked;pioRender();}else if(t.dataset.pios!=null){const x=PIO.items[+t.dataset.pios];x.sym=t.value||null;pioRender();}});
@@ -4646,7 +4651,7 @@ const pilMoney=v=>(v>=0?'+':'−')+Math.abs(v).toLocaleString('es-ES',{minimumFr
 /* temporalidad de PILOTEAR (noviembre 2026): cada operación elige su temporalidad y se puede cambiar después. El análisis usa esa
    temporalidad (soportes, vela de aviso, RSI y ADX), la de abajo para el detalle y la de arriba para la tendencia de fondo y el stop. */
 const PIL_TFS={c:['5m','15m','1h','4h','1d','1w'],a:['15m','1h','4h','1d','1w']},PIL_MS={'5m':3e5,'15m':9e5,'1h':36e5,'4h':144e5,'1d':864e5,'1w':6048e5},PIL_TFN={'5m':'5 min','15m':'15 min','1h':'1 h','4h':'4 h','1d':'1 día','1w':'1 semana'};
-const pilTfOf=p=>{const L=PIL_TFS[p.mk==='a'?'a':'c'];return L.includes(p.tf)?p.tf:'1h';};
+const pilTfOf=p=>{const L=PIL_TFS[p.mk==='a'?'a':'c'];return L.includes(p.tf)?p.tf:'4h';};
 function pilLadder(mk,tf){const L=PIL_TFS[mk==='a'?'a':'c'],i=Math.max(0,L.indexOf(tf));return {lo:L[Math.max(0,i-1)],m:L[i],hi:L[Math.min(L.length-1,i+1)]};}
 /* precio actual de una operación piloteada: cripto (Binance) o acción (data912) */
 /* precio de una operación piloteada. Cripto: el precio de MARCA de futuros de Binance (el que usa Binance para tu resultado y tu liquidación),
@@ -4744,7 +4749,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('
     const pm=a?a.usd/a.mg*100:null,op=!!p.open;
     const bar=`<div class="pil-bar" data-a="tog" role="button" tabindex="0" aria-expanded="${op}"><span class="pil-ar">${op?'▾':'▸'}</span><b class="${L?'up':'dn'}">${L?'▲':'▼'}</b><b>${p.sym.replace('USDT','')}</b><span class="mut">× ${p.lev}${p.mt==='cruzado'?' · cruzado':''}</span><b class="pil-bp ${pm==null?'':pm>=0?'up':'dn'}">${pm==null?'…':(pm>=0?'+':'−')+Math.abs(pm).toFixed(1).replace('.',',')+' %'}${a?`<small>${a.usd>=0?'+':'−'}${Math.abs(a.usd).toLocaleString('es-ES',{maximumFractionDigits:Math.abs(a.usd)<10?2:0})} USD</small>`:''}</b><span class="pil-bs ${a&&a.act?'act':''}">${a?pilStNm(a.st):'analizando'}</span><button type="button" class="pil-bg" data-a="go" aria-label="Ver en el gráfico">📈</button></div>`+pilRsiHTML(p,a);
     if(!op)return `<div class="pil-c min${a&&a.act?' act':''}" data-id="${p.id}">${bar}</div>`;
-    return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}">${bar}<div class="pil-h"><span class="mut">${p.bn?'<span class="bn-tag">Binance</span> ':''}${p.mk==='a'?'🏛 acción · ':''}${L?'LONG':'SHORT'} × ${p.lev} · margen ${p.margin} USD${p.extra?` + ${p.extra} USD que sumaste`:''}${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · margen ${p.mt==='cruzado'?'cruzado'+(p.cuenta>0?` (saldo libre ${p.cuenta} USD)`:' (sin saldo cargado)'):'aislado'} · desde ${fdate(p.t)}</span></div>
+    return `<div class="pil-c${a&&a.act?' act':''}" data-id="${p.id}">${bar}<div class="pil-h"><span class="mut">${p.bn?'<span class="bn-tag">Binance</span> ':''}${p.mk==='a'?'🏛 acción · ':''}${L?'LONG':'SHORT'} × ${p.lev} · margen ${p.margin} USD${p.extra?` + ${p.extra} USD que sumaste`:''}${p.ll?` + salvavidas ${p.ll.margin} USD`:''} · margen ${p.mt==='cruzado'?'cruzado'+(p.cuenta>0?` (saldo libre ${p.cuenta} USD)`:' (sin saldo cargado)'):'aislado'} · desde ${p.tEst===2?'~':''}${fdate(p.t)}${p.tEst===2?' (estimado por el precio de entrada)':''}</span></div>
       <div class="pil-tfs"><span>Temporalidad</span>${PIL_TFS[p.mk==='a'?'a':'c'].map(t=>`<button type="button" data-a="tf" data-tf="${t}" class="${pilTfOf(p)===t?'on':''}">${PIL_TFN[t]}</button>`).join('')}</div>
       ${a?`<div class="pil-s${a.act?'':' ok'}"><b>${a.title}</b>${a.txt}</div>
       <div class="pil-g"><span>Entrada</span><b>${fp(p.entry)}${p.ll?` · promedio ${fp(a.avg)}`:''}</b><span>${p.mk==='a'?'Precio ahora':pilMark(p.sym)?'Precio de marca (futuros)':'Precio ahora (spot)'}</span><b>${fp(a.c)}${a.t&&Date.now()-a.t>9e4?` <small class="dn">(de hace ${Math.round((Date.now()-a.t)/6e4)} min)</small>`:''}</b>
@@ -4843,7 +4848,7 @@ let pilSel=0;
 const pilMk=()=>($('pilMk')||{}).value==='a'?'a':'c';
 const pilSymOf=v=>{const q=String(v||'').trim().toUpperCase().replace(/[\/\s]/g,'');if(pilMk()==='a')return STK[q]?q:(STK[q.replace(/USDT$/,'')]?q.replace(/USDT$/,''):'');const c=q.replace(/USDT$/,'');return tickers[c+'USDT']?c+'USDT':'';};
 function pilMkSet(){const a=pilMk()==='a';$('pilQl').textContent=a?'Acción':'Moneda';$('pilSym').placeholder=a?'Buscar acción (AAPL, NVDA, SPY…)':'Buscar moneda (BTC, ETH, SOL…)';
-  const tf=$('pilTf');[...tf.options].forEach(o=>{o.hidden=a&&o.value==='5m';});if(a&&tf.value==='5m')tf.value='1h';$('pilX').value=a?'1':($('pilX').value==='1'?'10':$('pilX').value);$('pilSym').value='';$('pilPx').placeholder='ej. '+(a?'190':'85000');}
+  $('pilX').value=a?'1':($('pilX').value==='1'?'10':$('pilX').value);$('pilSym').value='';$('pilPx').placeholder='ej. '+(a?'190':'85000');}
 function pilFill(){if(pilMk()==='a'){const q=$('pilSym').value.trim().toUpperCase();let arr=Object.values(STK).filter(x=>x.c>0&&x.s);
     if(q)arr=arr.filter(x=>x.s.includes(q)).sort((a,b)=>(b.s.startsWith(q)-a.s.startsWith(q))||(b.q||0)-(a.q||0));else arr.sort((a,b)=>(b.q||0)-(a.q||0));arr=arr.slice(0,60);if(pilSel>=arr.length)pilSel=0;
     $('pilList').innerHTML=arr.map((t,i)=>`<div class="row${i===pilSel?' sel':''}" data-s="${t.s}"><span><b>${t.s}</b><small>${t.ex?' '+t.ex:''}</small></span><span>${fp(t.c)}</span><span class="${(t.p||0)>=0?'up':'dn'}">${fpct(t.p||0)}</span></div>`).join('')||`<div style="padding:12px 16px;color:var(--mut)">${Object.keys(STK).length?'Sin resultados':'Cargando acciones…'}</div>`;return;}
@@ -4868,7 +4873,7 @@ $('pilGo').onclick=()=>{const mk=pilMk(),s=pilSymOf($('pilSym').value),t=s?(mk==
   const raw=$('pilPx').value.trim(),px=raw?parsePx(raw,t.c):t.c;if(!(px>0)){err.textContent='Escribí el precio en el que entraste.';return;}
   const X=Math.round(+$('pilX').value);if(!(X>=1&&X<=125)){err.textContent='El apalancamiento tiene que estar entre 1 y 125.';return;}
   if(PIL.filter(p=>!p.bn).length>=20){err.textContent='Máximo 20 operaciones a la vez: dejá de pilotear alguna.';return;}
-  const mt=$('pilMt').value==='cruzado'?'cruzado':'aislado',p={id:s+'-'+Date.now(),sym:s,mk,tf:$('pilTf').value||'1h',mt,cuenta:mt==='cruzado'?Math.max(0,+$('pilCta').value||0):0,extra:0,open:true,dir:+$('pilDir').value,entry:px,lev:X,margin:Math.max(1,+$('pilM').value||100),t:Date.now(),state:null,ll:null,closed:false};
+  const mt=$('pilMt').value==='cruzado'?'cruzado':'aislado',p={id:s+'-'+Date.now(),sym:s,mk,tf:'4h',mt,cuenta:mt==='cruzado'?Math.max(0,+$('pilCta').value||0):0,extra:0,open:true,dir:+$('pilDir').value,entry:px,lev:X,margin:Math.max(1,+$('pilM').value||100),t:Date.now(),state:null,ll:null,closed:false};
   PIL.push(p);savePil();$('pilSym').value='';$('pilPx').value='';pilGoChart(p,false);pilRender();pilTick();};
 /* lleva el gráfico al activo y a la temporalidad de la operación (cambia a ACCIONES o a cripto si hace falta) */
 function pilGoChart(p,scroll=true){const a=p.mk==='a';if(a&&mode!=='a')applyMode('a');else if(!a&&mode==='a')applyMode('medio');
