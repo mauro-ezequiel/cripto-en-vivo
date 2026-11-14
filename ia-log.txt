@@ -1,0 +1,18 @@
+memoria {'ops': 1641, 'dias': 1090}
+tr salida {"n_ops": 111, "n_test": 34, "auc": 0.477, "bot": {"pct": -1.52, "gana": 70.6, "peor": -60.5}, "ia": {"pct": 0.92, "gana": 64.7, "peor": -37.0}, "mejora_ops": 73.5, "desde_prueba": 1783900800000, "eleccion": {"tramos": 1, "puntaje": 41.97, "por_variante": {"D": 41.97}, "auc_tramos": 0.508, "predice": false}, "curva": {"meses_ia": [[9.08, 31.15], [12.11, 31.15]], "bot_suma": -51.65, "n": 34}, "por_modo": {"TRADING": {"n": 34, "bot": -1.52, "ia": 0.92}}, "activa": false, "mitades": [[-2.61, -1.04], [-0.43, 2.88]], "versiones_viejas": 99} 0.2 1 D
+tr importa (salida) [['peakR', 0.0084], ['e921', 0.0042], ['gR', 0.0019], ['z', 0.0014], ['body', 0.0008], ['r7', 0.0005], ['d21', 0.0004], ['fl6', 0.0004]]
+tr reglas {"TRADING": {"probadas": 160, "regla": {"noprog": null, "after3": "trail", "k": 3, "lock": true, "take": [0, 0]}, "entren": {"bot": 10.23, "ia": 15.36}, "prueba": {"bot": 1.56, "ia": -2.4, "n": 34}, "activa": false}}
+Traceback (most recent call last):
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 482, in <module>
+    e = fam_entry(part['ent'], f, part['ops'])
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 405, in fam_entry
+    OUTE = {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
+                     ^^^^^^^^^^^^^
+  File "/home/runner/work/cripto-en-vivo/cripto-en-vivo/herramientas/ia-entrenar.py", line 50, in export
+    assert err < 1e-3, f'exportación distinta: {err}'
+           ^^^^^^^^^^
+AssertionError: exportación distinta: 0.0076717524087847044
+ls: cannot access 'ia.json': No such file or directory
+-rw-r--r-- 1 runner runner 36213957 Nov 14 13:32 ia-datos.json.gz
+-rw-r--r-- 1 runner runner     1784 Nov 14 13:37 ia-log.txt
