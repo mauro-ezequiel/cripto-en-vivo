@@ -3201,22 +3201,24 @@ const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(local
   return out;}/*OCRPARSE*/
 var PIO={busy:false,items:[]};
 async function ocrLib(){if(window.Tesseract)return;await new Promise((ok,ko)=>{const sc=document.createElement('script');sc.src='https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js';sc.onload=ok;sc.onerror=ko;document.head.appendChild(sc);});}
-async function pilImgRead(files){files=[...files].slice(0,10);const out=$('pilImgOut');if(PIO.busy||!files.length)return;PIO.busy=true;out.innerHTML='<div class="pio">📷 Leyendo… (la primera vez baja el lector, unos segundos)</div>';
+async function pilImgRead(files){files=[...files].slice(0,10);const out=$('pilImgOut');if(PIO.busy||!files.length)return;PIO.busy=true;try{PILMK.t=0;pilMarks();}catch(e){}out.innerHTML='<div class="pio">📷 Leyendo… (la primera vez baja el lector, unos segundos)</div>';
   try{await ocrLib();let k=0;const w=await Tesseract.createWorker('eng',1,{logger:m=>{if(m.status==='recognizing text'&&m.progress!=null)out.innerHTML=`<div class="pio">📷 Leyendo ${files.length>1?`la captura ${k+1} de ${files.length}`:'la captura'}… ${Math.round(m.progress*100)} %</div>`;}});
     let P=[];for(k=0;k<files.length;k++){const {data}=await w.recognize(files[k]);P=P.concat(ocrParse(data.text));}await w.terminate();
     /* la misma tarjeta puede salir en dos capturas (si se superponen): queda una sola, la completa */
     const U=[];for(const c of P){const same=U.find(u=>u.ok&&c.ok&&u.entry===c.entry&&u.size===c.size&&u.margin===c.margin);if(same){if(!same.sym&&c.sym)Object.assign(same,{sym:c.sym,mt:c.mt||same.mt});continue;}
       if(!c.ok&&c.sym&&P.some(o=>o.ok&&o.sym===c.sym))continue;U.push(c);}
-    pioBuild(U);}
+    for(let k2=0;k2<20&&!(PILMK.m&&Object.keys(PILMK.m).length);k2++)await new Promise(z=>setTimeout(z,250));pioBuild(U);}
   catch(e){out.innerHTML=`<div class="pio">No se pudo leer la imagen (${esc(String(e&&e.message||e).slice(0,80))}). Probá con otra captura.</div>`;}
   finally{PIO.busy=false;}}
+/* perpetuo de Binance para un símbolo (BTC, NVDA, YPF…): con precio de marca de Futuros, aunque la lista esté mostrando acciones */
+function pioPerp(s){s=String(s).toUpperCase();const k=/USDT$/.test(s)?s:s+'USDT';return (PILMK.m&&PILMK.m[k])||(tickers[k]&&!tickers[k].kind)?k:null;}
 function pioPx(s){return (PILMK.m&&PILMK.m[s])||(tickers[s]&&tickers[s].c)||null;}
 function pioBuild(P){const items=[];
   for(const c of P){if(!c.ok){items.push({k:'cut',c});continue;}
-    let sym=c.sym&&tickers[c.sym]?c.sym:c.sym&&tickers[c.sym+'USDT']?c.sym+'USDT':c.sym&&!/USDT$/.test(c.sym)&&typeof STK!=='undefined'&&STK[c.sym]?c.sym:null,cands=[];c.mk=sym&&!/USDT$/.test(sym)?'a':'c';
+    const pp=c.sym?pioPerp(c.sym):null;let sym=pp||(c.sym&&/USDT$/.test(c.sym)&&tickers[c.sym]?c.sym:c.sym&&!/USDT$/.test(c.sym)&&typeof STK!=='undefined'&&STK[c.sym]?c.sym:null),cands=[];c.mk=sym&&!/USDT$/.test(sym)?'a':'c';
     if(!sym){cands=Object.keys(tickers).filter(s=>{const v=pioPx(s);return v&&Math.abs(v/c.mark-1)<.004;}).sort((a,b)=>Math.abs(pioPx(a)/c.mark-1)-Math.abs(pioPx(b)/c.mark-1)).slice(0,6);
       const open=cands.filter(s=>PIL.some(p=>!p.closed&&p.sym===s&&p.dir===c.dir));if(open.length===1)sym=open[0];else if(cands.length===1)sym=cands[0];}
-    const p=sym?PIL.find(x=>!x.closed&&x.sym===sym&&x.dir===c.dir):null;
+    const p=sym?PIL.find(x=>!x.closed&&x.dir===c.dir&&(x.sym===sym||x.sym===sym.replace(/USDT$/,'')||x.sym+'USDT'===sym)):null;
     if(!sym){items.push({k:'pick',c,cands,on:true});continue;}
     if(!p){items.push({k:'new',c,sym,on:true,guess:!c.sym});continue;}
     const ch=[];if(Math.abs(p.entry/c.entry-1)>5e-4)ch.push(`entrada ${fp(p.entry)} → ${fp(c.entry)}`);if(p.lev!==c.lev)ch.push(`${p.lev}x → ${c.lev}x`);
@@ -3239,12 +3241,13 @@ function pioRender(){const out=$('pilImgOut'),I=PIO.items;if(!I.length){out.inne
 /* la captura no dice cuándo abriste: se estima con la última vela (1 h, hasta 41 días; si no, diaria) que pasó por el precio de entrada.
    Con eso el "RSI ini" es el de ese momento y no el de cuando importaste. */
 async function pioEstT(sym,entry){for(const [tf,n] of [['1h',1000],['1d',1000]]){try{const b=await kl(sym,tf,n);for(let i=b.length-1;i>=0;i--)if(b[i].low<=entry&&entry<=b[i].high)return (+b[i].t)+(tf==='1h'?18e5:432e5);}catch(e){}}return null;}
+(function pilToPerp(k0){setTimeout(()=>{if(!(PILMK.m&&Object.keys(PILMK.m).length)){try{pilMarks();}catch(e){}if(k0<8)pilToPerp(k0+1);return;}let ch=0;for(const p of PIL)if(p.mk==='a'&&p.qty>0&&!p.bn&&!p.closed){const k=pioPerp(p.sym);if(k){p.sym=k;p.mk='c';p.a=null;p.plan=null;p.tEst=2;for(const r of Object.keys(RSIE))if(r.startsWith('pil'+p.id+'|'))delete RSIE[r];setTimeout(()=>pilFixT(p),(ch++)*400);}}if(ch){savePil();pilRender();pilTick();}},k0?5000:4000);})(0);
 setTimeout(()=>{let i=0;for(const p of PIL)if(p.qty>0&&!p.bn&&!p.tEst&&!p.closed&&(p.mk||'c')==='c'){p.tEst=2;setTimeout(()=>pilFixT(p),(i++)*400);}},6000);
 async function pilFixT(p){const t=await pioEstT(p.sym,p.entry);if(t&&t<Date.now()){p.t=Math.min(t,Date.now()-6e4);p.tEst=1;for(const k of Object.keys(RSIE))if(k.startsWith('pil'+p.id+'|'))delete RSIE[k];savePil();pilRender();}}
 function pioApply(){let add=0,upd=0;const fix=[];for(const x of PIO.items){if(!x.on)continue;const c=x.c;
     if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
     if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
-    else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}if(x.p.tEst)fix.push(x.p);upd++;}}
+    else if(x.k==='upd'){Object.assign(x.p,{sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}if(x.p.tEst)fix.push(x.p);upd++;}}
   savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}. La hora en que abriste cada una se estima por el precio de entrada (para el RSI ini).</div>`;
   for(const p of PIL)if(p.tEst===1&&!p.closed&&(p.mk||'c')==='c')fix.push(p);[...new Set(fix)].forEach((p,i)=>{p.tEst=2;setTimeout(()=>pilFixT(p),i*400);});}
 $('pilImgBtn').onclick=()=>$('pilImgIn').click();
