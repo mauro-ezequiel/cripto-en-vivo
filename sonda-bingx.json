@@ -1,0 +1,7 @@
+{
+ "https://open-api.bingx.com/openApi/swap/v2/quote/contracts": "SyntaxError: Unexpected end of JSON input",
+ "https://open-api.bingx.com/openApi/swap/v2/quote/premiumIndex": "SyntaxError: Unexpected end of JSON input",
+ "YPF-USDT": "SyntaxError: Unexpected end of JSON input",
+ "NVDA-USDT": "SyntaxError: Unexpected end of JSON input",
+ "NCSKYPF2USD-USDT": "SyntaxError: Unexpected end of JSON input"
+}
