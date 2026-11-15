@@ -1,0 +1,47 @@
+{
+ "upd": 1794733687709,
+ "casos": 1784,
+ "nota": "USD por operación de 100 USD de margen que llegó a −70 %. extra = plata que se agregó en promedio. sin_perdida = salió en 0 o mejor. liquidadas = perdió todo el margen.",
+ "estrategias": {
+  "cerrar": {
+   "promedio_usd": -66.1,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0.2,
+   "liquidadas_pct": 0,
+   "peor_usd": -97,
+   "sin_soporte_pct": 0
+  },
+  "aguantar": {
+   "promedio_usd": -72.1,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 25.3,
+   "liquidadas_pct": 69.3,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "rescate_margen": {
+   "promedio_usd": -68.9,
+   "extra_promedio": 12.6,
+   "sin_perdida_pct": 14.2,
+   "liquidadas_pct": 17.2,
+   "peor_usd": -285,
+   "sin_soporte_pct": 64.3
+  },
+  "rescate_promedio": {
+   "promedio_usd": -69.1,
+   "extra_promedio": 17.4,
+   "sin_perdida_pct": 13.3,
+   "liquidadas_pct": 12.8,
+   "peor_usd": -235,
+   "sin_soporte_pct": 64.3
+  },
+  "rescate_filtrado": {
+   "promedio_usd": -67.4,
+   "extra_promedio": 5.7,
+   "sin_perdida_pct": 8.2,
+   "liquidadas_pct": 10.1,
+   "peor_usd": -200,
+   "sin_soporte_pct": 79.5
+  }
+ }
+}
