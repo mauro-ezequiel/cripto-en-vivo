@@ -981,21 +981,21 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','canal','supertrend','ema','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig']
+    inds: ['liq','sop','trend','canal','supertrend','ema','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 15m (señales en 15 y 30 min)', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '15m', bars: 180,
-    inds: ['liq','trend','canal','bollinger','vwap','smc','div','rsi','adx','cvd','kon','fig']
+    inds: ['liq','sop','trend','canal','bollinger','vwap','smc','div','rsi','adx','cvd','kon','fig']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','smc','div','rsi','adx','stochrsi','cvd','kon'],
+    inds: ['liq','sop','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','smc','div','rsi','adx','stochrsi','cvd','kon'],
     def: ['liq','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
@@ -1003,7 +1003,7 @@ const MODES = {
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
     info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señales (velas diarias): rebote tras caída de 6 meses y ruptura de máximos de 20 días con volumen, solo con el S&P 500 sobre su media de 200 días', 'Simulación: 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20), stop 2,5 × ATR diario, objetivos 3 / 6 / 9 × stop'],
     tf: '1d', bars: 160,
-    inds: ['liq','trend','canal','supertrend','ema','bollinger','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig'],
+    inds: ['liq','sop','trend','canal','supertrend','ema','bollinger','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig'],
     def: ['liq','trend','canal','supertrend','ema','vprofile','rsi','adx','cvd','kon']
   }
 };
@@ -1085,6 +1085,7 @@ const IND = {
   supertrend:{name:'Supertrend (10,3)',   color:'#f7c548', pane:false},
   bollinger: {name:'Bollinger (20,2)',    color:'#42a5f5', pane:false},
   vprofile:  {name:'Perfil de volumen',   color:'#ff9800', pane:false},
+  sop:       {name:'Soportes y resistencias fuertes', color:'#00bcd4', pane:false},
   fib:       {name:'Fibonacci auto',      color:'#e040fb', pane:false},
   fig:       {name:'Figuras chartistas',  color:'#ffd600', pane:false},
   liq:       {name:'Zonas de liquidación',color:'#ffd166', pane:false},
@@ -1168,6 +1169,35 @@ function calcIchi(pt=9,pk=26,pb=52){const n=candles.length,t=Array(n).fill(null)
     if(t[i]!=null&&k[i]!=null)a[i+26]=(t[i]+k[i])/2;if(i>=pb-1)b[i+26]=hhll(i,pb);}
   return {t,k,a,b};}
 
+/* ---------- 🧱 SOPORTES Y RESISTENCIAS FUERTES (noviembre 2026) ----------
+   Estudia TODAS las velas cargadas de la temporalidad elegida y marca los niveles donde el precio llega y se frena una y otra vez:
+   1) busca los giros (mínimos y máximos de 5 velas a cada lado); 2) junta los que caen a la misma altura (± media volatilidad, ATR);
+   3) a cada nivel le cuenta los toques (giros ahí), los falsos quiebres (la mecha lo pasa pero la vela cierra del otro lado) y los quiebres de verdad
+   (cierra del otro lado y sigue 3 velas); 4) puntaje = toques + ½ falsos quiebres − 1,5 quiebres, con más peso a lo reciente.
+   Muestra los 3 más fuertes debajo del precio (soportes, verdes) y los 3 arriba (resistencias, rojas). Más grueso = más fuerte. */
+var SOPK='';
+function calcSop(){const n=candles.length;if(n<40)return null;const k=symbol+'|'+tf+'|'+n+'|'+candles[0].time+'|'+Math.round(candles[n-1].close*1e6);if(SOPK.startsWith(symbol+'|'+tf+'|'+n+'|')&&C.sop&&Date.now()-(C.sop.t||0)<6e4)return C.sop;
+  const W=5,tr=[];for(let i=0;i<n;i++){const b=candles[i],pc=i?candles[i-1].close:b.open;tr.push(Math.max(b.high-b.low,Math.abs(b.high-pc),Math.abs(b.low-pc)));}
+  const atr=[...tr.slice(-200)].sort((a,b)=>a-b)[Math.floor(Math.min(200,n)/2)]||tr[n-1],last=candles[n-1].close,tol=Math.max(.5*atr,last*.0015);
+  const P=[];for(let i=W;i<n-W;i++){let lo=true,hi=true;for(let j=i-W;j<=i+W;j++){if(j===i)continue;if(candles[j].low<candles[i].low)lo=false;if(candles[j].high>candles[i].high)hi=false;if(!lo&&!hi)break;}
+    if(lo)P.push({p:candles[i].low,i});if(hi)P.push({p:candles[i].high,i});}
+  if(P.length<4)return null;P.sort((a,b)=>a.p-b.p);
+  const G=[];for(const x of P){const g=G[G.length-1];if(g&&x.p-g.sum/g.m.length<=tol){g.m.push(x);g.sum+=x.p;}else G.push({m:[x],sum:x.p});}
+  const L=[];for(const g of G){if(g.m.length<2)continue;const lv=g.sum/g.m.length,idx=[...new Set(g.m.map(x=>x.i))].sort((a,b)=>a-b);let tq=0,lastI=-99;for(const i of idx)if(i-lastI>=W){tq++;lastI=i;}if(tq<2)continue;
+    let fq=0,qb=0,side=0;for(let i=idx[0];i<n;i++){const b=candles[i],sd=b.close>lv+tol*.5?1:b.close<lv-tol*.5?-1:0;
+      if(sd&&side&&sd!==side){let ok=true;for(let j=i+1;j<=Math.min(n-1,i+3);j++){const s2=candles[j].close>lv?1:-1;if(s2!==sd){ok=false;break;}}if(ok)qb++;else fq++;}
+      else if(side===1&&b.low<lv-tol*.5&&b.close>lv)fq++;else if(side===-1&&b.high>lv+tol*.5&&b.close<lv)fq++;
+      if(sd)side=sd;}
+    const rec=idx.filter(i=>i>n*.7).length,sc=tq+rec*.5+fq*.5-qb*1.5;if(sc<2.5)continue;
+    L.push({p:lv,tq,fq,qb,sc,last:idx[idx.length-1],first:idx[0]});}
+  const dn=L.filter(x=>x.p<last).sort((a,b)=>b.sc-a.sc).slice(0,3),up=L.filter(x=>x.p>=last).sort((a,b)=>b.sc-a.sc).slice(0,3);
+  const mx=Math.max(1,...L.map(x=>x.sc));SOPK=k;
+  return {t:Date.now(),tol,lv:dn.map(x=>Object.assign(x,{r:1,f:x.sc/mx})).concat(up.map(x=>Object.assign(x,{r:-1,f:x.sc/mx})))};}
+function drawSop(ctx,X,Y,paneW){const S=C.sop;if(!S||!S.lv)return;const xr=paneW-(active.has('liq')?paneW*PROF:0)-6;ctx.font='600 11px system-ui,sans-serif';ctx.textAlign='right';ctx.textBaseline='bottom';
+  for(const l of S.lv){const y=Y(l.p),y1=Y(l.p+S.tol/2),y2=Y(l.p-S.tol/2);if(y==null)continue;const g=l.r>0,a=.25+.6*l.f,c=g?'38,199,90':'239,59,59',x0=Math.max(0,X(l.first)??0);
+    if(y1!=null&&y2!=null){ctx.fillStyle=`rgba(${c},${.06+.12*l.f})`;ctx.fillRect(x0,y1,paneW-x0,Math.max(1,y2-y1));}
+    ctx.strokeStyle=`rgba(${c},${a})`;ctx.lineWidth=1+2*l.f;ctx.setLineDash(l.f>.6?[]:[6,4]);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(paneW,y);ctx.stroke();ctx.setLineDash([]);
+    ctx.fillStyle=`rgba(${c},.95)`;ctx.fillText(`${g?'Soporte':'Resistencia'} ${fp(l.p)} · ${l.tq} toques${l.fq?` · ${l.fq} falsos quiebres`:''}`,xr,y-2);}}
 /* ---------- 🚦 SEMÁFORO (noviembre 2026) ----------
    Botón del gráfico que pinta cada indicador en 3 colores según lo que dice ESE indicador solo:
    verde = punto de compra (sobreventa o tendencia a favor de LONG), rojo = punto de venta (sobrecompra o tendencia a la baja), gris = neutral.
@@ -1176,7 +1206,7 @@ function calcIchi(pt=9,pk=26,pb=52){const n=candles.length,t=Array(n).fill(null)
    Supertrend según su dirección · Bollinger y VWAP: tocando la banda de abajo (barato) o la de arriba (caro) · Ichimoku: precio sobre o bajo la nube. */
 var SEMF=false;try{SEMF=localStorage.getItem('cv_sem')==='1';}catch(e){}
 const SEM_C={1:'#26c75a','-1':'#ef3b3b',0:'#8a909c'},semC=v=>SEM_C[v||0],semA=(v,a)=>v===1?`rgba(38,199,90,${a})`:v===-1?`rgba(239,59,59,${a})`:`rgba(138,144,156,${a})`;
-const SEM_N={rsi:'RSI',stochrsi:'Stoch RSI',macd:'MACD',adx:'ADX',kon:'Konkorde',cvd:'CVD',ema:'EMA',supertrend:'Supertrend',bollinger:'Bollinger',vwap:'VWAP',ichimoku:'Ichimoku'};
+const SEM_N={sop:'Soportes',rsi:'RSI',stochrsi:'Stoch RSI',macd:'MACD',adx:'ADX',kon:'Konkorde',cvd:'CVD',ema:'EMA',supertrend:'Supertrend',bollinger:'Bollinger',vwap:'VWAP',ichimoku:'Ichimoku'};
 var SEMS={};
 function semCalc(){const n=candles.length,cl=closes(),S={},pr=PRM[mode];if(n<30){SEMS={};return;}
   const g=k=>(C[k]!==undefined&&C[k]!==null);
@@ -1192,6 +1222,7 @@ function semCalc(){const n=candles.length,cl=closes(),S={},pr=PRM[mode];if(n<30)
   S.bollinger=cl.map((c,i)=>{if(B.u[i]==null)return null;const w=B.u[i]-B.l[i],pb=w>0?(c-B.l[i])/w:.5;return pb<=.05?1:pb>=.95?-1:0;});
   const V=active.has('vwap')&&C.vwap?C.vwap:calcVWAP();S.vwap=cl.map((c,i)=>V.u1[i]==null||V.l1[i]==null||V.u1[i]===V.l1[i]?null:c<=V.l1[i]?1:c>=V.u1[i]?-1:0);
   const I=active.has('ichimoku')&&C.ichi?C.ichi:calcIchi(...(pr.ichi||[]));S.ichimoku=cl.map((c,i)=>I.a[i]==null||I.b[i]==null?null:c>Math.max(I.a[i],I.b[i])?1:c<Math.min(I.a[i],I.b[i])?-1:0);
+  {const SP=C.sop||calcSop();S.sop=cl.map((c,i)=>{if(i<n-1||!SP||!SP.lv)return null;const near=SP.lv.filter(l=>Math.abs(c-l.p)<=SP.tol*1.5).sort((a,b)=>b.f-a.f)[0];return near?near.r:0;});}
   SEMS=S;}
 function semBarRender(){const el=$('semBar');if(!el)return;el.hidden=!SEMF;$('semBtn').classList.toggle('on',SEMF);$('semBtn').setAttribute('aria-pressed',SEMF?'true':'false');if(!SEMF)return;
   const last=a=>{if(!a)return null;for(let i=a.length-1;i>=Math.max(0,a.length-3);i--)if(a[i]!=null)return a[i];return null;};let g=0,r=0,n=0;
@@ -1223,6 +1254,7 @@ function calcInd(full){
   if(active.has('vwap'))C.vwap=calcVWAP();
   if(active.has('stochrsi'))C.srsi=calcStochRSI(...(PRM[mode].srsi||[]));
   if(active.has('cvd'))C.cvd=calcCVD();
+  C.sop=active.has('sop')||SEMF?calcSop():null;
   C.smc=active.has('smc')?calcSMC():null;
   C.div=active.has('div')?calcDiv():null;
   C.trend=active.has('trend')?calcTrendLine():null;
@@ -1518,6 +1550,7 @@ function drawInd(ctx,w,h){
       ctx.strokeStyle='#ff9800';ctx.lineWidth=1;ctx.setLineDash([2,3]);ctx.beginPath();ctx.moveTo(0,py);ctx.lineTo(paneW,py);ctx.stroke();ctx.setLineDash([]);
       ctx.fillStyle='#ff9800';ctx.font='600 11px system-ui,sans-serif';ctx.textAlign=vpL?'left':'right';ctx.textBaseline='bottom';ctx.fillText('POC '+fp(lastPOC),vpL?4:paneW*(active.has('liq')?1-PROF:1)-4,py-2);
     }
+    if(active.has('sop'))drawSop(ctx,X,Y,paneW);
     if(active.has('fig'))drawFig(ctx,from,to,X,Y,paneW);
     if(active.has('smc'))drawSMC(ctx,from,to,X,Y,paneW);
     if(active.has('div'))drawDiv(ctx,from,to,X,Y);
@@ -6073,6 +6106,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  bollinger:{g:'Indicadores',t:'🎚 Bandas de Bollinger',ind:'bollinger',b:'Media de 20 velas ± 2 desvíos. Contienen la mayor parte del movimiento. Bandas muy juntas = poca volatilidad (suele venir un movimiento fuerte).',h:['En tendencia alcista, un toque a la banda inferior es una oportunidad de compra (y al revés en bajista).','Ojo: en tendencias fuertes el precio "camina" por la banda; no shortees solo porque tocó la superior.','Es la base de SHOOTER: cierre fuera de la banda con RSI extremo y tendencia a favor.'],x:['e7','q_bb']},
  ichimoku:{g:'Indicadores',t:'☁️ Ichimoku',ind:'ichimoku',b:'La nube resume tendencia y soportes. Precio <b>sobre</b> la nube = alcista; <b>debajo</b> = bajista; <b>dentro</b> = indecisión.',h:['Buscá long cuando el precio está sobre la nube y retrocede hacia ella.','Una nube gruesa es un soporte fuerte; una fina se rompe fácil.'],x:['q_ichi']},
  vwap:{g:'Indicadores',t:'⚖️ VWAP diario',ind:'vwap',b:'Precio promedio del día ponderado por volumen: lo que pagó en promedio todo el mercado. Las bandas ±σ marcan extremos.',h:['Sobre el VWAP dominan los compradores; debajo, los vendedores.','Rebotes en el VWAP a favor de la tendencia son buenas entradas de corto plazo.','En las bandas ±2σ el precio está estirado: no entres a favor ahí.'],x:['q_vwap']},
+ sop:{g:'Indicadores',t:'🧱 Soportes y resistencias fuertes',ind:'sop',b:'Estudia todas las velas de la temporalidad elegida y marca los niveles donde el precio llegó varias veces y se frenó: soportes (verde, debajo del precio) y resistencias (rojo, arriba). Cuenta los toques y los falsos quiebres (la mecha pasa pero la vela vuelve). Más grueso = más fuerte.',h:['Un soporte con muchos toques es buen lugar para buscar LONG; si se quiebra con cierre, suele volverse resistencia.','Poné el stop un poco más allá de la franja, no justo en la línea: los falsos quiebres barren esos stops.'],x:[]},
  vprofile:{g:'Indicadores',t:'📊 Perfil de volumen',ind:'vprofile',b:'Barras horizontales con el volumen operado en cada precio. El nivel con más volumen (POC) actúa como imán y soporte o resistencia.',h:['Zonas de mucho volumen frenan el precio: buenos lugares para entrar o tomar ganancia.','Zonas de poco volumen se atraviesan rápido: no pongas el stop en el medio de una.'],x:['q_vp']},
  smc:{g:'Indicadores',t:'🟪 Zonas Smart Money',ind:'smc',b:'FVG: huecos que dejó un movimiento muy rápido; el precio suele volver a llenarlos. Order block: la última vela en contra antes de un impulso fuerte; suele frenar al precio cuando vuelve.',h:['Verde / violeta = zona de compra (soporte). Rojo / naranja = zona de venta (resistencia).','Sirven para ubicar la entrada o el stop, no para entrar solas.'],x:[]},
  div:{g:'Indicadores',t:'🟨 Divergencias de RSI',ind:'div',b:'El precio hace un mínimo (o máximo) nuevo, pero el RSI no lo acompaña: el movimiento pierde fuerza y puede girar.',h:['div ▲ verde: la caída pierde fuerza (posible rebote).','div ▼ roja: la suba pierde fuerza. Aparecen 3 velas después del giro, para confirmarlo.'],x:[]},
