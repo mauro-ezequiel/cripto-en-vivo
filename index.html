@@ -3246,8 +3246,9 @@ setTimeout(()=>{let i=0;for(const p of PIL)if(p.qty>0&&!p.bn&&!p.tEst&&!p.closed
 async function pilFixT(p){const t=await pioEstT(p.sym,p.entry);if(t&&t<Date.now()){p.t=Math.min(t,Date.now()-6e4);p.tEst=1;for(const k of Object.keys(RSIE))if(k.startsWith('pil'+p.id+'|'))delete RSIE[k];savePil();pilRender();}}
 function pioApply(){let add=0,upd=0;const fix=[];for(const x of PIO.items){if(!x.on)continue;const c=x.c;
     if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
-    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,src:c.ex||null,sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
+    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,src:c.ex||null,bxRef:null,sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
     else if(x.k==='upd'){Object.assign(x.p,{src:c.ex||x.p.src||null,sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}if(x.p.tEst)fix.push(x.p);upd++;}}
+  for(const p of PIL)if(p.src==='bingx'&&!p.closed&&p.t>Date.now()-6e4||PIO.items.some(x=>x.p===p&&x.c&&x.c.ex)){const it=PIO.items.find(x=>(x.p===p||x.sym===p.sym)&&x.c&&x.c.mark),v=pilPxBase(p);if(it&&v)p.bxRef={mark:it.c.mark,src:v,t:Date.now()};}
   savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}. La hora en que abriste cada una se estima por el precio de entrada (para el RSI ini).</div>`;
   for(const p of PIL)if(p.tEst===1&&!p.closed&&(p.mk||'c')==='c')fix.push(p);[...new Set(fix)].forEach((p,i)=>{p.tEst=2;setTimeout(()=>pilFixT(p),i*400);});}
 $('pilImgBtn').onclick=()=>$('pilImgIn').click();
@@ -4713,7 +4714,9 @@ async function bxLoad(){if(BXM.busy||Date.now()-BXM.t<12e3||Date.now()-BXM.fail<
       if(Object.keys(map).length)BXM.map=map;else throw 0;}
     const j=await getJ('https://open-api.bingx.com/openApi/swap/v2/quote/premiumIndex',12000),L=(j&&j.data)||[],m={};for(const x of L){const v=+x.markPrice;if(v>0)m[x.symbol]=v;}
     if(Object.keys(m).length){BXM.m=m;BXM.t=Date.now();}else throw 0;}catch(e){BXM.fail=Date.now();}finally{BXM.busy=false;}}
-const pilPxOf=p=>(p.src==='bingx'&&bxPx(p.sym))||(p.mk==='a'?(STK[p.sym]&&STK[p.sym].c||null):(pilMark(p.sym)||(tickers[p.sym]&&tickers[p.sym].c)||null));
+const pilPxBase=p=>p.mk==='a'?(STK[p.sym]&&STK[p.sym].c||null):(pilMark(p.sym)||(tickers[p.sym]&&tickers[p.sym].c)||null);
+/* si BingX no responde: mientras el precio de la bolsa siga igual que cuando importaste (mercado cerrado), se usa el precio de marca de la captura */
+const pilPxOf=p=>{const b=p.src==='bingx'&&bxPx(p.sym);if(b)return b;const v=pilPxBase(p);if(p.bxRef&&v!=null&&Math.abs(v/p.bxRef.src-1)<1e-6)return p.bxRef.mark;return v;};
 /* velas de un activo en una temporalidad (la última es la que está en curso, como en Binance) */
 async function pilKl(s,tf,mk,n=260){if(mk!=='a')return kl(s,tf,n);
   if(tf==='1d'||tf==='1w'){const b=withLive(s,await stkHist(s));return (tf==='1w'?aggBars(b,'1w'):b).slice(-n);}
