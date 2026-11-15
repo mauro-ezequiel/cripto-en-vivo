@@ -167,6 +167,13 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         active.add('sop'); calcInd(true); const S = C.sop; return { velas: candles.length, precio: candles.at(-1).close, tol: S && +S.tol.toPrecision(4), niveles: S ? S.lv.map(l => `${l.r > 0 ? 'S' : 'R'} ${+l.p.toPrecision(6)} · ${l.tq} toques · ${l.fq} falsos · ${l.qb} quiebres · fuerza ${l.f.toFixed(2)}`) : null }; }, [sy, t]); out[sy + ' ' + t] = r;
       try { await pg.locator('#chart').screenshot({ path: `capturas/soportes-${sy}-${t}.png`, timeout: 15000 }); } catch (e) {} }
     info.push({ soportes: out }); await pg.evaluate(() => { active.delete('sop'); calcInd(true); }); } catch (e) { info.push({ soportes_error: e.message.slice(0, 200) }); }
+  /* rescate en pilotear */
+  try { const out = {}; for (const [sy, dir, lev, k] of [['BTCUSDT', 1, 10, 1.06], ['ETHUSDT', -1, 10, .94], ['SOLUSDT', 1, 20, 1.03]]) { const r = await pg.evaluate(async ([sy, dir, lev, k]) => { setView('pil'); const c = tickers[sy] && tickers[sy].c; if (!c) return 'sin precio';
+        const p = { id: sy + '-resc', sym: sy, mk: 'c', tf: '4h', mt: 'aislado', cuenta: 0, extra: 0, open: true, dir, entry: c * k, lev, margin: 100, t: Date.now() - 864e5, state: null, ll: null, closed: false }; PIL = PIL.filter(x => x.id !== p.id); PIL.push(p); savePil();
+        p.resc = true; await pilRescCalc(p); for (let i = 0; i < 30 && PRESC[p.id] && PRESC[p.id].busy; i++) await new Promise(z => setTimeout(z, 300)); pilRender();
+        const el = document.querySelector(`.pil-c[data-id="${p.id}"] .resc`), R = PRESC[p.id]; const txt = el ? el.textContent.replace(/\s+/g, ' ').slice(0, 700) : null; return { veredicto: R.v, sumar: R.need, liq: R.liq, nuevaLiq: R.newLiq, soporte: R.sp && R.sp.p, texto: txt }; }, [sy, dir, lev, k]); out[sy] = r;
+      try { await pg.locator(`.pil-c[data-id="${sy}-resc"]`).screenshot({ path: `capturas/rescate-${sy}.png`, timeout: 10000 }); } catch (e) {} }
+    await pg.evaluate(() => { PIL = PIL.filter(x => !/-resc$/.test(x.id)); savePil(); pilRender(); }); info.push({ rescate: out }); } catch (e) { info.push({ rescate_error: e.message.slice(0, 200) }); }
   /* semáforo del gráfico */
   try { const r = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); await w(1500);
       for (const k of ['rsi', 'macd', 'ema', 'bollinger', 'supertrend', 'adx']) active.add(k); calcInd(true); if (!SEMF) semToggle(); await w(1500);
