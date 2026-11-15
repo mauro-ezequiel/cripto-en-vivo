@@ -4775,7 +4775,8 @@ function pilRescHTML(p){const R=PRESC[p.id],L=p.dir>0;if(!R||R.busy)return '<div
 function pilPlan(p,D){if(!p.plan){const a4=(D&&D.f4&&D.f4.atrP)||.02,sl=Math.min(.8*pilLiqD(p),3*a4),e=pilAvg(p);
     p.plan={sl,stop:e*(1-p.dir*sl),cut:e*(1-p.dir*sl*.5)};}return p.plan;}
 function pilAnalyze(p,D,c){
-  const d=p.dir,avg=pilAvg(p),liq=pilLiqPx(p),L=pilLiqD(p),pf=d*(c/avg-1),usd=d*(c-avg)*pilQty(p),mg=p.margin+(p.ll?p.ll.margin:0),atr=D.f1.atrP||.01;
+  /* el % sobre el margen inicial (cantidad × entrada ÷ X), como lo muestran Binance y las demás apps */
+  const d=p.dir,avg=pilAvg(p),liq=pilLiqPx(p),L=pilLiqD(p),pf=d*(c/avg-1),usd=d*(c-avg)*pilQty(p),mg=p.qty>0?pilQty(p)*avg/p.lev:p.margin+(p.ll?p.ll.margin:0),atr=D.f1.atrP||.01;
   const fav=d*(.2*D.f15.tr+.4*D.f1.tr+.4*D.f4.tr),against=D.f1.adx>22&&D.f1.di===-d,lossF=pf<0?-pf/L:0,liqDist=d*(c-liq)/c;
   const sup=(d>0?D.lows.filter(x=>x<=c*1.002).sort((a,b)=>b-a):D.highs.filter(x=>x>=c*.998).sort((a,b)=>a-b))[0];
   const res=(d>0?D.highs.filter(x=>x>c).sort((a,b)=>a-b):D.lows.filter(x=>x<c).sort((a,b)=>b-a))[0];
