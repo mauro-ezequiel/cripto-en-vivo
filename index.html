@@ -3184,10 +3184,15 @@ const SIGCARD_MS=36e5;var SIGHIDE=new Set();try{SIGHIDE=new Set(JSON.parse(local
     const h=l.match(/([A-Z0-9]{2,20})USDT\b/);
     if(h&&/(aislad|cruzad|isolat|cross)/i.test(l)){nu();c.sym=h[1]+'USDT';c.mt=/(cruzad|cross)/i.test(l)?'cruzado':'aislado';const x=l.match(/(\d{1,3})\s*[xX]\b/);if(x)c.lev=+x[1];
       if(/^\W{0,2}S\W/.test(l)||/\b(short|vender|venta)\b/i.test(l))c.side=-1;else if(/^\W{0,2}B\W/.test(l)||/\b(long|comprar|compra)\b/i.test(l))c.side=1;continue;}
+    /* otro formato (Binance TradFi / app nueva): "Long Aislado 6x > | -6.0249(-7.71%)" con el símbolo en la línea de arriba */
+    if(/\b(long|short)\b/i.test(l)&&/(aislad|cruzad|isolat|cross)/i.test(l)&&!/USDT\b/.test(l)){nu();c.side=/short/i.test(l)?-1:1;c.mt=/(cruzad|cross)/i.test(l)?'cruzado':'aislado';const x=l.match(/(\d{1,3})\s*[xX]\b/);if(x)c.lev=+x[1];
+      const pv=l.replace(/\d{1,3}\s*[xX]\b/,' ').replace(/\(\s*-\s+/g,'(-');const nn=nums(pv.slice(pv.search(/[|>]/)+1>0?pv.search(/[|>]/)+1:0));const a=nn.filter(x=>!x.pc),b=nn.find(x=>x.pc);if(a.length)c.pnl=a[0].v;if(b)c.roi=b.v;
+      const prev=(L[i-1]||'').match(/^\W*([A-Z][A-Z0-9.]{1,11})\b/);if(prev&&!/^(PNL|USDT|LONG|SHORT)$/.test(prev[1]))c.sym=prev[1];continue;}
+    {const m=l.match(/(posici[oó]n|position|cantidad|qty)\s*\(\s*([A-Z0-9.]{2,12})\s*\)/i);if(m&&/marg/i.test(l)){const n=nextNums(i,2);if(!c||c.qraw!=null||c.size!=null)nu();if(!c.sym)c.sym=m[2].toUpperCase();if(n){const a=n.filter(x=>!x.pc);if(a.length>=2){c.qraw=Math.abs(a[0].v);c.margin=a[1].v;}const b=n.find(x=>x.pc);if(b)c.ratio=b.v;}continue;}}
     if(/pnl/i.test(l)&&/roi/i.test(l)){const n=nextNums(i,2);if(!c||c.pnl!=null)nu();if(n){const a=n.filter(x=>!x.pc),b=n.find(x=>x.pc);if(a.length)c.pnl=a[0].v;if(b)c.roi=b.v;}continue;}
     if(/(tama|size)/i.test(l)&&/marg/i.test(l)){const n=nextNums(i,2);if(!c||c.size!=null)nu();if(n){const a=n.filter(x=>!x.pc);if(a.length>=2){c.size=Math.abs(a[0].v);c.margin=a[1].v;}const b=n.find(x=>x.pc);if(b)c.ratio=b.v;}continue;}
     if(/(entrada|entry)/i.test(l)&&/(marca|mark)/i.test(l)){const n=nextNums(i,2);if(!c||c.entry!=null)nu();if(n){const a=n.filter(x=>!x.pc);if(a.length>=2){c.entry=a[0].v;c.mark=a[1].v;if(a[2])c.liq=a[2].v;}}continue;}}
-  for(const c of out){delete c.raw;c.ok=c.entry>0&&c.mark>0&&c.size>0&&c.margin>0;if(!c.ok)continue;
+  for(const c of out){delete c.raw;if(c.qraw>0&&c.mark>0&&!(c.size>0))c.size=c.qraw*c.mark;c.ok=c.entry>0&&c.mark>0&&c.size>0&&c.margin>0;if(!c.ok)continue;
     const qty=c.size/c.mark;c.qty=qty;
     c.dir=c.pnl!=null&&Math.abs(c.mark-c.entry)/c.entry>1e-4&&c.pnl!==0?(Math.sign(c.pnl)===Math.sign(c.mark-c.entry)?1:-1):(c.side||1);
     if(!c.lev&&c.pnl&&c.roi)c.lev=Math.max(1,Math.round(c.size*Math.abs(c.roi)/100/Math.abs(c.pnl)));
@@ -3208,10 +3213,10 @@ async function pilImgRead(files){files=[...files].slice(0,10);const out=$('pilIm
 function pioPx(s){return (PILMK.m&&PILMK.m[s])||(tickers[s]&&tickers[s].c)||null;}
 function pioBuild(P){const items=[];
   for(const c of P){if(!c.ok){items.push({k:'cut',c});continue;}
-    let sym=c.sym&&tickers[c.sym]?c.sym:null,cands=[];
+    let sym=c.sym&&tickers[c.sym]?c.sym:c.sym&&tickers[c.sym+'USDT']?c.sym+'USDT':c.sym&&!/USDT$/.test(c.sym)&&typeof STK!=='undefined'&&STK[c.sym]?c.sym:null,cands=[];c.mk=sym&&!/USDT$/.test(sym)?'a':'c';
     if(!sym){cands=Object.keys(tickers).filter(s=>{const v=pioPx(s);return v&&Math.abs(v/c.mark-1)<.004;}).sort((a,b)=>Math.abs(pioPx(a)/c.mark-1)-Math.abs(pioPx(b)/c.mark-1)).slice(0,6);
       const open=cands.filter(s=>PIL.some(p=>!p.closed&&p.sym===s&&p.dir===c.dir));if(open.length===1)sym=open[0];else if(cands.length===1)sym=cands[0];}
-    const p=sym?PIL.find(x=>!x.closed&&x.sym===sym&&x.dir===c.dir&&(x.mk||'c')!=='a'):null;
+    const p=sym?PIL.find(x=>!x.closed&&x.sym===sym&&x.dir===c.dir):null;
     if(!sym){items.push({k:'pick',c,cands,on:true});continue;}
     if(!p){items.push({k:'new',c,sym,on:true,guess:!c.sym});continue;}
     const ch=[];if(Math.abs(p.entry/c.entry-1)>5e-4)ch.push(`entrada ${fp(p.entry)} → ${fp(c.entry)}`);if(p.lev!==c.lev)ch.push(`${p.lev}x → ${c.lev}x`);
@@ -3238,7 +3243,7 @@ setTimeout(()=>{let i=0;for(const p of PIL)if(p.qty>0&&!p.bn&&!p.tEst&&!p.closed
 async function pilFixT(p){const t=await pioEstT(p.sym,p.entry);if(t&&t<Date.now()){p.t=Math.min(t,Date.now()-6e4);p.tEst=1;for(const k of Object.keys(RSIE))if(k.startsWith('pil'+p.id+'|'))delete RSIE[k];savePil();pilRender();}}
 function pioApply(){let add=0,upd=0;const fix=[];for(const x of PIO.items){if(!x.on)continue;const c=x.c;
     if(x.k==='pick'){if(!x.sym)continue;const p=PIL.find(y=>!y.closed&&y.sym===x.sym&&y.dir===c.dir);if(p){x.k='upd';x.p=p;}else x.k='new';}
-    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:'c',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
+    if(x.k==='new'){if(PIL.filter(p=>!p.bn&&!p.closed).length>=20)continue;PIL.push({id:x.sym+'-'+Date.now()+'-'+add,sym:x.sym,mk:/USDT$/.test(x.sym)?'c':'a',tf:'4h',tEst:1,mt:c.mt||'aislado',cuenta:0,extra:c.extra,open:true,dir:c.dir,entry:c.entry,lev:c.lev,margin:c.mg,qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,t:Date.now(),state:null,ll:null,closed:false});add++;}
     else if(x.k==='upd'){Object.assign(x.p,{entry:c.entry,lev:c.lev,margin:c.mg,extra:c.extra,mt:c.mt||x.p.mt||'aislado',qty:+c.qty.toPrecision(10),bnLiq:c.liq>0?c.liq:null,ll:null,a:null,plan:null});if(x.p.closed&&x.p.state==='liq'){x.p.closed=false;x.p.state=null;}if(x.p.tEst)fix.push(x.p);upd++;}}
   savePil();pilRender();pilTick();PIO.items=[];$('pilImgOut').innerHTML=`<div class="pio">Listo: ${add} nueva${add===1?'':'s'} y ${upd} actualizada${upd===1?'':'s'}. La hora en que abriste cada una se estima por el precio de entrada (para el RSI ini).</div>`;
   for(const p of PIL)if(p.tEst===1&&!p.closed&&(p.mk||'c')==='c')fix.push(p);[...new Set(fix)].forEach((p,i)=>{p.tEst=2;setTimeout(()=>pilFixT(p),i*400);});}
