@@ -33,7 +33,9 @@ function run(h, i0, d, lev, S) { // h: velas 1 h desde la entrada; i0 = índice 
   const cand = S ? S.L.filter(l => d * (c0 - l.p) > 0 && d * (c0 - l.p) <= 3 * S.atr && l.f >= .35).sort((a, b) => d * (b.p - a.p)) : [];
   const sp = cand.sort((a, b) => b.f - a.f)[0];
   const zone = sp ? sp.p - d * (S.tol * .5 + .5 * S.atr) : null; // el piso de la zona (con margen para mechas)
-  for (const modo of ['margen', 'promedio']) { const k = 'rescate_' + modo;
+  const rsi = (() => { const cl = h.slice(Math.max(0, i0 - 60), i0 + 1).map(x => x.close); let g = 0, l = 0; for (let i = 1; i < cl.length; i++) { const x = cl[i] - cl[i - 1]; if (i <= 14) { g += Math.max(x, 0) / 14; l += Math.max(-x, 0) / 14; } else { g = (g * 13 + Math.max(x, 0)) / 14; l = (l * 13 + Math.max(-x, 0)) / 14; } } return l === 0 ? 100 : 100 - 100 / (1 + g / l); })();
+  R._sop = !!sp; R._f = sp ? sp.f : 0; R._rsi = d > 0 ? rsi : 100 - rsi;
+  for (const [modo, salida] of [['margen', 0], ['margen', .3], ['margen', .5], ['promedio', 0], ['promedio', .3]]) { const k = 'rescate_' + modo + (salida ? '_sale_en_-' + Math.round(salida * 100) + '%' : '_sale_en_0');
     if (!sp) { R[k] = Object.assign({}, R.cerrar, { sin: 1 }); continue; }
     let q = q0, avg = e0, mg = M0, extra = 0, added = false, r = null;
     if (modo === 'margen') { const need = (Math.abs(avg - zone) / avg + MM) * q * avg - mg; if (need > 0) { extra = Math.ceil(need); mg += extra; added = true; } }
@@ -42,10 +44,10 @@ function run(h, i0, d, lev, S) { // h: velas 1 h desde la entrada; i0 = índice 
         const need = (Math.abs(avg - zone) / avg + MM) * q * avg - mg; if (need > 0) { mg += Math.ceil(need); extra += Math.ceil(need); } }
       const liq = liqOf(d, avg, q, mg); if (d * (lo - liq) <= 0) { r = -mg; break; }
       if (d * (b.close - zone) < 0) { r = pnl(b.close, avg, q); break; } // cerró del otro lado del soporte: se sale (el soporte no aguantó)
-      if (d * (hi - avg) >= 0) { r = 0; break; } } // volvió al precio promedio: sale sin pérdida
+      if (pnl(hi, avg, q) >= -salida * M0) { r = -salida * M0; break; } } // rebotó: sale en 0 (o con la pérdida achicada a −30 % / −50 %)
     R[k] = { usd: r ?? pnl(h[end].close, avg, q), extra }; }
   /* rescate solo si vale la pena: soporte fuerte (≥ 0,6) y la plata extra no pasa el margen inicial; si no, cerrar */
-  R.rescate_filtrado = sp && sp.f >= .6 && R.rescate_margen.extra <= M0 ? R.rescate_margen : Object.assign({}, R.cerrar, { sin: 1 });
+
   return R; }
 (async () => { const END = Date.now() - 3600e3, START = END - 400 * 864e5, AGG = {}; let N = 0; let rng = 12345; const rnd = () => (rng = (rng * 16807) % 2147483647) / 2147483647;
   for (const s of SYMS) { const h = await kl(s, '1h', START, END); if (h.length < 3000) { console.log('sin datos', s); continue; } const h4 = agg(h, 4);
@@ -53,7 +55,8 @@ function run(h, i0, d, lev, S) { // h: velas 1 h desde la entrada; i0 = índice 
       let i0 = -1; for (let j = i; j < Math.min(h.length - 250, i + 24 * 20); j++) { const px = d > 0 ? h[j].low : h[j].high; if (d * (px - e) * q <= -70) { i0 = j; break; } } if (i0 < 0) continue;
       const liq = liqOf(d, e, q, M0); if (d * ((d > 0 ? h[i0].low : h[i0].high) - liq) <= 0) continue; // ya liquidada en la misma vela
       const j4 = Math.floor(i0 / 4) - 1, S = sop(h4.slice(Math.max(0, j4 - 600), j4 + 1)); const R = run(h.slice(i), i0 - i, d, lev, S); N++;
-      for (const [k2, v] of Object.entries(R)) { const A = AGG[k2] = AGG[k2] || { n: 0, usd: 0, extra: 0, gan0: 0, liq: 0, peor: 0, sin: 0 }; A.n++; A.usd += v.usd; A.extra += v.extra; if (v.usd >= -.5) A.gan0++; if (v.usd <= -M0 - v.extra + .5) A.liq++; A.peor = Math.min(A.peor, v.usd); if (v.sin) A.sin++; } }
+      const grupos = ['todas'].concat(R._sop ? ['con_soporte'] : []).concat(R._sop && R._f >= .6 ? ['soporte_fuerte'] : []).concat(R._sop && R._rsi <= 30 ? ['soporte_y_RSI_1h_en_sobreventa'] : []).concat(R._sop && R._f >= .6 && R._rsi <= 30 ? ['soporte_fuerte_y_RSI_1h_en_sobreventa'] : []);
+      for (const g of grupos) for (const [k0, v] of Object.entries(R)) { if (k0[0] === '_') continue; const k2 = g + ' · ' + k0; const A = AGG[k2] = AGG[k2] || { n: 0, usd: 0, extra: 0, gan0: 0, liq: 0, peor: 0, sin: 0 }; A.n++; A.usd += v.usd; A.extra += v.extra; if (v.usd >= -.5) A.gan0++; if (v.usd <= -M0 - v.extra + .5) A.liq++; A.peor = Math.min(A.peor, v.usd); if (v.sin) A.sin++; } }
     console.log(s, 'casos', N); }
   const out = { upd: Date.now(), casos: N, nota: 'USD por operación de 100 USD de margen que llegó a −70 %. extra = plata que se agregó en promedio. sin_perdida = salió en 0 o mejor. liquidadas = perdió todo el margen.', estrategias: {} };
   for (const [k, A] of Object.entries(AGG)) out.estrategias[k] = { promedio_usd: +(A.usd / A.n).toFixed(1), extra_promedio: +(A.extra / A.n).toFixed(1), sin_perdida_pct: +(100 * A.gan0 / A.n).toFixed(1), liquidadas_pct: +(100 * A.liq / A.n).toFixed(1), peor_usd: Math.round(A.peor), sin_soporte_pct: +(100 * A.sin / A.n).toFixed(1) };
