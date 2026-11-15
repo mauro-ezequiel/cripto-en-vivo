@@ -1,0 +1,287 @@
+{
+ "upd": 1794733827943,
+ "casos": 1784,
+ "nota": "USD por operación de 100 USD de margen que llegó a −70 %. extra = plata que se agregó en promedio. sin_perdida = salió en 0 o mejor. liquidadas = perdió todo el margen.",
+ "estrategias": {
+  "todas · cerrar": {
+   "promedio_usd": -66.1,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0.2,
+   "liquidadas_pct": 0,
+   "peor_usd": -97,
+   "sin_soporte_pct": 0
+  },
+  "todas · aguantar": {
+   "promedio_usd": -72.1,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 25.3,
+   "liquidadas_pct": 69.3,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "todas · rescate_margen_sale_en_0": {
+   "promedio_usd": -68.9,
+   "extra_promedio": 12.6,
+   "sin_perdida_pct": 14.2,
+   "liquidadas_pct": 17.2,
+   "peor_usd": -285,
+   "sin_soporte_pct": 64.3
+  },
+  "todas · rescate_margen_sale_en_-30%": {
+   "promedio_usd": -68.7,
+   "extra_promedio": 12.6,
+   "sin_perdida_pct": 0.1,
+   "liquidadas_pct": 13.4,
+   "peor_usd": -285,
+   "sin_soporte_pct": 64.3
+  },
+  "todas · rescate_margen_sale_en_-50%": {
+   "promedio_usd": -67.8,
+   "extra_promedio": 12.6,
+   "sin_perdida_pct": 0.1,
+   "liquidadas_pct": 8,
+   "peor_usd": -285,
+   "sin_soporte_pct": 64.3
+  },
+  "todas · rescate_promedio_sale_en_0": {
+   "promedio_usd": -69.1,
+   "extra_promedio": 17.4,
+   "sin_perdida_pct": 13.3,
+   "liquidadas_pct": 12.8,
+   "peor_usd": -235,
+   "sin_soporte_pct": 64.3
+  },
+  "todas · rescate_promedio_sale_en_-30%": {
+   "promedio_usd": -67.9,
+   "extra_promedio": 14.8,
+   "sin_perdida_pct": 0.1,
+   "liquidadas_pct": 10.4,
+   "peor_usd": -232,
+   "sin_soporte_pct": 64.3
+  },
+  "con_soporte · cerrar": {
+   "promedio_usd": -64.4,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0.3,
+   "liquidadas_pct": 0,
+   "peor_usd": -92,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · aguantar": {
+   "promedio_usd": -73.8,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 25.3,
+   "liquidadas_pct": 72,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · rescate_margen_sale_en_0": {
+   "promedio_usd": -72.5,
+   "extra_promedio": 35.3,
+   "sin_perdida_pct": 39.6,
+   "liquidadas_pct": 48.3,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · rescate_margen_sale_en_-30%": {
+   "promedio_usd": -71.8,
+   "extra_promedio": 35.3,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 37.6,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · rescate_margen_sale_en_-50%": {
+   "promedio_usd": -69.3,
+   "extra_promedio": 35.3,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 22.5,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · rescate_promedio_sale_en_0": {
+   "promedio_usd": -73,
+   "extra_promedio": 48.8,
+   "sin_perdida_pct": 36.9,
+   "liquidadas_pct": 36,
+   "peor_usd": -235,
+   "sin_soporte_pct": 0
+  },
+  "con_soporte · rescate_promedio_sale_en_-30%": {
+   "promedio_usd": -69.5,
+   "extra_promedio": 41.5,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 29.1,
+   "peor_usd": -232,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · cerrar": {
+   "promedio_usd": -64.2,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0.3,
+   "liquidadas_pct": 0,
+   "peor_usd": -92,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · aguantar": {
+   "promedio_usd": -73.2,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 26.1,
+   "liquidadas_pct": 72.1,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · rescate_margen_sale_en_0": {
+   "promedio_usd": -70.8,
+   "extra_promedio": 35.4,
+   "sin_perdida_pct": 41.4,
+   "liquidadas_pct": 48.5,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · rescate_margen_sale_en_-30%": {
+   "promedio_usd": -70.7,
+   "extra_promedio": 35.4,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 37.3,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · rescate_margen_sale_en_-50%": {
+   "promedio_usd": -68.5,
+   "extra_promedio": 35.4,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 22.1,
+   "peor_usd": -285,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · rescate_promedio_sale_en_0": {
+   "promedio_usd": -72.9,
+   "extra_promedio": 46.6,
+   "sin_perdida_pct": 37.1,
+   "liquidadas_pct": 36.3,
+   "peor_usd": -200,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte · rescate_promedio_sale_en_-30%": {
+   "promedio_usd": -68.9,
+   "extra_promedio": 39,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 29.2,
+   "peor_usd": -200,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · cerrar": {
+   "promedio_usd": -66.8,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0.2,
+   "liquidadas_pct": 0,
+   "peor_usd": -90,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · aguantar": {
+   "promedio_usd": -79.2,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 20.1,
+   "liquidadas_pct": 77.4,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_0": {
+   "promedio_usd": -80.8,
+   "extra_promedio": 33.9,
+   "sin_perdida_pct": 33.1,
+   "liquidadas_pct": 54.2,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_-30%": {
+   "promedio_usd": -78.8,
+   "extra_promedio": 33.9,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 44.5,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_-50%": {
+   "promedio_usd": -71.9,
+   "extra_promedio": 33.9,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 26.6,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · rescate_promedio_sale_en_0": {
+   "promedio_usd": -80.1,
+   "extra_promedio": 49.7,
+   "sin_perdida_pct": 31.1,
+   "liquidadas_pct": 39.3,
+   "peor_usd": -232,
+   "sin_soporte_pct": 0
+  },
+  "soporte_y_RSI_1h_en_sobreventa · rescate_promedio_sale_en_-30%": {
+   "promedio_usd": -76.1,
+   "extra_promedio": 43.2,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 33.6,
+   "peor_usd": -232,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · cerrar": {
+   "promedio_usd": -67.5,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 0,
+   "peor_usd": -90,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · aguantar": {
+   "promedio_usd": -79.3,
+   "extra_promedio": 0,
+   "sin_perdida_pct": 20.2,
+   "liquidadas_pct": 78.5,
+   "peor_usd": -100,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_0": {
+   "promedio_usd": -81.1,
+   "extra_promedio": 35,
+   "sin_perdida_pct": 34,
+   "liquidadas_pct": 55.9,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_-30%": {
+   "promedio_usd": -80.1,
+   "extra_promedio": 35,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 46.2,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · rescate_margen_sale_en_-50%": {
+   "promedio_usd": -73.2,
+   "extra_promedio": 35,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 28.3,
+   "peor_usd": -243,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · rescate_promedio_sale_en_0": {
+   "promedio_usd": -80.3,
+   "extra_promedio": 48,
+   "sin_perdida_pct": 30.8,
+   "liquidadas_pct": 39.3,
+   "peor_usd": -200,
+   "sin_soporte_pct": 0
+  },
+  "soporte_fuerte_y_RSI_1h_en_sobreventa · rescate_promedio_sale_en_-30%": {
+   "promedio_usd": -77.6,
+   "extra_promedio": 41.1,
+   "sin_perdida_pct": 0,
+   "liquidadas_pct": 34.4,
+   "peor_usd": -200,
+   "sin_soporte_pct": 0
+  }
+ }
+}
