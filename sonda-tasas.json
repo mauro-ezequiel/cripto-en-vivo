@@ -1,0 +1,819 @@
+{
+ "rend": [
+  {
+   "entidad": "nexo",
+   "rendimientos": [
+    {
+     "moneda": "BTC",
+     "apy": 6,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ETH",
+     "apy": 6,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDC",
+     "apy": 10.5,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDT",
+     "apy": 11.5,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BNB",
+     "apy": 6.75,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "DOT",
+     "apy": 15,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "SOL",
+     "apy": 8,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "AVAX",
+     "apy": 8,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "POL",
+     "apy": 6.75,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "fiwind",
+   "rendimientos": [
+    {
+     "moneda": "ARS",
+     "apy": 17.5,
+     "fecha": "2026-11-13",
+     "bonusValue": 23,
+     "bonusThreshold": 750000
+    },
+    {
+     "moneda": "BTC",
+     "apy": 0.5,
+     "fecha": "2023-09-25",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "ETH",
+     "apy": 0.5,
+     "fecha": "2023-09-25",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "USDT",
+     "apy": 4,
+     "fecha": "2026-08-05",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "USDC",
+     "apy": 4,
+     "fecha": "2026-08-05",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "ADA",
+     "apy": 1,
+     "fecha": "2023-01-24",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "DOT",
+     "apy": 2,
+     "fecha": "2023-09-25",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    },
+    {
+     "moneda": "POL",
+     "apy": 2,
+     "fecha": "2023-09-25",
+     "bonusValue": 0,
+     "bonusThreshold": null
+    }
+   ]
+  },
+  {
+   "entidad": "letsbit",
+   "rendimientos": [
+    {
+     "moneda": "ARS",
+     "apy": 20.3,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USD",
+     "apy": 1.26,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDT",
+     "apy": 1.26,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDC",
+     "apy": 1.26,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "belo",
+   "rendimientos": [
+    {
+     "moneda": "USDC",
+     "apy": 2.3223156993658676,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ARGT",
+     "apy": 19.004901017072463,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BOLT",
+     "apy": 2.5003019454543725,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "PERT",
+     "apy": 2.500569592110035,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "MEXT",
+     "apy": 4.5003849989391265,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ETH",
+     "apy": 2.768841314001438,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "CHLT",
+     "apy": 2.5004210171060928,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDT",
+     "apy": 10,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "COLT",
+     "apy": 14.423227024948723,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BRAT",
+     "apy": 17.456757243243086,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "SOL",
+     "apy": 3.8246692334015577,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BTC",
+     "apy": 0.1,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USD",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BRL",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USD_AR",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BOB",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "PEN",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "MXN",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "CLP",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "COP",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "XAUT",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "EUR",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "GBP",
+     "apy": 0,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "lemoncash",
+   "rendimientos": [
+    {
+     "moneda": "USDT",
+     "apy": 2.71,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "ripio",
+   "rendimientos": [
+    {
+     "moneda": "USDT",
+     "apy": 2.46,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "DAI",
+     "apy": 3.23,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDC",
+     "apy": 3.82,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ETH",
+     "apy": 1.71,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BTC",
+     "apy": 0.07,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "WBRL",
+     "apy": 9.13,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "WARS",
+     "apy": 22.1,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "satoshitango",
+   "rendimientos": [
+    {
+     "moneda": "USDC",
+     "apy": 5,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ETH",
+     "apy": 0.73,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDT",
+     "apy": 0.5,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "SOL",
+     "apy": 4,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "lucamoney",
+   "rendimientos": [
+    {
+     "moneda": "USDC",
+     "apy": 6.28,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "decrypto",
+   "rendimientos": []
+  },
+  {
+   "entidad": "vesseo",
+   "rendimientos": [
+    {
+     "moneda": "USDC",
+     "apy": 6.343593260845681,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "astropay",
+   "rendimientos": [
+    {
+     "moneda": "USD",
+     "apy": 6,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "lunefi",
+   "rendimientos": [
+    {
+     "moneda": "USDT",
+     "apy": 18,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "USDC",
+     "apy": 18,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "ETH",
+     "apy": 14,
+     "fecha": "2026-11-15"
+    },
+    {
+     "moneda": "BTC",
+     "apy": 14,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "berry",
+   "rendimientos": [
+    {
+     "moneda": "USDC",
+     "apy": 7,
+     "fecha": "2026-11-15"
+    }
+   ]
+  },
+  {
+   "entidad": "prex",
+   "rendimientos": [
+    {
+     "moneda": "USD",
+     "apy": 2,
+     "fecha": "2026-11-15"
+    }
+   ]
+  }
+ ],
+ "fci": [
+  [
+   "1822 Raices Ahorro Pesos - Clase A",
+   "2026-11-13",
+   22,
+   284
+  ],
+  [
+   "1822 Raices Ahorro Pesos - Clase B",
+   "2026-11-13",
+   22.8,
+   1528
+  ],
+  [
+   "Balanz Capital Money Market - Clase A",
+   "2026-11-13",
+   20.2,
+   247
+  ],
+  [
+   "Balanz Capital Money Market - Clase B",
+   "2026-11-13",
+   20.8,
+   150
+  ],
+  [
+   "Balanz Capital Money Market - Clase C",
+   "2026-11-13",
+   21.2,
+   108
+  ],
+  [
+   "Balanz Capital Money Market - Clase D",
+   "2026-11-13",
+   21.3,
+   285
+  ],
+  [
+   "Cocos Ahorro - Clase B",
+   "2026-11-13",
+   19.7,
+   63
+  ],
+  [
+   "Cocos Ahorro - Clase C",
+   "2026-11-13",
+   19.7,
+   27
+  ],
+  [
+   "Delta Pesos - Clase A",
+   "2026-11-12",
+   19.2,
+   77
+  ],
+  [
+   "Delta Pesos - Clase B",
+   "2026-11-12",
+   21,
+   675
+  ],
+  [
+   "Delta Pesos - Clase D",
+   "2026-11-12",
+   22.1,
+   36
+  ],
+  [
+   "Delta Pesos - Clase M",
+   "2026-11-12",
+   19.1,
+   8
+  ],
+  [
+   "Delta Pesos - Clase X",
+   "2026-11-12",
+   21.6,
+   399
+  ],
+  [
+   "Fima Premium - Clase A",
+   "2026-11-12",
+   19.9,
+   3616
+  ],
+  [
+   "Fima Premium - Clase B",
+   "2026-11-12",
+   21.7,
+   4431
+  ],
+  [
+   "Fima Premium - Clase C",
+   "2026-11-12",
+   22.1,
+   1095
+  ],
+  [
+   "Fima Premium - Clase N",
+   "2026-11-12",
+   22.9,
+   323
+  ],
+  [
+   "Max Money Market - Clase B",
+   "2026-11-13",
+   20.8,
+   444
+  ],
+  [
+   "Mercado Fondo - Clase A",
+   "2026-11-13",
+   21.1,
+   9168
+  ],
+  [
+   "Mercado Fondo - Clase C",
+   "2026-11-13",
+   22.3,
+   52
+  ],
+  [
+   "Pellegrini I FCIC - Clase U",
+   "2025-09-30",
+   79.5,
+   21
+  ],
+  [
+   "Pellegrini Liquidez Pesos - Clase C",
+   "2026-11-12",
+   23.9,
+   165
+  ],
+  [
+   "Pellegrini Renta Pesos - Clase A",
+   "2026-11-13",
+   21.9,
+   154
+  ],
+  [
+   "Pellegrini Renta Pesos - Clase B",
+   "2026-11-13",
+   22.5,
+   2044
+  ],
+  [
+   "Toronto Trust Ahorro - Clase A",
+   "2026-11-13",
+   19.2,
+   68
+  ],
+  [
+   "Toronto Trust Ahorro - Clase B",
+   "2026-11-13",
+   20,
+   328
+  ],
+  [
+   "Toronto Trust Ahorro - Clase C",
+   "2026-11-13",
+   19.6,
+   8
+  ],
+  [
+   "Ualintec Ahorro Pesos - Clase A",
+   "2026-11-13",
+   21.7,
+   165
+  ],
+  [
+   "Ualintec Ahorro Pesos - Clase B",
+   "2026-11-13",
+   22.6,
+   66
+  ],
+  [
+   "Ualintec Ahorro Pesos - Clase C",
+   "2026-11-13",
+   23.2,
+   19
+  ]
+ ],
+ "pf": [
+  [
+   "BANCO DE LA NACION ARGENTINA",
+   0.1925,
+   0
+  ],
+  [
+   "BANCO DE GALICIA Y BUENOS AIRES S.A.",
+   0.1825,
+   0
+  ],
+  [
+   "BANCO BBVA ARGENTINA S.A.",
+   0.17,
+   0
+  ],
+  [
+   "BANCO SANTANDER ARGENTINA S.A.",
+   0.175,
+   0
+  ],
+  [
+   "BANCO DE LA PROVINCIA DE BUENOS AIRES",
+   0.21,
+   0.22
+  ],
+  [
+   "BANCO MACRO S.A.",
+   0.195,
+   0
+  ],
+  [
+   "INDUSTRIAL AND COMMERCIAL BANK OF CHINA (ARGENTINA) S.A.U.",
+   0.179,
+   0
+  ],
+  [
+   "BANCO DE LA CIUDAD DE BUENOS AIRES",
+   0.17,
+   0
+  ],
+  [
+   "BANCO PATAGONIA S.A.",
+   0.16,
+   0
+  ],
+  [
+   "BANCO CREDICOOP COOPERATIVO LIMITADO",
+   0.185,
+   0.185
+  ],
+  [
+   "BANCO BICA S.A.",
+   0.24,
+   0.24
+  ],
+  [
+   "BANCO CMF S.A.",
+   0.24,
+   0.24
+  ],
+  [
+   "BANCO COMAFI SOCIEDAD ANONIMA",
+   0.19,
+   0.19
+  ],
+  [
+   "BANCO DE COMERCIO S.A.",
+   0.21,
+   0.21
+  ],
+  [
+   "BANCO DE FORMOSA S.A.",
+   0.185,
+   0.185
+  ],
+  [
+   "BANCO DE LA PROVINCIA DE CORDOBA S.A.",
+   0.2075,
+   0.2075
+  ],
+  [
+   "BANCO DEL CHUBUT S.A.",
+   0.205,
+   0.205
+  ],
+  [
+   "BANCO DEL SOL S.A.",
+   0.23,
+   0.23
+  ],
+  [
+   "BANCO DINO S.A.",
+   0.2,
+   0.22
+  ],
+  [
+   "BANCO HIPOTECARIO S.A.",
+   0.195,
+   0.22
+  ],
+  [
+   "BANCO JULIO SOCIEDAD ANONIMA",
+   0.19,
+   0.19
+  ],
+  [
+   "BANCO MARIVA S.A.",
+   0.2375,
+   0.2375
+  ],
+  [
+   "BANCO MASVENTAS S.A.",
+   0.21,
+   0.19
+  ],
+  [
+   "BANCO MERIDIAN S.A.",
+   0.24,
+   0.24
+  ],
+  [
+   "BANCO PROVINCIA DE TIERRA DEL FUEGO",
+   0.19,
+   0.15
+  ],
+  [
+   "BANCO VOII S.A.",
+   0.23,
+   0.23
+  ],
+  [
+   "BIBANK S.A.",
+   0.22,
+   0.22
+  ],
+  [
+   "CRÉDITO REGIONAL COMPAÑÍA FINANCIERA S.A.U.",
+   0.2375,
+   0.2375
+  ],
+  [
+   "REBA COMPAÑIA FINANCIERA S.A.",
+   0.24,
+   0.24
+  ],
+  [
+   "Banco Piano",
+   0.175,
+   0.175
+  ],
+  [
+   "Brubank",
+   0.17,
+   0.17
+  ],
+  [
+   "UALA",
+   0.22,
+   0.22
+  ],
+  [
+   "Cocos",
+   0.24,
+   0.24
+  ]
+ ],
+ "letras": [
+  [
+   "S30N6",
+   22.66,
+   1.9,
+   "2026-11-30"
+  ],
+  [
+   "TTD26",
+   -115.66,
+   -9.62,
+   "2026-12-15"
+  ],
+  [
+   "T15E7",
+   23.47,
+   1.94,
+   "2027-01-15"
+  ],
+  [
+   "S29E7",
+   24.31,
+   2,
+   "2027-01-29"
+  ],
+  [
+   "S26F7",
+   25.16,
+   2.05,
+   "2027-02-26"
+  ],
+  [
+   "T30A7",
+   27.1,
+   2.15,
+   "2027-04-30"
+  ],
+  [
+   "T31Y7",
+   28.01,
+   2.2,
+   "2027-05-31"
+  ],
+  [
+   "T30J7",
+   28.62,
+   2.22,
+   "2027-06-30"
+  ],
+  [
+   "TY30P",
+   45.81,
+   2.3,
+   "2030-05-30"
+  ]
+ ]
+}
