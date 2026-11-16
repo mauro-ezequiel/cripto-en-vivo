@@ -5318,11 +5318,12 @@ function walOps(){const L=[],t0=WAL.t0||0,M=WAL.mg;
 /* recorrido en orden: al abrir se reserva el margen (si alcanza la plata disponible), al cerrar vuelve con su resultado */
 function walRun(){const L=walOps(),ev=[];for(const x of L){ev.push([x.t,0,x]);if(x.end)ev.push([x.end,1,x]);}ev.sort((a,b)=>a[0]-b[0]||a[1]-b[1]);
   let cash=WAL.cap,peak=WAL.cap,dd=0,day=-1,day0=WAL.cap,dayPnl=0;const pts=[[WAL.t0,WAL.cap]],LM=WAL.lim||WAL_DEF.lim,act=[];
+  /* noviembre 2026: el límite por dirección se cuenta aparte para cripto y para acciones (5 acciones LONG abiertas por semanas no tienen que frenar las señales de cripto, como pasaba con la IA) */
   /* límites de riesgo (octubre 2026): máximo de operaciones abiertas en la misma dirección (cinco LONG de distintas monedas son casi una sola apuesta a BTC),
      tope del capital en uso y pérdida máxima por día: si se llega, ese día no se toman señales nuevas */
   for(const [t,kind,x] of ev){const d=Math.floor((t-new Date().getTimezoneOffset()*6e4)/864e5);if(d!==day){day=d;dayPnl=0;day0=cash+act.reduce((a,y)=>a+y.mg,0);}
     if(!kind){const used=act.reduce((a,y)=>a+y.mg,0),eqNow=cash+used;
-      if(cash<x.mg)x.skip='sin plata disponible';else if(act.filter(y=>y.dir===x.dir).length>=LM.dir)x.skip=`ya hay ${LM.dir} ${x.dir>0?'LONG':'SHORT'} abiertas`;
+      if(cash<x.mg)x.skip='sin plata disponible';else if(act.filter(y=>y.dir===x.dir&&(y.k==='ACCIONES')===(x.k==='ACCIONES')).length>=LM.dir)x.skip=`ya hay ${LM.dir} ${x.dir>0?'LONG':'SHORT'} abiertas en ${x.k==='ACCIONES'?'acciones':'cripto'}`;
       else if(used+x.mg>eqNow*LM.uso/100)x.skip=`superaba el ${LM.uso} % del capital en uso`;else if(dayPnl<=-day0*LM.dia/100)x.skip=`límite de pérdida del día (${LM.dia} %)`;
       else{cash-=x.mg;x.in=1;act.push(x);}}
     else if(x.in){cash+=x.mg+(x.u||0);x.done=1;dayPnl+=x.u||0;const k=act.indexOf(x);if(k>=0)act.splice(k,1);const eq=cash+L.filter(y=>y.in&&!y.done&&y.t<=t).reduce((a,y)=>a+y.mg,0);peak=Math.max(peak,eq);dd=Math.min(dd,eq/peak-1);pts.push([t,eq]);}}
