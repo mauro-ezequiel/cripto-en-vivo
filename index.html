@@ -3301,13 +3301,13 @@ function pasRender(){const el=$('pasBody');if(!el)return;const D=PAS.d;if(!D){el
   /* dólares y cripto (más riesgo, opcional) */
   if($('pasCripto').checked)for(const e of (D.re||[]))for(const r of e.rendimientos||[]){if(!/^(USDT|USDC|USD)$/.test(r.moneda)||!(r.apy>0)||Date.now()-new Date(r.fecha)>30*864e5)continue;
     R.push({n:e.entidad.replace(/^\w/,c=>c.toUpperCase()),q:`Rendimiento en ${r.moneda}`,k:2,tna:r.apy,m:Math.pow(1+r.apy/100,30/365)-1,usd:1,f:new Date(r.fecha+'T12:00').toLocaleDateString('es-AR',{day:'numeric',month:'numeric'}),nota:'En dólares/cripto: la ganancia es en esa moneda, no cubre si el dólar baja y depende de que la plataforma pague (no hay seguro de depósitos).'});}
-  R.sort((a,b)=>b.m-a.m);const inf=(D.inf||[]).slice(-1)[0],infM=inf?inf.valor/100:null,$f=v=>'$'+Math.round(v).toLocaleString('es-AR');
+  R.sort((a,b)=>b.m-a.m);const inf=(D.inf||[]).slice(-1)[0],infM=inf?inf.valor/100:null,$f=v=>(v<0?'−$':'$')+Math.abs(Math.round(v)).toLocaleString('es-AR');
   const K=['🟢 garantizado','🟡 muy bajo riesgo','🔴 con riesgo'];
   el.innerHTML=`<table><tr><th>Dónde</th><th>Tasa anual</th><th>Ganás en 1 mes</th></tr>${R.map((x,i)=>`<tr><td><span class="pas-n">${i+1}. ${esc(x.n)}</span><span class="pas-k k${x.k}">${K[x.k]}</span><small>${esc(x.q)}${x.usd?' · en dólares':''} · ${esc(x.f)}</small></td>
     <td>${x.tna.toFixed(1).replace('.',',')} %<small>${(x.m*100).toFixed(2).replace('.',',')} % al mes</small></td><td><b class="g">${x.usd?'≈ ':''}${$f(M*x.m)}</b>${infM!=null&&!x.usd?`<small>${x.m>infM?'le gana':'pierde'} a la inflación (${$f(M*(x.m-infM))})</small>`:''}</td></tr>`).join('')}</table>
     <div class="pas-nota">Ganancia en un mes por cada ${$f(M)}, antes de impuestos. ${inf?`Inflación del último mes publicado: <b>${inf.valor.toString().replace('.',',')} %</b> (${$f(M*infM)} por cada ${$f(M)}): lo que rinde menos que eso, en realidad pierde poder de compra. `:''}
     🟢 plazo fijo: tasa fija garantizada y con seguro de depósitos · 🟡 fondos, cuentas remuneradas y Letras: muy bajo riesgo pero la tasa cambia · 🔴 dólares/cripto: depende de la plataforma.
-    No existe ganancia 100 % segura: esto es información, no una recomendación. Fuentes: BCRA y CNV vía ArgentinaDatos, cuentas remuneradas según iProUP (${PAS_CTA_F}).</div>`;
+    No existe ganancia 100 % segura: esto es información, no una recomendación. Fuentes: BCRA y CNV vía ArgentinaDatos, cuentas remuneradas según ${PAS_CTA_F}.</div>`;
   const best=R[0];$('pasSub').textContent=best?`· la mejor hoy: ${best.n} (${$f(M*best.m)} por mes)`:'';}
 $('pasMonto').onchange=pasRender;$('pasCripto').onchange=pasRender;
 setInterval(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},6e4);setTimeout(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},5000);
