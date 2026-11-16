@@ -3885,7 +3885,7 @@ $('drwNtf').onclick=async e=>{const b=e.target.closest('button');if(!b)return;co
   if(ntfAny()&&NTF[k])NTF[k]=false;
   else{if(!permOK()&&!rmtOn()){await askNotif();if(!permOK()){renderDrw();return;}}if(permOK())NTF.on=true;NTF[k]=true;}
   saveNtf();renderNtf();renderDrw();};
-$('drwModes').onclick=e=>{const b=e.target.closest('.mcard');if(!b)return;if(b.dataset.m!==mode)applyMode(b.dataset.m);renderDrw();renderHist();setTimeout(()=>drawer(false),250);};
+$('drwModes').onclick=e=>{const b=e.target.closest('.mcard[data-m]');if(!b)return;if(b.dataset.m!==mode)applyMode(b.dataset.m);renderDrw();renderHist();setTimeout(()=>drawer(false),250);};
 /* alertas de precio */
 function parsePx(str,ref){let t=String(str||'').trim().replace(/\s|\$/g,'');if(!t)return NaN;
   if(t.includes(',')&&t.includes('.'))t=t.replace(/\./g,'').replace(',','.');
