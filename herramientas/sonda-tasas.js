@@ -1,7 +1,8 @@
-/* sonda: qué datos de tasas en Argentina se pueden leer (ArgentinaDatos) y si permiten leerse desde el navegador (CORS) */
 const fs = require('fs');
-(async () => { const out = {}; const B = 'https://api.argentinadatos.com/v1/finanzas/';
-  for (const p of ['tasas/plazoFijo', 'fci/mercadoDinero/ultimo', 'fci/mercadoDinero/penultimo', 'fci/rentaFija/ultimo', 'rendimientos', 'indices/inflacion', 'indices/uva', 'letras', 'tasas/depositos30Dias']) {
-    try { const r = await fetch(B + p, { headers: { Origin: 'https://mauro-ezequiel.github.io' } }); const t = await r.text(); let j = null; try { j = JSON.parse(t); } catch (e) {}
-      out[p] = { status: r.status, cors: r.headers.get('access-control-allow-origin'), n: Array.isArray(j) ? j.length : null, ej: Array.isArray(j) ? (p.startsWith('indices') ? j.slice(-2) : j.slice(0, 4)) : String(t).slice(0, 300) }; } catch (e) { out[p] = String(e); } }
-  fs.writeFileSync('sonda-tasas.json', JSON.stringify(out, null, 1)); console.log(JSON.stringify(out).slice(0, 2000)); })();
+(async () => { const B = 'https://api.argentinadatos.com/v1/finanzas/'; const out = {};
+  out.rend = await (await fetch(B + 'rendimientos')).json();
+  const u = await (await fetch(B + 'fci/mercadoDinero/ultimo')).json(), p = await (await fetch(B + 'fci/mercadoDinero/penultimo')).json();
+  out.fci = u.filter(x => /mercado|ual|naranja|brubank|personal|prex|cocos|lemon|galicia|santander|bbva|macro|nacion|icbc|balanz|iol|supervielle|hsbc|fima|1822|pellegrini|delta|toronto|max/i.test(x.fondo)).map(x => { const q = p.find(y => y.fondo === x.fondo); const d = q ? (new Date(x.fecha) - new Date(q.fecha)) / 864e5 : null; return [x.fondo, x.fecha, q && d ? +(((x.vcp / q.vcp) ** (365 / d) - 1) * 100).toFixed(1) : null, Math.round(x.patrimonio / 1e9)]; }).filter(x => x[3] > 5);
+  out.pf = (await (await fetch(B + 'tasas/plazoFijo')).json()).map(x => [x.entidad, x.tnaClientes, x.tnaNoClientes]);
+  out.letras = (await (await fetch(B + 'letras')).json()).letras.slice(0, 12).map(x => [x.ticker, x.tnaPorcentaje, x.temPorcentaje, x.fechaVencimiento]);
+  fs.writeFileSync('sonda-tasas.json', JSON.stringify(out, null, 1)); })();
