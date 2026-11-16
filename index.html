@@ -383,6 +383,12 @@ body.fs-on .fsbar{display:flex}
 .pio-b{display:flex;gap:8px;margin-top:8px}.pio-b button{flex:1;padding:8px;border-radius:8px;border:0;font:inherit;font-weight:700;cursor:pointer}.pio-b .ok{background:var(--acc);color:#fff}.pio-b .no{background:var(--line);color:var(--txt)}
 .resc{margin:8px 0;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg);font-size:13px;line-height:1.5}.resc h4{margin:0 0 6px;font-size:14px}.resc ol{margin:4px 0 6px;padding-left:18px}.resc .rv{font-weight:700;font-size:14px;margin-bottom:4px}
 .resc .rbt{font-size:11.5px;color:var(--mut);border-top:1px solid var(--line);margin-top:6px;padding-top:6px}.resc button{margin-top:6px}
+.pas .pas-f{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:6px 0 10px;font-size:13px}.pas select{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:8px;padding:4px 6px;font:inherit;font-weight:700}
+.pas .pas-ck{display:flex;gap:6px;align-items:center;color:var(--mut);font-size:12px;width:100%}
+.pas table{width:100%;border-collapse:collapse;font-size:13px}.pas th{color:var(--mut);font-weight:600;font-size:11px;text-align:right;padding:4px 4px;border-bottom:1px solid var(--line)}.pas th:first-child,.pas td:first-child{text-align:left}
+.pas td{padding:7px 4px;border-bottom:1px solid var(--line);text-align:right;vertical-align:top}.pas td small{display:block;color:var(--mut);font-size:10.5px;line-height:1.35;font-weight:400}.pas td b.g{color:var(--up)}.pas .pas-n{font-weight:700;font-size:13px}
+.pas .pas-k{display:inline-block;font-size:10px;padding:1px 6px;border-radius:999px;margin-left:4px;vertical-align:1px;font-weight:700}.pas .k0{background:rgba(38,199,90,.18);color:#26c75a}.pas .k1{background:rgba(255,193,7,.18);color:#ffc107}.pas .k2{background:rgba(239,59,59,.18);color:#ef5350}
+.pas .pas-nota{font-size:11.5px;color:var(--mut);line-height:1.5;margin-top:8px}
 .lst-h{display:flex;align-items:center;gap:8px}.lst-plus{margin-left:auto;width:30px;height:30px;border-radius:50%;border:0;background:var(--acc);color:#fff;font-size:20px;font-weight:700;cursor:pointer;line-height:1}
 .lst-d{margin:0 0 8px}.lst-d summary .lst-n{font-size:13px}.lst-del{margin-left:auto}.lst-tf{display:flex;align-items:center;gap:6px;font-size:11px;padding:2px 2px 6px}.lst-tf select{background:var(--panel,#11141a);color:var(--txt);border:1px solid var(--line);border-radius:6px;font-size:11px;padding:2px 4px}
 .lst-b{padding:2px 8px 8px}.lst-r{display:grid;grid-template-columns:1fr auto auto 26px;align-items:center;gap:6px;padding:6px 2px;border-top:1px solid var(--line);cursor:pointer;font-size:13px}
@@ -470,8 +476,8 @@ body.fs-on .fsbar{display:flex}
 @media (min-width:801px){#dash.dash{grid-template-columns:minmax(220px,260px) minmax(0,1fr)!important}}
 .liq-row{display:flex;align-items:center;gap:8px;flex-wrap:wrap;padding:4px 10px;font-size:11px;color:var(--mut);border-bottom:1px solid var(--line)}.liq-row .lopts{margin-left:0}body.fs-on .liq-row{display:none!important}@media (orientation:landscape) and (max-height:520px){.liq-row{display:none!important}}
 .bell-btn{margin-left:auto;background:none;border:1px solid var(--line);color:var(--txt);border-radius:50%;width:26px;height:26px;min-width:26px;padding:0;font-size:13px;line-height:1;cursor:pointer}.bell-btn~.i-btn{margin-left:0}
-@media (max-width:800px){body[data-v="main"] #sigBox,body[data-v="main"] #pilBox,body[data-v="main"] #cicBox,body[data-v="main"] #acuBox{display:none!important}body[data-v="sig"] .app>aside,body[data-v="pil"] .app>aside,body[data-v="cic"] .app>aside{display:none!important}
-  body[data-v="cic"] main>*:not(#cicBox):not(#acuBox){display:none!important}body[data-v="cic"] #cicBox{border-top:0}body[data-v="cic"] #acuBox{min-height:50vh}
+@media (max-width:800px){body[data-v="main"] #sigBox,body[data-v="main"] #pilBox,body[data-v="main"] #cicBox,body[data-v="main"] #acuBox,body[data-v="main"] #pasBox,body[data-v="sig"] #pasBox,body[data-v="pil"] #pasBox{display:none!important}body[data-v="sig"] .app>aside,body[data-v="pil"] .app>aside,body[data-v="cic"] .app>aside{display:none!important}
+  body[data-v="cic"] main>*:not(#cicBox):not(#acuBox):not(#pasBox){display:none!important}body[data-v="cic"] #cicBox{border-top:0}body[data-v="cic"] #acuBox{min-height:50vh}
   body[data-v="sig"] main>*:not(#sigBox),body[data-v="pil"] main>*:not(#pilBox){display:none!important}body[data-v="sig"] #sigBox,body[data-v="pil"] #pilBox{border-top:0;min-height:calc(100vh - 80px)}#pilDrw{display:none!important}}
 .ers-tip{position:absolute;top:8px;left:50%;transform:translateX(-50%);z-index:6;display:flex;gap:6px;align-items:center;flex-wrap:wrap;justify-content:center;background:rgba(20,23,29,.94);border:1px solid #ef5350;border-radius:10px;padding:6px 10px;font-size:12px;color:var(--txt);max-width:calc(100% - 20px)}.ers-tip button{background:var(--bg);color:var(--txt);border:1px solid var(--line);border-radius:6px;padding:4px 8px;font-size:12px;cursor:pointer}.ers-tip #ersAll{border-color:#ef5350;color:#ff8a80}
 .rmt-n{font-size:12px;color:var(--mut);margin:0 0 4px;line-height:1.45}.rmt-f{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin:8px 0;font-size:12px;line-height:1.45}.rmt-f ol{margin:0 0 8px;padding-left:18px}.rmt-f li{margin:3px 0}.rmt-f a{color:var(--acc)}
@@ -855,6 +861,10 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#26a69a;box-shadow:0 0 0 2px rg
       <div class="lqx-sum" id="lqSum"></div>
       <div class="lqx-read" id="lqRead"></div><div class="lqx-body"><div class="lqx-chart" id="lqChart"></div><div class="lqx-side"><div class="mh">Más liquidadas en la ventana</div><div id="lqTop"></div><div class="mh" style="margin-top:6px">Liquidaciones grandes</div><div id="lqFeed"></div></div></div></section>
     <section class="news" id="newsBox"><div class="dt">Las 5 noticias globales más relevantes para las criptomonedas <span class="mut" id="newsUpd"></span><button class="i-btn" data-i="news" type="button" aria-label="Cómo funcionan las noticias" aria-expanded="false">ⓘ</button></div><div class="i-box" data-i="news" hidden><b>Noticias</b><br>Las 5 noticias globales que más pueden mover a las criptomonedas, ordenadas por relevancia. Cada una dice si es <b>▲ alcista</b>, <b>▼ bajista</b> o <b>● neutral</b>, su impacto (alto, medio o bajo) y la fuente; las etiquetas de color indican el tema. La lista se renueva cada 8 h, pero si sale una muy importante reemplaza a la menos relevante (marcada NUEVA). El tono de las noticias de las últimas 12 h también entra como factor en el termómetro. Tocá el título para abrirla en la fuente original.</div><div id="newsList"></div></section>
+    <section class="acu pas" id="pasBox"><div class="dt"><span>💸 Ingresos pasivos: dónde rinde más tu plata</span> <span class="mut" id="pasSub"></span></div>
+      <div class="pas-f"><span class="mut">Cuánto ganás por cada</span><select id="pasMonto"><option value="1000000" selected>$1.000.000</option><option value="500000">$500.000</option><option value="5000000">$5.000.000</option><option value="10000000">$10.000.000</option></select><span class="mut">en 1 mes</span>
+        <label class="pas-ck"><input type="checkbox" id="pasCripto"> mostrar también dólares y cripto (más riesgo)</label></div>
+      <div id="pasBody"><div class="mut">Cargando tasas…</div></div></section>
     <section class="adat" id="datBox"><div class="dt"><span id="datHead">📋 Datos del activo</span><span class="mut" id="datSub"></span></div><div id="datBody"><div class="mut">Elegí una moneda o acción para ver de qué se trata.</div></div></section>
   </main>
 </div>
@@ -3255,6 +3265,52 @@ $('pilImgBtn').onclick=()=>$('pilImgIn').click();
 $('pilImgIn').onchange=e=>{const f=e.target.files;if(f&&f.length)pilImgRead(f);e.target.value='';};
 $('pilImgOut').addEventListener('change',e=>{const t=e.target;if(t.dataset.pio!=null){PIO.items[+t.dataset.pio].on=t.checked;pioRender();}else if(t.dataset.pios!=null){const x=PIO.items[+t.dataset.pios];x.sym=t.value||null;pioRender();}});
 $('pilImgOut').addEventListener('click',e=>{const b=e.target.closest('[data-pioa]');if(!b)return;if(b.dataset.pioa==='1')pioApply();else{PIO.items=[];$('pilImgOut').innerHTML='';}});
+/* ---------- 💸 INGRESOS PASIVOS (noviembre 2026) ----------
+   Ranking de dónde rinde más la plata sin hacer nada, ordenado por cuánto ganás por cada $1.000.000 en un mes.
+   Datos en vivo de ArgentinaDatos (api.argentinadatos.com, se lee desde el navegador): plazos fijos de cada banco (TNA a 30 días, BCRA),
+   fondos money market que usan las billeteras y bancos (rendimiento de los últimos días), Letras del Tesoro (LECAP, tasa mensual al vencimiento),
+   inflación del último mes y rendimientos en dólares/cripto. Las cuentas remuneradas que no publican datos abiertos (Naranja X, Personal Pay, Claro Pay,
+   Lemon, Reba) van con la última tasa publicada por iProUP y su fecha. */
+var PAS={t:0,d:null,busy:false};
+const PAS_FCI=[['Mercado Pago','Mercado Fondo - Clase A','Cuenta (fondo Mercado Fondo) · se retira al instante'],['Ualá','Ualintec Ahorro Pesos - Clase A','Cuenta remunerada (fondo Ualintec) · al instante'],
+  ['Banco Galicia','Fima Premium - Clase A','Fondo Fima Premium desde la app · al instante'],['Banco Nación','Pellegrini Renta Pesos - Clase A','Fondo Pellegrini desde la app · al instante'],
+  ['Banco Provincia / Cuenta DNI','1822 Raices Ahorro Pesos - Clase A','Fondo 1822 Raíces · al instante'],['Cocos','Cocos Ahorro - Clase A','Fondo Cocos Ahorro · al instante'],['Balanz','Balanz Capital Money Market - Clase A','Fondo money market · al instante'],
+  ['Banco Santander','Super Ahorro $ - Clase A','Fondo Super Ahorro $ · al instante'],['BBVA','FBA Renta Pesos - Clase A','Fondo FBA Renta Pesos · al instante'],['Banco Macro','Pionero Pesos - Clase A','Fondo Pionero Pesos · al instante'],['ICBC','Alpha Pesos - Clase A','Fondo Alpha Pesos · al instante']];
+const PAS_CTA=[['Naranja X','Cuenta remunerada',19],['Personal Pay','Cuenta remunerada',19.1],['Claro Pay','Cuenta remunerada',19],['Lemon','Cuenta remunerada en pesos',20.8],['Reba','Cuenta remunerada (de $30.000 a $1.000.000)',21]];
+const PAS_CTA_F='3/11/2026 (iProUP)';
+const PAS_BCO=/^(BANCO DE LA NACION|BANCO DE GALICIA|BANCO SANTANDER|BANCO BBVA|BANCO MACRO|BANCO DE LA PROVINCIA DE BUENOS AIRES|INDUSTRIAL AND COMMERCIAL|BANCO CREDICOOP|BANCO PATAGONIA|BANCO SUPERVIELLE|BANCO CIUDAD|BRUBANK|UALA|Cocos|BANCO HIPOTECARIO)/i;
+const pasNom=e=>String(e).replace(/ S\.A\.U?\.?| COMPAÑ[IÍ]A FINANCIERA| Y BUENOS AIRES/gi,'').replace(/^BANCO DE LA /i,'Banco ').replace(/^BANCO /i,'Banco ').toLowerCase().replace(/(^|\s)\S/g,c=>c.toUpperCase()).replace('Industrial And Commercial Bank Of China (argentina)','ICBC').replace('Bbva','BBVA').replace('Uala','Ualá');
+async function pasLoad(){if(PAS.busy||Date.now()-PAS.t<30*6e4&&PAS.d)return;PAS.busy=true;const B='https://api.argentinadatos.com/v1/finanzas/',g=u=>getJ(B+u,15000).catch(()=>null);
+  try{const [pf,fu,fp,le,inf,re]=await Promise.all([g('tasas/plazoFijo'),g('fci/mercadoDinero/ultimo'),g('fci/mercadoDinero/penultimo'),g('letras'),g('indices/inflacion'),g('rendimientos')]);
+    PAS.d={pf,fu,fp,le,inf,re};PAS.t=Date.now();}catch(e){}PAS.busy=false;pasRender();}
+function pasRender(){const el=$('pasBody');if(!el)return;const D=PAS.d;if(!D){el.innerHTML='<div class="mut">Cargando tasas…</div>';return;}
+  const M=+$('pasMonto').value||1e6,R=[],m30=tna=>Math.pow(1+tna/365,30)-1;
+  /* plazos fijos: el mejor de todos y los bancos conocidos */
+  const pf=(D.pf||[]).map(x=>({e:x.entidad,t:Math.max(x.tnaClientes||0,x.tnaNoClientes||0)})).filter(x=>x.t>0).sort((a,b)=>b.t-a.t);
+  const pfSel=pf.slice(0,3).concat(pf.filter(x=>PAS_BCO.test(x.e))).filter((x,i,a)=>a.findIndex(y=>y.e===x.e)===i);
+  for(const x of pfSel)R.push({n:pasNom(x.e),q:'Plazo fijo a 30 días',k:0,tna:x.t*100,m:x.t*30/365,f:'BCRA, hoy',nota:'Tasa fija garantizada por 30 días. Depósitos cubiertos por el seguro de depósitos (SEDESA) hasta el tope vigente.'});
+  /* fondos money market de billeteras y bancos (rendimiento del último día hábil, anualizado) */
+  const fu=D.fu||[],fp=D.fp||[];for(const [n,f,q] of PAS_FCI){const re2=new RegExp('^'+f.split(' - ')[0].replace(/[$.*+?()[\]]/g,'\\$&'),'i'),a=fu.filter(x=>re2.test(x.fondo)&&/clase a/i.test(x.fondo))[0]||fu.find(x=>re2.test(x.fondo));if(!a)continue;
+    const b=fp.find(x=>x.fondo===a.fondo);if(!b||!(b.vcp>0)||a.fecha===b.fecha)continue;const d=Math.max(1,(new Date(a.fecha)-new Date(b.fecha))/864e5),r=a.vcp/b.vcp-1;if(!(r>0)||r>.01)continue;
+    const tna=r/d*365;R.push({n,q,k:1,tna:tna*100,m:Math.pow(1+r/d,30)-1,f:'fondo, '+new Date(a.fecha+'T12:00').toLocaleDateString('es-AR',{day:'numeric',month:'numeric'}),nota:'Fondo money market: rinde todos los días y la sacás cuando quieras. No es plazo fijo: no está garantizado, pero invierte en plazos fijos y cauciones de muy bajo riesgo. Varía día a día.'});}
+  for(const [n,q,t] of PAS_CTA)R.push({n,q,k:1,tna:t,m:m30(t/100),f:PAS_CTA_F,nota:'Tasa publicada por la billetera; la cambian seguido. Puede tener tope.'});
+  /* LECAP: la de ~1 mes y la más larga en pesos */
+  const L=((D.le&&D.le.letras)||[]).filter(x=>x.temPorcentaje>0&&x.tnaPorcentaje>0&&x.tnaPorcentaje<80&&/^[ST]\d/.test(x.ticker)).sort((a,b)=>new Date(a.fechaVencimiento)-new Date(b.fechaVencimiento));
+  for(const x of [L[0],L[Math.floor(L.length/2)],L[L.length-1]].filter((v,i,a)=>v&&a.indexOf(v)===i)){const dias=Math.round((new Date(x.fechaVencimiento)-Date.now())/864e5);if(dias<5)continue;
+    R.push({n:'Letra del Tesoro '+x.ticker,q:`LECAP · vence ${new Date(x.fechaVencimiento+'T12:00').toLocaleDateString('es-AR')} (${dias} días)`,k:1,tna:x.tnaPorcentaje,m:x.temPorcentaje/100,f:'mercado, hoy',nota:'Se compra en cualquier broker (Cocos, Balanz, IOL, bancos). Si la tenés hasta el vencimiento, la ganancia es fija; si la vendés antes, el precio puede variar.'});}
+  /* dólares y cripto (más riesgo, opcional) */
+  if($('pasCripto').checked)for(const e of (D.re||[]))for(const r of e.rendimientos||[]){if(!/^(USDT|USDC|USD)$/.test(r.moneda)||!(r.apy>0)||Date.now()-new Date(r.fecha)>30*864e5)continue;
+    R.push({n:e.entidad.replace(/^\w/,c=>c.toUpperCase()),q:`Rendimiento en ${r.moneda}`,k:2,tna:r.apy,m:Math.pow(1+r.apy/100,30/365)-1,usd:1,f:new Date(r.fecha+'T12:00').toLocaleDateString('es-AR',{day:'numeric',month:'numeric'}),nota:'En dólares/cripto: la ganancia es en esa moneda, no cubre si el dólar baja y depende de que la plataforma pague (no hay seguro de depósitos).'});}
+  R.sort((a,b)=>b.m-a.m);const inf=(D.inf||[]).slice(-1)[0],infM=inf?inf.valor/100:null,$f=v=>'$'+Math.round(v).toLocaleString('es-AR');
+  const K=['🟢 garantizado','🟡 muy bajo riesgo','🔴 con riesgo'];
+  el.innerHTML=`<table><tr><th>Dónde</th><th>Tasa anual</th><th>Ganás en 1 mes</th></tr>${R.map((x,i)=>`<tr><td><span class="pas-n">${i+1}. ${esc(x.n)}</span><span class="pas-k k${x.k}">${K[x.k]}</span><small>${esc(x.q)}${x.usd?' · en dólares':''} · ${esc(x.f)}</small></td>
+    <td>${x.tna.toFixed(1).replace('.',',')} %<small>${(x.m*100).toFixed(2).replace('.',',')} % al mes</small></td><td><b class="g">${x.usd?'≈ ':''}${$f(M*x.m)}</b>${infM!=null&&!x.usd?`<small>${x.m>infM?'le gana':'pierde'} a la inflación (${$f(M*(x.m-infM))})</small>`:''}</td></tr>`).join('')}</table>
+    <div class="pas-nota">Ganancia en un mes por cada ${$f(M)}, antes de impuestos. ${inf?`Inflación del último mes publicado: <b>${inf.valor.toString().replace('.',',')} %</b> (${$f(M*infM)} por cada ${$f(M)}): lo que rinde menos que eso, en realidad pierde poder de compra. `:''}
+    🟢 plazo fijo: tasa fija garantizada y con seguro de depósitos · 🟡 fondos, cuentas remuneradas y Letras: muy bajo riesgo pero la tasa cambia · 🔴 dólares/cripto: depende de la plataforma.
+    No existe ganancia 100 % segura: esto es información, no una recomendación. Fuentes: BCRA y CNV vía ArgentinaDatos, cuentas remuneradas según iProUP (${PAS_CTA_F}).</div>`;
+  const best=R[0];$('pasSub').textContent=best?`· la mejor hoy: ${best.n} (${$f(M*best.m)} por mes)`:'';}
+$('pasMonto').onchange=pasRender;$('pasCripto').onchange=pasRender;
+setInterval(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},6e4);setTimeout(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},5000);
 /* ---------- 📋 DATOS DEL ACTIVO e ÍCONOS (noviembre 2026) ----------
    Al elegir una moneda o acción, abajo de todo: un vistazo rápido (qué es, sector, cómo viene en el mes y el año, distancia al máximo, RSI)
    y la última noticia; con "Ver más", la descripción completa, la ficha (fundada, CEO, empleados, sede, web) y las noticias recientes en español.
@@ -5658,7 +5714,7 @@ $('sigBell').onclick=()=>{drawer(true);setTimeout(()=>{const n=$('drwNtf');if(n)
   row.innerHTML='<span>Zonas de liquidación:</span>';row.appendChild(lo);$('inds').after(row);row.hidden=!active.has('liq')||!MODES[mode].inds.length;})();
 /* ---------- celular: Señales y Pilotear se abren como pantallas desde el menú inferior ---------- */
 const isMob=()=>matchMedia('(max-width:800px)').matches;
-function setView(v){document.body.dataset.v=v;if(v!=='main')window.scrollTo(0,0);document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===v));}
+function setView(v){document.body.dataset.v=v;if(v==='cic')try{pasLoad();}catch(e){}if(v!=='main')window.scrollTo(0,0);document.querySelectorAll('#mnav [data-go]').forEach(b=>b.classList.toggle('on',b.dataset.go===v));}
 document.body.dataset.v='main';
 (function(){const hook=(id,v)=>{const el=$(id);if(!el)return;const orig=el.scrollIntoView.bind(el);
     el.scrollIntoView=o=>{if(!isMob()){orig(o);return;}if(v==='main'){if(document.body.dataset.v!=='main'){setView('main');setTimeout(()=>orig(o),40);}else orig(o);}else setView(v);};};
