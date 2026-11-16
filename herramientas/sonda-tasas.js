@@ -1,8 +1,7 @@
 const fs = require('fs');
-(async () => { const B = 'https://api.argentinadatos.com/v1/finanzas/'; const out = {};
-  out.rend = await (await fetch(B + 'rendimientos')).json();
-  const u = await (await fetch(B + 'fci/mercadoDinero/ultimo')).json(), p = await (await fetch(B + 'fci/mercadoDinero/penultimo')).json();
-  out.fci = u.filter(x => /mercado|ual|naranja|brubank|personal|prex|cocos|lemon|galicia|santander|bbva|macro|nacion|icbc|balanz|iol|supervielle|hsbc|fima|1822|pellegrini|delta|toronto|max/i.test(x.fondo)).map(x => { const q = p.find(y => y.fondo === x.fondo); const d = q ? (new Date(x.fecha) - new Date(q.fecha)) / 864e5 : null; return [x.fondo, x.fecha, q && d ? +(((x.vcp / q.vcp) ** (365 / d) - 1) * 100).toFixed(1) : null, Math.round(x.patrimonio / 1e9)]; }).filter(x => x[3] > 5);
-  out.pf = (await (await fetch(B + 'tasas/plazoFijo')).json()).map(x => [x.entidad, x.tnaClientes, x.tnaNoClientes]);
-  out.letras = (await (await fetch(B + 'letras')).json()).letras.slice(0, 12).map(x => [x.ticker, x.tnaPorcentaje, x.temPorcentaje, x.fechaVencimiento]);
+(async () => { const out = {}; const B = 'https://api.argentinadatos.com/v1/';
+  for (const p of ['finanzas/bonos', 'finanzas/cauciones', 'finanzas/tasas/plazoFijoUva', 'finanzas/obligaciones', 'finanzas/ons', 'finanzas/bonos/cer', 'finanzas/tasas/caucion', 'finanzas/indices/riesgo-pais/ultimo', 'finanzas/letras', 'finanzas/fci/otros/ultimo', 'finanzas/fci/rentaVariable/ultimo', 'cotizaciones/dolares']) {
+    try { const r = await fetch(B + p); const t = await r.text(); out[p] = { status: r.status, ej: t.slice(0, 700) }; } catch (e) { out[p] = String(e); } }
+  const L = await (await fetch(B + 'finanzas/letras')).json(); out.letras_todas = (L.letras || []).map(x => [x.ticker, x.tnaPorcentaje, x.temPorcentaje, x.fechaVencimiento]);
+  for (const u of ['https://data912.com/live/arg_bonds', 'https://data912.com/live/arg_notes', 'https://data912.com/live/arg_corp']) { try { const r = await fetch(u); const j = await r.json(); out[u] = { n: j.length, ej: j.slice(0, 40).map(x => [x.symbol, x.c, x.px_bid, x.px_ask, x.pct_change]) }; } catch (e) { out[u] = String(e); } }
   fs.writeFileSync('sonda-tasas.json', JSON.stringify(out, null, 1)); })();
