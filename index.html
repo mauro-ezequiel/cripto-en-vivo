@@ -6833,13 +6833,16 @@ function iaOpFix(x){const c=IAOP_CFG[x.f]||IAOP_CFG.sh;x.mg=x.mg||c.mg;x.lev=x.l
 try{IAOPS=JSON.parse(localStorage.getItem('cv_ia_ops')||'null');if(!Array.isArray(IAOPS))IAOPS=(JSON.parse(localStorage.getItem('cv_ia_ideas')||'[]')||[]);IAOPS=IAOPS.map(iaOpFix);IANTF=localStorage.getItem('cv_ia_ntf')==='1';}catch(e){IAOPS=[];}
 /* octubre 2026 · IA 24 h: la IA opera y practica dentro del bot 24 h (datos/ia-ops.json). Sus operaciones reales se ven acá; las de práctica solo suman a la estadística */
 var IABOT=null;const IABOT_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia-ops.json';
-async function iaBotLoad(){try{const j=await getJ(IABOT_URL+'?t='+Math.floor(Date.now()/6e4));if(!j||!Array.isArray(j.ops))return;IABOT=j;
+/* noviembre 2026: el archivo pesa ~1,5 MB (2.000 operaciones de práctica + las reales): con 9 s en el celular a veces no llegaba y la billetera mostraba IA en 0.
+   Ahora espera hasta 40 s, reintenta y, al llegar, vuelve a dibujar la billetera. */
+var IABOT_BUSY=0;
+async function iaBotLoad(){if(IABOT_BUSY)return;IABOT_BUSY=1;try{let j=null;for(let k=0;k<3&&!j;k++){try{j=await getJ(IABOT_URL+'?t='+Math.floor(Date.now()/6e4),40000);}catch(e){await new Promise(z=>setTimeout(z,2000));}}if(!j||!Array.isArray(j.ops))return;IABOT=j;
     const real=j.ops.filter(x=>!x.pr).map(x=>iaMgFix(iaOpFix(Object.assign({},x,{bot:1})))),ids=new Set(real.map(x=>x.id));
     try{const loc=IAOPS.filter(x=>!x.bot&&!ids.has(x.id));if(loc.length){const M=new Map(JSON.parse(localStorage.getItem('cv_ia_ops_local')||'[]').map(x=>[x.id,x]));for(const x of loc){const y=Object.assign({},x);delete y.loc;M.set(x.id,y);}localStorage.setItem('cv_ia_ops_local',JSON.stringify([...M.values()]));}}catch(_){}
     /* octubre 2026: las del bot 24 h (las mismas en todas las cuentas) + las que esta página había abierto antes del bot compartido (📱, sin borrar nada) */
     let st=[];try{st=JSON.parse(localStorage.getItem('cv_ia_ops_local')||'[]');}catch(_){}
     const loc=st.filter(x=>x&&!ids.has(x.id)&&x.t<SHARED_T&&!real.some(y=>y.sym===x.sym&&y.dir===x.dir&&Math.abs(y.t-x.t)<36e5)).map(x=>Object.assign(iaOpFix(x),{loc:1}));
-    IAOPS=real.concat(loc).sort((a,b)=>a.t-b.t);saveIAOPS();if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}catch(e){}}
+    IAOPS=real.concat(loc).sort((a,b)=>a.t-b.t);saveIAOPS();if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}try{if($('walBox')&&$('walBox').open)walRender();}catch(e){}}catch(e){}finally{IABOT_BUSY=0;}}
 function iaPractica(){if(!IABOT)return '';const P=IABOT.ops.filter(x=>x.pr),R=IABOT.ops.filter(x=>!x.pr),f=L=>{const C=L.filter(x=>x.st!=='open'),n=C.length;return {n,open:L.length-n,w:n?C.filter(x=>x.pnl>0).length/n*100:null,avg:n?C.reduce((a,x)=>a+(x.pnl/x.mg*100),0)/n:null};};
   const p=f(P),r=f(R);
   return `<div class="ia-mut">🏋️ <b>Practica 24 h en el bot</b> (aunque la página esté cerrada): ${p.n} prácticas cerradas${p.open?` y ${p.open} en curso`:''}${p.n?` · ganó el ${Math.round(p.w)} % · ${iaPct2(p.avg)} del margen por operación`:''}. Operaciones reales del bot: ${r.n} cerradas${r.open?`, ${r.open} en curso`:''}${r.n?` · ${Math.round(r.w)} % ganadas`:''}. Cada día el estudio mide su acierto real y ajusta el umbral de entrada.</div>`;}
