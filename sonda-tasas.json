@@ -1,0 +1,568 @@
+{
+ "tasas/plazoFijo": {
+  "status": 200,
+  "cors": "*",
+  "n": 33,
+  "ej": [
+   {
+    "entidad": "BANCO DE LA NACION ARGENTINA",
+    "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00011.png",
+    "tnaClientes": 0.1925,
+    "tnaNoClientes": 0,
+    "enlace": null,
+    "tasas": [
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 60,
+      "plazoMaxDias": 60,
+      "tna": 0.2
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 90,
+      "plazoMaxDias": 90,
+      "tna": 0.2025
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 365,
+      "plazoMaxDias": 365,
+      "tna": 0.23
+     }
+    ]
+   },
+   {
+    "entidad": "BANCO DE GALICIA Y BUENOS AIRES S.A.",
+    "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00007.png",
+    "tnaClientes": 0.1825,
+    "tnaNoClientes": 0,
+    "enlace": null,
+    "tasas": [
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 60,
+      "plazoMaxDias": 60,
+      "tna": 0.16
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 90,
+      "plazoMaxDias": 90,
+      "tna": 0.17
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 365,
+      "plazoMaxDias": 365,
+      "tna": 0.205
+     }
+    ]
+   },
+   {
+    "entidad": "BANCO BBVA ARGENTINA S.A.",
+    "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00017.png",
+    "tnaClientes": 0.17,
+    "tnaNoClientes": 0,
+    "enlace": null,
+    "tasas": [
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 60,
+      "plazoMaxDias": 60,
+      "tna": 0.19
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 90,
+      "plazoMaxDias": 90,
+      "tna": 0.19
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 365,
+      "plazoMaxDias": 365,
+      "tna": 0.23
+     }
+    ]
+   },
+   {
+    "entidad": "BANCO SANTANDER ARGENTINA S.A.",
+    "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00072.png",
+    "tnaClientes": 0.175,
+    "tnaNoClientes": 0,
+    "enlace": null,
+    "tasas": [
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 60,
+      "plazoMaxDias": 60,
+      "tna": 0.17
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 90,
+      "plazoMaxDias": 90,
+      "tna": 0.1825
+     },
+     {
+      "montoMinimo": null,
+      "montoMaximo": null,
+      "plazoMinDias": 365,
+      "plazoMaxDias": 365,
+      "tna": 0.175
+     }
+    ]
+   }
+  ]
+ },
+ "fci/mercadoDinero/ultimo": {
+  "status": 200,
+  "cors": "*",
+  "n": 623,
+  "ej": [
+   {
+    "fondo": "1810 Ahorro",
+    "horizonte": "corto",
+    "fecha": "2026-11-13",
+    "vcp": 245785.692,
+    "ccp": 6260572620,
+    "patrimonio": 1538759175328.04
+   },
+   {
+    "fondo": "1822 Raices Ahorro Dólares - Clase A",
+    "horizonte": "corto",
+    "fecha": "2026-11-13",
+    "vcp": 1005.808,
+    "ccp": 45220397.07,
+    "patrimonio": 45483024.84
+   },
+   {
+    "fondo": "1822 Raices Ahorro Pesos - Clase A",
+    "horizonte": "corto",
+    "fecha": "2026-11-13",
+    "vcp": 39253.289,
+    "ccp": 7224520538.12,
+    "patrimonio": 283586192908.04
+   },
+   {
+    "fondo": "1822 Raices Ahorro Pesos - Clase B",
+    "horizonte": "corto",
+    "fecha": "2026-11-13",
+    "vcp": 39280.272,
+    "ccp": 38899237074.1,
+    "patrimonio": 1527972623137.7
+   }
+  ]
+ },
+ "fci/mercadoDinero/penultimo": {
+  "status": 200,
+  "cors": "*",
+  "n": 606,
+  "ej": [
+   {
+    "fondo": "1810 Ahorro",
+    "horizonte": "corto",
+    "fecha": "2026-11-12",
+    "vcp": 245655.455,
+    "ccp": 6188554.337124694,
+    "patrimonio": 1520252131478.59
+   },
+   {
+    "fondo": "1822 Raices Ahorro Dólares - Clase A",
+    "horizonte": "corto",
+    "fecha": "2026-11-12",
+    "vcp": 1005.773,
+    "ccp": 44840.63520297323,
+    "patrimonio": 45099500.19
+   },
+   {
+    "fondo": "1822 Raices Ahorro Pesos - Clase A",
+    "horizonte": "corto",
+    "fecha": "2026-11-12",
+    "vcp": 39231.898,
+    "ccp": 7181434.398750221,
+    "patrimonio": 281741301825.46
+   },
+   {
+    "fondo": "1822 Raices Ahorro Pesos - Clase B",
+    "horizonte": "corto",
+    "fecha": "2026-11-12",
+    "vcp": 39258.211,
+    "ccp": 39804649.62110856,
+    "patrimonio": 1562659333606.55
+   }
+  ]
+ },
+ "fci/rentaFija/ultimo": {
+  "status": 200,
+  "cors": "*",
+  "n": 2306,
+  "ej": [
+   {
+    "fondo": "1810 Ahorros Activos",
+    "horizonte": "medio",
+    "fecha": "2026-11-13",
+    "vcp": 32335.647,
+    "ccp": 3530874788,
+    "patrimonio": 114173120099.25
+   },
+   {
+    "fondo": "1810 Mas Ahorro",
+    "horizonte": "corto",
+    "fecha": "2026-11-13",
+    "vcp": 71884.15,
+    "ccp": 2529248355,
+    "patrimonio": 181812868404.06
+   },
+   {
+    "fondo": "1810 Mas Ahorro RP",
+    "horizonte": "corto",
+    "fecha": "2020-09-24",
+    "vcp": 3617.75,
+    "ccp": 104611378,
+    "patrimonio": 378457844.16
+   },
+   {
+    "fondo": "1810 Renta Dólar - Clase A",
+    "horizonte": "largo",
+    "fecha": "2026-11-13",
+    "vcp": 1029.567,
+    "ccp": 94824562,
+    "patrimonio": 97628226.43
+   }
+  ]
+ },
+ "rendimientos": {
+  "status": 200,
+  "cors": "*",
+  "n": 14,
+  "ej": [
+   {
+    "entidad": "nexo",
+    "rendimientos": [
+     {
+      "moneda": "BTC",
+      "apy": 6,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "ETH",
+      "apy": 6,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USDC",
+      "apy": 10.5,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USDT",
+      "apy": 11.5,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BNB",
+      "apy": 6.75,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "DOT",
+      "apy": 15,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "SOL",
+      "apy": 8,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "AVAX",
+      "apy": 8,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "POL",
+      "apy": 6.75,
+      "fecha": "2026-11-15"
+     }
+    ]
+   },
+   {
+    "entidad": "fiwind",
+    "rendimientos": [
+     {
+      "moneda": "ARS",
+      "apy": 17.5,
+      "fecha": "2026-11-13",
+      "bonusValue": 23,
+      "bonusThreshold": 750000
+     },
+     {
+      "moneda": "BTC",
+      "apy": 0.5,
+      "fecha": "2023-09-25",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "ETH",
+      "apy": 0.5,
+      "fecha": "2023-09-25",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "USDT",
+      "apy": 4,
+      "fecha": "2026-08-05",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "USDC",
+      "apy": 4,
+      "fecha": "2026-08-05",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "ADA",
+      "apy": 1,
+      "fecha": "2023-01-24",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "DOT",
+      "apy": 2,
+      "fecha": "2023-09-25",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     },
+     {
+      "moneda": "POL",
+      "apy": 2,
+      "fecha": "2023-09-25",
+      "bonusValue": 0,
+      "bonusThreshold": null
+     }
+    ]
+   },
+   {
+    "entidad": "letsbit",
+    "rendimientos": [
+     {
+      "moneda": "ARS",
+      "apy": 20.3,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USD",
+      "apy": 1.26,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USDT",
+      "apy": 1.26,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USDC",
+      "apy": 1.26,
+      "fecha": "2026-11-15"
+     }
+    ]
+   },
+   {
+    "entidad": "belo",
+    "rendimientos": [
+     {
+      "moneda": "USDC",
+      "apy": 2.3223156993658676,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "ARGT",
+      "apy": 19.004901017072463,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BOLT",
+      "apy": 2.5003019454543725,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "PERT",
+      "apy": 2.500569592110035,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "MEXT",
+      "apy": 4.5003849989391265,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "ETH",
+      "apy": 2.768841314001438,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "CHLT",
+      "apy": 2.5004210171060928,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USDT",
+      "apy": 10,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "COLT",
+      "apy": 14.423227024948723,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BRAT",
+      "apy": 17.456757243243086,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "SOL",
+      "apy": 3.8246692334015577,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BTC",
+      "apy": 0.1,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USD",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BRL",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "USD_AR",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "BOB",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "PEN",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "MXN",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "CLP",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "COP",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "XAUT",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "EUR",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     },
+     {
+      "moneda": "GBP",
+      "apy": 0,
+      "fecha": "2026-11-15"
+     }
+    ]
+   }
+  ]
+ },
+ "indices/inflacion": {
+  "status": 200,
+  "cors": "*",
+  "n": 1004,
+  "ej": [
+   {
+    "fecha": "2026-09-30",
+    "valor": 1.9
+   },
+   {
+    "fecha": "2026-10-31",
+    "valor": 2.2
+   }
+  ]
+ },
+ "indices/uva": {
+  "status": 200,
+  "cors": "*",
+  "n": 3883,
+  "ej": [
+   {
+    "fecha": "2026-11-15",
+    "valor": 2196.12
+   },
+   {
+    "fecha": "2026-11-16",
+    "valor": 2196.12
+   }
+  ]
+ },
+ "letras": {
+  "status": 200,
+  "cors": "*",
+  "n": null,
+  "ej": "{\n  \"fechaActualizacion\": \"2026-11-15T01:58:50.733Z\",\n  \"letras\": [\n    {\n      \"ticker\": \"S30N6\",\n      \"precioArs\": 128.77,\n      \"tnaPorcentaje\": 22.66,\n      \"teaPorcentaje\": 25.3,\n      \"temPorcentaje\": 1.9,\n      \"fechaVencimiento\": \"2026-11-30\",\n      \"cierreArs\": 128.77,\n      \"variacionPorc"
+ },
+ "tasas/depositos30Dias": {
+  "status": 200,
+  "cors": "*",
+  "n": 6579,
+  "ej": [
+   {
+    "fecha": "2000-01-03",
+    "valor": 0.0815
+   },
+   {
+    "fecha": "2000-01-04",
+    "valor": 0.0862
+   },
+   {
+    "fecha": "2000-01-05",
+    "valor": 0.0779
+   },
+   {
+    "fecha": "2000-01-06",
+    "valor": 0.0773
+   }
+  ]
+ }
+}
