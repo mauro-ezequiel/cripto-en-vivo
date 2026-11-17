@@ -775,6 +775,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .fsind-h b{font-size:13px;padding-left:4px}.fsind .fsind-x{flex:0 0 auto;background:var(--bg);border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:6px 12px;font-size:13px;font-weight:700;min-height:34px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center}
 
 .cap-b{font-size:10px;cursor:help}.cap-b.o{opacity:.5}.cap-hoy{margin:0 0 8px;padding:8px 12px;border-radius:12px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.35);font-size:12.5px}.cap-hoy a{color:#00e676;font-weight:700;cursor:pointer}
+#pasBox{scroll-margin-top:6px}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -3419,7 +3420,9 @@ function pasRender(){const el=$('pasBody');if(!el)return;const D=PAS.d;if(!D){el
     <b>Impuestos:</b> plazo fijo y cuentas remuneradas en pesos están exentos de Ganancias para personas; fondos y Letras en pesos, en general también. Lo de dólares/cripto (y cualquier plataforma del exterior) paga Ganancias —acá se descuenta un 15 % estimado— y suma para Bienes Personales: consultá a un contador para tu caso.
     No existe ganancia 100 % segura: esto es información, no una recomendación. Fuentes: BCRA y CNV vía ArgentinaDatos, cuentas remuneradas según ${PAS_CTA_F}.</div>`;
   const best=R[0];$('pasSub').textContent=best?`· la mejor hoy: ${best.n} (${$f(M*best.m)} por mes)`:'';}
-$('pasDrw').onclick=()=>{drawer(false);setView('cic');pasLoad();setTimeout(()=>{try{$('pasBox').scrollIntoView({behavior:'smooth',block:'start'});}catch(e){}},250);};
+/* abre Ciclo con Ingresos pasivos arriba de todo: se reacomoda varias veces porque lo de arriba termina de cargar después y empuja la sección; si tocás o deslizás la pantalla, deja de moverla */
+$('pasDrw').onclick=()=>{drawer(false);setView('cic');pasLoad();let yo=false;const st=()=>{yo=true;};['touchstart','wheel','keydown'].forEach(ev=>addEventListener(ev,st,{once:true,passive:true}));
+  const go=()=>{if(yo)return;const b=$('pasBox');if(b)try{b.scrollIntoView({block:'start'});}catch(e){}};[80,350,800,1500,2500,4000].forEach(t=>setTimeout(go,t));setTimeout(()=>['touchstart','wheel','keydown'].forEach(ev=>removeEventListener(ev,st)),4100);};
 $('pasMonto').onchange=pasRender;$('pasCripto').onchange=pasRender;
 setInterval(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},6e4);setTimeout(()=>{if(document.body.dataset.v==='cic'||innerWidth>800)pasLoad();},5000);
 /* lo que puso el usuario en cada opción: cuánto le tendría que rendir por mes (con topes y tramos) */
@@ -3548,7 +3551,7 @@ function datPaint(){const s=DATCUR;if(!s)return;const isC=/USDT$/.test(s),D=DAT[
 /* ---------- ⭐ MIS LISTAS (noviembre 2026) ----------
    En el menú lateral: Favoritos (las mismas ★ de la lista de monedas, cripto y acciones) y carpetas propias.
    Cada activo muestra su RSI 14 en la temporalidad elegida para la carpeta, con los colores de la planilla. Se guarda en el celular y en la cuenta. */
-var LSTS=[],LSTTF={},LSTOPEN={fav:1},LSTNEW=false,LSTMSG={},LSTASK=null,LSTPEND=new Set(),lstRT=0;
+var LSTS=[],LSTTF={},LSTOPEN={},LSTNEW=false,LSTMSG={},LSTASK=null,LSTPEND=new Set(),lstRT=0;
 try{LSTS=JSON.parse(localStorage.getItem('cv_lists')||'[]')||[];LSTTF=JSON.parse(localStorage.getItem('cv_liststf')||'{}')||{};}catch(e){}
 const LST_TF=[['1h','1h','h'],['4h','4h','4h'],['1d','1d','d'],['1w','1 sem','w']];
 function lstSave(){try{localStorage.setItem('cv_lists',JSON.stringify(LSTS));localStorage.setItem('cv_liststf',JSON.stringify(LSTTF));}catch(e){}try{cloudSave();}catch(e){}}
