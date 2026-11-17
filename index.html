@@ -2100,7 +2100,8 @@ async function niRender(force){const el=$('niBox');if(!el||NI.busy)return;const 
   }catch(e){el.innerHTML='<div class="mut">No se pudieron calcular ahora.</div>';}finally{NI.busy=false;}}
 const fmtUsd=v=>v>=1e9?(v/1e9).toFixed(1).replace('.',',')+' mil M':v>=1e6?(v/1e6).toFixed(1).replace('.',',')+' M':v>=1e3?Math.round(v/1e3)+' mil':Math.round(v)+'';
 setInterval(()=>niRender(),6e4);
-async function loadChart(){
+let CHGEN=0; // cada carga nueva del gráfico invalida las descargas de historial que quedaron en camino
+async function loadChart(){CHGEN++;
   if(mode==='a')return loadChartStk();
   $('loading').textContent='Cargando…';$('loading').style.display='flex';
   setNames();if(typeof renderChips==='function')renderChips();
@@ -2143,9 +2144,9 @@ async function loadChart(){
 
 // cargar más historial al desplazarse a la izquierda (y, en velas de 1 día o más, toda la historia de la moneda apenas abre)
 async function loadOlder(){if(loadingMore||noMore||!candles.length||mode==='a')return false;loadingMore=true;let ok=false;
-  const sym=symbol,t=tf,end=(candles[0].time-TZ)*1000-1;
+  const sym=symbol,t=tf,g=CHGEN,end=(candles[0].time-TZ)*1000-1;
   try{const d=await (await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000&endTime=${end}`)).json();
-    if(sym===symbol&&t===tf){if(!Array.isArray(d)||!d.length)noMore=true;else{const older=d.map(toBar),n=older.length,range=chart.timeScale().getVisibleLogicalRange();
+    if(sym===symbol&&t===tf&&g===CHGEN){if(!Array.isArray(d)||!d.length)noMore=true;else{const older=d.map(toBar).filter(b=>b.time<candles[0].time),n=older.length;if(!n){noMore=true;loadingMore=false;return false;}const range=chart.timeScale().getVisibleLogicalRange();
         candles=older.concat(candles);series.setData(candles);volume.setData(candles.map(volBar));calcInd(true);
         if(range)chart.timeScale().setVisibleLogicalRange({from:range.from+n,to:range.to+n});if(ruler){ruler.a.l+=n;ruler.b.l+=n;}ok=n>=1000;if(n<1000)noMore=true;}}}catch(e){}
   loadingMore=false;return ok;}
@@ -2154,13 +2155,13 @@ chart.timeScale().subscribeVisibleLogicalRangeChange(async r=>{
   if(!r||r.from>20||loadingMore||noMore||!candles.length||mode==='a') return;
   if(r.from<20){await loadOlder();return;}
   loadingMore=true;
-  const sym=symbol,t=tf,end=(candles[0].time-TZ)*1000-1;
+  const sym=symbol,t=tf,g=CHGEN,end=(candles[0].time-TZ)*1000-1;
   try{
     const d=await (await fetch(`${KLU(sym)}?symbol=${sym}&interval=${t}&limit=1000&endTime=${end}`)).json();
-    if(sym===symbol&&t===tf){
-      if(!d.length) noMore=true;
+    if(sym===symbol&&t===tf&&g===CHGEN){
+      const older=Array.isArray(d)?d.map(toBar).filter(b=>b.time<candles[0].time):[], n=older.length;
+      if(!n) noMore=true;
       else{
-        const older=d.map(toBar), n=older.length;
         const range=chart.timeScale().getVisibleLogicalRange();
         candles=older.concat(candles);
         series.setData(candles); volume.setData(candles.map(volBar)); calcInd(true);
