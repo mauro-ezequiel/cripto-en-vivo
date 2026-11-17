@@ -1,0 +1,1985 @@
+{
+ "nota": "Acierto = toca +1,5 ATR antes que −1,5 ATR (30 velas). Base = todas las velas en ese sentido. Entrenamiento 2020-2023, prueba 2024-2026.",
+ "tf": {
+  "4h": {
+   "base": {
+    "L": {
+     "tr": 49.1,
+     "te": 47,
+     "teN": 185658
+    },
+    "S": {
+     "tr": 50.6,
+     "te": 52.8,
+     "teN": 185658
+    }
+   },
+   "mejores_en_entrenamiento": [
+    {
+     "k": "L:caidas3+btc+lejos",
+     "trN": 421,
+     "tr": 61,
+     "teN": 864,
+     "te": 46.6,
+     "trRet": 2.08,
+     "teRet": -0.59,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+btc+lejos",
+     "trN": 393,
+     "tr": 60.1,
+     "teN": 649,
+     "te": 49.5,
+     "trRet": 2.05,
+     "teRet": 0,
+     "monedas": 30
+    },
+    {
+     "k": "L:mecha+btc+lejos",
+     "trN": 343,
+     "tr": 58.6,
+     "teN": 758,
+     "te": 45,
+     "trRet": 1.76,
+     "teRet": -0.08,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+btc+lejos",
+     "trN": 560,
+     "tr": 58,
+     "teN": 1103,
+     "te": 45.8,
+     "trRet": 1.5,
+     "teRet": -0.17,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+bajo200+btc",
+     "trN": 849,
+     "tr": 57.8,
+     "teN": 924,
+     "te": 54.9,
+     "trRet": 0.96,
+     "teRet": 0.54,
+     "monedas": 29
+    },
+    {
+     "k": "L:s50+btc+lejos",
+     "trN": 660,
+     "tr": 57.6,
+     "teN": 1205,
+     "te": 46.4,
+     "trRet": 1.75,
+     "teRet": -0.05,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+caidas3+btc",
+     "trN": 689,
+     "tr": 57.5,
+     "teN": 1057,
+     "te": 43.5,
+     "trRet": 1.79,
+     "teRet": -0.28,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2+btc+lejos",
+     "trN": 420,
+     "tr": 56.9,
+     "teN": 838,
+     "te": 46.8,
+     "trRet": 1.49,
+     "teRet": -0.73,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+div+rLento",
+     "trN": 375,
+     "tr": 56.8,
+     "teN": 508,
+     "te": 40.6,
+     "trRet": 0.41,
+     "teRet": -0.58,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2+mecha+btc",
+     "trN": 620,
+     "tr": 56.8,
+     "teN": 735,
+     "te": 41.8,
+     "trRet": 1.68,
+     "teRet": -0.36,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+vol+btc",
+     "trN": 1698,
+     "tr": 56.7,
+     "teN": 1768,
+     "te": 57.7,
+     "trRet": 0.63,
+     "teRet": -0.29,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+r35+caidas3",
+     "trN": 390,
+     "tr": 56.4,
+     "teN": 413,
+     "te": 44.6,
+     "trRet": 2.77,
+     "teRet": -0.17,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+vol+btc",
+     "trN": 1553,
+     "tr": 56.4,
+     "teN": 1722,
+     "te": 57.1,
+     "trRet": 0.53,
+     "teRet": -0.31,
+     "monedas": 30
+    },
+    {
+     "k": "L:btc+lejos",
+     "trN": 872,
+     "tr": 56.2,
+     "teN": 1794,
+     "te": 45.3,
+     "trRet": 1.5,
+     "teRet": -0.54,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+vol+btc",
+     "trN": 1549,
+     "tr": 56,
+     "teN": 1666,
+     "te": 57.5,
+     "trRet": 0.44,
+     "teRet": -0.26,
+     "monedas": 30
+    },
+    {
+     "k": "S:bajo200+s50+btc",
+     "trN": 634,
+     "tr": 56,
+     "teN": 834,
+     "te": 51.2,
+     "trRet": 0.79,
+     "teRet": -0.05,
+     "monedas": 29
+    },
+    {
+     "k": "L:bajo200+div+rLento",
+     "trN": 583,
+     "tr": 55.7,
+     "teN": 855,
+     "te": 45.8,
+     "trRet": 0.19,
+     "teRet": 0.08,
+     "monedas": 30
+    },
+    {
+     "k": "L:div+rLento",
+     "trN": 583,
+     "tr": 55.7,
+     "teN": 855,
+     "te": 45.8,
+     "trRet": 0.19,
+     "teRet": 0.08,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+vol+btc",
+     "trN": 513,
+     "tr": 55.6,
+     "teN": 725,
+     "te": 47.9,
+     "trRet": 1.41,
+     "teRet": -0.38,
+     "monedas": 29
+    },
+    {
+     "k": "L:r35+btc+lejos",
+     "trN": 572,
+     "tr": 55.1,
+     "teN": 1200,
+     "te": 45.3,
+     "trRet": 1.11,
+     "teRet": -0.35,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+z25+btc",
+     "trN": 500,
+     "tr": 55,
+     "teN": 390,
+     "te": 38.7,
+     "trRet": 1.48,
+     "teRet": -1.01,
+     "monedas": 30
+    },
+    {
+     "k": "S:vol+btc",
+     "trN": 2061,
+     "tr": 55,
+     "teN": 2061,
+     "te": 56.6,
+     "trRet": 0.23,
+     "teRet": -0.28,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+r2+btc",
+     "trN": 1462,
+     "tr": 54.9,
+     "teN": 1496,
+     "te": 44.6,
+     "trRet": 1.87,
+     "teRet": -0.27,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+r35+btc",
+     "trN": 791,
+     "tr": 54.9,
+     "teN": 958,
+     "te": 49.8,
+     "trRet": 0.72,
+     "teRet": -0.03,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+r35+caidas3",
+     "trN": 1090,
+     "tr": 54.8,
+     "teN": 1187,
+     "te": 45.6,
+     "trRet": 2.15,
+     "teRet": 0.16,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+bajo200+btc",
+     "trN": 1610,
+     "tr": 54.8,
+     "teN": 2203,
+     "te": 45.4,
+     "trRet": 0.79,
+     "teRet": -0.65,
+     "monedas": 29
+    },
+    {
+     "k": "L:s50+vol+btc",
+     "trN": 1688,
+     "tr": 54.7,
+     "teN": 1524,
+     "te": 49.6,
+     "trRet": 1.7,
+     "teRet": 0.75,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+bb+btc",
+     "trN": 1051,
+     "tr": 54.7,
+     "teN": 1039,
+     "te": 47.4,
+     "trRet": 1.46,
+     "teRet": -0.06,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+tendS+z25",
+     "trN": 585,
+     "tr": 54.5,
+     "teN": 407,
+     "te": 38.3,
+     "trRet": 1.74,
+     "teRet": -0.97,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r35+div",
+     "trN": 497,
+     "tr": 54.5,
+     "teN": 644,
+     "te": 41.5,
+     "trRet": 0.16,
+     "teRet": -0.32,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+btc+lejos",
+     "trN": 543,
+     "tr": 54.3,
+     "teN": 1262,
+     "te": 44.1,
+     "trRet": 1.31,
+     "teRet": -0.72,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+r2+btc",
+     "trN": 1625,
+     "tr": 54.1,
+     "teN": 1839,
+     "te": 44.1,
+     "trRet": 1.65,
+     "teRet": -0.44,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+tendS+vol",
+     "trN": 1860,
+     "tr": 54.1,
+     "teN": 1568,
+     "te": 51,
+     "trRet": 1.57,
+     "teRet": 0.88,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+vol+btc",
+     "trN": 2089,
+     "tr": 54.1,
+     "teN": 1871,
+     "te": 51.2,
+     "trRet": 1.71,
+     "teRet": 1.02,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+vol+btc",
+     "trN": 1726,
+     "tr": 54.1,
+     "teN": 1640,
+     "te": 48.8,
+     "trRet": 1.56,
+     "teRet": 0.61,
+     "monedas": 30
+    },
+    {
+     "k": "L:vol+btc",
+     "trN": 2523,
+     "tr": 54,
+     "teN": 2541,
+     "te": 50.1,
+     "trRet": 1.61,
+     "teRet": 0.56,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+r35+btc",
+     "trN": 457,
+     "tr": 54,
+     "teN": 580,
+     "te": 44.5,
+     "trRet": 1.52,
+     "teRet": 0.36,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend+lejos",
+     "trN": 587,
+     "tr": 54,
+     "teN": 825,
+     "te": 50.1,
+     "trRet": 1.68,
+     "teRet": 0.22,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+s50+vol",
+     "trN": 1839,
+     "tr": 54,
+     "teN": 2087,
+     "te": 55.5,
+     "trRet": 0.09,
+     "teRet": -0.18,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2+caidas3+btc",
+     "trN": 1856,
+     "tr": 53.9,
+     "teN": 2248,
+     "te": 44.7,
+     "trRet": 1.45,
+     "teRet": -0.68,
+     "monedas": 30
+    }
+   ],
+   "mejores_en_prueba_con_n": [
+    {
+     "k": "S:tend+vol+btc",
+     "trN": 1698,
+     "tr": 56.7,
+     "teN": 1768,
+     "te": 57.7,
+     "trRet": 0.63,
+     "teRet": -0.29,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+vol+btc",
+     "trN": 1549,
+     "tr": 56,
+     "teN": 1666,
+     "te": 57.5,
+     "trRet": 0.44,
+     "teRet": -0.26,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+div",
+     "trN": 517,
+     "tr": 48.7,
+     "teN": 597,
+     "te": 57.1,
+     "trRet": -0.84,
+     "teRet": 0.29,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+vol+btc",
+     "trN": 1553,
+     "tr": 56.4,
+     "teN": 1722,
+     "te": 57.1,
+     "trRet": 0.53,
+     "teRet": -0.31,
+     "monedas": 30
+    },
+    {
+     "k": "S:mecha+btc+lejos",
+     "trN": 363,
+     "tr": 52.6,
+     "teN": 511,
+     "te": 56.9,
+     "trRet": -1.06,
+     "teRet": 0.45,
+     "monedas": 30
+    },
+    {
+     "k": "S:vol+mecha+btc",
+     "trN": 345,
+     "tr": 51,
+     "teN": 276,
+     "te": 56.9,
+     "trRet": -0.07,
+     "teRet": 0.52,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+bajo200+div",
+     "trN": 333,
+     "tr": 48.3,
+     "teN": 346,
+     "te": 56.9,
+     "trRet": -1.28,
+     "teRet": 0.07,
+     "monedas": 30
+    },
+    {
+     "k": "S:vol+btc",
+     "trN": 2061,
+     "tr": 55,
+     "teN": 2061,
+     "te": 56.6,
+     "trRet": 0.23,
+     "teRet": -0.28,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+s50+vol",
+     "trN": 1839,
+     "tr": 54,
+     "teN": 2087,
+     "te": 55.5,
+     "trRet": 0.09,
+     "teRet": -0.18,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+vol",
+     "trN": 2180,
+     "tr": 53.8,
+     "teN": 2436,
+     "te": 55.4,
+     "trRet": 0.07,
+     "teRet": -0.22,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+tendS+vol",
+     "trN": 1786,
+     "tr": 53.6,
+     "teN": 1981,
+     "te": 55.3,
+     "trRet": 0.07,
+     "teRet": -0.23,
+     "monedas": 30
+    },
+    {
+     "k": "S:bajo200+btc+lejos",
+     "trN": 504,
+     "tr": 51.2,
+     "teN": 609,
+     "te": 55.3,
+     "trRet": -0.8,
+     "teRet": 0.38,
+     "monedas": 29
+    },
+    {
+     "k": "S:tend+r2+btc",
+     "trN": 1449,
+     "tr": 51,
+     "teN": 1657,
+     "te": 54.9,
+     "trRet": -0.02,
+     "teRet": -0.18,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+s50+div",
+     "trN": 410,
+     "tr": 47.8,
+     "teN": 494,
+     "te": 54.9,
+     "trRet": -1.03,
+     "teRet": 0.16,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+div",
+     "trN": 542,
+     "tr": 46.3,
+     "teN": 667,
+     "te": 54.9,
+     "trRet": -1.13,
+     "teRet": 0.05,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+bajo200+btc",
+     "trN": 849,
+     "tr": 57.8,
+     "teN": 924,
+     "te": 54.9,
+     "trRet": 0.96,
+     "teRet": 0.54,
+     "monedas": 29
+    },
+    {
+     "k": "S:div+lejos",
+     "trN": 562,
+     "tr": 48.2,
+     "teN": 527,
+     "te": 54.8,
+     "trRet": -2.47,
+     "teRet": -0.56,
+     "monedas": 30
+    },
+    {
+     "k": "S:r2+mecha+btc",
+     "trN": 425,
+     "tr": 49.4,
+     "teN": 453,
+     "te": 54.7,
+     "trRet": -1.07,
+     "teRet": -0.07,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+btc",
+     "trN": 11048,
+     "tr": 53.7,
+     "teN": 12319,
+     "te": 54.6,
+     "trRet": 0.22,
+     "teRet": 0,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+s50+btc",
+     "trN": 10138,
+     "tr": 53.5,
+     "teN": 11537,
+     "te": 54.5,
+     "trRet": 0.1,
+     "teRet": -0.04,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+bajo200+mecha",
+     "trN": 1468,
+     "tr": 50.6,
+     "teN": 1685,
+     "te": 54.5,
+     "trRet": -0.76,
+     "teRet": -0.03,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+mecha+btc",
+     "trN": 5420,
+     "tr": 53.5,
+     "teN": 5994,
+     "te": 54.4,
+     "trRet": 0.32,
+     "teRet": 0.09,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+s50+btc",
+     "trN": 10967,
+     "tr": 53.7,
+     "teN": 12375,
+     "te": 54.3,
+     "trRet": 0.12,
+     "teRet": -0.07,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+tendS+btc",
+     "trN": 10534,
+     "tr": 53.6,
+     "teN": 11789,
+     "te": 54.3,
+     "trRet": 0.18,
+     "teRet": -0.03,
+     "monedas": 30
+    },
+    {
+     "k": "S:bajo200+caidas3+btc",
+     "trN": 986,
+     "tr": 51.7,
+     "teN": 849,
+     "te": 54.3,
+     "trRet": 0.11,
+     "teRet": -0.01,
+     "monedas": 29
+    }
+   ],
+   "simples": [
+    {
+     "k": "S:btc",
+     "trN": 15059,
+     "tr": 53.2,
+     "teN": 15727,
+     "te": 54.2,
+     "trRet": 0,
+     "teRet": -0.06,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS",
+     "trN": 15650,
+     "tr": 52.5,
+     "teN": 17841,
+     "te": 53.4,
+     "trRet": -0.17,
+     "teRet": 0.04,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend",
+     "trN": 16755,
+     "tr": 52,
+     "teN": 19168,
+     "te": 53.3,
+     "trRet": -0.22,
+     "teRet": 0.02,
+     "monedas": 30
+    },
+    {
+     "k": "S:div",
+     "trN": 1800,
+     "tr": 47.8,
+     "teN": 1662,
+     "te": 53,
+     "trRet": -2.01,
+     "teRet": -0.61,
+     "monedas": 30
+    },
+    {
+     "k": "S:mecha",
+     "trN": 15857,
+     "tr": 49.8,
+     "teN": 16118,
+     "te": 52.8,
+     "trRet": -0.74,
+     "teRet": -0.14,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50",
+     "trN": 15788,
+     "tr": 51.6,
+     "teN": 18205,
+     "te": 52.7,
+     "trRet": -0.22,
+     "teRet": -0.03,
+     "monedas": 30
+    },
+    {
+     "k": "S:vol",
+     "trN": 4497,
+     "tr": 50,
+     "teN": 4518,
+     "te": 52.2,
+     "trRet": -0.87,
+     "teRet": -0.58,
+     "monedas": 30
+    },
+    {
+     "k": "S:bajo200",
+     "trN": 16005,
+     "tr": 49.3,
+     "teN": 14309,
+     "te": 51.8,
+     "trRet": -1.21,
+     "teRet": -0.31,
+     "monedas": 30
+    },
+    {
+     "k": "S:rLento",
+     "trN": 6475,
+     "tr": 49.7,
+     "teN": 5010,
+     "te": 50.7,
+     "trRet": -1.72,
+     "teRet": -0.91,
+     "monedas": 30
+    },
+    {
+     "k": "S:caidas3",
+     "trN": 10174,
+     "tr": 50.2,
+     "teN": 10067,
+     "te": 50.6,
+     "trRet": -0.69,
+     "teRet": -0.4,
+     "monedas": 30
+    },
+    {
+     "k": "S:r2",
+     "trN": 5870,
+     "tr": 48.7,
+     "teN": 5953,
+     "te": 49.9,
+     "trRet": -1.18,
+     "teRet": -0.59,
+     "monedas": 30
+    },
+    {
+     "k": "S:lejos",
+     "trN": 4114,
+     "tr": 48.4,
+     "teN": 4498,
+     "te": 49.6,
+     "trRet": -1.64,
+     "teRet": -0.59,
+     "monedas": 30
+    },
+    {
+     "k": "S:r35",
+     "trN": 5531,
+     "tr": 48.8,
+     "teN": 5167,
+     "te": 49.4,
+     "trRet": -1.48,
+     "teRet": -0.76,
+     "monedas": 30
+    },
+    {
+     "k": "S:bb",
+     "trN": 4985,
+     "tr": 47.9,
+     "teN": 4761,
+     "te": 49.3,
+     "trRet": -1.2,
+     "teRet": -0.55,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend",
+     "trN": 16005,
+     "tr": 50.5,
+     "teN": 14309,
+     "te": 48,
+     "trRet": 1.01,
+     "teRet": 0.11,
+     "monedas": 30
+    },
+    {
+     "k": "L:btc",
+     "trN": 17508,
+     "tr": 51.4,
+     "teN": 17464,
+     "te": 47.9,
+     "trRet": 1.13,
+     "teRet": -0.01,
+     "monedas": 30
+    },
+    {
+     "k": "L:rLento",
+     "trN": 5712,
+     "tr": 49.8,
+     "teN": 6898,
+     "te": 47.8,
+     "trRet": 0.11,
+     "teRet": 0.18,
+     "monedas": 30
+    },
+    {
+     "k": "S:z25",
+     "trN": 2624,
+     "tr": 45.8,
+     "teN": 2446,
+     "te": 47.8,
+     "trRet": -1.53,
+     "teRet": -0.92,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS",
+     "trN": 15630,
+     "tr": 50.7,
+     "teN": 14019,
+     "te": 47.6,
+     "trRet": 1.02,
+     "teRet": 0.14,
+     "monedas": 30
+    },
+    {
+     "k": "L:vol",
+     "trN": 4497,
+     "tr": 49.3,
+     "teN": 4518,
+     "te": 47.3,
+     "trRet": 0.67,
+     "teRet": 0.38,
+     "monedas": 30
+    },
+    {
+     "k": "S:r30",
+     "trN": 3038,
+     "tr": 49,
+     "teN": 2758,
+     "te": 47.3,
+     "trRet": -1.89,
+     "teRet": -1.45,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200",
+     "trN": 16755,
+     "tr": 47.8,
+     "teN": 19168,
+     "te": 46.5,
+     "trRet": 0.02,
+     "teRet": -0.22,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50",
+     "trN": 15452,
+     "tr": 50,
+     "teN": 13589,
+     "te": 46.3,
+     "trRet": 0.98,
+     "teRet": 0.07,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35",
+     "trN": 4915,
+     "tr": 47.9,
+     "teN": 5782,
+     "te": 46.3,
+     "trRet": 0.23,
+     "teRet": 0.19,
+     "monedas": 30
+    },
+    {
+     "k": "L:bb",
+     "trN": 4438,
+     "tr": 47.3,
+     "teN": 5021,
+     "te": 46.2,
+     "trRet": 0.38,
+     "teRet": -0.01,
+     "monedas": 30
+    },
+    {
+     "k": "L:caidas3",
+     "trN": 9428,
+     "tr": 49.2,
+     "teN": 10583,
+     "te": 45.9,
+     "trRet": 0.6,
+     "teRet": -0.3,
+     "monedas": 30
+    },
+    {
+     "k": "L:mecha",
+     "trN": 17183,
+     "tr": 47.5,
+     "teN": 17076,
+     "te": 45.7,
+     "trRet": 0.41,
+     "teRet": -0.07,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2",
+     "trN": 5766,
+     "tr": 49.9,
+     "teN": 6408,
+     "te": 45.6,
+     "trRet": 0.7,
+     "teRet": -0.11,
+     "monedas": 30
+    },
+    {
+     "k": "L:div",
+     "trN": 1155,
+     "tr": 52.8,
+     "teN": 1612,
+     "te": 45.5,
+     "trRet": 0.07,
+     "teRet": 0.14,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30",
+     "trN": 2417,
+     "tr": 47.7,
+     "teN": 2790,
+     "te": 45.5,
+     "trRet": 0.52,
+     "teRet": 0.49,
+     "monedas": 30
+    },
+    {
+     "k": "L:z25",
+     "trN": 2254,
+     "tr": 44.2,
+     "teN": 2393,
+     "te": 45.4,
+     "trRet": -0.26,
+     "teRet": 0.16,
+     "monedas": 30
+    },
+    {
+     "k": "L:lejos",
+     "trN": 3722,
+     "tr": 45.1,
+     "teN": 4791,
+     "te": 45.4,
+     "trRet": 0.13,
+     "teRet": 0.21,
+     "monedas": 30
+    }
+   ]
+  },
+  "1d": {
+   "base": {
+    "L": {
+     "tr": 50.9,
+     "te": 46.2,
+     "teN": 30399
+    },
+    "S": {
+     "tr": 48.9,
+     "te": 53.6,
+     "teN": 30399
+    }
+   },
+   "mejores_en_entrenamiento": [
+    {
+     "k": "L:r35+mecha+lejos",
+     "trN": 157,
+     "tr": 72.6,
+     "teN": 211,
+     "te": 48.3,
+     "trRet": 4.73,
+     "teRet": 1.69,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+mecha+rLento",
+     "trN": 88,
+     "tr": 71.6,
+     "teN": 121,
+     "te": 60.3,
+     "trRet": 3.37,
+     "teRet": 3.93,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+caidas3+lejos",
+     "trN": 90,
+     "tr": 70,
+     "teN": 127,
+     "te": 44.1,
+     "trRet": 6.15,
+     "teRet": 0.41,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+r35+lejos",
+     "trN": 102,
+     "tr": 69.6,
+     "teN": 178,
+     "te": 36,
+     "trRet": 5.44,
+     "teRet": 0.17,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r30+mecha",
+     "trN": 115,
+     "tr": 69.6,
+     "teN": 171,
+     "te": 60.8,
+     "trRet": 2.83,
+     "teRet": 4.34,
+     "monedas": 30
+    },
+    {
+     "k": "L:mecha+rLento+lejos",
+     "trN": 125,
+     "tr": 69.6,
+     "teN": 169,
+     "te": 49.7,
+     "trRet": 3.84,
+     "teRet": 0.29,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+r35+mecha",
+     "trN": 118,
+     "tr": 69.5,
+     "teN": 175,
+     "te": 61.1,
+     "trRet": 2.92,
+     "teRet": 4.21,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+mecha",
+     "trN": 118,
+     "tr": 69.5,
+     "teN": 175,
+     "te": 61.1,
+     "trRet": 2.92,
+     "teRet": 4.21,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+bb+mecha",
+     "trN": 109,
+     "tr": 68.8,
+     "teN": 161,
+     "te": 62.1,
+     "trRet": 2.87,
+     "teRet": 5.19,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+mecha+caidas3",
+     "trN": 91,
+     "tr": 68.1,
+     "teN": 194,
+     "te": 59.3,
+     "trRet": 2.66,
+     "teRet": 2.72,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+btc+lejos",
+     "trN": 98,
+     "tr": 67.3,
+     "teN": 223,
+     "te": 38.1,
+     "trRet": 4.18,
+     "teRet": 1.05,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+r35+lejos",
+     "trN": 116,
+     "tr": 67.2,
+     "teN": 165,
+     "te": 37,
+     "trRet": 5.13,
+     "teRet": 0.82,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+r2+mecha",
+     "trN": 82,
+     "tr": 67.1,
+     "teN": 166,
+     "te": 58.4,
+     "trRet": 0.46,
+     "teRet": 3.26,
+     "monedas": 30
+    },
+    {
+     "k": "L:bb+mecha",
+     "trN": 149,
+     "tr": 67.1,
+     "teN": 221,
+     "te": 55.2,
+     "trRet": 2.66,
+     "teRet": 3.53,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+mecha+lejos",
+     "trN": 219,
+     "tr": 67.1,
+     "teN": 289,
+     "te": 46,
+     "trRet": 3.26,
+     "teRet": 0.52,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+r35+caidas3",
+     "trN": 123,
+     "tr": 66.7,
+     "teN": 205,
+     "te": 41,
+     "trRet": 3.48,
+     "teRet": 0.08,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+mecha+rLento",
+     "trN": 161,
+     "tr": 66.5,
+     "teN": 230,
+     "te": 53.9,
+     "trRet": 3.24,
+     "teRet": 1.2,
+     "monedas": 30
+    },
+    {
+     "k": "L:vol+mecha",
+     "trN": 110,
+     "tr": 66.4,
+     "teN": 165,
+     "te": 52.7,
+     "trRet": 3.35,
+     "teRet": 2.38,
+     "monedas": 30
+    },
+    {
+     "k": "L:mecha+lejos",
+     "trN": 243,
+     "tr": 65.8,
+     "teN": 317,
+     "te": 45.1,
+     "trRet": 3.2,
+     "teRet": 0.22,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+caidas3+lejos",
+     "trN": 83,
+     "tr": 65.1,
+     "teN": 128,
+     "te": 43,
+     "trRet": 4.07,
+     "teRet": 0.35,
+     "monedas": 29
+    },
+    {
+     "k": "L:bajo200+bb+mecha",
+     "trN": 123,
+     "tr": 65,
+     "teN": 185,
+     "te": 55.1,
+     "trRet": 1.77,
+     "teRet": 3.58,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+bajo200+r35",
+     "trN": 148,
+     "tr": 64.2,
+     "teN": 294,
+     "te": 41.2,
+     "trRet": 2.39,
+     "teRet": 0.59,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+r35+mecha",
+     "trN": 92,
+     "tr": 64.1,
+     "teN": 149,
+     "te": 40.9,
+     "trRet": 2.6,
+     "teRet": 2.77,
+     "monedas": 29
+    },
+    {
+     "k": "L:r35+mecha",
+     "trN": 290,
+     "tr": 63.8,
+     "teN": 425,
+     "te": 49.9,
+     "trRet": 2.74,
+     "teRet": 1.87,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r35+mecha",
+     "trN": 272,
+     "tr": 63.6,
+     "teN": 395,
+     "te": 49.9,
+     "trRet": 2.55,
+     "teRet": 1.72,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50+r2+lejos",
+     "trN": 85,
+     "tr": 63.5,
+     "teN": 124,
+     "te": 37.9,
+     "trRet": 5.8,
+     "teRet": 0.59,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+bajo200+lejos",
+     "trN": 104,
+     "tr": 63.5,
+     "teN": 183,
+     "te": 36.6,
+     "trRet": 3.77,
+     "teRet": 0.6,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+s50+z25",
+     "trN": 81,
+     "tr": 63,
+     "teN": 126,
+     "te": 32.5,
+     "trRet": 3.35,
+     "teRet": -0.81,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+bb+z25",
+     "trN": 99,
+     "tr": 62.6,
+     "teN": 160,
+     "te": 35,
+     "trRet": 2.67,
+     "teRet": -0.02,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+z25",
+     "trN": 99,
+     "tr": 62.6,
+     "teN": 160,
+     "te": 35,
+     "trRet": 2.67,
+     "teRet": -0.02,
+     "monedas": 29
+    },
+    {
+     "k": "L:r35+mecha+btc",
+     "trN": 96,
+     "tr": 62.5,
+     "teN": 173,
+     "te": 35.8,
+     "trRet": 1.43,
+     "teRet": 1.74,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+r35",
+     "trN": 189,
+     "tr": 62.4,
+     "teN": 374,
+     "te": 41.4,
+     "trRet": 2.51,
+     "teRet": 0.6,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+vol+rLento",
+     "trN": 93,
+     "tr": 62.4,
+     "teN": 149,
+     "te": 56.4,
+     "trRet": -1.34,
+     "teRet": 0.81,
+     "monedas": 29
+    },
+    {
+     "k": "L:vol+rLento",
+     "trN": 93,
+     "tr": 62.4,
+     "teN": 149,
+     "te": 56.4,
+     "trRet": -1.34,
+     "teRet": 0.81,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+s50+r35",
+     "trN": 129,
+     "tr": 61.2,
+     "teN": 276,
+     "te": 39.9,
+     "trRet": 2.44,
+     "teRet": 0.6,
+     "monedas": 29
+    },
+    {
+     "k": "L:tendS+r35+bb",
+     "trN": 126,
+     "tr": 61.1,
+     "teN": 230,
+     "te": 47.4,
+     "trRet": 2.78,
+     "teRet": 1.42,
+     "monedas": 29
+    },
+    {
+     "k": "L:r35+caidas3+btc",
+     "trN": 90,
+     "tr": 61.1,
+     "teN": 229,
+     "te": 46.3,
+     "trRet": 2.58,
+     "teRet": 0.86,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r2+mecha",
+     "trN": 118,
+     "tr": 61,
+     "teN": 243,
+     "te": 50.2,
+     "trRet": -0.11,
+     "teRet": 1.03,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS+r35+caidas3",
+     "trN": 107,
+     "tr": 60.7,
+     "teN": 217,
+     "te": 44.7,
+     "trRet": 2.42,
+     "teRet": 1.16,
+     "monedas": 29
+    },
+    {
+     "k": "L:bajo200+r35+vol",
+     "trN": 84,
+     "tr": 60.7,
+     "teN": 158,
+     "te": 58.9,
+     "trRet": -1.23,
+     "teRet": 1.7,
+     "monedas": 30
+    }
+   ],
+   "mejores_en_prueba_con_n": [
+    {
+     "k": "S:bajo200+mecha+div",
+     "trN": 94,
+     "tr": 53.2,
+     "teN": 88,
+     "te": 64.8,
+     "trRet": -3.38,
+     "teRet": -0.31,
+     "monedas": 29
+    },
+    {
+     "k": "S:mecha+div",
+     "trN": 107,
+     "tr": 53.3,
+     "teN": 104,
+     "te": 64.4,
+     "trRet": -3.03,
+     "teRet": -0.08,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend+btc+lejos",
+     "trN": 109,
+     "tr": 42.2,
+     "teN": 65,
+     "te": 63.1,
+     "trRet": -3.83,
+     "teRet": 2.72,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+bb+vol",
+     "trN": 84,
+     "tr": 58.3,
+     "teN": 134,
+     "te": 62.7,
+     "trRet": -1.36,
+     "teRet": 3.29,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r2+vol",
+     "trN": 82,
+     "tr": 56.1,
+     "teN": 128,
+     "te": 62.5,
+     "trRet": -1.96,
+     "teRet": 2.4,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+bb+mecha",
+     "trN": 109,
+     "tr": 68.8,
+     "teN": 161,
+     "te": 62.1,
+     "trRet": 2.87,
+     "teRet": 5.19,
+     "monedas": 30
+    },
+    {
+     "k": "S:r30+btc+lejos",
+     "trN": 87,
+     "tr": 37.9,
+     "teN": 55,
+     "te": 61.8,
+     "trRet": -5.48,
+     "teRet": 1.99,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+div+rLento",
+     "trN": 80,
+     "tr": 57.5,
+     "teN": 115,
+     "te": 61.7,
+     "trRet": -2.02,
+     "teRet": 2.39,
+     "monedas": 30
+    },
+    {
+     "k": "L:div+rLento",
+     "trN": 80,
+     "tr": 57.5,
+     "teN": 115,
+     "te": 61.7,
+     "trRet": -2.02,
+     "teRet": 2.39,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2+vol",
+     "trN": 92,
+     "tr": 55.4,
+     "teN": 137,
+     "te": 61.3,
+     "trRet": -1.79,
+     "teRet": 2.35,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+r35+mecha",
+     "trN": 118,
+     "tr": 69.5,
+     "teN": 175,
+     "te": 61.1,
+     "trRet": 2.92,
+     "teRet": 4.21,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+mecha",
+     "trN": 118,
+     "tr": 69.5,
+     "teN": 175,
+     "te": 61.1,
+     "trRet": 2.92,
+     "teRet": 4.21,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+div",
+     "trN": 115,
+     "tr": 56.5,
+     "teN": 128,
+     "te": 60.9,
+     "trRet": -0.82,
+     "teRet": 1.52,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2+bb+vol",
+     "trN": 81,
+     "tr": 56.8,
+     "teN": 120,
+     "te": 60.8,
+     "trRet": -1.41,
+     "teRet": 2.8,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r30+mecha",
+     "trN": 115,
+     "tr": 69.6,
+     "teN": 171,
+     "te": 60.8,
+     "trRet": 2.83,
+     "teRet": 4.34,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+bb+vol",
+     "trN": 84,
+     "tr": 56,
+     "teN": 144,
+     "te": 60.4,
+     "trRet": -2.21,
+     "teRet": 3.01,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30+mecha+rLento",
+     "trN": 88,
+     "tr": 71.6,
+     "teN": 121,
+     "te": 60.3,
+     "trRet": 3.37,
+     "teRet": 3.93,
+     "monedas": 30
+    },
+    {
+     "k": "S:bb+btc+lejos",
+     "trN": 104,
+     "tr": 33.7,
+     "teN": 68,
+     "te": 60.3,
+     "trRet": -4.45,
+     "teRet": 2.71,
+     "monedas": 30
+    },
+    {
+     "k": "S:bb+vol+mecha",
+     "trN": 86,
+     "tr": 45.3,
+     "teN": 77,
+     "te": 59.7,
+     "trRet": -1.36,
+     "teRet": -2.16,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50+btc+lejos",
+     "trN": 142,
+     "tr": 41.5,
+     "teN": 89,
+     "te": 59.6,
+     "trRet": -3.1,
+     "teRet": 1.76,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+mecha+caidas3",
+     "trN": 91,
+     "tr": 68.1,
+     "teN": 194,
+     "te": 59.3,
+     "trRet": 2.66,
+     "teRet": 2.72,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS+btc+lejos",
+     "trN": 96,
+     "tr": 57.3,
+     "teN": 78,
+     "te": 59,
+     "trRet": 0.71,
+     "teRet": 2.43,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200+r35+vol",
+     "trN": 84,
+     "tr": 60.7,
+     "teN": 158,
+     "te": 58.9,
+     "trRet": -1.23,
+     "teRet": 1.7,
+     "monedas": 30
+    },
+    {
+     "k": "S:mecha+caidas3+lejos",
+     "trN": 84,
+     "tr": 44,
+     "teN": 102,
+     "te": 58.8,
+     "trRet": -3.2,
+     "teRet": -0.42,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35+r2+mecha",
+     "trN": 82,
+     "tr": 67.1,
+     "teN": 166,
+     "te": 58.4,
+     "trRet": 0.46,
+     "teRet": 3.26,
+     "monedas": 30
+    }
+   ],
+   "simples": [
+    {
+     "k": "S:div",
+     "trN": 297,
+     "tr": 47.8,
+     "teN": 281,
+     "te": 58,
+     "trRet": -3.3,
+     "teRet": -0.38,
+     "monedas": 30
+    },
+    {
+     "k": "S:bajo200",
+     "trN": 2092,
+     "tr": 49.1,
+     "teN": 2220,
+     "te": 55.5,
+     "trRet": -2.12,
+     "teRet": -0.22,
+     "monedas": 30
+    },
+    {
+     "k": "S:caidas3",
+     "trN": 1402,
+     "tr": 45.2,
+     "teN": 1695,
+     "te": 55,
+     "trRet": -1.82,
+     "teRet": 0.5,
+     "monedas": 30
+    },
+    {
+     "k": "S:rLento",
+     "trN": 851,
+     "tr": 45.5,
+     "teN": 847,
+     "te": 54.9,
+     "trRet": -3.28,
+     "teRet": -0.79,
+     "monedas": 30
+    },
+    {
+     "k": "L:vol",
+     "trN": 564,
+     "tr": 53.5,
+     "teN": 654,
+     "te": 54.4,
+     "trRet": 2.79,
+     "teRet": 2.83,
+     "monedas": 30
+    },
+    {
+     "k": "S:mecha",
+     "trN": 2142,
+     "tr": 49.3,
+     "teN": 2644,
+     "te": 53.7,
+     "trRet": -0.59,
+     "teRet": -0.14,
+     "monedas": 30
+    },
+    {
+     "k": "S:tend",
+     "trN": 2469,
+     "tr": 49.9,
+     "teN": 3248,
+     "te": 52.4,
+     "trRet": -0.25,
+     "teRet": -0.3,
+     "monedas": 30
+    },
+    {
+     "k": "S:lejos",
+     "trN": 632,
+     "tr": 42.9,
+     "teN": 690,
+     "te": 52.3,
+     "trRet": -4.16,
+     "teRet": -1.35,
+     "monedas": 30
+    },
+    {
+     "k": "L:rLento",
+     "trN": 791,
+     "tr": 55.1,
+     "teN": 1272,
+     "te": 52.2,
+     "trRet": 0.5,
+     "teRet": 0.63,
+     "monedas": 30
+    },
+    {
+     "k": "S:r30",
+     "trN": 522,
+     "tr": 48.1,
+     "teN": 487,
+     "te": 52.2,
+     "trRet": -4.19,
+     "teRet": -2.21,
+     "monedas": 30
+    },
+    {
+     "k": "S:btc",
+     "trN": 2067,
+     "tr": 51.6,
+     "teN": 2179,
+     "te": 52.2,
+     "trRet": -0.49,
+     "teRet": -0.14,
+     "monedas": 30
+    },
+    {
+     "k": "L:div",
+     "trN": 145,
+     "tr": 56.6,
+     "teN": 198,
+     "te": 50.5,
+     "trRet": -2.68,
+     "teRet": 0.59,
+     "monedas": 30
+    },
+    {
+     "k": "S:r2",
+     "trN": 825,
+     "tr": 43.4,
+     "teN": 971,
+     "te": 50.2,
+     "trRet": -3.58,
+     "teRet": -1.31,
+     "monedas": 30
+    },
+    {
+     "k": "S:tendS",
+     "trN": 2168,
+     "tr": 51.9,
+     "teN": 2926,
+     "te": 49.7,
+     "trRet": 0.13,
+     "teRet": -0.42,
+     "monedas": 30
+    },
+    {
+     "k": "S:s50",
+     "trN": 2330,
+     "tr": 49.5,
+     "teN": 3019,
+     "te": 49.3,
+     "trRet": -0.67,
+     "teRet": -0.44,
+     "monedas": 30
+    },
+    {
+     "k": "S:r35",
+     "trN": 849,
+     "tr": 45.5,
+     "teN": 822,
+     "te": 48.9,
+     "trRet": -3.32,
+     "teRet": -1.71,
+     "monedas": 30
+    },
+    {
+     "k": "L:r2",
+     "trN": 688,
+     "tr": 50.4,
+     "teN": 1133,
+     "te": 48.5,
+     "trRet": 0.54,
+     "teRet": 0.41,
+     "monedas": 30
+    },
+    {
+     "k": "L:bajo200",
+     "trN": 2469,
+     "tr": 49.9,
+     "teN": 3248,
+     "te": 47.5,
+     "trRet": 0.05,
+     "teRet": 0.1,
+     "monedas": 30
+    },
+    {
+     "k": "S:bb",
+     "trN": 751,
+     "tr": 43.7,
+     "teN": 788,
+     "te": 47.3,
+     "trRet": -3.46,
+     "teRet": -1.82,
+     "monedas": 30
+    },
+    {
+     "k": "L:r35",
+     "trN": 670,
+     "tr": 56,
+     "teN": 973,
+     "te": 47,
+     "trRet": 0.53,
+     "teRet": 0.77,
+     "monedas": 30
+    },
+    {
+     "k": "L:caidas3",
+     "trN": 1277,
+     "tr": 51.1,
+     "teN": 2005,
+     "te": 46.6,
+     "trRet": 0.36,
+     "teRet": 0.37,
+     "monedas": 30
+    },
+    {
+     "k": "L:r30",
+     "trN": 275,
+     "tr": 59.3,
+     "teN": 379,
+     "te": 45.4,
+     "trRet": 1.27,
+     "teRet": 0.93,
+     "monedas": 30
+    },
+    {
+     "k": "L:mecha",
+     "trN": 2364,
+     "tr": 51.6,
+     "teN": 2734,
+     "te": 44.8,
+     "trRet": 0.97,
+     "teRet": 0.01,
+     "monedas": 30
+    },
+    {
+     "k": "S:z25",
+     "trN": 428,
+     "tr": 47.9,
+     "teN": 438,
+     "te": 44.5,
+     "trRet": -3.48,
+     "teRet": -1.98,
+     "monedas": 30
+    },
+    {
+     "k": "L:bb",
+     "trN": 535,
+     "tr": 48,
+     "teN": 753,
+     "te": 44.1,
+     "trRet": 0.43,
+     "teRet": 0.15,
+     "monedas": 30
+    },
+    {
+     "k": "L:tend",
+     "trN": 2092,
+     "tr": 50.6,
+     "teN": 2220,
+     "te": 44,
+     "trRet": 1.92,
+     "teRet": 0.02,
+     "monedas": 30
+    },
+    {
+     "k": "S:vol",
+     "trN": 564,
+     "tr": 44.7,
+     "teN": 654,
+     "te": 44,
+     "trRet": -2.99,
+     "teRet": -3.03,
+     "monedas": 30
+    },
+    {
+     "k": "L:lejos",
+     "trN": 554,
+     "tr": 53.2,
+     "teN": 714,
+     "te": 42.3,
+     "trRet": 1.59,
+     "teRet": 0.17,
+     "monedas": 30
+    },
+    {
+     "k": "L:btc",
+     "trN": 2369,
+     "tr": 54.4,
+     "teN": 3290,
+     "te": 42.1,
+     "trRet": 2.48,
+     "teRet": -0.41,
+     "monedas": 30
+    },
+    {
+     "k": "L:z25",
+     "trN": 257,
+     "tr": 51.4,
+     "teN": 281,
+     "te": 40.6,
+     "trRet": -0.66,
+     "teRet": 0.5,
+     "monedas": 30
+    },
+    {
+     "k": "L:s50",
+     "trN": 2005,
+     "tr": 51.3,
+     "teN": 2209,
+     "te": 40,
+     "trRet": 1.59,
+     "teRet": -0.53,
+     "monedas": 30
+    },
+    {
+     "k": "L:tendS",
+     "trN": 2165,
+     "tr": 52.1,
+     "teN": 2330,
+     "te": 39.6,
+     "trRet": 2.37,
+     "teRet": -0.64,
+     "monedas": 30
+    }
+   ]
+  }
+ }
+}
