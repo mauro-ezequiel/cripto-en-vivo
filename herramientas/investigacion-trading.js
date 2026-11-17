@@ -82,6 +82,10 @@ const FILT = {
   canal_fuerte: c => c.cn && c.cn.dir === c.dir && (c.dir > 0 ? c.cn.pos <= .35 : c.cn.pos >= .65),
   d200_8: c => c.d200 <= 8, d200_4: c => c.d200 <= 4,
   bollinger: c => c.z <= 0, volumen: c => c.vr < .7,
+  /* noviembre 2026: lo que separó ganadoras de perdedoras en las señales en práctica (ADX de la moneda, ATR, distancia a la EMA 200, volumen) */
+  d8_adx30: c => c.d200 <= 8 && c.adx != null && c.adx <= 30, d8_adx35: c => c.d200 <= 8 && c.adx != null && c.adx <= 35,
+  d8_atr: c => c.d200 <= 8 && c.atrN <= .0135, d5: c => c.d200 <= 5, d8_vol: c => c.d200 <= 8 && c.vr >= .6,
+  d8_adx30_vol: c => c.d200 <= 8 && c.adx != null && c.adx <= 30 && c.vr >= .6,
   canal_y_d200: c => FILT.canal(c) && c.d200 <= 8,
   canal_y_boll: c => FILT.canal(c) && c.z <= 0 };
 
@@ -104,7 +108,7 @@ async function main() { const t0 = Date.now(), R = { fecha: new Date().toISOStri
         const rr = dir > 0 ? P.r14[i] : 100 - P.r14[i], core = P.vr[i] < 1 && atrP > .01 * sc && atrP <= .017 * sc, d50 = dir * (cb - P.e50[i]) / P.atr[i];
         let ok = false; if (core && rr < 50) ok = d50 >= .5; else if (core && rank < 40 && rr < 55 && P.adx[i] != null && P.adx[i] >= 25) ok = true; if (!ok) continue;
         const k = lastClosed(BT, ms, t); if (!(k >= 0 && PB.e50[k] != null && Math.sign(BT[k].c - PB.e50[k]) === dir)) continue; // BTC a favor
-        C.push({ s, t, dir, e: cb, atrP, i, cn: canal(b, i), d200: dir * (cb / P.e200[i] - 1) * 100, z: P.bs[i] ? dir * (cb - P.bm[i]) / P.bs[i] : 0, vr: P.vr[i] }); } }
+        C.push({ s, t, dir, e: cb, atrP, i, cn: canal(b, i), d200: dir * (cb / P.e200[i] - 1) * 100, z: P.bs[i] ? dir * (cb - P.bm[i]) / P.bs[i] : 0, vr: P.vr[i], adx: P.adx[i], atrN: atrP / sc }); } }
     const maxMs = Math.min(14 * DAY, 42 * ms), cool = Math.max(24 * H, 6 * ms), j0 = {};
     for (const c of C) c.j0 = idxAfter(B1[c.s], c.t);
     if (GEST) { R.gestion_trading = []; const trendAt = (c, t) => { const T = TR4[c.s], k = lastClosed(T.b, ms, t); return k >= 0 && T.e200[k] != null && c.dir * (T.b[k].c - T.e200[k]) > 0; };
