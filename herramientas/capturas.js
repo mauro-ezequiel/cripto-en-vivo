@@ -161,6 +161,15 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     await pg.waitForTimeout(5000);
     const tfix = await pg.evaluate(() => { const r = { form_tf: !!document.getElementById('pilTf'), def_tf: pilTfOf({ mk: 'c' }) }; const p = { id: 'XRPUSDT-t', sym: 'XRPUSDT', mk: 'c', tf: '4h', entry: 2.0, t: Date.now(), tEst: 2 }; return pioEstT('XRPUSDT', tickers.XRPUSDT ? tickers.XRPUSDT.c * 1.05 : 2).then(t => Object.assign(r, { estimado: t ? new Date(t).toISOString() : null, horas_atras: t ? Math.round((Date.now() - t) / 36e5) : null })); });
     info.push({ pilcaptura: { pre, post, tfix } }); } catch (e) { info.push({ pilcaptura_error: e.message.slice(0, 200) }); }
+  /* indicador Capitulación (vela diaria) y su aviso en la planilla de RSI */
+  try { const out = {}; let best = null; for (const sy of ['BTCUSDT', 'ETHUSDT', 'SOLUSDT', 'DOGEUSDT', 'AVAXUSDT']) { const r = await pg.evaluate(async sy => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
+        if (symbol !== sy) select(sy); if (tf !== '1d') { tf = '1d'; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
+        active.add('cap'); calcInd(true); const S = C.cap; return { velas: candles.length, off: !!(S && S.off), senales: S && S.L ? S.L.map(v => new Date(candles[v.i].t).toISOString().slice(0, 10) + (v.abierta ? ' (abierta)' : '')) : null }; }, sy); out[sy] = r;
+      if (r.senales && r.senales.length && (!best || r.senales.length > best[1])) { best = [sy, r.senales.length]; try { await pg.locator('#chart').screenshot({ path: `capturas/capitulacion-${sy}.png`, timeout: 15000 }); } catch (e) {} } }
+    out.en4h = await pg.evaluate(async () => { tf = '4h'; renderTfs(); loadChart(); await new Promise(z => setTimeout(z, 2500)); calcInd(true); return C.cap; });
+    out.planilla = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); RSICX.tf = '1d'; rsiCxRender(); const b = $('rsiCx'); b.scrollIntoView(); for (let k = 0; k < 60 && !(RSICX.d['1d'] && RSICX.d['1d'].t); k++) { rsiCxLoad(); await w(500); } rsiCxRender();
+      return { monedas: Object.keys(RSICX.d['1d'].v).length, caps: Object.entries(RSICX.d['1d'].v).filter(([, x]) => x[2]).map(([s, x]) => s + ':' + x[2]), aviso: ($('rsiCxBody').querySelector('.cap-hoy') || {}).textContent || '' }; });
+    info.push({ capitulacion: out }); } catch (e) { info.push({ capitulacion_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
