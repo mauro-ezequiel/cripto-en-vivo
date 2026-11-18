@@ -4156,7 +4156,10 @@ const stkBar=r=>{const t=Date.parse(r.date+'T00:00:00Z'),v=+r.v||0;return {time:
 async function stkHist(sym){const h=STKH[sym];if(h&&Date.now()-h.t<30*6e4)return h.b;
   if(isBA(sym)){const q=STK[sym]||{},base=sym.replace(/\.BA$/,''),E=q.kind==='AR'?['stocks']:q.kind==='ON'?['corp','bonds']:['bonds','notes'];let rows=null;
     for(const e of E){const j=await safe(getJ(`${D912}/historical/${e}/${base}`,20000));if(Array.isArray(j)&&j.length){rows=j;break;}}
-    if(!rows)throw new Error('sin historial en BYMA');const b=[];for(const r of rows.slice(-1500)){const c=+r.c;if(!(c>0))continue;const t=Date.parse(r.date+'T00:00:00Z'),o=+r.o||c,hh=Math.max(+r.h||c,c,o),l=Math.min(+r.l||c,c,o),v=+r.v||0;
+    if(!rows){/* letras y algunas ONs no tienen historial publicado: se muestra solo la vela de hoy (así no queda el gráfico del activo anterior) */
+      const c=q.c||0;if(!(c>0))throw new Error('sin historial en BYMA');const date=artDay(),t=Date.parse(date+'T00:00:00Z');
+      setTimeout(()=>{const n=$('loading');if(n){n.textContent=`${base}: BYMA no publica su historial; se ve solo el precio de hoy`;n.style.display='flex';setTimeout(()=>n.style.display='none',3500);}},60);
+      const b=[{time:t/1000,t,open:q.l||c,high:q.h||c,low:q.l||c,close:c,v:q.v||0,tb:(q.v||0)/2,date}];STKH[sym]={t:Date.now(),b,ced:true,src:'byma'};return b;}const b=[];for(const r of rows.slice(-1500)){const c=+r.c;if(!(c>0))continue;const t=Date.parse(r.date+'T00:00:00Z'),o=+r.o||c,hh=Math.max(+r.h||c,c,o),l=Math.min(+r.l||c,c,o),v=+r.v||0;
       b.push({time:t/1000,t,open:o,high:hh,low:l,close:c,v,tb:hh>l?v*(c-l)/(hh-l):v/2,date:r.date});}
     STKH[sym]={t:Date.now(),b,ced:true,src:'byma'};return b;}
   /* v5: velas diarias completas de Yahoo (las publica herramientas/intradia.js); sirven para todas las acciones, no solo las que tienen historial de CEDEAR */
