@@ -2529,7 +2529,7 @@ $('q').oninput=()=>{
 $('q').onkeydown=e=>{if(e.key==='Enter'){const r=$('list').querySelector('.row');if(r)select(r.dataset.s);}};
 $('list').onclick=e=>{const st=e.target.closest('[data-star]');if(st){const s=st.dataset.star;favs.has(s)?favs.delete(s):favs.add(s);saveFavs();renderList();return;}const r=e.target.closest('.row');if(r)select(r.dataset.s);};
 $('ltabs').onclick=e=>{const b=e.target.closest('[data-f]');if(!b)return;favOnly=b.dataset.f==='fav';[...$('ltabs').children].forEach(x=>x.classList.toggle('on',x===b));renderList();};
-function select(s){
+function select(s){if(mode==='a')try{bxWant([s]);}catch(e){}
   symbol=s;document.querySelectorAll('.row').forEach(r=>r.classList.toggle('active',r.dataset.s===s));
   updateTop();loadChart();try{icoHead();datShow();}catch(e){}
 }
@@ -4128,14 +4128,13 @@ async function loadStocks(){
    Ahora, con la bolsa cerrada, el precio sigue al contrato 24/7: primero BingX, si no responde Binance. Con la bolsa abierta, el de la bolsa. */
 function stk24(){const cerrado=!mktOpen();let n=0;
   for(const s in STK){const o=STK[s];if(o.c0==null){o.c0=o.c;o.p0=o.p;}
-    if(!cerrado){if(o.src24){o.c=o.c0;o.p=o.p0;o.src24=null;}continue;}
-    const bx=bxPx(s),bn=pilMark(s.replace('.','')+'USDT'),v=bx||bn;
+    const bx=bxPx(s),bn=cerrado?pilMark(s.replace('.','')+'USDT'):null,v=bx||bn;
     if(v>0&&o.c0>0&&Math.abs(v/o.c0-1)<.25){const prev=o.c0/(1+(o.p0||0)/100);o.c=v;o.p=(v/prev-1)*100;o.h=Math.max(o.h??v,v);o.l=Math.min(o.l??v,v);o.src24=bx?'BingX':'Binance';n++;}
     else if(o.src24){o.c=o.c0;o.p=o.p0;o.src24=null;}}
-  const b=$('hdLive');if(b){const o=mode==='a'&&STK[symbol];b.textContent=o&&o.src24?'● 24 H · '+o.src24:'● EN VIVO';b.title=o&&o.src24?'La bolsa está cerrada: precio del contrato que opera las 24 h en '+o.src24+' (el mismo que ves en esa app). Precio de cierre de la bolsa: '+o.c0:'';}
+  const b=$('hdLive');if(b){const o=mode==='a'&&STK[symbol];b.textContent=o&&o.src24?(cerrado?'● 24 H · ':'● ')+o.src24:'● EN VIVO';b.title=o&&o.src24?'Precio del contrato de '+o.src24+(cerrado?' (opera las 24 h; la bolsa está cerrada)':'')+', el mismo que ves en esa app. Precio de la bolsa: '+o.c0:'';}
   return n;}
 /* con la bolsa cerrada, refresca el precio 24 h cada 15 s mientras estés en ACCIONES */
-setInterval(()=>{if(mode!=='a'||mktOpen()){stk24();return;}try{bxLoad();pilMarks();}catch(e){}if(stk24()){renderList();updateTop();stkLiveBar();}},15000);
+setInterval(()=>{if(mode==='a')try{bxWant([symbol]);}catch(e){}if(mode!=='a'){stk24();return;}if(!mktOpen())try{pilMarks();}catch(e){}if(stk24()){renderList();updateTop();stkLiveBar();}},5000);
 (function poll(){setTimeout(async()=>{try{await loadStocks();}catch(e){}poll();},mode==='a'&&mktOpen()?20000:120000);})();
 loadStocks();
 const stkBar=r=>{const t=Date.parse(r.date+'T00:00:00Z'),v=+r.v||0;return {time:t/1000,t,open:+r.o,high:+r.h,low:+r.l,close:+r.c,v,tb:r.h>r.l?v*(r.c-r.l)/(r.h-r.l):v/2,date:r.date};};
@@ -4912,10 +4911,27 @@ async function pilMarks(){if(PIL.some(p=>p.src==='bingx'&&!p.closed))bxLoad();if
 const pilMark=s=>Date.now()-PILMK.t<9e4?PILMK.m[s]||null:null;
 /* noviembre 2026 · BingX: las operaciones importadas de una captura de BingX siguen el precio de marca de BingX (sus contratos de acciones cotizan 24/7).
    Se lee la API pública de BingX desde el navegador; si no responde, se usa Binance o la bolsa como antes. */
-var BXM={t:0,m:{},map:null,busy:false,fail:0};
+var BXM={t:0,m:{},ts:{},map:null,busy:false,fail:0};
 const bxBase=s=>String(s).toUpperCase().replace(/USDT$/,'');
-function bxPx(sym){const k=BXM.map&&BXM.map[bxBase(sym)];return k&&BXM.m[k]>0?BXM.m[k]:null;}
-async function bxLoad(){if(BXM.busy||Date.now()-BXM.t<12e3||Date.now()-BXM.fail<3e5)return;BXM.busy=true;
+function bxPx(sym){const k=BXM.map&&BXM.map[bxBase(sym)];if(!k||!(BXM.m[k]>0))return null;if(BXM.ts&&BXM.ts[k]&&Date.now()-BXM.ts[k]>18e4)return null;return BXM.m[k];}
+/* BingX por WebSocket (noviembre 2026): la API normal de BingX no deja que una página la lea (bloqueo CORS), pero el WebSocket sí.
+   Da el ÚLTIMO PRECIO de cada contrato, el mismo número grande que muestra la app (probado: NVDA → NCSKNVDA2USD-USDT, 158,13).
+   Las acciones en BingX se llaman NCSK + ticker + 2USD; se prueban varios nombres y se queda con el que contesta. */
+const BXWS={ws:null,want:new Set(),subs:new Set(),retry:0,ui:0};
+const bxCands=s=>{const b=bxBase(s).replace(/[.\-]/g,'');return /USDT$/.test(String(s).toUpperCase())&&!STK[s]?[b+'-USDT']:[`NCSK${b}2USD-USDT`,`NCSI${b}2USD-USDT`,`NCS${b}2USD-USDT`,`NCSK${b}USD-USDT`,b+'-USDT'];};
+function bxWant(list){let nuevo=false;for(const s of list){if(!s)continue;for(const c of bxCands(s))if(!BXWS.want.has(c)){BXWS.want.add(c);nuevo=true;}}if(nuevo)bxWsGo();}
+function bxWsSub(c){const w=BXWS.ws;if(!w||w.readyState!==1||BXWS.subs.has(c))return;BXWS.subs.add(c);try{w.send(JSON.stringify({id:'s'+BXWS.subs.size,reqType:'sub',dataType:c+'@lastPrice'}));}catch(e){}}
+function bxWsGo(){if(typeof WebSocket==='undefined'||typeof DecompressionStream==='undefined')return;const w=BXWS.ws;if(w&&w.readyState<=1){if(w.readyState===1)BXWS.want.forEach(bxWsSub);return;}
+  try{const ws=BXWS.ws=new WebSocket('wss://open-api-swap.bingx.com/swap-market');ws.binaryType='arraybuffer';BXWS.subs=new Set();
+    ws.onopen=()=>{BXWS.retry=0;BXWS.want.forEach(bxWsSub);};
+    ws.onmessage=async e=>{let t;try{t=typeof e.data==='string'?e.data:await new Response(new Blob([e.data]).stream().pipeThrough(new DecompressionStream('gzip'))).text();}catch(x){return;}
+      if(t==='Ping'){try{ws.send('Pong');}catch(x){}return;}let j;try{j=JSON.parse(t);}catch(x){return;}const d=j&&j.data;if(!d||!d.s||!(+d.c>0))return;
+      const k=d.s,m=k.match(/^NCS[A-Z]?([A-Z0-9]+?)2?USD-USDT$/),base=m?m[1]:k.replace(/-USDT$/,'');BXM.map=BXM.map||{};if(!BXM.map[base]||BXM.map[base]===k||!BXM.ts[BXM.map[base]])BXM.map[base]=k;
+      BXM.m[k]=+d.c;(BXM.ts=BXM.ts||{})[k]=Date.now();BXM.t=Date.now();
+      if(Date.now()-BXWS.ui>1500){BXWS.ui=Date.now();try{if(mode==='a'&&stk24()){updateTop();stkLiveBar();}}catch(x){}}};
+    ws.onclose=()=>{BXWS.ws=null;if(BXWS.want.size&&BXWS.retry<20){BXWS.retry++;setTimeout(bxWsGo,Math.min(6e4,3e3*BXWS.retry));}};
+    ws.onerror=()=>{try{ws.close();}catch(x){}};}catch(e){}}
+async function bxLoad(){try{bxWant(PIL.filter(p=>!p.closed&&(p.src==='bingx'||p.mk==='a')).map(p=>p.sym));}catch(e){}if(BXM.busy||Date.now()-BXM.t<12e3||Date.now()-BXM.fail<3e5)return;BXM.busy=true;
   try{if(!BXM.map){const j=await getJ('https://open-api.bingx.com/openApi/swap/v2/quote/contracts',12000),L=(j&&j.data)||[],map={};
       for(const x of L){const sy=String(x.symbol||''),b=sy.split('-')[0],q=sy.split('-')[1]||'';if(!/USD/.test(q))continue;if(!map[b])map[b]=sy;const m=b.match(/^NCS[A-Z]*?([A-Z]{1,6})2?USD$/);if(m&&!map[m[1]])map[m[1]]=sy;}
       if(Object.keys(map).length)BXM.map=map;else throw 0;}
