@@ -4995,7 +4995,7 @@ function iaCoDecide(p,a){const R=PRESC[p.id],d=p.dir,L=d>0,c=a&&a.c;if(!a||!c)re
     return{k:'margen',m:R.need,nl:R.newLiq,t:`🛟 Salvavidas: sumá <b>${R.need} USD de margen</b>. La liquidación pasa a ${fp(R.newLiq)}, más allá del ${L?'soporte':'techo'} fuerte en ${fp(R.sp.p)}.${s2?` (Una 2ª operación costaría ${s2.m} USD.)`:''}`};}
   /* sin salvavidas que valga la pena: retirarse en el mejor momento */
   const liq=pilLiqPx(p),atr=R.atr||0,lejos=atr&&R.e21?d*(R.e21-c)/atr:0,sobre=L?R.r14<35:R.r14>65,stopX=isFinite(liq)?c-d*Math.abs(c-liq)*.5:null;
-  if(lejos>1.5&&sobre&&stopX){const tgt=R.e21-d*.25*atr;return{k:'esperar',tgt,stopX,t:`🚪 Retirarse en el mejor momento: el precio se alejó mucho de golpe (RSI ${Math.round(R.r14)}), suele haber un rebote corto. Poné una orden de cierre en <b>${fp(tgt)}</b> y un stop en <b>${fp(stopX)}</b> (a mitad de camino a la liquidación). Lo que toque primero.`};}
+  if(lejos>1.5&&sobre&&stopX){let tgt=R.e21-d*.25*atr;const av=pilAvg(p);if(d*(tgt-av)>0)tgt=av; /* si el rebote llega a tu entrada, salís sin pérdida */return{k:'esperar',tgt,stopX,t:`🚪 Retirarse en el mejor momento: el precio se alejó mucho de golpe (RSI ${Math.round(R.r14)}), suele haber un rebote corto. Poné una orden de cierre en <b>${fp(tgt)}</b> y un stop en <b>${fp(stopX)}</b> (a mitad de camino a la liquidación). Lo que toque primero.`};}
   return{k:'salir',t:`🚪 Retirarse ahora: ${R.v==='salir'?R.why:'la tendencia va en contra en varias temporalidades y no conviene poner más plata.'} Cada vela que esperás suele costar más.`};}
 /* copia simulada: arranca igual que tu operación y aplica las jugadas de la IA */
 function iaSimLiq(x){const L=x.mg/(x.q*x.avg)-.005;return x.avg*(1-x.d*L);}
