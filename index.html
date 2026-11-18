@@ -777,6 +777,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .cap-b{font-size:10px;cursor:help}.cap-b.o{opacity:.5}.cap-hoy{margin:0 0 8px;padding:8px 12px;border-radius:12px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.35);font-size:12.5px}.cap-hoy a{color:#00e676;font-weight:700;cursor:pointer}
 #pasBox{scroll-margin-top:6px}
 .ind-tf{font-size:10px;font-weight:600;color:var(--mut);margin-left:6px;white-space:nowrap;letter-spacing:.01em}.chip.on .ind-tf{color:var(--mut)}
+.iaco{margin:8px 0;padding:10px 12px;border-radius:14px;background:rgba(26,107,255,.09);border:1px solid rgba(26,107,255,.35);font-size:12.5px;line-height:1.45}.iaco-t{font-weight:800;margin-bottom:4px}.iaco button{margin-top:6px}.iaco-s{margin-top:8px;padding-top:7px;border-top:1px solid var(--line);font-size:12px}.iaco-l{display:flex;flex-direction:column;gap:2px;margin-top:4px;color:var(--mut);font-size:11px}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -4967,8 +4968,59 @@ async function pilRescCalc(p){PRESC[p.id]={busy:1};pilRender();
     else if(need>mg){v='salir';why=`Para que la liquidación quede debajo del soporte habría que sumar ${need} USD, más que el margen que tenés (${mg.toFixed(0)} USD). No vale la pena.`;}
     else v='rescate';
     const newLiq=need?avg*(1-d*((mg+need)/(q*avg)-.005)):liq;
-    PRESC[p.id]={t:Date.now(),v,why,sp,S,zone,floor,need,extra:v==='rescate'?need:0,newLiq,c,avg,usd,mg,liq};}
+    const cl=b.map(x=>x.close),e21=IA._.ema(cl,21),r14=IA._.rsi(cl,14);let atr=0;for(let i=Math.max(1,b.length-15);i<b.length;i++)atr+=Math.max(b[i].high-b[i].low,Math.abs(b[i].high-b[i-1].close),Math.abs(b[i].low-b[i-1].close))/14;
+    PRESC[p.id]={t:Date.now(),v,why,sp,S,zone,floor,need,extra:v==='rescate'?need:0,newLiq,c,avg,usd,mg,liq,q,e21:e21[e21.length-1],r14:r14[r14.length-1],atr:S&&S.atr||atr};}
   catch(e){PRESC[p.id]={err:1};}pilRender();}
+
+/* ===== 🧠 IA COPILOTO de PILOTEAR (noviembre 2026) =====
+   Mira cada operación pilotada y elige UNA de estas jugadas:
+   · mantener / tomar ganancia (si vas ganando)
+   · salvavidas 1: sumar margen, para que la liquidación quede del otro lado de un soporte fuerte
+   · salvavidas 2: abrir una 2ª operación en el mismo activo, en la zona del soporte (baja el precio promedio y la liquidación)
+   · retirarse: ya mismo, o esperando un rebote corto hasta un objetivo, con un stop antes de la liquidación
+   Elige el salvavidas solo si hay un soporte fuerte cerca y la tendencia no está en contra. Entre los dos, el que cuesta menos plata
+   (si la 2ª operación cuesta parecido, la prefiere porque además acerca el punto de salida sin pérdida).
+   Además lleva una COPIA SIMULADA de tu operación donde aplica ella misma lo que recomienda, para medir si sus decisiones sirven. */
+function iaCo2da(R,lev,d){if(!R||!R.sp||!(R.zone>0))return null;const q=R.q,avg=R.avg,mg=R.mg,z=R.zone;
+  const test=m=>{const q2=m*lev/z,nq=q+q2,na=(avg*q+z*q2)/nq,nm=mg+m,L=na*(1-d*(nm/(nq*na)-.005));return {m,na,L,ok:d*(R.floor-L)>0};};
+  let lo=1,hi=Math.max(5,mg*3);if(!test(hi).ok)return null;for(let k=0;k<30;k++){const mid=(lo+hi)/2;if(test(mid).ok)hi=mid;else lo=mid;}return test(Math.ceil(hi));}
+function iaCoDecide(p,a){const R=PRESC[p.id],d=p.dir,L=d>0,c=a&&a.c;if(!a||!c)return null;const contra=['salir','vuelta','aviso'].includes(a.st);
+  if(a.st==='liq')return{k:'liq',t:'💥 Liquidada (simulación).'};
+  if(a.usd>=0){if(a.st==='asegurar')return{k:'tomar',t:'💰 Tomá ganancia: la tendencia está girando. Cerrá (o al menos la mitad) ahora.'};return{k:'mantener',t:'👍 Mantener: vas ganando y no hay nada en contra.'};}
+  if(['peligro','stopplan'].includes(a.st))return{k:'salir',t:'🛑 Retirarse YA: '+(a.st==='peligro'?'estás muy cerca de la liquidación.':'el precio pasó el stop del plan.')};
+  if(!R||R.busy||R.err)return{k:'calc',t:'🧠 Analizando soportes de 4 h…'};
+  if(R.v==='aguantar'&&!contra)return{k:'mantener',t:`⏳ Aguantar sin sumar plata: tu liquidación ya está más allá del ${L?'soporte':'techo'} fuerte en ${fp(R.sp.p)}. Si una vela de 4 h cierra ${L?'debajo':'arriba'} de ${fp(R.zone)}, salí.`};
+  if(R.v==='rescate'&&!contra){const s2=iaCo2da(R,p.lev,d);
+    if(s2&&s2.m<=R.need*1.3)return{k:'segunda',m:s2.m,px:R.zone,na:s2.na,nl:s2.L,t:`🛟 Salvavidas: abrí una 2ª operación ${L?'LONG':'SHORT'} × ${p.lev} de <b>${s2.m} USD</b> con orden límite en <b>${fp(R.zone)}</b> (${L?'soporte':'techo'} fuerte). Tu precio promedio pasa a ${fp(s2.na)} y la liquidación a ${fp(s2.L)}, del otro lado del ${L?'soporte':'techo'}. Sumar margen costaría ${R.need} USD.`};
+    return{k:'margen',m:R.need,nl:R.newLiq,t:`🛟 Salvavidas: sumá <b>${R.need} USD de margen</b>. La liquidación pasa a ${fp(R.newLiq)}, más allá del ${L?'soporte':'techo'} fuerte en ${fp(R.sp.p)}.${s2?` (Una 2ª operación costaría ${s2.m} USD.)`:''}`};}
+  /* sin salvavidas que valga la pena: retirarse en el mejor momento */
+  const liq=pilLiqPx(p),atr=R.atr||0,lejos=atr&&R.e21?d*(R.e21-c)/atr:0,sobre=L?R.r14<35:R.r14>65,stopX=isFinite(liq)?c-d*Math.abs(c-liq)*.5:null;
+  if(lejos>1.5&&sobre&&stopX){const tgt=R.e21-d*.25*atr;return{k:'esperar',tgt,stopX,t:`🚪 Retirarse en el mejor momento: el precio se alejó mucho de golpe (RSI ${Math.round(R.r14)}), suele haber un rebote corto. Poné una orden de cierre en <b>${fp(tgt)}</b> y un stop en <b>${fp(stopX)}</b> (a mitad de camino a la liquidación). Lo que toque primero.`};}
+  return{k:'salir',t:`🚪 Retirarse ahora: ${R.v==='salir'?R.why:'la tendencia va en contra en varias temporalidades y no conviene poner más plata.'} Cada vela que esperás suele costar más.`};}
+/* copia simulada: arranca igual que tu operación y aplica las jugadas de la IA */
+function iaSimLiq(x){const L=x.mg/(x.q*x.avg)-.005;return x.avg*(1-x.d*L);}
+function iaSimPnl(x,c){return x.d*(c-x.avg)*x.q-.0005*x.q*(x.avg+c);}
+function iaCoSim(p,a,dec){const c=a&&a.c;if(!c)return;let x=p.ias;
+  if(!x){x=p.ias={t0:Date.now(),d:p.dir,avg:pilAvg(p),q:pilQty(p),mg:p.margin+(p.ll?p.ll.margin:0)+(p.extra||0),st:'open',acts:[],usado:0,pnl0:a.usd};}
+  if(x.st!=='open')return;const log=t=>{x.acts.push({t:Date.now(),x:t});if(x.acts.length>12)x.acts.shift();},cerrar=(px,why)=>{x.st='closed';x.cpx=px;x.pnl=Math.max(-x.mg,iaSimPnl(x,px));x.ct=Date.now();log(why+' en '+fp(px));};
+  if(x.d*(c-iaSimLiq(x))<=0){x.st='closed';x.cpx=c;x.pnl=-x.mg;x.ct=Date.now();log('💥 liquidada');return;}
+  if(x.pend&&x.d*(c-x.pend.px)<=0){const q2=x.pend.m*p.lev/x.pend.px;x.avg=(x.avg*x.q+x.pend.px*q2)/(x.q+q2);x.q+=q2;x.mg+=x.pend.m;x.usado+=x.pend.m;log(`🛟 se llenó la 2ª operación (${x.pend.m} USD en ${fp(x.pend.px)})`);x.pend=null;}
+  if(x.ex){if(x.d*(c-x.ex.tgt)>=0)return cerrar(c,'🚪 cerró en el rebote');if(x.d*(c-x.ex.stop)<=0)return cerrar(c,'🛑 cerró por stop');}
+  if(p.closed)return cerrar(c,'cerró junto con tu operación');
+  if(!dec)return;
+  if(dec.k==='salir'||dec.k==='tomar')return cerrar(c,dec.k==='tomar'?'💰 tomó ganancia':'🚪 se retiró');
+  if(dec.k==='margen'&&!x.marg&&!x.pend){x.mg+=dec.m;x.usado+=dec.m;x.marg=1;log(`🛟 sumó ${dec.m} USD de margen`);}
+  if(dec.k==='segunda'&&!x.pend&&!x.seg&&!x.marg){x.pend={px:dec.px,m:dec.m};x.seg=1;log(`🛟 puso la 2ª operación (${dec.m} USD) en ${fp(dec.px)}`);}
+  if(dec.k==='esperar'&&!x.ex){x.ex={tgt:dec.tgt,stop:dec.stopX};log(`🚪 orden de cierre en ${fp(dec.tgt)}, stop ${fp(dec.stopX)}`);}}
+function iaCoRun(p){const a=p.a;if(!a||!a.c)return;
+  if(!p.closed&&a.usd<0&&(!PRESC[p.id]||(!PRESC[p.id].busy&&Date.now()-(PRESC[p.id].t||0)>6e5)))pilRescCalc(p);
+  const dec=p.closed?null:iaCoDecide(p,a);if(dec&&dec.k!=='calc'){if(p.iak!==dec.k){const prev=p.iak;p.iak=dec.k;
+      if(prev&&ntfAny())notify(`🧠 IA copiloto · ${p.sym.replace('USDT','')}`,dec.t.replace(/<[^>]+>/g,''),'iaco-'+p.id,{pil:p.id});}}
+  try{iaCoSim(p,a,dec&&dec.k!=='calc'?dec:null);}catch(e){}p.iad=dec;}
+function iaCoHTML(p,a){const dec=p.iad,x=p.ias;if(!dec&&!x)return '';const c=a&&a.c;
+  const sim=x?(()=>{const v=x.st==='open'&&c?iaSimPnl(x,c):x.pnl,yo=a?a.usd:null;return `<div class="iaco-s">Copia simulada de la IA: <b class="${v>=0?'up':'dn'}">${pilMoney(v)}</b>${x.usado?` (puso ${x.usado} USD más)`:''}${x.st==='closed'?' · cerrada':''} · tu operación: <b class="${yo>=0?'up':'dn'}">${yo==null?'—':pilMoney(yo)}</b>${x.acts.length?`<div class="iaco-l">${x.acts.slice(-4).map(z=>`<span>${new Date(z.t).toLocaleString('es-ES',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})} · ${z.x}</span>`).join('')}</div>`:''}</div>`;})():'';
+  const bt=dec&&dec.k==='segunda'&&!p.ll?`<button type="button" data-a="iaseg">Ya abrí la 2ª operación</button>`:dec&&dec.k==='margen'?`<button type="button" data-a="iamg">Ya sumé los ${dec.m} USD</button>`:'';
+  return `<div class="iaco"><div class="iaco-t">🧠 IA copiloto</div>${dec?`<div>${dec.t}</div>`:''}${bt}${sim}</div>`;}
 function pilRescHTML(p){const R=PRESC[p.id],L=p.dir>0;if(!R||R.busy)return '<div class="resc">🛟 Calculando el rescate (soportes de 4 h)…</div>';if(R.err)return '<div class="resc">No se pudo calcular (sin datos de velas). Probá de nuevo.</div>';
   const pd=x=>fpct((x/R.c-1)*100),bt=`<div class="rbt">📊 Prueba con 1 año de datos (1.784 operaciones que llegaron a −70 %): <b>cerrar</b> perdió en promedio 64 USD de cada 100 · <b>rescatar sumando margen</b> salió sin pérdida el 40 % de las veces, pero en promedio perdió 72 USD (contando lo agregado) y el 48 % igual terminó liquidada · <b>aguantar sin hacer nada</b>: 72 % liquidadas. El rescate es una apuesta al rebote, no una salida segura.</div>`;
   const sp=R.sp?`${L?'Soporte':'Resistencia'} fuerte en <b>${fp(R.sp.p)}</b> (${pd(R.sp.p)}, ${R.sp.tq} toques${R.sp.fq?`, ${R.sp.fq} falsos quiebres`:''})`:'';
@@ -5031,7 +5083,8 @@ async function pilTick(){if(pilBusy||!PIL.length)return;pilBusy=true;
     /* una operación marcada como liquidada vuelve a pilotearse si el precio volvió del lado bueno de la liquidación (antes quedaba congelada) */
     if(p.closed){if(p.dir*(c-pilLiqPx(p))>0){p.closed=false;p.state=null;}else if(p.a)continue;}
     try{const D=await pilData(p.sym,pilTfOf(p),p.mk||'c'),a=pilAnalyze(p,D,c);a.t=Date.now();p.a=a;
-      if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}}
+      if(a.st!==p.state){p.state=a.st;p.stT=Date.now();pilNotify(p,a);if(a.st==='liq')p.closed=true;}}catch(e){}
+    try{iaCoRun(p);}catch(e){}}
     savePil();pilRender();}finally{pilBusy=false;}}
 function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('pilCnt');if(cnt){const n=PIL.filter(p=>!p.closed&&p.a&&p.a.act).length;cnt.textContent=PIL.length?`(${PIL.length}${n?` · ${n} con aviso`:''})`:'';}
   const el=$('pilCards');if(!el)return;if(el.contains(document.activeElement)&&document.activeElement.tagName==='INPUT')return;
@@ -5049,7 +5102,7 @@ function pilRender(){const box=$('pilBox');if(box)box.hidden=false;const cnt=$('
         ${a.sup!=null?`<span>${L?'Soporte cercano':'Resistencia cercana'}</span><b>${fp(a.sup)}</b>`:''}${a.res!=null?`<span>${L?'Resistencia':'Soporte'} a favor</span><b>${fp(a.res)}</b>`:''}
         ${a.exitAt?`<span>Salí si toca</span><b class="dn">${fp(a.exitAt)}</b>`:''}</div>
       ${pilTgHTML(a)}${p.mk==='a'?'':pilCmpHTML(p,a)}<div class="pil-r">${a.why.map(w=>`<i>${esc(w)}</i>`).join('')}</div>`:'<div class="mut">Analizando…</div>'}
-      ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><input data-x="nota" type="text" autocomplete="off" maxlength="200" placeholder="Nota: por qué entraste y por qué saliste (opcional)"><select data-x="plan"><option value="">¿Seguiste el plan?</option><option value="1">Sí, seguí el plan</option><option value="0">No, salí antes o me quedé de más</option></select><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go" class="pil-go">📈 Ver en el gráfico: mi entrada y objetivos</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="adj">Ajustar con Binance</button>${p.closed?'':`<button data-a="resc" class="${p.resc?'on':''}">🛟 Rescate</button>`}<button data-a="del">Dejar de pilotear</button></div>${p.resc&&!p.closed?pilRescHTML(p,a):''}
+      ${p.closing?`<div class="pil-cl"><input data-x="ex" type="text" inputmode="decimal" autocomplete="off" placeholder="Precio de salida${a?' (ahora '+fp(a.c)+')':''}"><input data-x="nota" type="text" autocomplete="off" maxlength="200" placeholder="Nota: por qué entraste y por qué saliste (opcional)"><select data-x="plan"><option value="">¿Seguiste el plan?</option><option value="1">Sí, seguí el plan</option><option value="0">No, salí antes o me quedé de más</option></select><button data-a="save">Guardar en mi diario</button><button data-a="cancel">Cancelar</button></div>`:''}<div class="pil-a"><button data-a="go" class="pil-go">📈 Ver en el gráfico: mi entrada y objetivos</button>${!p.ll&&!p.closed?'<button data-a="ll">Ya agregué el salvavidas</button>':''}${p.closing?'':'<button data-a="close">Cerré la operación</button>'}<button data-a="adj">Ajustar con Binance</button>${p.closed?'':`<button data-a="resc" class="${p.resc?'on':''}">🛟 Rescate</button>`}<button data-a="del">Dejar de pilotear</button></div>${a?iaCoHTML(p,a):''}${p.resc&&!p.closed?pilRescHTML(p,a):''}
       ${p.adj?`<div class="pil-cl"><div class="mut" style="font-size:11.5px">Copiá los datos de Binance (Posiciones): precio de entrada, apalancamiento y margen. Si agregaste a la posición, poné el precio de entrada promedio y el margen total.</div><label>Precio de entrada${p.mk==='a'?'':' (el de Binance)'}<input data-x="entry" type="text" inputmode="decimal" value="${pilAvg(p)}"></label><label>Apalancamiento (X)<input data-x="lev" type="number" inputmode="numeric" min="1" max="125" value="${p.lev}"></label><label>Margen de la posición (USD)<input data-x="margin" type="number" inputmode="decimal" min="1" value="${p.margin+(p.ll?p.ll.margin:0)}"></label><label>Margen que le sumaste aparte (USD)<input data-x="extra" type="number" inputmode="decimal" min="0" value="${p.extra||0}"></label><label>Tipo de margen<select data-x="mt"><option value="aislado"${p.mt!=='cruzado'?' selected':''}>Aislado</option><option value="cruzado"${p.mt==='cruzado'?' selected':''}>Cruzado</option></select></label><label>Saldo libre de la cuenta (solo cruzado, USD)<input data-x="cuenta" type="number" inputmode="decimal" min="0" value="${p.cuenta||''}"></label><button data-a="adjok">Guardar</button><button data-a="adjno">Cancelar</button></div>`:''}</div>`;}).join('');}
 /* avisos de PILOTEAR: el mismo ícono y el mismo nombre en la tarjeta, en la barra, en la notificación y en la ⓘ */
 const PIL_ST={liq:['💥','LIQUIDADA','el precio pasó tu liquidación estimada (simulación).'],peligro:['🚨','SALÍ YA','estás muy cerca de la liquidación.'],stopplan:['🛑','SALÍ POR STOP','el precio pasó el stop recomendado.'],
@@ -5175,6 +5228,8 @@ $('pilCards').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;cons
   else if(b.dataset.a==='tog'){p.open=!p.open;savePil();pilRender();}
   else if(b.dataset.a==='adj'){p.adj=!p.adj;pilRender();}
   else if(b.dataset.a==='resc'){p.resc=!p.resc;if(p.resc)pilRescCalc(p);pilRender();}
+  else if(b.dataset.a==='iaseg'){const d=p.iad;if(d&&d.k==='segunda'&&!p.ll){p.ll={margin:d.m,px:d.px};delete p.bnLiq;p.plan=null;p.a=null;savePil();pilRescCalc(p);pilTick();}pilRender();}
+  else if(b.dataset.a==='iamg'){const d=p.iad;if(d&&d.k==='margen'){p.extra=+((p.extra||0)+d.m).toFixed(2);delete p.bnLiq;p.plan=null;p.a=null;savePil();pilRescCalc(p);pilTick();}pilRender();}
   else if(b.dataset.a==='rescok'){const R=PRESC[p.id];if(R&&R.extra>0){p.extra=+((p.extra||0)+R.extra).toFixed(2);delete p.bnLiq;p.plan=null;p.a=null;savePil();pilRescCalc(p);pilTick();}pilRender();}
   else if(b.dataset.a==='adjno'){p.adj=false;document.activeElement&&document.activeElement.blur();pilRender();}
   else if(b.dataset.a==='adjok'){const card=b.closest('.pil-c'),v=k=>(card.querySelector(`[data-x="${k}"]`)||{}).value,snap=JSON.stringify([p.entry,p.lev,p.margin,p.extra||0,p.mt]);{const en=parsePx(String(v('entry')||'').trim(),pilAvg(p)),lv=Math.round(+v('lev')),mg=+v('margin');if(en>0&&(Math.abs(en/pilAvg(p)-1)>1e-9||p.ll)){p.entry=en;p.ll=null;}if(lv>=1&&lv<=125)p.lev=lv;if(mg>0){p.margin=mg;p.ll=null;}}
