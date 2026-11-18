@@ -1,0 +1,29 @@
+{
+ "https://open-api.bingx.com/openApi/swap/v2/quote/contracts": {
+  "status": 403,
+  "cors": null,
+  "largo": 0,
+  "muestra": ""
+ },
+ "https://open-api.bingx.com/openApi/swap/v2/quote/premiumIndex": {
+  "status": 403,
+  "cors": null,
+  "largo": 0,
+  "muestra": ""
+ },
+ "https://open-api.bingx.com/openApi/swap/v1/ticker/price": {
+  "status": 403,
+  "cors": null,
+  "largo": 0,
+  "muestra": ""
+ },
+ "wsSym": "NCSKNVDA2USD-USDT",
+ "ws": [
+  "{\"id\":\"a\",\"code\":0,\"msg\":\"\",\"dataType\":\"\",\"data\":null}",
+  "{\"id\":\"b\",\"code\":0,\"msg\":\"\",\"dataType\":\"\",\"data\":null}",
+  "{\"code\":0,\"dataType\":\"NCSKNVDA2USD-USDT@lastPrice\",\"data\":{\"e\":\"lastPriceUpdate\",\"E\":1794981091059,\"s\":\"NCSKNVDA2USD-USDT\",\"c\":\"158.13\"}}",
+  "{\"code\":0,\"dataType\":\"NCSKNVDA2USD-USDT@markPrice\",\"data\":{\"e\":\"markPriceUpdate\",\"E\":1794981091440,\"s\":\"NCSKNVDA2USD-USDT\",\"p\":\"158.13\"}}",
+  "{\"code\":0,\"dataType\":\"NCSKNVDA2USD-USDT@markPrice\",\"data\":{\"e\":\"markPriceUpdate\",\"E\":1794981092442,\"s\":\"NCSKNVDA2USD-USDT\",\"p\":\"158.13\"}}",
+  "{\"code\":0,\"dataType\":\"NCSKNVDA2USD-USDT@markPrice\",\"data\":{\"e\":\"markPriceUpdate\",\"E\":1794981093444,\"s\":\"NCSKNVDA2USD-USDT\",\"p\":\"158.10\"}}"
+ ]
+}
