@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'; upgrade-insecure-requests">
 <meta name="referrer" content="strict-origin-when-cross-origin">
+<script>/* seguridad (noviembre 2026): la página no se deja meter dentro de otra (evita copias "envueltas" y clics engañosos) */
+if(window.top!==window.self){try{window.top.location.replace(window.self.location.href);}catch(e){document.documentElement.style.display='none';}}</script>
 <link rel="preconnect" href="https://unpkg.com" crossorigin><link rel="preconnect" href="https://www.gstatic.com" crossorigin><link rel="preconnect" href="https://api.binance.com" crossorigin><link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
 <link rel="preconnect" href="https://data-api.binance.vision" crossorigin>
 <link rel="preconnect" href="https://fapi.binance.com" crossorigin>
@@ -3936,7 +3938,11 @@ setTimeout(()=>{
 },2500);
 /* al tocar un aviso se abre la moneda de la señal */
 function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
-if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);});
+if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);
+  /* la página abrió al instante con la copia guardada y en segundo plano bajó una versión nueva: se ofrece recargar */
+  if(e.data&&e.data.type==='nueva'&&!document.getElementById('swNueva')){const b=document.createElement('button');b.id='swNueva';b.type='button';b.textContent='✨ Hay una versión nueva · tocá para actualizar';
+    b.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:78px;z-index:9999;padding:10px 16px;border-radius:999px;border:0;background:var(--acc);color:#fff;font-weight:700;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.5)';
+    b.onclick=()=>location.reload();document.body.appendChild(b);}});
 {const u=new URLSearchParams(location.search);if(u.get('sym'))setTimeout(()=>openFromNotif({sym:u.get('sym'),tf:u.get('tf'),m:u.get('m')}),1500);}
 
 /* ---------- menú lateral, alertas de precio manuales e historial desplegable ---------- */
