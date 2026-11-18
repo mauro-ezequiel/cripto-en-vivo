@@ -65,10 +65,12 @@ async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep
         for (const s of U[f]) { try { const b = (await kl(s, tf, 300)).slice(0, -1); if (b.length < 220) continue; const P = IA.prep(b), j = b.length - 1, c = b[j].close; let d = 0;
             if (f === 'tr') { const st = P.st[j]; if (st && P.e200[j] != null && Math.sign(P.e21[j] - P.e50[j]) === st && Math.sign(c - P.e200[j]) === st) d = st; if (d < 0 && !cycFall(now)) d = 0; }
             else { const z = P.bs[j] ? (c - P.bm[j]) / P.bs[j] : 0; if (z <= -1.8 && P.r7[j] != null && P.r7[j] <= 35) d = 1; }
-            if (!d) continue; const p = IA.predict(E.model, IA.entryX(P, j, d, bs)); if (!(p >= thrP)) continue;
+            if (!d) continue; const ex = IA.entryX(P, j, d, bs), p = IA.predict(E.model, ex); if (!(p >= thrP)) continue;
             const sl = Math.min(C.cap, Math.max(.004, C.a * (P.atr[j] || 0) / c));
             out.push({ id: s + '-' + f + '-' + tf + '-' + b[j].t, f, tf, sym: s, dir: d, p: +p.toFixed(4), entry: c, sl, tps: [1, 2, 3].map(k => c * (1 + d * k * C.r * sl)), stop: c * (1 - d * sl), t: b[j].t + ms, pr: !(real && p >= thr) ? 1 : 0,
-              why: IA.explain(E.model, IA.entryX(P, j, d, bs), IA.ENTRY_F).slice(0, 3) }); } catch (e) {} await sleep(50); }
+              why: IA.explain(E.model, ex, IA.ENTRY_F).slice(0, 3),
+              /* noviembre 2026: se guarda la foto de los datos de entrada para que el estudio diario aprenda también de cómo terminó en vivo */
+              x: ex.map(v => v == null || !isFinite(v) ? null : +(+v).toFixed(5)), xv: IA.ENTRY_F.length }); } catch (e) {} await sleep(50); }
         for (const x of out.sort((a, b) => b.p - a.p)) { if (A.ops.some(y => y.id === x.id) || A.ops.some(y => y.sym === x.sym && y.f === x.f && !!y.pr === !!x.pr && (y.st === 'open' || x.t - y.t < C.cool))) continue;
           if (A.ops.filter(y => y.f === x.f && !!y.pr === !!x.pr && y.st === 'open').length >= (x.pr ? C.maxP : C.max)) continue;
           Object.assign(x, { mg: C.mg, lev: C.lev, age: C.age, hit: 0, real: 0, st: 'open', thr: +thr.toFixed(4), bot: 1 }); A.ops.push(x); ch = true;

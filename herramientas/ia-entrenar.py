@@ -342,6 +342,36 @@ def importance(m, X, Y, names, reps=2):
     return sorted(out, key=lambda x: -x[1])
 
 
+# APRENDER DE LO VIVIDO (noviembre 2026): las operaciones que la IA hizo en vivo (reales y de práctica, datos/ia-ops.json) guardan la foto de sus
+# datos de entrada. Se suman al estudio de la entrada con más peso (VIVO_W), porque son lo más reciente y ya incluyen cómo se ejecutó de verdad
+# (velas de 1 min, comisión y deslizamiento). La prueba sigue siendo solo con meses históricos que no vio, para que la comparación sea justa.
+VIVO_W = float(os.environ.get('IA_VIVO_W', 3))
+def vivo_rows(fam):
+    if ANTES or os.environ.get('IA_VIVO') == '0':
+        return np.zeros((0, len(ENF))), np.zeros(0), np.zeros(0)
+    try:
+        L = json.load(open('ia-ops.json'))['ops']
+    except Exception:
+        return np.zeros((0, len(ENF))), np.zeros(0), np.zeros(0)
+    X, Y, T = [], [], []
+    for o in L:
+        x = o.get('x')
+        if o.get('f') != fam or o.get('st') not in ('win', 'fail', 'exp') or not x or o.get('xv') != len(ENF) or any(v is None for v in x):
+            continue
+        X.append([float(v) for v in x]); Y.append(1.0 if (o.get('hit') or 0) >= 1 else 0.0); T.append(float(o.get('t') or 0))
+    if not X:
+        return np.zeros((0, len(ENF))), np.zeros(0), np.zeros(0)
+    return np.array(X), np.array(Y), np.array(T)
+
+
+def fitw(n, X, Y, XV, YV):
+    """Entrena con los datos históricos y, si hay, con las operaciones vividas (más peso)."""
+    if len(XV) == 0 or len(set(YV.tolist())) < 1:
+        return gbc(n).fit(X, Y)
+    w = np.concatenate([np.ones(len(X)), np.full(len(XV), VIVO_W)])
+    return gbc(n).fit(np.vstack([X, XV]), np.concatenate([Y, YV]), sample_weight=w)
+
+
 def fam_entry(ent, fam, bot_ops=()):
     w = min(len(r) for r in ent); A = np.array([r[:min(w, 1 + len(ENF) + 5)] for r in ent], float)
     if len(A) < 500:
@@ -350,7 +380,11 @@ def fam_entry(ent, fam, bot_ops=()):
     t, X, Y, P = A[:, 0], A[:, 1:k0], A[:, k0], A[:, k0 + 2]
     RK = A[:, k0 + 3] if A.shape[1] > k0 + 3 else np.arange(len(A))  # datos viejos sin la moneda: no se agrupa
     cut = cut_of(t); tr, te = t < cut, t >= cut
-    m = gbc(120).fit(X[tr], Y[tr]); p = m.predict_proba(X[te])[:, 1]
+    XV, YV, TV = vivo_rows(fam)
+    if len(XV):
+        print(fam, 'operaciones vividas que suma al estudio:', len(XV), 'acierto en vivo', round(float(YV.mean() * 100), 1))
+    # para la prueba, solo lo vivido ANTES de los meses de prueba (sin espiar)
+    m = fitw(120, X[tr], Y[tr], XV[TV < cut], YV[TV < cut]); p = m.predict_proba(X[te])[:, 1]
     auc = roc_auc_score(Y[te], p); top = p >= np.quantile(p, .8)
     res = {'n': int(len(A)), 'auc': round(auc, 3), 'base': round(float(Y[te].mean() * 100), 1), 'top20': round(float(Y[te][top].mean() * 100), 1),
            'top20_pct': round(float(P[te][top].mean()), 2), 'base_pct': round(float(P[te].mean()), 2)}
@@ -401,7 +435,8 @@ def fam_entry(ent, fam, bot_ops=()):
     res['propias']['bot_pct'] = round(float(np.mean(bp)), 2) if bp else None
     res['propias']['apta'] = bool(apta) if STRICT else True
     res['propias']['supera_bots'] = bool(len(pick) and bp and res['propias']['pct'] >= np.mean(bp))
-    mF = gbc(120).fit(X, Y); pall = mF.predict_proba(X)[:, 1]
+    mF = fitw(120, X, Y, XV, YV); pall = mF.predict_proba(X)[:, 1]
+    res['vividas'] = int(len(XV))
     OUTE = {'model': export(mF, X), 'test': res, 'imp': imp, 'q': [round(float(v), 4) for v in np.quantile(pall, [.2, .5, .8])], 'thr': round(float(np.quantile(pall, best_q)), 4)}
     # CON DATOS DE FUTUROS (interés abierto, flujo, traders grandes, minoristas, funding): segundo modelo con las mismas entradas que los tienen.
     # Se usa en vivo solo si en la validación (sin mirar la prueba) eligió entradas que ganaron más que el modelo de siempre.
