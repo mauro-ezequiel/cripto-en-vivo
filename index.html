@@ -776,6 +776,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 
 .cap-b{font-size:10px;cursor:help}.cap-b.o{opacity:.5}.cap-hoy{margin:0 0 8px;padding:8px 12px;border-radius:12px;background:rgba(0,230,118,.1);border:1px solid rgba(0,230,118,.35);font-size:12.5px}.cap-hoy a{color:#00e676;font-weight:700;cursor:pointer}
 #pasBox{scroll-margin-top:6px}
+.ind-tf{font-size:10px;font-weight:600;color:var(--mut);margin-left:6px;white-space:nowrap;letter-spacing:.01em}.chip.on .ind-tf{color:var(--mut)}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -2005,11 +2006,14 @@ chart.subscribeCrosshairMove(p=>{
 });
 
 /* ---- barra de indicadores ---- */
+/* las 3 temporalidades donde más acertó cada indicador (herramientas/investigacion-temporalidades.js, 15 criptos; acierto = +1,5 ATR antes que −1,5 ATR; al azar 50 %) */
+const IND_TF={"trend":[["1D",52],["4h",50],["1h",50]],"sop":[["4h",50],["12h",50],["15m",50]],"cvd":[["4h",52],["1h",51],["12h",51]],"stochrsi":[["1S",56],["15m",50],["4h",49]],"canal":[["1S",56],["15m",50],["12h",49]],"smc":[["15m",50],["12h",50],["4h",50]],"ema":[["1D",56],["4h",52],["12h",51]],"bollinger":[["1S",55],["4h",50],["15m",50]],"kon":[["1S",59],["12h",54],["4h",51]],"vwap":[["1D",52],["12h",52],["4h",51]],"supertrend":[["1D",53],["12h",52],["4h",51]],"ichimoku":[["12h",56],["4h",55],["1D",53]],"rsi":[["12h",50],["15m",49],["4h",48]],"adx":[["1D",50],["4h",50],["1h",50]],"fib":[["4h",50],["1h",49],["15m",49]],"div":[["12h",52],["4h",51],["1D",51]],"cap":[["1D",73]]};
+const indTf=k=>{const L=IND_TF[k];return L?`<small class="ind-tf" title="Temporalidades donde más acertó en las pruebas (de mayor a menor). Acierto = el precio fue 1,5 ATR a favor antes que 1,5 ATR en contra; al azar da 50 %.">${L.map(([t,v])=>t+' '+v+'%').join(' · ')}</small>`:'';};
 function renderChips(){
   const M=MODES[mode];
   $('inds').classList.toggle('hide',!M.inds.length);
-  $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
-  $('fsInd').innerHTML='<div class="fsind-h"><b>Indicadores</b><button type="button" class="fsind-x" data-fsx="1" aria-label="Cerrar indicadores">✕ Cerrar</button></div>'+M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}</span><span class="sw"></span></button>`).join('');
+  $('inds').innerHTML=`<button class="ind-tog" id="indTog" type="button">Indicadores · ${active.size} activos <i>▾</i></button>`+'<span class="lbl">Indicadores:</span>'+M.inds.map(k=>`<button class="chip${active.has(k)?' on':''}" data-ind="${k}" style="${active.has(k)?'color:'+IND[k].color:''}"><i></i>${IND[k].name}${indTf(k)}<span class="bdg"></span></button>`).join('')+(mode==='p'?'<button class="chip cu-chip" id="cuOpen">⚙ Personalizar</button>':'');
+  $('fsInd').innerHTML='<div class="fsind-h"><b>Indicadores</b><button type="button" class="fsind-x" data-fsx="1" aria-label="Cerrar indicadores">✕ Cerrar</button></div>'+M.inds.map(k=>`<button class="${active.has(k)?'on':''}" data-ind="${k}"><span><i style="background:${IND[k].color}"></i>${IND[k].name}${indTf(k)}</span><span class="sw"></span></button>`).join('');
   $('fsIndBtn').hidden=!M.inds.length;if($('indN'))$('indN').textContent=active.size;if($('indTop'))$('indTop').hidden=!M.inds.length;['halvBtn','fsHalvBtn'].forEach(id=>{const b=$(id);if(b)b.hidden=mode==='a';});$('inds').classList.toggle('open',document.body.classList.contains('ind-open'));
   if($('liqOptsRow'))$('liqOptsRow').hidden=!active.has('liq')||!M.inds.length;
 }
