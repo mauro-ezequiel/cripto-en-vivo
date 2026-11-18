@@ -170,6 +170,9 @@ const fs = require('fs'), { chromium } = require('playwright-core');
     out.planilla = await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); RSICX.tf = '1d'; rsiCxRender(); const b = $('rsiCx'); b.scrollIntoView(); for (let k = 0; k < 60 && !(RSICX.d['1d'] && RSICX.d['1d'].t); k++) { rsiCxLoad(); await w(500); } rsiCxRender();
       return { monedas: Object.keys(RSICX.d['1d'].v).length, caps: Object.entries(RSICX.d['1d'].v).filter(([, x]) => x[2]).map(([s, x]) => s + ':' + x[2]), aviso: ($('rsiCxBody').querySelector('.cap-hoy') || {}).textContent || '' }; });
     info.push({ capitulacion: out }); } catch (e) { info.push({ capitulacion_error: e.message.slice(0, 200) }); }
+  /* ACCIONES fuera de horario: precio del contrato 24 h (BingX o Binance) */
+  try { info.push({ acciones24: await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await w(500); select('NVDA'); try { await bxLoad(); } catch (e) {} BXM.t = 0; await pilMarks(); PILMK.t = 0; await pilMarks(); await w(500);
+      const n = stk24(); const o = STK.NVDA || {}; return { bolsaAbierta: mktOpen(), bingx: !!BXM.map, binanceNVDA: pilMark('NVDAUSDT'), bolsa: o.c0, precio: o.c, fuente: o.src24 || 'bolsa', cambio: o.p, etiqueta: $('hdLive').textContent, cambiadas: n }; }) }); } catch (e) { info.push({ acciones24_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
