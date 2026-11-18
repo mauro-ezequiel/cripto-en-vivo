@@ -173,6 +173,14 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   /* ACCIONES fuera de horario: precio del contrato 24 h (BingX o Binance) */
   try { info.push({ acciones24: await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await w(500); select('NVDA'); bxWant(['NVDA', 'TSLA', 'YPF']); for (let k = 0; k < 40 && !bxPx('NVDA'); k++) await w(500); await w(1000);
       const n = stk24(); const o = STK.NVDA || {}; return { bolsaAbierta: mktOpen(), bingx: { NVDA: bxPx('NVDA'), TSLA: bxPx('TSLA'), YPF: bxPx('YPF'), nombres: BXM.map }, bolsaTSLA: STK.TSLA && STK.TSLA.c0, preciosTSLA: STK.TSLA && STK.TSLA.c, binanceNVDA: pilMark('NVDAUSDT'), bolsa: o.c0, precio: o.c, fuente: o.src24 || 'bolsa', cambio: o.p, etiqueta: $('hdLive').textContent, cambiadas: n }; }) }); } catch (e) { info.push({ acciones24_error: e.message.slice(0, 200) }); }
+  /* BYMA: acciones, bonos, letras y ONs de la bolsa argentina */
+  try { const out = {}; for (const sy of ['GGAL.BA', 'YPFD.BA', 'AL30.BA', 'S29E7.BA', 'YMCJD.BA']) { const r = await pg.evaluate(async sy => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); setView('main'); for (let k = 0; k < 40 && !stkReady; k++) await w(500);
+        const cnt = {}; for (const o of Object.values(STK)) cnt[o.kind] = (cnt[o.kind] || 0) + 1; let s2 = sy; if (!STK[s2]) { const o = Object.values(STK).find(o => o.kind === 'ON'); s2 = o && o.s; }
+        if (!s2) return { cnt }; select(s2); if (tf !== '1d') { tf = '1d'; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 50 && symbol === s2); k++) await w(300); await w(800);
+        $('q').value = s2.replace('.BA', ''); renderList(); const fil = [...document.querySelectorAll('#list .row')].slice(0, 4).map(r => r.textContent.replace(/\s+/g, ' ').trim()); $('q').value = ''; renderList();
+        return { s: s2, cnt, mep: STKMEP, titulo: $('sym').textContent, precio: STK[s2].c, velas: candles.length, ultima: candles.length ? candles.at(-1).date : null, lista: fil }; }, sy); out[sy] = r;
+      if (sy === 'GGAL.BA' || sy === 'AL30.BA') try { await pg.screenshot({ path: `capturas/byma-${sy}.png` }); } catch (e) {} }
+    info.push({ byma: out }); } catch (e) { info.push({ byma_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);

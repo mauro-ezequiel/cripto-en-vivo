@@ -1054,7 +1054,7 @@ const MODES = {
     def: ['liq','cap','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
-    name: 'ACCIONES', tag: 'NYSE + NASDAQ · USD',
+    name: 'ACCIONES', tag: 'NYSE + NASDAQ + BYMA',
     desc: 'Acciones de EE. UU. con CEDEAR (NYSE y NASDAQ), en dólares. Las señales salen solo de NYSE, donde la regla se probó',
     info: ['Velas de 1 h, 2 h y 4 h (60 días) y diarias, semanales y mensuales', 'Zonas de liquidez: stops acumulados y muros de opciones', 'Termómetro con amplitud del mercado, volumen, opciones y noticias', 'Señales (velas diarias): rebote tras caída de 6 meses y ruptura de máximos de 20 días con volumen, solo con el S&P 500 sobre su media de 200 días', 'Simulación: 500 USD con apalancamiento según la acción (tocar el stop cuesta ~40 % del margen, tope × 20), stop 2,5 × ATR diario, objetivos 3 / 6 / 9 × stop'],
     tf: '1d', bars: 160,
@@ -2499,7 +2499,7 @@ function renderList(){
   const rf=favOnly&&typeof lstRsi==='function',rtf=(typeof LSTTF!=='undefined'&&LSTTF.fav)||'1d';$('list').classList.toggle('wr',rf);$('lhead').classList.toggle('wr',rf);
   $('lhead').innerHTML=`<span>Par</span><span>Precio</span><span>24h</span>${rf?`<span>RSI ${rtf==='1w'?'1 sem':rtf}</span>`:''}`;
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
-    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE'):t.fut?'/USDT · perp':'/USDT'}</small></span>
+    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.n||t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE')+(t.kind==='BONO'?' bono':t.kind==='LETRA'?' letra':t.kind==='ON'?' ON':''):t.fut?'/USDT · perp':'/USDT'}</small></span>
     <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
   ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
@@ -2535,7 +2535,7 @@ function select(s){if(mode==='a')try{bxWant([s]);}catch(e){}
 }
 function updateTop(){
   const t=tickers[symbol];if(!t)return;
-  $('sym').textContent=t.kind?symbol+' · '+(t.ex||'NYSE')+' · USD':symbol.replace('USDT','')+(t.fut?'/USDT · futuros perpetuos':'/USDT');
+  $('sym').textContent=t.kind?(t.n||symbol)+' · '+(t.ex||'NYSE')+(t.kind==='BONO'?' · bono':t.kind==='LETRA'?' · letra':t.kind==='ON'?' · obligación negociable':'')+' · '+(t.cur||'USD'):symbol.replace('USDT','')+(t.fut?'/USDT · futuros perpetuos':'/USDT');
   $('px').textContent=fp(t.c);$('px').className='px '+(t.p>=0?'up':'dn');
   $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
   $('s-hi').textContent=fp(t.h);$('s-lo').textContent=fp(t.l);$('s-vol').textContent=fv(t.q);
@@ -4111,14 +4111,27 @@ const artDay=()=>artNow().toISOString().slice(0,10);
 function mktOpen(){const d=artNow(),wd=d.getUTCDay(),m=d.getUTCHours()*60+d.getUTCMinutes();return wd>=1&&wd<=5&&m>=9*60+30&&m<=16*60+5;}
 /* noviembre 2026: empresas argentinas en EE. UU. (ADR) que no estaban en las listas: se ven en el buscador y en la planilla (las señales siguen igual) */
 const ARG_ADR={GGAL:'NASDAQ',CRESY:'NASDAQ',BIOX:'NASDAQ',CAAP:'NYSE',ARCO:'NYSE',AGRO:'NYSE'};
+var STKMEP=0;const isBA=s=>/\.BA$/.test(String(s));
 async function loadStocks(){
-  const [U0,A0,C]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000)),safe(getJ(D912+'/live/arg_cedears',20000))]);if(!Array.isArray(U0))return;const U=U0.concat(Array.isArray(A0)?A0:[]);
+  const [U0,A0,C,BA,BB,BN,BC]=await Promise.all([safe(getJ(D912+'/live/usa_stocks',25000)),safe(getJ(D912+'/live/usa_adrs',20000)),safe(getJ(D912+'/live/arg_cedears',20000)),
+    safe(getJ(D912+'/live/arg_stocks',20000)),safe(getJ(D912+'/live/arg_bonds',20000)),safe(getJ(D912+'/live/arg_notes',20000)),safe(getJ(D912+'/live/arg_corp',20000))]);if(!Array.isArray(U0))return;const U=U0.concat(Array.isArray(A0)?A0:[]);
   const cv={};if(Array.isArray(C))for(const x of C)if(x.v>0)cv[x.symbol]=+x.v;const day=artDay();
   /* se ven todas las acciones de EE. UU. que tienen CEDEAR (NYSE, NASDAQ y otras); las señales siguen solo en NYSE, donde se probaron */
   for(const x of U){const s=x.symbol;if(!(x.c>0)||!(NYSE.has(s)||NASDAQ.has(s)||cv[s]>0||s==='SPY'||ARG_ADR[s]))continue;
     const o=STK[s]||(STK[s]={s,kind:s==='SPY'?'ETF':'US',ex:NYSE.has(s)?'NYSE':NASDAQ.has(s)?'NASDAQ':ARG_ADR[s]||'EE. UU.'});if(o.day!==day){o.day=day;o.h=o.l=null;}
     o.c=o.c0=+x.c;o.p=o.p0=+x.pct_change||0;o.src24=null;o.sv=+x.v||0;o.v=cv[s]||1;o.q=o.sv*o.c;o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;
     o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}
+  /* BYMA (noviembre 2026): acciones del panel líder y general, bonos, letras y obligaciones negociables de la bolsa argentina.
+     Se guardan con ".BA" al final (GGAL.BA) para no mezclarse con la misma empresa en EE. UU. (GGAL en NASDAQ).
+     Acciones, bonos y letras: la especie en pesos. ONs: la especie en dólares (D), que es como se suelen mirar. */
+  try{const ab=(BB||[]).find(x=>x.symbol==='AL30'),abd=(BB||[]).find(x=>x.symbol==='AL30D');const mep=ab&&abd&&abd.c>0?ab.c/abd.c:0;if(mep>100)STKMEP=mep;
+    const add=(L,kind,cur,ok)=>{if(!Array.isArray(L))return;const all=new Set(L.map(x=>x.symbol));
+      for(const x of L){const b=String(x.symbol);if(!(x.c>0)||!ok(b,all))continue;const k=b+'.BA',o=STK[k]||(STK[k]={s:k,n:b,kind,ex:'BYMA',cur});if(o.day!==day){o.day=day;o.h=o.l=null;}
+        o.c=o.c0=+x.c;o.p=o.p0=+x.pct_change||0;o.src24=null;o.sv=+x.v||0;o.v=o.sv;const usd=cur==='USD'?o.c:o.c/(STKMEP||1450);o.q=o.sv*usd*(kind==='AR'?1:kind==='ON'?.01:.01);
+        o.bid=+x.px_bid||0;o.ask=+x.px_ask||0;o.qb=+x.q_bid||0;o.qa=+x.q_ask||0;o.ops=+x.q_op||0;o.h=Math.max(o.h??o.c,o.c);o.l=Math.min(o.l??o.c,o.c);}};
+    const pesos=(b,all)=>!(/[CD]$/.test(b)&&all.has(b.slice(0,-1)))&&!/\.D$/.test(b)&&!(/D$/.test(b)&&all.has(b.slice(0,-1)));
+    add(BA,'AR','ARS',(b,all)=>!/\.D$/.test(b)&&!(/D$/.test(b)&&all.has(b.slice(0,-1))));
+    add(BB,'BONO','ARS',pesos);add(BN,'LETRA','ARS',pesos);add(BC,'ON','USD',b=>/D$/.test(b));}catch(e){}
   stk24();
   if(Object.keys(STK).length)stkReady=true;
   if(mode==='a'){renderList();updateTop();stkLiveBar();try{rsiRender();}catch(e){}}
@@ -4141,6 +4154,11 @@ const stkBar=r=>{const t=Date.parse(r.date+'T00:00:00Z'),v=+r.v||0;return {time:
 /* historial en dólares: cierres diarios de NYSE; la forma de cada vela (apertura, máximo, mínimo y volumen) sale del CEDEAR
    del mismo día pasado a dólares. Las acciones sin CEDEAR se ven solo con cierres y no generan señales. */
 async function stkHist(sym){const h=STKH[sym];if(h&&Date.now()-h.t<30*6e4)return h.b;
+  if(isBA(sym)){const q=STK[sym]||{},base=sym.replace(/\.BA$/,''),E=q.kind==='AR'?['stocks']:q.kind==='ON'?['corp','bonds']:['bonds','notes'];let rows=null;
+    for(const e of E){const j=await safe(getJ(`${D912}/historical/${e}/${base}`,20000));if(Array.isArray(j)&&j.length){rows=j;break;}}
+    if(!rows)throw new Error('sin historial en BYMA');const b=[];for(const r of rows.slice(-1500)){const c=+r.c;if(!(c>0))continue;const t=Date.parse(r.date+'T00:00:00Z'),o=+r.o||c,hh=Math.max(+r.h||c,c,o),l=Math.min(+r.l||c,c,o),v=+r.v||0;
+      b.push({time:t/1000,t,open:o,high:hh,low:l,close:c,v,tb:hh>l?v*(c-l)/(hh-l):v/2,date:r.date});}
+    STKH[sym]={t:Date.now(),b,ced:true,src:'byma'};return b;}
   /* v5: velas diarias completas de Yahoo (las publica herramientas/intradia.js); sirven para todas las acciones, no solo las que tienen historial de CEDEAR */
   try{if(typeof stkIntraFile==='function'){const f=await stkIntraFile(sym);if(f&&f.d1&&f.d1.t&&f.d1.t.length>250){const d=f.d1,b=d.t.map((t,i)=>{const T=t*1000,date=new Date(T).toISOString().slice(0,10),tt=Date.parse(date+'T00:00:00Z'),v=d.v[i]||0;
         return {time:tt/1000,t:tt,open:d.o[i],high:d.h[i],low:d.l[i],close:d.c[i],v,tb:d.h[i]>d.l[i]?v*(d.c[i]-d.l[i])/(d.h[i]-d.l[i]):v/2,date};});STKH[sym]={t:Date.now(),b,ced:true,src:'yahoo'};return b;}}}catch(e){}
@@ -4289,9 +4307,10 @@ async function loadChartStk(){CHUSER=false;
   if(klineWs){klineWs.onclose=null;klineWs.close();klineWs=null;}
   clearInterval(futTimer);closeLiqWs();FUT={none:true};LIQ=null;ruler=null;noMore=true;
   const sym=symbol,t=tf;
-  try{const intra=STK_INTRA.has(t),I=intra?await stkIntra(sym,t):null,b=intra?I.b:await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
+  try{const ba=isBA(sym),intra=STK_INTRA.has(t)&&!ba,I=intra?await stkIntra(sym,t):null,b=intra?I.b:await stkHist(sym);if(id!==stkLoadId||sym!==symbol||t!==tf)return;
+    if(ba&&STK_INTRA.has(t))setTimeout(()=>{const n=$('loading');if(n){n.textContent=`${sym.replace('.BA','')}: BYMA solo publica velas diarias; se muestran las de 1 día`;n.style.display='flex';setTimeout(()=>n.style.display='none',3500);}},50);
     if(intra){STKI[sym].cur=I;if((t==='1m'&&I.k!=='m1')||(t==='5m'&&I.k!=='m5'))setTimeout(()=>{const n=$('loading');if(n){n.textContent=`${sym}: velas de ${t} solo en las principales; se muestran las de 15 min`;n.style.display='flex';setTimeout(()=>n.style.display='none',3500);}},50);}
-    candles=intra?aggIntra(stkIntraLive(sym,b,I.bms),t,I.bms):aggBars(withLive(sym,b),t);if(candles.length)setPrecision(candles.at(-1).close);
+    candles=intra?aggIntra(stkIntraLive(sym,b,I.bms),t,I.bms):aggBars(withLive(sym,b),isBA(sym)&&STK_INTRA.has(t)?'1d':t);if(candles.length)setPrecision(candles.at(-1).close);
     series.setData(candles);volume.setData(candles.map(volBar));stkLiqCompute();calcInd(true);fitView();chartKicks();restoreLines();setTimeout(()=>niRender(true),400);
     const q=STK[sym],lb=b.at(-1);if(q&&lb&&(lb.date===artDay()||!mktOpen())&&Math.abs(lb.close/q.c-1)<.02){q.h=Math.max(lb.date===artDay()?q.h||0:0,lb.high);q.l=Math.min(lb.date===artDay()?q.l||Infinity:Infinity,lb.low);}updateTop();
   }catch(e){if(id===stkLoadId)$('loading').textContent='No se pudo cargar el historial de '+sym;return;}
@@ -4919,7 +4938,7 @@ function bxPx(sym){const k=BXM.map&&BXM.map[bxBase(sym)];if(!k||!(BXM.m[k]>0))re
    Las acciones en BingX se llaman NCSK + ticker + 2USD; se prueban varios nombres y se queda con el que contesta. */
 const BXWS={ws:null,want:new Set(),subs:new Set(),retry:0,ui:0};
 const bxCands=s=>{const b=bxBase(s).replace(/[.\-]/g,'');return /USDT$/.test(String(s).toUpperCase())&&!STK[s]?[b+'-USDT']:[`NCSK${b}2USD-USDT`,`NCSI${b}2USD-USDT`,`NCS${b}2USD-USDT`,`NCSK${b}USD-USDT`,b+'-USDT'];};
-function bxWant(list){let nuevo=false;for(const s of list){if(!s)continue;for(const c of bxCands(s))if(!BXWS.want.has(c)){BXWS.want.add(c);nuevo=true;}}if(nuevo)bxWsGo();}
+function bxWant(list){let nuevo=false;for(const s of list){if(!s||isBA(s))continue;for(const c of bxCands(s))if(!BXWS.want.has(c)){BXWS.want.add(c);nuevo=true;}}if(nuevo)bxWsGo();}
 function bxWsSub(c){const w=BXWS.ws;if(!w||w.readyState!==1||BXWS.subs.has(c))return;BXWS.subs.add(c);try{w.send(JSON.stringify({id:'s'+BXWS.subs.size,reqType:'sub',dataType:c+'@lastPrice'}));}catch(e){}}
 function bxWsGo(){if(typeof WebSocket==='undefined'||typeof DecompressionStream==='undefined')return;const w=BXWS.ws;if(w&&w.readyState<=1){if(w.readyState===1)BXWS.want.forEach(bxWsSub);return;}
   try{const ws=BXWS.ws=new WebSocket('wss://open-api-swap.bingx.com/swap-market');ws.binaryType='arraybuffer';BXWS.subs=new Set();
