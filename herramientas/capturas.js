@@ -177,8 +177,10 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   try { const out = {}; for (const sy of ['GGAL.BA', 'YPFD.BA', 'AL30.BA', 'S29E7.BA', 'YMCJD.BA']) { const r = await pg.evaluate(async sy => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); setView('main'); for (let k = 0; k < 40 && !stkReady; k++) await w(500);
         const cnt = {}; for (const o of Object.values(STK)) cnt[o.kind] = (cnt[o.kind] || 0) + 1; let s2 = sy; if (!STK[s2]) { const o = Object.values(STK).find(o => o.kind === 'ON'); s2 = o && o.s; }
         if (!s2) return { cnt }; select(s2); if (tf !== '1d') { tf = '1d'; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 50 && symbol === s2); k++) await w(300); await w(800);
-        $('q').value = s2.replace('.BA', ''); renderList(); const fil = [...document.querySelectorAll('#list .row')].slice(0, 4).map(r => r.textContent.replace(/\s+/g, ' ').trim()); $('q').value = ''; renderList();
-        return { s: s2, cnt, mep: STKMEP, titulo: $('sym').textContent, precio: STK[s2].c, velas: candles.length, ultima: candles.length ? candles.at(-1).date : null, lista: fil }; }, sy); out[sy] = r;
+        $('q').value = s2.replace('.BA', ''); renderList(); const fil = [...document.querySelectorAll('#list .row, #list > div')].slice(0, 4).map(r => r.textContent.replace(/\s+/g, ' ').trim()); $('q').value = ''; renderList();
+        let hist = null; try { const hb = await stkHist(s2); hist = { n: hb.length, primera: hb[0].date, ultima: hb.at(-1).date, cierre: hb.at(-1).close }; } catch (e) { hist = 'error ' + e.message; }
+        const ultC = candles.length ? candles.at(-1).close : null;
+        return { s: s2, hist, ultC, cnt, mep: STKMEP, titulo: $('sym').textContent, precio: STK[s2].c, velas: candles.length, ultima: candles.length ? candles.at(-1).date : null, lista: fil }; }, sy); out[sy] = r;
       if (sy === 'GGAL.BA' || sy === 'AL30.BA') try { await pg.screenshot({ path: `capturas/byma-${sy}.png` }); } catch (e) {} }
     info.push({ byma: out }); } catch (e) { info.push({ byma_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
