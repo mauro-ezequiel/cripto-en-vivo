@@ -9,6 +9,9 @@ permissions:
 concurrency:
   group: senales
   cancel-in-progress: false
+# datos cifrados (noviembre 2026): sin este secreto todo sigue sin cifrar, como antes
+env:
+  DATOS_KEY: ${{ secrets.DATOS_KEY }}
 jobs:
   revisar:
     runs-on: ubuntu-latest

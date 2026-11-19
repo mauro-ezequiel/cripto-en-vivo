@@ -7,7 +7,7 @@
    Comisión 0,05 % por lado. Si en una misma vela toca stop y objetivo, se asume el stop.
    Ojo: usa las monedas con más volumen de hoy (las que se hundieron en el año y ya no están no cuentan).
    Prueba local sin internet: BT_MOCK=1 node herramientas/historial-anual.js */
-const fs = require('fs');
+const fs = require('fs'), CIFRA = require('./cifra.js');
 const IA = require('../ia-core.js'), IAON = !!process.env.IA; // con IA=1 también guarda el recorrido de cada señal para que la IA estudie
 const IAD = { tr: { ent: [], ops: [], old: [] }, sh: { ent: [], ops: [], old: [] } };
 /* octubre 2026 · la IA estudia también las VERSIONES VIEJAS de los bots: las señales que las reglas de antes hubieran tomado y que un filtro
@@ -405,7 +405,7 @@ async function publish(body) { const tok = process.env.GH_TOKEN, repo = process.
   if (r.status === 404) { const mm = await (await fetch(api + '/git/ref/heads/main', { headers: H })).json(); r = await fetch(api + '/git/refs', { method: 'POST', headers: H, body: JSON.stringify({ ref: 'refs/heads/datos', sha: mm.object.sha }) }); }
   if (!r.ok) { console.log('rama datos:', r.status); return false; }
   for (let k = 0; k < 3; k++) { const g = await fetch(api + '/contents/historial.json?ref=datos', { headers: H }), sha = g.ok ? (await g.json()).sha : null;
-    const p = await fetch(api + '/contents/historial.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: 'Historial del último año', content: Buffer.from(body).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
+    const p = await fetch(api + '/contents/historial.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: 'Historial del último año', content: Buffer.from(CIFRA.enc('historial.json', body)).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
     if (p.ok) return true; console.log('publicar:', p.status, (await p.text()).slice(0, 200)); await sleep(3000); }
   return false; }
 

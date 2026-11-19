@@ -15,6 +15,9 @@ permissions:
 concurrency:
   group: historial
   cancel-in-progress: false
+# datos cifrados (noviembre 2026): sin este secreto todo sigue sin cifrar, como antes
+env:
+  DATOS_KEY: ${{ secrets.DATOS_KEY }}
 jobs:
   recalcular:
     runs-on: ubuntu-latest
@@ -55,6 +58,8 @@ jobs:
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/fyg.json" -o fyg.json || true
           # memoria acumulada: lo que la IA estudió los días anteriores (así no olvida lo de hace más de un año)
           curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/ia-datos/ia-datos.json.gz" -o prev-datos.json.gz || true
+          node herramientas/cifra.js dec prev-ia.json bitacora.json ia-ops.json
+          node herramientas/cifra.js decbin prev-datos.json.gz
           set -o pipefail
           python herramientas/ia-entrenar.py ia-datos.json.gz 2>&1 | tee ia-log.txt
           node herramientas/publicar.js ia.json "IA: estudio diario"
@@ -66,5 +71,6 @@ jobs:
         run: |
           ls -la ia-datos.json.gz ia.json ia-log.txt 2>&1 | tee -a ia-log.txt || true
           mkdir -p out && cp ia-datos.json.gz out/ && (cp ia.json out/ 2>/dev/null || true) && (cp ia-log.txt out/ 2>/dev/null || true)
+          node herramientas/cifra.js encbin out/ia-datos.json.gz && node herramientas/cifra.js enc out/ia.json
           cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Datos de estudio de la IA"
           git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:ia-datos

@@ -3,6 +3,7 @@
    señales nuevas, objetivos alcanzados, zona de salvavidas y stop.
    Necesita dos secretos del repositorio: TELEGRAM_TOKEN y TELEGRAM_CHAT. */
 const fs = require('fs');
+const CIFRA = require('./herramientas/cifra.js'); // datos cifrados (noviembre 2026): sin el secreto DATOS_KEY no cambia nada
 const API = 'https://data-api.binance.vision/api/v3'; // datos públicos de Binance accesibles desde los servidores de GitHub
 const PAGE = 'https://mauro-ezequiel.github.io/cripto-en-vivo/';
 const TOKEN = process.env.TELEGRAM_TOKEN, CHAT = process.env.TELEGRAM_CHAT;
@@ -148,7 +149,7 @@ async function ghPut(file, body, shaKey, msg, info) { const tok = process.env.GH
       if (r.status === 404) { const mm = await (await fetch(api + '/git/ref/heads/main', { headers: H })).json(); r = await fetch(api + '/git/refs', { method: 'POST', headers: H, body: JSON.stringify({ ref: 'refs/heads/datos', sha: mm.object.sha }) }); }
       if (!r.ok) { console.log('rama datos:', r.status); return false; } S.brOk = true; }
     let sha = S[shaKey]; if (!sha) { const g = await fetch(api + '/contents/' + file + '?ref=datos', { headers: H }); if (g.ok) sha = (await g.json()).sha; }
-    const r = await fetch(api + '/contents/' + file, { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: msg, content: Buffer.from(body).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
+    const r = await fetch(api + '/contents/' + file, { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: msg, content: Buffer.from(CIFRA.enc(file, body)).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
     if (r.ok) { S[shaKey] = (await r.json()).content.sha; console.log('Publicado', file, info || ''); return true; }
     console.log('publicar', file, r.status, (await r.text()).slice(0, 200)); S[shaKey] = null; return false; } catch (e) { console.log('publicar error', file, e.message); return false; } }
 
@@ -167,7 +168,7 @@ const bitId = x => x.sym + '-' + x.t;
 const bitRec = x => ({ id: bitId(x), m: x.m, sym: x.sym, dir: x.dir, entry: x.entry, tp: x.tp, sl: x.sl, ll: x.ll == null ? null : x.ll, setup: x.setup || null, conf: x.conf || null, t: x.t, v: x.v || null, libro: x.libro || null, out: null });
 async function bitLoad() { if (Array.isArray(S.bit)) return true;
   try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/bitacora.json?t=' + Date.now());
-    if (r.ok) { const j = await r.json(); S.bit = Array.isArray(j.ops) ? j.ops : []; } else if (r.status === 404) S.bit = []; else return false; } catch (e) { return false; } // si falla la lectura no se pisa nada: se reintenta
+    if (r.ok) { const j = CIFRA.decJ(await r.text()); S.bit = Array.isArray(j.ops) ? j.ops : []; } else if (r.status === 404) S.bit = []; else return false; } catch (e) { return false; } // si falla la lectura no se pisa nada: se reintenta
   for (const x of S.hist || []) if (!S.bit.some(b => b.id === bitId(x))) S.bit.push(bitRec(x)); // las de los últimos 10 días que ya estaban publicadas
   S.bit.sort((a, b) => a.t - b.t); S.bitDirty = true; return true; }
 /* resultado como % del margen (1/3 de la posición en cada objetivo, el resto al precio de salida), con 0,05 % de comisión por lado */
@@ -231,7 +232,7 @@ async function freno(now) { S.freno = S.freno || {}; const out = {};
       if (!S.freno[m] || now - S.freno[m] > 3 * 864e5) { S.freno[m] = now; await tg(`🛑 FRENO · ${SIGCFG[m].name} ${VER[m]}\nSus últimas ${L.length} operaciones en vivo dan ${live.toFixed(1)} % del margen por operación; la simulación del último año da ${sim >= 0 ? '+' : ''}${sim.toFixed(1)} %.\nEn vivo está rindiendo bastante peor que lo simulado: conviene bajar el margen o pausar este modo hasta ver qué cambió.`, false); } } }
   S.frenoAct = out; }
 async function calYear() { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/historial.json?t=' + Date.now()); if (!r.ok) return;
-    const j = await r.json(), minN = j.minN || 20;
+    const j = CIFRA.decJ(await r.text()), minN = j.minN || 20;
     for (const m of ['medio', 'tx', 'x']) { const L = (j.ops || []).filter(o => o[0] === m && o[1] !== 'tp-x' && o[6] !== 0); if (L.length) SIMAVG[m] = L.reduce((a, o) => a + o[7] / (m === 'x' ? 50 : 350) * 100, 0) / L.length; }
     for (const m in j.cal || {}) for (const s in j.cal[m]) { const x = j.cal[m][s]; if (x && x.n >= minN && s in CALSET) CALSET[s] = x.p; } } catch (e) {} }
 

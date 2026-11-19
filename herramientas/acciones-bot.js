@@ -4,6 +4,7 @@
    y seguir las operaciones abiertas, y publica el resultado otra vez en datos/acciones.json. Todas las cuentas y dispositivos leen ese archivo.
    Avisa por Telegram las señales nuevas y las operaciones que se cierran. Nunca borra operaciones: solo agrega o actualiza. */
 const { chromium } = require('playwright-core');
+const CIFRA = require('./cifra.js');
 const REPO = process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo', TOK = process.env.GH_TOKEN;
 const TOKEN = process.env.TELEGRAM_TOKEN, CHAT = process.env.TELEGRAM_CHAT, CANAL = process.env.TELEGRAM_CANAL || '@criptolive_senales';
 const PAGE = 'https://mauro-ezequiel.github.io/cripto-en-vivo/?bot=acciones&t=' + Date.now();
@@ -18,8 +19,8 @@ async function tg(text) { if (!TOKEN || !CHAT) { console.log('[sin Telegram]', t
 async function leer() { const r = await fetch(API + '/contents/acciones.json?ref=datos', { headers: H });
   if (r.status === 404) return { sha: null, j: { ops: [], senales: [] } };
   if (!r.ok) throw new Error('no pude leer acciones.json: ' + r.status);
-  const g = await r.json(); return { sha: g.sha, j: JSON.parse(Buffer.from(g.content, 'base64').toString('utf8')) }; }
-async function escribir(sha, j, msg) { const r = await fetch(API + '/contents/acciones.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: msg, content: Buffer.from(JSON.stringify(j)).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
+  const g = await r.json(); return { sha: g.sha, j: CIFRA.decJ(Buffer.from(g.content, 'base64').toString('utf8')) }; }
+async function escribir(sha, j, msg) { const r = await fetch(API + '/contents/acciones.json', { method: 'PUT', headers: H, body: JSON.stringify(Object.assign({ message: msg, content: Buffer.from(CIFRA.enc('acciones.json', JSON.stringify(j))).toString('base64'), branch: 'datos' }, sha ? { sha } : {})) });
   if (!r.ok) throw new Error('no pude publicar: ' + r.status + ' ' + (await r.text()).slice(0, 200)); }
 (async () => {
   const { sha, j: prev } = await leer(); prev.ops = prev.ops || []; prev.senales = prev.senales || [];

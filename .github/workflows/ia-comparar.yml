@@ -12,6 +12,9 @@ on:
         default: '1095'
 permissions:
   contents: write
+# datos cifrados (noviembre 2026): sin este secreto todo sigue sin cifrar, como antes
+env:
+  DATOS_KEY: ${{ secrets.DATOS_KEY }}
 jobs:
   comparar:
     runs-on: ubuntu-latest
@@ -38,6 +41,7 @@ jobs:
         run: |
           pip install --quiet numpy scikit-learn
           for f in ia noticias libro bitacora ia-ops fyg; do curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/$f.json" -o $( [ $f = ia ] && echo prev-ia.json || echo $f.json ) || true; done
+          node herramientas/cifra.js dec prev-ia.json bitacora.json ia-ops.json
           set -o pipefail
           IA_ANTES=1 python herramientas/ia-entrenar.py ia-datos.json.gz 2>&1 | tee ia-antes-log.txt
           mv ia.json ia-antes.json
