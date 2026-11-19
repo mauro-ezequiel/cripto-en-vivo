@@ -3944,9 +3944,8 @@ setTimeout(()=>{
 function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
 if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);
   /* la página abrió al instante con la copia guardada y en segundo plano bajó una versión nueva: se ofrece recargar */
-  if(e.data&&e.data.type==='nueva'&&!document.getElementById('swNueva')){const b=document.createElement('button');b.id='swNueva';b.type='button';b.textContent='✨ Hay una versión nueva · tocá para actualizar';
-    b.style.cssText='position:fixed;left:50%;transform:translateX(-50%);bottom:78px;z-index:9999;padding:10px 16px;border-radius:999px;border:0;background:var(--acc);color:#fff;font-weight:700;font-size:13px;box-shadow:0 6px 24px rgba(0,0,0,.5)';
-    b.onclick=()=>location.reload();document.body.appendChild(b);}});
+  if(e.data&&e.data.type==='nueva'&&!document.getElementById('updBtn')&&!(Date.now()-(+sessionStorage.getItem('swRel')||0)<9e4)){const b=document.createElement('button');b.id='updBtn';b.type='button';b.innerHTML='🔄 <b>Hay una actualización</b> · tocá para verla';
+    b.onclick=()=>{b.textContent='Actualizando…';try{sessionStorage.setItem('swRel',Date.now());}catch(x){}location.reload();};document.body.appendChild(b);}});
 {const u=new URLSearchParams(location.search);if(u.get('sym'))setTimeout(()=>openFromNotif({sym:u.get('sym'),tf:u.get('tf'),m:u.get('m')}),1500);}
 
 /* ---------- menú lateral, alertas de precio manuales e historial desplegable ---------- */
@@ -4313,12 +4312,11 @@ document.addEventListener('click',e=>{const r=e.target.closest('[data-rsis]');if
 setInterval(()=>{if(mode==='a'){rsiLoad().then(rsiRender);}},6e4);
 /* ---------- botón "hay una actualización": aparece cuando se publica una versión nueva de la página ----------
    Compara el tamaño de la página que tenés abierta con la que está publicada ahora (o, si no se puede saber, con la del primer chequeo). */
-var APPV={n:0,base:null};try{const nv=performance.getEntriesByType('navigation')[0];APPV.n=nv&&nv.decodedBodySize||0;}catch(e){}
-async function appVerCheck(){try{const r=await fetch(location.pathname+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)return;const n=new TextEncoder().encode(await r.text()).length;
-    if(APPV.n){if(n!==APPV.n)appVerShow();return;}if(APPV.base==null){APPV.base=n;return;}if(n!==APPV.base)appVerShow();}catch(e){}}
-function appVerShow(){if($('updBtn'))return;const b=document.createElement('button');b.id='updBtn';b.type='button';b.innerHTML='🔄 <b>Hay una actualización</b> · tocá para verla';
-  b.onclick=async()=>{b.textContent='Actualizando…';try{if(swReg)await swReg.update();const ks=await caches.keys();await Promise.all(ks.map(k=>caches.delete(k)));}catch(e){}location.reload();};document.body.appendChild(b);}
-setTimeout(appVerCheck,5000);setInterval(appVerCheck,3*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appVerCheck();});
+/* 19/11/2026: este chequeo comparaba el TAMAÑO de la página; con la apertura instantánea (copia guardada) los tamaños ya no
+   coincidían y el botón volvía a salir a los 2 segundos de actualizar. Ahora lo hace el service worker comparando el contenido
+   (sw.js): acá solo se le pide que revise cada 3 minutos y al volver a la pestaña. */
+const appVerCheck=()=>{try{const c=navigator.serviceWorker&&navigator.serviceWorker.controller;if(c)c.postMessage({type:'revisar'});}catch(e){}};
+setTimeout(appVerCheck,8000);setInterval(appVerCheck,3*6e4);document.addEventListener('visibilitychange',()=>{if(!document.hidden)appVerCheck();});
 let stkLoadId=0;
 async function loadChartStk(){CHUSER=false;
   const id=++stkLoadId;$('loading').textContent='Cargando…';$('loading').style.display='flex';
