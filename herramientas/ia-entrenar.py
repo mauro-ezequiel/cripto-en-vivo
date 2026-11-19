@@ -345,7 +345,8 @@ def importance(m, X, Y, names, reps=2):
 # APRENDER DE LO VIVIDO (noviembre 2026): las operaciones que la IA hizo en vivo (reales y de práctica, datos/ia-ops.json) guardan la foto de sus
 # datos de entrada. Se suman al estudio de la entrada con más peso (VIVO_W), porque son lo más reciente y ya incluyen cómo se ejecutó de verdad
 # (velas de 1 min, comisión y deslizamiento). La prueba sigue siendo solo con meses históricos que no vio, para que la comparación sea justa.
-VIVO_W = float(os.environ.get('IA_VIVO_W', 3))
+VIVO_W = float(os.environ.get('IA_VIVO_W', 2))
+VIVO_MIN = int(os.environ.get('IA_VIVO_MIN', 30))  # con menos operaciones vividas que esto no se usan: pocas y con peso extra pueden empeorarla
 def vivo_rows(fam):
     if ANTES or os.environ.get('IA_VIVO') == '0':
         return np.zeros((0, len(ENF))), np.zeros(0), np.zeros(0)
@@ -359,7 +360,9 @@ def vivo_rows(fam):
         if o.get('f') != fam or o.get('st') not in ('win', 'fail', 'exp') or not x or o.get('xv') != len(ENF) or any(v is None for v in x):
             continue
         X.append([float(v) for v in x]); Y.append(1.0 if (o.get('hit') or 0) >= 1 else 0.0); T.append(float(o.get('t') or 0))
-    if not X:
+    if len(X) < VIVO_MIN:
+        if X:
+            print(fam, 'operaciones vividas:', len(X), '(menos de', VIVO_MIN, ': todavía no se usan)')
         return np.zeros((0, len(ENF))), np.zeros(0), np.zeros(0)
     return np.array(X), np.array(Y), np.array(T)
 
