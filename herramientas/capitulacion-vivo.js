@@ -1,9 +1,9 @@
 /* CAPITULACIÓN EN VIVO (noviembre 2026). El 73 % del indicador salió de una búsqueda entre ~700 combinaciones con datos de 2020-2026:
    puede estar inflado por suerte. Para saber cuánto acierta DE VERDAD, cada día se anotan las señales nuevas (solo hacia adelante,
-   desde el 18/11/2026, sin rellenar el pasado) y se sigue cada una hasta que toca el objetivo (+1,5 ATR) o el stop (−1,5 ATR), o 30 días.
+   desde el 17/11/2026, sin rellenar el pasado) y se sigue cada una hasta que toca el objetivo (+1,5 ATR) o el stop (−1,5 ATR), o 30 días.
    Guarda capitulacion.json en la rama "datos"; la página muestra el marcador real al lado del 73 % de las pruebas. */
 const fs = require('fs');
-const DESDE = '2026-11-18'; /* la búsqueda del indicador usó datos hasta el 17/11 */
+const DESDE = '2026-11-17'; /* la búsqueda corrió el 17/11 a la mañana: la vela diaria del 17 cerró después, así que ya es fuera de la muestra */
 const sleep = ms => new Promise(r => setTimeout(r, ms));
 async function j(u) { for (let k = 0; k < 4; k++) { try { const r = await fetch(u); if (r.ok) return await r.json(); } catch (e) {} await sleep(1500); } return null; }
 function rsi(c, n) { const o = []; let g = 0, l = 0; for (let i = 1; i < c.length; i++) { const d = c[i] - c[i - 1], u = Math.max(d, 0), w = Math.max(-d, 0); if (i <= n) { g += u / n; l += w / n; } else { g = (g * (n - 1) + u) / n; l = (l * (n - 1) + w) / n; } o[i] = i >= n ? (l ? 100 - 100 / (1 + g / l) : 100) : null; } return o; }
