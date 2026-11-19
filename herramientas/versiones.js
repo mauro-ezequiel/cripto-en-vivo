@@ -57,7 +57,7 @@ function shAll(D, cs, hc, tf, btcDir, s, U7, ch24) { const cc = cs.slice(0, -1),
         tendencia_1h: up1h, btc_a_favor: btcDir === dir ? 1 : 0, volumen: r2(L.vr), cambio_24h: r2(ch24), hora: new Date().getUTCHours() } }); }
     return out; }); }
 /* % del margen: 1/3 en cada objetivo, tocado el objetivo 1 el stop pasa a la entrada, plazo, comisión 0,05 % por lado */
-const SAL = require('./salida-lib.js'), DVLV = require('./dvol-lib.js'), TL = require('./traders-lib.js');
+const CIFRA = require('./cifra.js'), SAL = require('./salida-lib.js'), DVLV = require('./dvol-lib.js'), TL = require('./traders-lib.js');
 const cv = b => ({ t: +b.t, o: b.open, h: b.high, l: b.low, c: b.close, v: b.v });
 function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.h : b.l, stop = o.hit ? o.entry : o.sl;
   const fin = (px, c) => { let v = 0; for (let k = 0; k < o.hit; k++) v += d * (o.tp[k] / o.entry - 1) / 3; v += (1 - o.hit / 3) * d * (px / o.entry - 1); o.out = { c, hit: o.hit, p: +px.toPrecision(8), t: b.t, pct: +((v - .001 - .0008 - .0001 * Math.max(0, (b.t - o.t) / (8 * H))) * o.lev * 100).toFixed(2) }; }; // comisión + deslizamiento + financiación
@@ -67,7 +67,7 @@ function step(o, b) { const d = o.dir, adv = d > 0 ? b.l : b.h, fav = d > 0 ? b.
   if (b.t + 3e5 - o.t >= o.age) return fin(b.c, 5); }
 async function run(now, base, U7, D) { const S = D.S;
   if (!S.ver) { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/versiones.json?t=' + now);
-      if (r.ok) { const j = await r.json(); S.ver = { ops: Array.isArray(j.ops) ? j.ops : [], last: {} }; } else if (r.status === 404) S.ver = { ops: [], last: {} }; else return; } catch (e) { return; } }
+      if (r.ok) { const j = CIFRA.decJ(await r.text()); S.ver = { ops: Array.isArray(j.ops) ? j.ops : [], last: {} }; } else if (r.status === 404) S.ver = { ops: [], last: {} }; else return; } catch (e) { return; } }
   const A = S.ver; A.last = A.last || {}; A.diag = A.diag || {}; let ch = false; const K = {}, get = (s, tf, n) => { const k = s + tf; return K[k] || (K[k] = D.kl(s, tf, n).catch(() => null)); };
   const btc = async tf => { const b = await get('BTCUSDT', tf, 80); if (!b) return 0; const cl = b.slice(0, -1).map(x => x.close), e = D.emaArr(cl, 50); return cl[cl.length - 1] > e[e.length - 1] ? 1 : -1; };
   const add = (m, s, x, tf) => { const V = VERS[m].find(y => y.v === x.v), G = m === 'medio' ? TR : V, cool = G.cool;

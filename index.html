@@ -782,6 +782,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .iaco{margin:8px 0;padding:10px 12px;border-radius:14px;background:rgba(26,107,255,.09);border:1px solid rgba(26,107,255,.35);font-size:12.5px;line-height:1.45}.iaco-t{font-weight:800;margin-bottom:4px}.iaco button{margin-top:6px}.iaco-s{margin-top:8px;padding-top:7px;border-top:1px solid var(--line);font-size:12px}.iaco-l{display:flex;flex-direction:column;gap:2px;margin-top:4px;color:var(--mut);font-size:11px}
 .rsi-ord{font-size:12px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;white-space:nowrap}.rsi-ord.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .ind-tf .tf-flojo{opacity:.55}.ind-tf .tf-ok{color:#00e676}.iaco-n{font-size:11px;color:var(--mut);margin-bottom:6px}
+.dk-av{position:fixed;left:50%;transform:translateX(-50%);top:12px;z-index:9998;max-width:92vw;padding:10px 14px;border-radius:14px;background:#1c1c20;border:1px solid var(--line);font-size:13px}.dk-av button{margin-left:8px;background:none;border:0;color:var(--mut);cursor:pointer}.adm-dk{margin:12px 0;padding:12px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px}.adm-dk small{color:var(--mut);line-height:1.45}.adm-dk-k{display:flex;gap:8px;align-items:center}.adm-dk-k code{word-break:break-all;font-size:11px;background:#000;padding:6px 8px;border-radius:8px;flex:1}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -1519,7 +1520,7 @@ function drawSMC(ctx,from,to,X,Y,paneW){const Z=C.smc;if(!Z)return;const xr=pane
    (cualquier vela: ~50 %), el peor año 64,7 %, y en promedio +4,8 % a los 5 días. En 12 h y 4 h NO funciona: solo vela diaria y solo cripto. */
 const CAP_WIN='73 %';
 /* marcador real: señales anotadas cada día desde el 17/11/2026 (herramientas/capitulacion-vivo.js) */
-var CAPV=null;async function capVivo(){if(CAPV&&Date.now()-CAPV.t0<36e5)return CAPV;try{const r=await fetch('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/capitulacion.json?t='+Math.floor(Date.now()/36e5));if(r.ok){CAPV=await r.json();CAPV.t0=Date.now();}}catch(e){}return CAPV;}
+var CAPV=null;async function capVivo(){if(CAPV&&Date.now()-CAPV.t0<36e5)return CAPV;try{const r=await fetch('https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/capitulacion.json?t='+Math.floor(Date.now()/36e5));if(r.ok){CAPV=await datosDec(await r.json());CAPV.t0=Date.now();}}catch(e){}return CAPV;}
 const capVivoTxt=()=>{const r=CAPV&&CAPV.resumen;if(!r)return 'en vivo: se mide desde el 17/11/2026';const c=r.ganadas+r.perdidas;return c?`en vivo: ${r.ganadas} de ${c} (${r.acierto} %)${r.abiertas?` · ${r.abiertas} abiertas`:''}${c<30?' · todavía son pocas para sacar conclusiones':''}`:`en vivo: ${r.abiertas||0} abiertas, ninguna terminada todavía`;};
 /* en la planilla (vela diaria): 2 = capitulación en una de las 2 últimas velas cerradas, 1 = se está formando en la vela de hoy */
 function capLast(k){const n=k.length;if(n<40)return 0;const c=k.map(b=>b.close),R=[];{let g=0,l=0;for(let i=1;i<n;i++){const d=c[i]-c[i-1],u=Math.max(d,0),w=Math.max(-d,0);if(i<=14){g+=u/14;l+=w/14;}else{g=(g*13+u)/14;l=(l*13+w)/14;}R[i]=i>=14?(l?100-100/(1+g/l):100):null;}}
@@ -1700,7 +1701,22 @@ try{Object.assign(liqOpts,JSON.parse(localStorage.getItem('cv_liqopts')||'{}'))}
 const saveLiqOpts=()=>{try{localStorage.setItem('cv_liqopts',JSON.stringify(liqOpts))}catch(e){}};
 
 const getJ=async(u,ms=9000)=>{const c=new AbortController(),t=setTimeout(()=>c.abort(),ms);
-  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error(r.status);return await r.json();}finally{clearTimeout(t);}};
+  try{const r=await fetch(u,{signal:c.signal});if(!r.ok)throw new Error(r.status);return await datosDec(await r.json());}finally{clearTimeout(t);}};
+/* DATOS CIFRADOS (noviembre 2026): el repositorio es público, así que las señales, la bitácora, el historial, la IA y las planillas
+   se suben cifradas (AES-256-GCM). La clave está en Firebase (privado/datos) y solo la pueden leer las cuentas con suscripción activa
+   y el dueño. Los archivos sin cifrar se siguen leyendo igual (durante el cambio conviven las dos formas). */
+var DKEY=null,DKEYP=null,DKEYERR=null;
+const b64u8=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function datosKey(){if(DKEY)return DKEY;if(DKEYP)return DKEYP;
+  DKEYP=(async()=>{for(let k=0;k<80&&!(fbUser&&fbDb&&(SUBOK||isAdmin()));k++)await new Promise(z=>setTimeout(z,250));
+    if(!fbUser||!fbDb)throw new Error('sin sesión');const d=await fbDb.collection('privado').doc('datos').get();const k64=d.exists&&d.data().k;if(!k64)throw new Error('falta la clave');
+    DKEY=await crypto.subtle.importKey('raw',b64u8(k64),'AES-GCM',false,['decrypt']);DKEYERR=null;return DKEY;})();
+  try{return await DKEYP;}catch(e){DKEYP=null;DKEYERR=e.message;datosAviso();throw e;}}
+async function datosDec(j){if(!j||j.cl_enc!==1)return j;const key=await datosKey();let buf=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64u8(j.iv)},key,b64u8(j.d));
+  if(j.z)buf=await new Response(new Blob([buf]).stream().pipeThrough(new DecompressionStream('gzip'))).arrayBuffer();return JSON.parse(new TextDecoder().decode(buf));}
+const fetchJD=async(u,o)=>datosDec(await (await fetch(u,o)).json());
+function datosAviso(){if(document.getElementById('dkAv')||!document.body)return;const d=document.createElement('div');d.id='dkAv';d.className='dk-av';
+  d.innerHTML=(fbUser?'🔒 Las señales y los datos de los bots son para cuentas con suscripción activa.':'🔒 Entrá con tu cuenta para ver las señales y los datos de los bots.')+' <button type="button">✕</button>';d.querySelector('button').onclick=()=>d.remove();document.body.appendChild(d);}
 const safe=p=>p.then(v=>v,()=>null);
 const clamp=(x,a=-1,b=1)=>Math.max(a,Math.min(b,x));
 const fusd=v=>'$'+fv(v);
@@ -2628,6 +2644,9 @@ service cloud.firestore {
     }
   }
 }`;
+function admDkHTML(){const x=ADM.dk;return `<div class="adm-dk"><b>🔐 Clave de los datos</b><small>Cifra las señales, la bitácora, la IA y las planillas en GitHub para que nadie las lea sin pagar. Va en dos lugares: acá (Firebase) y en GitHub como secreto <b>DATOS_KEY</b>.</small>
+  ${x&&x.k&&x.ver?`<div class="adm-dk-k"><code>${esc(x.k)}</code><button type="button" data-dk="copiar">Copiar</button></div><small>Huella: <b>${x.h||'…'}</b>. Cargala en GitHub: <b>tu repositorio → Settings → Secrets and variables → Actions → New repository secret</b>, nombre <b>DATOS_KEY</b>, valor: la clave de arriba. No la compartas con nadie.</small>`:''}
+  <div><button type="button" data-dk="ver">Ver la clave actual</button> <button type="button" data-dk="crear">Crear clave nueva</button></div></div>`;}
 function keepIn(el,html){const a=document.activeElement,keep={};el.querySelectorAll('input[id],input[data-cf],input[data-tg],input[data-rtx]').forEach(i=>{if(i.type!=='radio'&&i.type!=='checkbox')keep[i.id||i.dataset.cf||(i.dataset.tg?'tg':'')||'r'+i.dataset.rtx]=[i.value,i===a,i.selectionStart];});
   el.innerHTML=html;for(const k in keep){const i=el.querySelector('#'+CSS.escape(k))||el.querySelector(`[data-cf="${k}"]`)||(k==='tg'?el.querySelector('[data-tg]'):null)||(k[0]==='r'?el.querySelector(`[data-rtx="${k.slice(1)}"]`):null);
     if(i&&keep[k][0]&&i.value!==keep[k][0]&&document.activeElement!==i){i.value=keep[k][0];}if(i&&keep[k][1]){i.focus();try{i.setSelectionRange(keep[k][2],keep[k][2]);}catch(_){}}}}
@@ -2794,6 +2813,7 @@ function admRender(){let el=$('admBox');if(!ADM.open){if(el)el.remove();return;}
     <label>Dirección USDT · BNB Smart Chain (BEP20)<input data-cf="bep20" value="${esc(C.bep20||'')}" placeholder="0x…" spellcheck="false"></label>
     <label>Enlace del grupo de Telegram (solo lo ven las cuentas activas)<input data-tg="1" value="${esc(TGLINK||'')}" placeholder="https://t.me/+…" spellcheck="false"></label>
     <button type="button" class="g" data-save="1">Guardar</button>${ADM.saved?'<span class="up"> ✓ Guardado</span>':''}</div>
+    ${admDkHTML()}
     <p class="mut" style="font-size:12px;line-height:1.5">Las direcciones las sacás de tu Binance: <b>Billetera → Depositar → USDT</b>, eligiendo la red TRC20 o BEP20. El Pay ID está en <b>Pagar → tu perfil</b>. Los pagos por red se pueden verificar solos (ver "Verificar en la red"); los de Binance Pay los confirmás vos mirando el historial de Binance Pay.</p></div>`;
   const H=`<div class="adm-in"><div class="adm-hd"><button type="button" class="adm-x" data-x="1">← Volver</button><b>👑 Administración</b><button type="button" data-ref="1">↻ Actualizar</button></div>
     ${bad}
@@ -2810,6 +2830,11 @@ async function admClick(e){const b=e.target.closest('button,input');if(!b)return
   if(d.x){admClose();return;}if(d.ref){admLoad();return;}if(d.tab){ADM.tab=d.tab;ADM.saved=false;admRender();return;}
   if(d.copy){try{await navigator.clipboard.writeText(ADM_RULES);b.textContent='✓ Copiadas';}catch(_){b.textContent='Seleccioná el texto de abajo y copialo';}return;}
   if(d.ask){ADM.ask=d.ask;admRender();return;}
+  if(d.dk){try{if(d.dk==='crear'){if(ADM.dk&&ADM.dk.k&&!confirm('Ya hay una clave. Si creás otra, hasta que la cargues en GitHub la página no va a poder leer los datos nuevos. ¿Seguro?'))return;
+        const raw=crypto.getRandomValues(new Uint8Array(32)),k=btoa(String.fromCharCode(...raw));await fbDb.collection('privado').doc('datos').set({k,t:Date.now()});ADM.dk={k,ver:true};}
+      else if(d.dk==='ver'){const x=await fbDb.collection('privado').doc('datos').get();ADM.dk=x.exists?Object.assign({ver:true},x.data()):{};}
+      else if(d.dk==='copiar'){await navigator.clipboard.writeText(ADM.dk.k);b.textContent='✓ Copiada';return;}
+      ADM.dk.h=ADM.dk.k?[...new Uint8Array(await crypto.subtle.digest('SHA-256',b64u8(ADM.dk.k)))].map(x=>x.toString(16).padStart(2,'0')).join('').slice(0,8):null;DKEY=null;DKEYP=null;}catch(e){alert('No se pudo: '+e.message);}admRender();return;}
   try{
     if(d.bk){const x=(ADM.L||[]).find(y=>y.uid===d.bk)||{};await fbDb.collection('bloqueos').doc(d.bk).set({email:x.email||'',nombre:x.nombre||'',t:Date.now()});ADM.B.set(d.bk,{});ADM.ask=null;}
     else if(d.ub){await fbDb.collection('bloqueos').doc(d.ub).delete();ADM.B.delete(d.ub);}
@@ -6146,7 +6171,7 @@ function applyCloudPil(d){if(!d)return;const pt=+(localStorage.getItem('cv_pil_t
 /* ---------- historial del último año: % de acierto recalculados cada día por el servidor (herramientas/historial-anual.js) ---------- */
 const HIST_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/historial.json';
 window.HISTYR=null;
-async function histYrLoad(){try{const j=await (await fetch(HIST_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!j.cal)return;
+async function histYrLoad(){try{const j=await fetchJD(HIST_URL+'?t='+Date.now(),{cache:'no-store'});if(!j||!j.cal)return;
   const minN=j.minN||20;let k=0;
   for(const m in j.cal)for(const s in j.cal[m]){const x=j.cal[m][s];if(!x||!(x.n>=minN)||!CAL[m]||!CAL[m][s])continue;Object.assign(CAL[m][s],{p:x.p,p3:x.p3,n:x.n,usd:x.usd,yr:true});k++;}
   for(const m in (j.azar||{})){const a=j.azar[m];if(a&&a.n>=50&&window.AZAR){AZAR[m]=Object.assign({p3:null},a);if(m==='medio')AZAR.p=AZAR.medio;}}
@@ -6155,7 +6180,7 @@ async function histYrLoad(){try{const j=await (await fetch(HIST_URL+'?t='+Date.n
 setTimeout(histYrLoad,2500);setInterval(histYrLoad,6*36e5);
 /* ---------- señales del servidor 24 h: las que llegaron por Telegram también quedan en la página ---------- */
 const SRV_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/senales.json';
-async function srvImport(){try{const j=await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();if(j.estado)SRVEST=j.estado;
+async function srvImport(){try{const j=await fetchJD(SRV_URL+'?t='+Date.now(),{cache:'no-store'});if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();if(j.estado)SRVEST=j.estado;
   for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
     const f={sym:x.sym,m:x.m,dir:x.dir,tf:cfg.tf,entry:x.entry,zl:x.zl,zh:x.zh,tp0:x.tp[0],tp1:x.tp[1],tp2:x.tp[2],sl:x.sl,conf:x.conf,setup:x.setup,reasons:(x.reasons||[]).slice(0,5).concat('📡 enviada por el servidor 24 h'),
@@ -6325,8 +6350,8 @@ vbInfo();setTimeout(()=>{vbRender();vbScan();},5000);setInterval(vbScan,30*6e4);
    Se consulta la API de GitHub con revalidación (ETag): si no cambió responde 304 y no gasta el límite de consultas. */
 const SRV_API='https://api.github.com/repos/mauro-ezequiel/cripto-en-vivo/contents/senales.json?ref=datos';
 let srvSeen=null,srvApiOff=0;
-async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await r.json();if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
-  return await (await fetch(SRV_URL+'?t='+Date.now(),{cache:'no-store'})).json();}
+async function srvFetch(){if(Date.now()>srvApiOff){try{const r=await fetch(SRV_API,{headers:{Accept:'application/vnd.github.raw'},cache:'no-cache'});if(r.ok)return await datosDec(await r.json());if(r.status===403||r.status===429)srvApiOff=Date.now()+15*6e4;}catch(e){}}
+  return await fetchJD(SRV_URL+'?t='+Date.now(),{cache:'no-store'});}
 srvImport=async function(){try{const j=await srvFetch();if(!j||!Array.isArray(j.senales))return;let ch=false;SRVCHK=Date.now();if(j.estado)SRVEST=j.estado;const fresh=[];
   for(const x of j.senales){const cfg=SIGCFG[x.m];if(!cfg||!x.sym||!x.t||!Array.isArray(x.tp))continue;const id=x.sym+'-'+x.t;if(OPS_DROP.has(id)||SIG[x.m].some(s=>s.op===id))continue; // octubre 2026: sin saltear por operaciones locales parecidas (por eso cada dispositivo mostraba distintas)
     const c=CAL[x.m]&&CAL[x.m][x.setup];
@@ -6712,7 +6737,7 @@ trnPill();
 const IA_URL='https://raw.githubusercontent.com/mauro-ezequiel/cripto-en-vivo/datos/ia.json';
 var IAM=null,IAOPEN=false,IAST={},IABUSY=false;try{IAST=JSON.parse(localStorage.getItem('cv_ia_st')||'{}')||{};}catch(e){}
 const IARES={tr:{tf:'1h',ms:36e5},sh:{tf:'15m',ms:9e5}};
-async function iaLoad(){try{const j=await (await fetch(IA_URL+'?t='+Date.now(),{cache:'no-store'})).json();if(j&&j.ver)IAM=j;}catch(e){}if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}
+async function iaLoad(){try{const j=await fetchJD(IA_URL+'?t='+Date.now(),{cache:'no-store'});if(j&&j.ver)IAM=j;}catch(e){}if(IAOPEN)iaRender();try{iaSigRender();}catch(e){}}
 const iaBars={};
 async function iaKl(s,f){const k=s+f,c=iaBars[k];if(c&&Date.now()-c.t<6e4)return c.b;const b=await kl(s,IARES[f].tf,300);iaBars[k]={t:Date.now(),b};return b;}
 let iaBtc={t:0,d:0};

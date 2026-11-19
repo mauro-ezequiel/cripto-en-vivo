@@ -10,6 +10,9 @@ permissions:
 concurrency:
   group: intradia
   cancel-in-progress: true
+# datos cifrados (noviembre 2026): sin este secreto todo sigue sin cifrar, como antes
+env:
+  DATOS_KEY: ${{ secrets.DATOS_KEY }}
 jobs:
   velas:
     runs-on: ubuntu-latest

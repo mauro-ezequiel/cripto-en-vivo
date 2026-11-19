@@ -3,7 +3,7 @@
    15 min de los últimos 60 días de cada acción de la planilla (de ahí se arman las de 1 h, 2 h y 4 h). Además guarda las velas diarias completas de 2 años (para las señales de ACCIONES). Publica en la rama "intradia", comprimido (la página las lee de ahí y
    les suma el precio en vivo). También calcula el RSI 14 diario (con lo necesario para seguirlo en vivo) y el RSI 14 de 1 hora.
    Uso: node herramientas/intradia.js [carpeta-anterior] → escribe out/c/<ACCION>.json.gz y out/rsi.json */
-const fs = require('fs'), path = require('path');
+const fs = require('fs'), path = require('path'), CIFRA = require('./cifra.js');
 const PREV = process.argv[2] || 'prev', OUT = 'out', SEC = JSON.parse(fs.readFileSync(path.join(__dirname, 'sectores.json'), 'utf8'));
 const sleep = ms => new Promise(r => setTimeout(r, ms)), yh = s => s.replace('.', '-');
 const zlib = require('zlib'), MAIN = new Set(Object.entries(SEC).filter(([k]) => !k.startsWith('_')).flatMap(([, v]) => v.slice(0, 8)));
@@ -34,7 +34,7 @@ function velasH(m, h) { const out = []; let key = null;
 /* semanal: cierres de cada semana (lunes a viernes) con las velas diarias; la semana en curso queda afuera y la completa el precio en vivo */
 function semanas(d1) { const out = []; let key = null; d1.t.forEach((t, i) => { const k = Math.floor((t / 86400 + 3) / 7); if (k !== key) { out.push({ k, c: d1.c[i] }); key = k; } else out[out.length - 1].c = d1.c[i]; }); return out; }
 (async () => { fs.mkdirSync(path.join(OUT, 'c'), { recursive: true });
-  let prev = {}; try { prev = JSON.parse(fs.readFileSync(path.join(PREV, 'rsi.json'), 'utf8')); } catch (e) {}
+  let prev = {}; try { prev = CIFRA.decJ(fs.readFileSync(path.join(PREV, 'rsi.json'), 'utf8')); } catch (e) {}
   const today = new Date().toISOString().slice(0, 10), needDaily = !prev.dia || prev.dia !== today || process.env.DIARIO;
   const D = {}, X = {}, ok = [], fail = []; let q = 0;
   await Promise.all(Array.from({ length: 4 }, async () => { while (q < LIST.length) { const s = LIST[q++];
@@ -66,7 +66,7 @@ function semanas(d1) { const out = []; let key = null; d1.t.forEach((t, i) => { 
   const out = { upd: Date.now(), dia: needDaily ? today : prev.dia, cols: ['rsi_d', 'g', 'l', 'cierre', 'rsi_1h', 'cambio_ant', 'ultimo'], sectores: Object.fromEntries(Object.entries(SEC).filter(([k]) => !k.startsWith('_'))), d: D,
     /* x[ACCION] = [RSI 1 h, 2 h, 4 h, 8 h, 12 h, RSI semanal al cierre de la semana anterior, promedio de subas, de bajas, cierre de la semana anterior] */
     xcols: ['1h', '2h', '4h', '8h', '12h', 'rsi_s', 'g_s', 'l_s', 'cierre_s', 'rsi_m', 'g_m', 'l_m', 'cierre_m'], x: Object.keys(X).length ? X : (prev.x || {}) };
-  fs.writeFileSync(path.join(OUT, 'rsi.json'), JSON.stringify(out));
+  fs.writeFileSync(path.join(OUT, 'rsi.json'), CIFRA.enc('rsi.json', JSON.stringify(out)));
   /* ACUMULACIÓN: velas semanales de toda la historia de los índices (una vez por día; el resto de las corridas usa las de antes) */
   { let acu = null; try { acu = JSON.parse(fs.readFileSync(path.join(PREV, 'acum.json'), 'utf8')); } catch (e) {}
     if (!acu || acu.v !== 2 || needDaily || acu.dia !== today) { const d = {}; for (const s of ['SPY', 'QQQ', 'DIA', 'IWM']) { const y = await yahoo(s, '1d', '20y'); let w = null; // Yahoo con "max" agrupa en meses: se bajan las diarias de 20 años y se arman las semanales

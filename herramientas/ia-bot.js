@@ -5,7 +5,7 @@
    - Operaciones de PRÁCTICA: con un umbral un poco más bajo y sin esas condiciones, para que aprenda de lo que pasa en vivo. No avisan.
    Todas se siguen con velas de 1 min (primero el stop, después los objetivos; tocado el objetivo 1 el stop pasa a la entrada) y quedan guardadas
    en datos/ia-ops.json. El estudio diario mide su acierto real por puntaje y ajusta el umbral en vivo (ia.json → vivo). */
-const IA = require('../ia-core.js');
+const IA = require('../ia-core.js'), CIFRA = require('./cifra.js');
 const CFG = { tr: { nm: 'TRADING', mg: 350, lev: 10, age: 7 * 864e5, cool: 24 * 36e5, max: 4, maxP: 8, tfs: ['4h'], a: 3, r: .75, cap: .036, wmin: 70 },
   sh: { nm: 'SHOOTER', mg: 50, lev: 15, age: 12 * 36e5, cool: 36e5, max: 6, maxP: 12, tfs: ['15m', '30m'], a: 4, r: .25, cap: .05, wmin: 80 } };
 const FEE = .0016, /* comisión + deslizamiento (antes solo comisión, .0008) */ TFMS = { '15m': 9e5, '30m': 18e5, '4h': 144e5 }, PRACT = .85; // práctica: desde el 85 % del umbral
@@ -37,10 +37,10 @@ function step(x, k) { if (x.st !== 'open') return null; const d = x.dir, stop = 
 /* deps: { S, getJ, kl, API, cycFall, tg, fp, ghPut, sleep } */
 async function run(now, U, D) { const { S, getJ, kl, API, cycFall, tg, fp, sleep } = D;
   if (!S.ia) { try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ia-ops.json?t=' + now);
-      if (r.ok) { const j = await r.json(); S.ia = { ops: Array.isArray(j.ops) ? j.ops : [] }; } else if (r.status === 404) S.ia = { ops: [] }; else return; } catch (e) { return; } }
+      if (r.ok) { const j = CIFRA.decJ(await r.text()); S.ia = { ops: Array.isArray(j.ops) ? j.ops : [] }; } else if (r.status === 404) S.ia = { ops: [] }; else return; } catch (e) { return; } }
   const A = S.ia; let ch = false;
   /* modelo del estudio diario, cada 3 h */
-  if (!D.M || !A.mT || now - A.mT > 3 * 36e5) { /* octubre 2026: también si el bot se reinició (el modelo vive en memoria; antes tardaba hasta 3 h en volver) */ try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ia.json?t=' + now); if (r.ok) { D.M = await r.json(); A.mT = now; } } catch (e) {} }
+  if (!D.M || !A.mT || now - A.mT > 3 * 36e5) { /* octubre 2026: también si el bot se reinició (el modelo vive en memoria; antes tardaba hasta 3 h en volver) */ try { const r = await fetch('https://raw.githubusercontent.com/' + (process.env.GITHUB_REPOSITORY || 'mauro-ezequiel/cripto-en-vivo') + '/datos/ia.json?t=' + now); if (r.ok) { D.M = CIFRA.decJ(await r.text()); A.mT = now; } } catch (e) {} }
   const M = D.M; const nm = x => `${x.sym.replace('USDT', '')} ${x.dir > 0 ? 'LONG' : 'SHORT'} (${CFG[x.f].nm} ${x.tf})`;
   /* 1) seguimiento con velas de 1 min */
   for (const x of A.ops.filter(o => o.st === 'open')) { let from = x.chk || x.t;
