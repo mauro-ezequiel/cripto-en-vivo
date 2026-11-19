@@ -33,6 +33,13 @@ jobs:
           IAX_N: '30'
           BT_DAYS: ${{ inputs.dias || '365' }}
           NO_PUBLISH: ${{ (inputs.dias && inputs.dias != '365') && '1' || '' }}
+      - name: Capitulación en vivo (marcador real del indicador)
+        continue-on-error: true
+        run: |
+          curl -sfL "https://raw.githubusercontent.com/${{ github.repository }}/datos/capitulacion.json" -o prev-cap.json || true
+          node herramientas/capitulacion-vivo.js && node herramientas/publicar.js capitulacion.json "Capitulación: marcador en vivo"
+        env:
+          GH_TOKEN: ${{ github.token }}
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
