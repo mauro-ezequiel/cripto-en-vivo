@@ -783,6 +783,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .rsi-ord{font-size:12px;padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--card);color:var(--mut);cursor:pointer;white-space:nowrap}.rsi-ord.on{background:var(--acc);border-color:var(--acc);color:#fff}
 .ind-tf .tf-flojo{opacity:.55}.ind-tf .tf-ok{color:#00e676}.iaco-n{font-size:11px;color:var(--mut);margin-bottom:6px}
 .dk-av{position:fixed;left:50%;transform:translateX(-50%);top:12px;z-index:9998;max-width:92vw;padding:10px 14px;border-radius:14px;background:#1c1c20;border:1px solid var(--line);font-size:13px}.dk-av button{margin-left:8px;background:none;border:0;color:var(--mut);cursor:pointer}.adm-dk{margin:12px 0;padding:12px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px}.adm-dk small{color:var(--mut);line-height:1.45}.adm-dk-k{display:flex;gap:8px;align-items:center}.adm-dk-k code{word-break:break-all;font-size:11px;background:#000;padding:6px 8px;border-radius:8px;flex:1}
+.upd-top{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff!important;font-weight:700}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -825,7 +826,7 @@ input,select,textarea{border-radius:12px}
 </div>
 <div class="app">
   <aside>
-    <div class="brand"><button class="hamb" id="hamb" aria-label="Abrir menú" title="Menú">☰</button><span class="dot" id="live"></span>CRIPTO-LIVE<button class="acct-btn hide" id="instBtn" title="Instalar CRIPTO-LIVE en este dispositivo">⬇ Instalar app</button><span class="acct" id="acct"></span></div>
+    <div class="brand"><button class="hamb" id="hamb" aria-label="Abrir menú" title="Menú">☰</button><span class="dot" id="live"></span>CRIPTO-LIVE<button class="acct-btn hide" id="instBtn" title="Instalar CRIPTO-LIVE en este dispositivo">⬇ Instalar app</button><button type="button" class="acct-btn upd-top hide" id="updTop" title="Hay una versión nueva de la página: tocá para cargarla">🔄 Actualizar</button><span class="acct" id="acct"></span></div>
     <div class="search">
       <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
       <input id="q" placeholder="Buscar moneda (BTC, ETH, SOL…)" autocomplete="off">
@@ -3969,8 +3970,9 @@ setTimeout(()=>{
 function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
 if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);
   /* la página abrió al instante con la copia guardada y en segundo plano bajó una versión nueva: se ofrece recargar */
-  if(e.data&&e.data.type==='nueva'&&!document.getElementById('updBtn')&&!(Date.now()-(+sessionStorage.getItem('swRel')||0)<9e4)){const b=document.createElement('button');b.id='updBtn';b.type='button';b.innerHTML='🔄 <b>Hay una actualización</b> · tocá para verla';
-    b.onclick=()=>{b.textContent='Actualizando…';try{sessionStorage.setItem('swRel',Date.now());}catch(x){}location.reload();};document.body.appendChild(b);}});
+  if(e.data&&e.data.type==='nueva'){const b=$('updTop');if(b)b.classList.remove('hide');}});
+/* 20/11/2026: el aviso de versión nueva ya no es un cartel flotante: es un botón chico arriba, al lado de la corona */
+$('updTop').onclick=e=>{e.currentTarget.textContent='Actualizando…';location.reload();};
 {const u=new URLSearchParams(location.search);if(u.get('sym'))setTimeout(()=>openFromNotif({sym:u.get('sym'),tf:u.get('tf'),m:u.get('m')}),1500);}
 
 /* ---------- menú lateral, alertas de precio manuales e historial desplegable ---------- */
