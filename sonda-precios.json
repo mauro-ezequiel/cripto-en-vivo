@@ -1,0 +1,432 @@
+{
+ "acciones": {
+  "en_bolsa": 3328,
+  "en_bingx": 307,
+  "nombres": [
+   "*-USDT",
+   "*X-USDT",
+   "NCSK*2USD-USDT",
+   "N*SKC2USD-USDT"
+  ],
+  "mayores_diferencias": [
+   {
+    "k": "BTC-USDT",
+    "t": "BTC",
+    "bingx": 59107,
+    "bolsa": 25.735,
+    "dif": 229575.54
+   },
+   {
+    "k": "BCH-USDT",
+    "t": "BCH",
+    "bingx": 193.88,
+    "bolsa": 36.49,
+    "dif": 431.32
+   },
+   {
+    "k": "BIO-USDT",
+    "t": "BIO",
+    "bingx": 0.01486,
+    "bolsa": 358.09,
+    "dif": -100
+   },
+   {
+    "k": "BEN-USDT",
+    "t": "BEN",
+    "bingx": 0.000088,
+    "bolsa": 31.915,
+    "dif": -100
+   },
+   {
+    "k": "SOLV-USDT",
+    "t": "SOLV",
+    "bingx": 0.003814,
+    "bolsa": 84.26,
+    "dif": -100
+   },
+   {
+    "k": "BILL-USDT",
+    "t": "BILL",
+    "bingx": 0.00397,
+    "bolsa": 61.41,
+    "dif": -99.99
+   },
+   {
+    "k": "G-USDT",
+    "t": "G",
+    "bingx": 0.002545,
+    "bolsa": 41.54,
+    "dif": -99.99
+   },
+   {
+    "k": "H-USDT",
+    "t": "H",
+    "bingx": 0.01082,
+    "bolsa": 182.035,
+    "dif": -99.99
+   },
+   {
+    "k": "IOTX-USDT",
+    "t": "IOT",
+    "bingx": 0.002307,
+    "bolsa": 37.455,
+    "dif": -99.99
+   },
+   {
+    "k": "ROBO-USDT",
+    "t": "ROBO",
+    "bingx": 0.003288,
+    "bolsa": 62.21,
+    "dif": -99.99
+   },
+   {
+    "k": "SXT-USDT",
+    "t": "SXT",
+    "bingx": 0.007491,
+    "bolsa": 113.37,
+    "dif": -99.99
+   },
+   {
+    "k": "W-USDT",
+    "t": "W",
+    "bingx": 0.007976,
+    "bolsa": 95.08,
+    "dif": -99.99
+   },
+   {
+    "k": "CP-USDT",
+    "t": "CP",
+    "bingx": 0.00607,
+    "bolsa": 89.78,
+    "dif": -99.99
+   },
+   {
+    "k": "TAC-USDT",
+    "t": "TAC",
+    "bingx": 0.001281,
+    "bolsa": 12.21,
+    "dif": -99.99
+   },
+   {
+    "k": "ACT-USDT",
+    "t": "ACT",
+    "bingx": 0.008869,
+    "bolsa": 44.14,
+    "dif": -99.98
+   },
+   {
+    "k": "BEAM-USDT",
+    "t": "BEAM",
+    "bingx": 0.003285,
+    "bolsa": 20.87,
+    "dif": -99.98
+   },
+   {
+    "k": "F-USDT",
+    "t": "F",
+    "bingx": 0.002088,
+    "bolsa": 11.15,
+    "dif": -99.98
+   },
+   {
+    "k": "HEI-USDT",
+    "t": "HEI",
+    "bingx": 0.07974,
+    "bolsa": 323.31,
+    "dif": -99.98
+   },
+   {
+    "k": "Q-USDT",
+    "t": "Q",
+    "bingx": 0.024344,
+    "bolsa": 103.27,
+    "dif": -99.98
+   },
+   {
+    "k": "CFX-USDT",
+    "t": "CF",
+    "bingx": 0.03018,
+    "bolsa": 115.65,
+    "dif": -99.97
+   },
+   {
+    "k": "WAL-USDT",
+    "t": "WAL",
+    "bingx": 0.02205,
+    "bolsa": 67.79,
+    "dif": -99.97
+   },
+   {
+    "k": "A-USDT",
+    "t": "A",
+    "bingx": 0.06379,
+    "bolsa": 169.785,
+    "dif": -99.96
+   },
+   {
+    "k": "PI-USDT",
+    "t": "PI",
+    "bingx": 0.05046,
+    "bolsa": 143.365,
+    "dif": -99.96
+   },
+   {
+    "k": "PUMP-USDT",
+    "t": "PUMP",
+    "bingx": 0.002428,
+    "bolsa": 6.31,
+    "dif": -99.96
+   },
+   {
+    "k": "VET-USDT",
+    "t": "VET",
+    "bingx": 0.004485,
+    "bolsa": 10.245,
+    "dif": -99.96
+   },
+   {
+    "k": "C-USDT",
+    "t": "C",
+    "bingx": 0.05691,
+    "bolsa": 110.38,
+    "dif": -99.95
+   },
+   {
+    "k": "SKY-USDT",
+    "t": "SKY",
+    "bingx": 0.04425,
+    "bolsa": 91.14,
+    "dif": -99.95
+   },
+   {
+    "k": "STRK-USDT",
+    "t": "STRK",
+    "bingx": 0.03007,
+    "bolsa": 57.99,
+    "dif": -99.95
+   },
+   {
+    "k": "SEI-USDT",
+    "t": "SEI",
+    "bingx": 0.03487,
+    "bolsa": 54.41,
+    "dif": -99.94
+   },
+   {
+    "k": "BB-USDT",
+    "t": "BB",
+    "bingx": 0.004994,
+    "bolsa": 7.745,
+    "dif": -99.94
+   },
+   {
+    "k": "SNX-USDT",
+    "t": "SN",
+    "bingx": 0.1477,
+    "bolsa": 212.31,
+    "dif": -99.93
+   },
+   {
+    "k": "RARE-USDT",
+    "t": "RARE",
+    "bingx": 0.01321,
+    "bolsa": 16.435,
+    "dif": -99.92
+   },
+   {
+    "k": "TREE-USDT",
+    "t": "TREE",
+    "bingx": 0.02868,
+    "bolsa": 34.85,
+    "dif": -99.92
+   },
+   {
+    "k": "ZETA-USDT",
+    "t": "ZETA",
+    "bingx": 0.02717,
+    "bolsa": 29.55,
+    "dif": -99.91
+   },
+   {
+    "k": "EDU-USDT",
+    "t": "EDU",
+    "bingx": 0.04521,
+    "bolsa": 50.97,
+    "dif": -99.91
+   },
+   {
+    "k": "CFG-USDT",
+    "t": "CFG",
+    "bingx": 0.0565,
+    "bolsa": 58.69,
+    "dif": -99.9
+   },
+   {
+    "k": "S-USDT",
+    "t": "S",
+    "bingx": 0.02657,
+    "bolsa": 22.925,
+    "dif": -99.88
+   },
+   {
+    "k": "OGN-USDT",
+    "t": "OGN",
+    "bingx": 0.01873,
+    "bolsa": 13.895,
+    "dif": -99.87
+   },
+   {
+    "k": "AVNT-USDT",
+    "t": "AVNT",
+    "bingx": 0.06004,
+    "bolsa": 42.77,
+    "dif": -99.86
+   },
+   {
+    "k": "AIN-USDT",
+    "t": "AIN",
+    "bingx": 0.11181,
+    "bolsa": 62.29,
+    "dif": -99.82
+   }
+  ],
+  "sin_bingx_muestra": [
+   "AA",
+   "AAAU",
+   "AACG",
+   "AAMI",
+   "AAON",
+   "AAP",
+   "AAT",
+   "ABAT",
+   "ABCB",
+   "ABCL",
+   "ABEO",
+   "ABEV",
+   "ABG",
+   "ABM",
+   "ABNB",
+   "ABR",
+   "ABSI",
+   "ABT",
+   "ABUS",
+   "ABVX",
+   "ABX",
+   "ACAD",
+   "ACB",
+   "ACCO",
+   "ACDC",
+   "ACEL",
+   "ACGL",
+   "ACHC",
+   "ACHR",
+   "ACI",
+   "ACIC",
+   "ACIW",
+   "ACLS",
+   "ACM",
+   "ACMR",
+   "ACNB",
+   "ACP",
+   "ACTG",
+   "ADAM",
+   "ADC",
+   "ADCT",
+   "ADEA",
+   "ADM",
+   "ADMA",
+   "ADNT",
+   "ADP",
+   "ADPT",
+   "ADSK",
+   "ADT",
+   "ADTN",
+   "ADUS",
+   "ADV",
+   "ADX",
+   "AEBI",
+   "AEE",
+   "AEG",
+   "AEI",
+   "AEIS",
+   "AEO",
+   "AEP",
+   "AES",
+   "AESI",
+   "AEVA",
+   "AFG",
+   "AFL",
+   "AFRM",
+   "AG",
+   "AGCO",
+   "AGI",
+   "AGIO",
+   "AGL",
+   "AGM",
+   "AGNC",
+   "AGNT",
+   "AGO",
+   "AGRO",
+   "AGX",
+   "AGYS",
+   "AHCO",
+   "AHR"
+  ]
+ },
+ "cripto": [
+  {
+   "s": "ETHUSDT",
+   "spot_binance": 1622.69,
+   "perp_bingx": 1621.38,
+   "dif": -0.081
+  },
+  {
+   "s": "BTCUSDT",
+   "spot_binance": 58986.55,
+   "perp_bingx": 58946.4,
+   "dif": -0.068
+  },
+  {
+   "s": "BNBUSDT",
+   "spot_binance": 539.78,
+   "perp_bingx": 539.59,
+   "dif": -0.035
+  },
+  {
+   "s": "XRPUSDT",
+   "spot_binance": 0.9076,
+   "perp_bingx": 0.907,
+   "dif": -0.066
+  },
+  {
+   "s": "SOLUSDT",
+   "spot_binance": 68.9,
+   "perp_bingx": 68.833,
+   "dif": -0.097
+  },
+  {
+   "s": "SUIUSDT",
+   "spot_binance": 0.6456,
+   "perp_bingx": 0.6449,
+   "dif": -0.108
+  },
+  {
+   "s": "LINKUSDT",
+   "spot_binance": 8.551,
+   "perp_bingx": 8.544,
+   "dif": -0.082
+  },
+  {
+   "s": "ADAUSDT",
+   "spot_binance": 0.1432,
+   "perp_bingx": 0.143,
+   "dif": -0.14
+  },
+  {
+   "s": "DOGEUSDT",
+   "spot_binance": 0.05443,
+   "perp_bingx": 0.05438,
+   "dif": -0.092
+  }
+ ]
+}
