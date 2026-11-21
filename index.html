@@ -1079,8 +1079,20 @@ let hlines = {}; // symbol -> [{price, line}]
 let ruler = null; // {phase, a:{l,p}, b:{l,p}}
 
 /* ---------- formato ---------- */
-const dec = p => p >= 1000 ? 2 : p >= 1 ? 3 : p >= 0.01 ? 5 : 8;
-const fp = p => (+p).toLocaleString('es-ES',{minimumFractionDigits:dec(p),maximumFractionDigits:dec(p)});
+/* PRECIOS COMO EN LA APP (21/11/2026): mismos decimales que Binance (el "paso" de precio de cada par, sacado de Binance)
+   y mismo formato: coma para los miles y punto para los decimales (59,024.46). Acciones: 2 decimales, como BingX y BYMA. */
+const dec = p => p >= 10 ? 2 : p >= 1 ? 3 : p >= 0.1 ? 4 : p >= 0.01 ? 5 : p >= 0.001 ? 6 : 8;
+var SYMDEC=(()=>{try{const j=JSON.parse(localStorage.getItem('cv_symdec')||'null');return j&&j.m?j:{t:0,m:{}};}catch(e){return {t:0,m:{}};}})();
+const decOf=(s,p)=>{if(s&&typeof STK!=='undefined'&&STK[s])return p<1?4:2;const d=s&&SYMDEC.m[s];return d!=null?d:dec(p);};
+const fmtN=(p,d)=>(+p).toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fp = (p,s) => fmtN(p,decOf(s,+p));
+const fpS = (s,p) => fp(p,s);
+async function symDecLoad(){if(Date.now()-SYMDEC.t<7*864e5&&Object.keys(SYMDEC.m).length>100)return;
+  const dd=t=>{t=String(t);const i=t.indexOf('.');if(i<0)return 0;const f=t.slice(i+1).replace(/0+$/,'');return f.length;};const m={};
+  try{const j=await (await fetch('https://data-api.binance.vision/api/v3/exchangeInfo?permissions=SPOT&symbolStatus=TRADING')).json();for(const x of j.symbols||[]){if(!/USDT$/.test(x.symbol))continue;const f=(x.filters||[]).find(f=>f.filterType==='PRICE_FILTER');if(f)m[x.symbol]=dd(f.tickSize);}}catch(e){}
+  try{const j=await (await fetch('https://fapi.binance.com/fapi/v1/exchangeInfo')).json();for(const x of j.symbols||[]){if(m[x.symbol]!=null||!/USDT$/.test(x.symbol))continue;const f=(x.filters||[]).find(f=>f.filterType==='PRICE_FILTER');if(f)m[x.symbol]=dd(f.tickSize);}}catch(e){}
+  if(Object.keys(m).length>100){SYMDEC={t:Date.now(),m};try{localStorage.setItem('cv_symdec',JSON.stringify(SYMDEC));}catch(e){}try{renderList();updateTop();setPrecision(candles.length?candles.at(-1).close:0);}catch(e){}}}
+setTimeout(()=>{try{symDecLoad();}catch(e){}},6000);
 const fv = v => v>=1e9?(v/1e9).toFixed(2)+' B':v>=1e6?(v/1e6).toFixed(2)+' M':v>=1e3?(v/1e3).toFixed(1)+' K':(+v).toFixed(0);
 const fpct = v => (v>=0?'+':'')+(+v).toFixed(2)+'%';
 
@@ -1105,7 +1117,7 @@ const volume = chart.addHistogramSeries({priceFormat:{type:'volume'},priceScaleI
 const toBar = k => ({time:Math.floor(k[0]/1000)+TZ,t:k[0],open:+k[1],high:+k[2],low:+k[3],close:+k[4],v:+k[5],tb:+k[9]});
 const volBar = b => ({time:b.time,value:b.v,color:b.close>=b.open?'rgba(38,166,154,.45)':'rgba(239,83,80,.45)'});
 
-function setPrecision(p){const d=dec(p);series.applyOptions({priceFormat:{type:'price',precision:d,minMove:1/10**d}});}
+function setPrecision(p){const d=decOf(symbol,p);series.applyOptions({priceFormat:{type:'price',precision:d,minMove:1/10**d}});}
 
 /* =====================================================================
    INDICADORES (modo Medio plazo)
@@ -2524,7 +2536,7 @@ function renderList(){
   $('lhead').innerHTML=`<span>Par</span><span>Precio</span><span>24h</span>${rf?`<span>RSI ${rtf==='1w'?'1 sem':rtf}</span>`:''}`;
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
     <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.n||t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE')+(t.kind==='BONO'?' bono':t.kind==='LETRA'?' letra':t.kind==='ON'?' ON':''):t.fut?'/USDT · perp':'/USDT'}</small></span>
-    <span data-c>${fp(t.c)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
+    <span data-c>${fp(t.c,t.s)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
   ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
 }
@@ -2532,12 +2544,12 @@ function renderList(){
    cada segundo); los precios se pintan como mucho una vez por segundo y solo si la lista se ve */
 var LISTN=150,LISTALL=0,ROWS=new Map(),ROWQ=new Map(),rowRaf=0;
 let rowScT=0;$('list').addEventListener('scroll',()=>{const l=$('list');if(LISTN<LISTALL&&l.scrollTop+l.clientHeight>l.scrollHeight-400){LISTN+=200;const st=l.scrollTop;renderList();l.scrollTop=st;}
-  clearTimeout(rowScT);rowScT=setTimeout(()=>{for(const r of l.querySelectorAll('.row[data-st]')){const t=tickers[r.dataset.s];delete r.dataset.st;if(!t)continue;r.querySelector('[data-c]').textContent=fp(t.c);const p=r.querySelector('[data-p]');p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';}},120);},{passive:true});
+  clearTimeout(rowScT);rowScT=setTimeout(()=>{for(const r of l.querySelectorAll('.row[data-st]')){const t=tickers[r.dataset.s];delete r.dataset.st;if(!t)continue;r.querySelector('[data-c]').textContent=fp(t.c,t.s);const p=r.querySelector('[data-p]');p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';}},120);},{passive:true});
 function rowFlush(){rowRaf=0;const l=$('list');if(!l||!l.offsetParent||document.hidden){ROWQ.clear();return;}
   const top=l.scrollTop,bot=top+l.clientHeight,W=[];
   for(const [s,up] of ROWQ){const row=ROWS.get(s),t=tickers[s];if(!row||!t)continue;const y=row.offsetTop;W.push([row,t,up,y+row.offsetHeight>top&&y<bot]);} // primero se lee, después se escribe (sin recalcular a cada fila)
   for(const [row,t,up,v] of W){if(!v){row.dataset.st=1;continue;}const c=row.querySelector('[data-c]'),p=row.querySelector('[data-p]'); // las que no se ven se actualizan al aparecer
-    c.textContent=fp(t.c);p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';
+    c.textContent=fp(t.c,t.s);p.textContent=fpct(t.p);p.className=t.p>=0?'up':'dn';
     c.className=up?'tk-up':'tk-dn';} // el precio se pinta del color del último movimiento (sin animación: es mucho más liviano)
   ROWQ.clear();}
 let qTimer;
@@ -2560,10 +2572,10 @@ function select(s){if(mode==='a')try{bxWant([s]);}catch(e){}
 function updateTop(){
   const t=tickers[symbol];if(!t)return;
   $('sym').textContent=t.kind?(t.n||symbol)+' · '+(t.ex||'NYSE')+(t.kind==='BONO'?' · bono':t.kind==='LETRA'?' · letra':t.kind==='ON'?' · obligación negociable':'')+' · '+(t.cur||'USD'):symbol.replace('USDT','')+(t.fut?'/USDT · futuros perpetuos':'/USDT');
-  $('px').textContent=fp(t.c);$('px').className='px '+(t.p>=0?'up':'dn');
+  $('px').textContent=fp(t.c,symbol);$('px').className='px '+(t.p>=0?'up':'dn');
   $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
-  $('s-hi').textContent=fp(t.h);$('s-lo').textContent=fp(t.l);$('s-vol').textContent=fv(t.q);
-  document.title=`${fp(t.c)} ${symbol.replace('USDT','')} · CRIPTO-LIVE`;
+  $('s-hi').textContent=fp(t.h,symbol);$('s-lo').textContent=fp(t.l,symbol);$('s-vol').textContent=fv(t.q);
+  document.title=`${fp(t.c,symbol)} ${symbol.replace('USDT','')} · CRIPTO-LIVE`;
 }
 function connectTickers(){
   const ws=new WebSocket(`${WS}/ws/!miniTicker@arr`);
@@ -4017,7 +4029,7 @@ function renderAlrForm(){
     <small class="mut" id="alrNow"></small><span class="err" id="alrErr"></span>
     <div class="row"><button class="sec" data-a="cancel">Cancelar</button><button class="pri" data-a="save">Guardar alerta</button></div></div>`;
   const upd=()=>{const s=symOf($('alrSym').value),t=tickers[s],v=parsePx($('alrPx').value,t&&t.c);
-    $('alrNow').textContent=t?`${s.replace('USDT','')} ahora: ${fp(t.c)}`+(v>0?` · avisa cuando ${v>t.c?'suba':'baje'} a ${fp(v)} (${fpct((v/t.c-1)*100)})`:''):'';};
+    $('alrNow').textContent=t?`${s.replace('USDT','')} ahora: ${fp(t.c,s)}`+(v>0?` · avisa cuando ${v>t.c?'suba':'baje'} a ${fp(v,s)} (${fpct((v/t.c-1)*100)})`:''):'';};
   $('alrSym').oninput=$('alrPx').oninput=upd;upd();
 }
 $('alrForm').onclick=e=>{const b=e.target.closest('[data-a]');if(!b)return;
@@ -4578,7 +4590,7 @@ document.addEventListener('click',e=>{if(!e.target.closest('.rtf')){$('tfPop').h
 /* buscador de activos en pantalla completa */
 $('fsQ').oninput=()=>{const q=$('fsQ').value.trim().toUpperCase().replace(/USDT$/,''),r=$('fsQr');if(!q){r.hidden=true;return;}
   const L=Object.values(mode==='a'?STK:tickers).filter(t=>t.s&&t.s.replace('USDT','').includes(q)).sort((a,b)=>(b.s.replace('USDT','').startsWith(q)-a.s.replace('USDT','').startsWith(q))||(b.q||0)-(a.q||0)).slice(0,8);
-  r.innerHTML=L.length?L.map(t=>`<button type="button" data-s="${t.s}"><b>${t.s.replace('USDT','')}</b><small>${fp(t.c)} · ${fpct(t.p||0)}</small></button>`).join(''):'<div class="mut" style="padding:8px">Sin resultados</div>';r.hidden=false;};
+  r.innerHTML=L.length?L.map(t=>`<button type="button" data-s="${t.s}"><b>${t.s.replace('USDT','')}</b><small>${fp(t.c,t.s)} · ${fpct(t.p||0)}</small></button>`).join(''):'<div class="mut" style="padding:8px">Sin resultados</div>';r.hidden=false;};
 $('fsQ').onkeydown=e=>{if(e.key==='Enter'){const b=$('fsQr').querySelector('[data-s]');if(b)b.click();}};
 $('fsQr').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;select(b.dataset.s);$('fsQ').value='';$('fsQr').hidden=true;$('fsQ').blur();};
 
@@ -6344,7 +6356,7 @@ function vbRender(){const el=$('vbar');if(!el)return;
   const hot=VB.list.filter(x=>x.st),show=hot.length?hot.sort((a,b)=>({exp:0,cheap:1,warm:2}[a.st]-{exp:0,cheap:1,warm:2}[b.st])):Object.values(tickers).filter(t=>!t.kind&&SAFE.includes(t.s)).sort((a,b)=>b.q-a.q).map(t=>({s:t.s,st:null,chg:t.p,p:t.c}));
   if(!show.length)return;
   const lab={cheap:'BARATO · long',exp:'CARO · short',warm:'caro, todavía sube'};
-  el.innerHTML=show.map(x=>{const tk=tickers[x.s],chg=tk?tk.p:x.chg;return `<button type="button" class="vb ${x.st||''}" data-s="${x.s}" title="${x.st?`En el ${Math.round(x.pct*100)} % de su año · RSI ${Math.round(x.rsi)}`:'Principal'}"><b>${x.s.replace('USDT','')} <span class="${chg>=0?'up':'dn'}" style="${x.st&&x.st!=='warm'?'color:#fff':''}">${chg!=null?fpct(+chg):''}</span></b><small>${x.st?lab[x.st]:fp(tk?tk.c:x.p)}</small></button>`;}).join('');}
+  el.innerHTML=show.map(x=>{const tk=tickers[x.s],chg=tk?tk.p:x.chg;return `<button type="button" class="vb ${x.st||''}" data-s="${x.s}" title="${x.st?`En el ${Math.round(x.pct*100)} % de su año · RSI ${Math.round(x.rsi)}`:'Principal'}"><b>${x.s.replace('USDT','')} <span class="${chg>=0?'up':'dn'}" style="${x.st&&x.st!=='warm'?'color:#fff':''}">${chg!=null?fpct(+chg):''}</span></b><small>${x.st?lab[x.st]:fp(tk?tk.c:x.p,x.s)}</small></button>`;}).join('');}
 $('vbar').onclick=e=>{const b=e.target.closest('[data-s]');if(!b)return;if(mode==='a')applyMode('medio');select(b.dataset.s);if(typeof setView==='function'&&document.body.dataset.v!=='main')setView('main');};
 vbInfo();setTimeout(()=>{vbRender();vbScan();},5000);setInterval(vbScan,30*6e4);setInterval(vbRender,15000);
 
