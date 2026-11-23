@@ -1,0 +1,3 @@
+const fs=require('fs');(async()=>{const R={};try{const u=await (await fetch('https://data912.com/live/usa_stocks')).json();R.data912=u.find(x=>x.symbol==='NVDA');}catch(e){R.e1=e.message}
+try{const j=await (await fetch('https://query1.finance.yahoo.com/v8/finance/chart/NVDA?range=5d&interval=1d',{headers:{'User-Agent':'Mozilla/5.0'}})).json();const r=j.chart.result[0];R.yahoo={precio:r.meta.regularMarketPrice,cierre_ant:r.meta.chartPreviousClose,dias:r.timestamp.map((t,i)=>new Date(t*1000).toISOString().slice(0,10)+' '+r.indicators.quote[0].close[i])};}catch(e){R.e2=e.message}
+fs.writeFileSync('sonda-nvda.json',JSON.stringify(R));console.log('RESULTADO',JSON.stringify(R));})();
