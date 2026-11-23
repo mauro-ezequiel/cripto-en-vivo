@@ -375,9 +375,21 @@ async function main() {
   S.run = now;
   if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); else console.log('Prueba sin Telegram: no se guarda el estado.');
 }
+/* 23/11/2026: el horario automático de GitHub atrasa o se saltea las corridas de las velas de acciones (el lunes no corrió ninguna
+   hasta la tarde y el gráfico de NVDA quedó en el viernes). Este bot corre sin parar, así que con la bolsa abierta se fija si la
+   tarea de velas está corriendo y, si no, la arranca. La tarea ahora sigue sola cada 15 min hasta el cierre. */
+let INTRA_T = 0;
+async function intradiaVigilar() { const tok = process.env.GH_TOKEN, repo = process.env.GITHUB_REPOSITORY; if (!tok || !repo) return; const now = Date.now(); if (now - INTRA_T < 15 * 6e4) return; INTRA_T = now;
+  const d = new Date(now), wd = d.getUTCDay(), m = d.getUTCHours() * 60 + d.getUTCMinutes(); if (wd === 0 || wd === 6 || m < 13 * 60 + 35 || m > 20 * 60 + 50) return;
+  try { const H = { Authorization: 'Bearer ' + tok, Accept: 'application/vnd.github+json' };
+    const j = await (await fetch(`https://api.github.com/repos/${repo}/actions/workflows/intradia.yml/runs?per_page=3`, { headers: H })).json(); const L = (j && j.workflow_runs) || [];
+    if (L.some(r => r.status !== 'completed')) return; if (L[0] && now - Date.parse(L[0].updated_at) < 25 * 6e4) return;
+    const r = await fetch(`https://api.github.com/repos/${repo}/actions/workflows/intradia.yml/dispatches`, { method: 'POST', headers: H, body: JSON.stringify({ ref: 'main' }) }); console.log('velas de acciones: arranqué la tarea', r.status);
+  } catch (e) { console.log('velas de acciones: no pude revisar', e.message); } }
 /* vuelta larga: revisa cada 5 minutos durante LOOP_MIN minutos (así no depende de la puntualidad del horario de GitHub) */
 async function run() { const LOOP = +(process.env.LOOP_MIN || 0) * 6e4, start = Date.now();
   while (true) { const t0 = Date.now(); try { await main(); } catch (e) { console.error(e); }
+    try { await intradiaVigilar(); } catch (e) {}
     if (!LOOP) break; const wait = 3e5 - (Date.now() - t0); /* cada 5 minutos (SHOOTER usa velas de 15 y 30 min) */ if (Date.now() - start + Math.max(0, wait) > LOOP) break; await sleep(Math.max(5000, wait)); }
   try { if (TOKEN && CHAT) fs.writeFileSync(STATE_FILE, JSON.stringify(S)); } catch (_) {} }
 run();

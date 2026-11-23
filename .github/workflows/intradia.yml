@@ -9,14 +9,14 @@ permissions:
   contents: write
 concurrency:
   group: intradia
-  cancel-in-progress: true
+  cancel-in-progress: false
 # datos cifrados (noviembre 2026): sin este secreto todo sigue sin cifrar, como antes
 env:
   DATOS_KEY: ${{ secrets.DATOS_KEY }}
 jobs:
   velas:
     runs-on: ubuntu-latest
-    timeout-minutes: 40
+    timeout-minutes: 450
     steps:
       - uses: actions/checkout@v4
       - name: Traer la versión anterior (para no perder las que fallen)
@@ -24,12 +24,22 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - name: Bajar velas y calcular RSI
-        run: node herramientas/intradia.js prev
+      # 23/11/2026: el horario de GitHub se atrasa horas; ahora, una vez arrancada, la tarea sigue sola cada 15 min hasta que cierra la bolsa
+      - name: Bajar velas, calcular RSI y publicar (cada 15 min mientras la bolsa esté abierta)
         env:
-          # corrida a mano: rehace también lo diario (RSI diario, semanal y mensual)
           DIARIO: ${{ github.event_name == 'workflow_dispatch' && '1' || '' }}
-      - name: Publicar en la rama intradia
         run: |
-          cd out && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Velas de 30 min y RSI"
-          git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:intradia
+          abierta() { d=$(date -u +%u); m=$((10#$(date -u +%H)*60 + 10#$(date -u +%M))); [ "$d" -le 5 ] && [ "$m" -ge 810 ] && [ "$m" -le 1265 ]; }
+          vuelta=0
+          while true; do
+            vuelta=$((vuelta+1)); echo "== vuelta $vuelta $(date -u +%H:%M)"
+            rm -rf out; node herramientas/intradia.js prev || echo "falló esta vuelta"
+            if [ -d out ] && [ "$(ls -A out)" ]; then
+              (cd out && rm -rf .git && git init -q && git checkout -q -b d && git add . && git -c user.name=cripto-live -c user.email=cripto-live@users.noreply.github.com commit -qm "Velas de 30 min y RSI" && git push -qf https://x-access-token:${{ github.token }}@github.com/${{ github.repository }} d:intradia) || echo "no se pudo publicar"
+              rm -rf prev && cp -r out prev && rm -rf prev/.git
+            fi
+            DIARIO=''
+            abierta || break
+            sleep 900
+            abierta || break
+          done

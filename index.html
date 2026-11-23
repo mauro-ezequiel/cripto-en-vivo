@@ -4251,7 +4251,10 @@ async function stkIntra(sym,t){const f=await stkIntraFile(sym),want=t==='1m'?'m1
 /* suma el precio en vivo a la vela en curso de la base (mercado abierto) */
 function stkIntraLive(sym,b,bms){const q=STK[sym];bms=bms||9e5;if(!q||!q.c||!b.length||!(mktOpen()||q.src24))return b;const slot=Math.floor(Date.now()/bms)*bms,last=b.at(-1);
   if(last.t>=slot){const x={...last,close:q.c,high:Math.max(last.high,q.c),low:Math.min(last.low,q.c)};return b.slice(0,-1).concat(x);}
-  if(Date.now()-last.t>6*36e5)return b; // datos viejos: no inventa velas
+  /* datos viejos (la tarea de velas se atrasó): antes no dibujaba nada y el gráfico quedaba en el último precio viejo aunque el
+     precio real ya se hubiera movido (NVDA, 23/11). Ahora agrega UNA vela con el precio de ahora, que arranca en el último cierre
+     conocido, así se ve el movimiento; las velas del medio aparecen cuando la tarea las baja. */
+  if(Date.now()-last.t>6*36e5&&!mktOpen())return b;
   return b.concat({time:slot/1000+TZ,t:slot,open:last.close,high:Math.max(last.close,q.c),low:Math.min(last.close,q.c),close:q.c,v:0,tb:0});}
 function aggIntra(b,t,bms){const ms=INTRA_MS[t];if(!ms||ms<=(bms||9e5))return b;const out=[];let cur=null,key=null;
   for(const x of b){const k=Math.floor(x.t/ms);if(k!==key){key=k;cur={...x,time:Math.floor(k*ms/1000)+TZ,t:k*ms};out.push(cur);}else{cur.high=Math.max(cur.high,x.high);cur.low=Math.min(cur.low,x.low);cur.close=x.close;cur.v+=x.v;cur.tb+=x.tb;}}
