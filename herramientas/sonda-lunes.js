@@ -1,7 +1,9 @@
 /* ¿Cómo abren los lunes? Hueco entre el cierre del viernes y la apertura del lunes, y el día completo del lunes (NVDA, SPY, QQQ) */
 const fs = require('fs'); const R = {};
-(async () => { for (const s of ['NVDA', 'SPY', 'QQQ']) { const j = await (await fetch('https://data912.com/historical/stocks/' + s)).json().catch(() => null) || await (await fetch('https://data912.com/historical/cedears/' + s)).json();
-    const B = j.map(r => ({ d: r.date, o: +r.o, c: +r.c, w: new Date(r.date + 'T12:00:00Z').getUTCDay() })).filter(b => b.o > 0 && b.c > 0);
+async function serie(s) { if (s.startsWith('CEDEAR ')) { const j = await (await fetch('https://data912.com/historical/cedears/' + s.slice(7))).json(); return j.map(r => ({ d: r.date, o: +r.o, c: +r.c })); }
+  const j = await (await fetch(`https://query1.finance.yahoo.com/v8/finance/chart/${s}?range=12y&interval=1d`, { headers: { 'User-Agent': 'Mozilla/5.0' } })).json(); const r = j.chart.result[0], q = r.indicators.quote[0];
+  return r.timestamp.map((t, i) => ({ d: new Date(t * 1000).toISOString().slice(0, 10), o: q.open[i], c: q.close[i] })); }
+(async () => { for (const s of ['NVDA', 'SPY', 'QQQ', 'CEDEAR NVDA']) { let B; try { B = (await serie(s)).map(b => ({ ...b, w: new Date(b.d + 'T12:00:00Z').getUTCDay() })).filter(b => b.o > 0 && b.c > 0); } catch (e) { R[s] = 'error ' + e.message; continue; }
     const res = {}; for (const [nom, desde] of [['ultimas_26_semanas', -26], ['ultimas_52_semanas', -52], ['desde_2015', null]]) {
       const L = []; for (let i = 1; i < B.length; i++) if (B[i].w === 1 && B[i - 1].w === 5 && (!desde && B[i].d >= '2015' || desde)) L.push({ d: B[i].d, gap: (B[i].o / B[i - 1].c - 1) * 100, dia: (B[i].c / B[i - 1].c - 1) * 100 });
       const X = desde ? L.slice(desde) : L; const f = (k, c) => X.filter(x => c(x[k])).length; const m = k => +(X.reduce((a, x) => a + x[k], 0) / X.length).toFixed(2);
