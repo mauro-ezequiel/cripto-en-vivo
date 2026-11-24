@@ -784,6 +784,9 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .ind-tf .tf-flojo{opacity:.55}.ind-tf .tf-ok{color:#00e676}.iaco-n{font-size:11px;color:var(--mut);margin-bottom:6px}
 .dk-av{position:fixed;left:50%;transform:translateX(-50%);top:12px;z-index:9998;max-width:92vw;padding:10px 14px;border-radius:14px;background:#1c1c20;border:1px solid var(--line);font-size:13px}.dk-av button{margin-left:8px;background:none;border:0;color:var(--mut);cursor:pointer}.adm-dk{margin:12px 0;padding:12px;border-radius:14px;border:1px solid var(--line);display:flex;flex-direction:column;gap:6px;font-size:13px}.adm-dk small{color:var(--mut);line-height:1.45}.adm-dk-k{display:flex;gap:8px;align-items:center}.adm-dk-k code{word-break:break-all;font-size:11px;background:#000;padding:6px 8px;border-radius:8px;flex:1}
 .upd-top{background:var(--acc)!important;border-color:var(--acc)!important;color:#fff!important;font-weight:700}
+.pie{flex:none;margin:18px 12px 8px;padding:14px 16px;border-top:1px solid var(--line);color:var(--mut);font-size:11px;line-height:1.5;display:flex;flex-direction:column;gap:6px}
+.pie b{color:#c3c6cc}.pie-l{font-size:12px}
+@media (min-width:901px){.pie{margin:0;padding:12px 16px 16px}}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -915,6 +918,12 @@ input,select,textarea{border-radius:12px}
         <label class="pas-ck"><input type="checkbox" id="pasCripto"> mostrar también dólares y cripto (más riesgo)</label></div>
       <div id="pasBody"><div class="mut">Cargando tasas…</div></div></section>
     <section class="adat" id="datBox"><div class="dt"><span id="datHead">📋 Datos del activo</span><span class="mut" id="datSub"></span></div><div id="datBody"><div class="mut">Elegí una moneda o acción para ver de qué se trata.</div></div></section>
+    <footer class="pie" id="pie">
+      <div class="pie-l"><b>CRIPTO-LIVE</b> © <span id="pieY">2026</span> · Todos los derechos reservados.</div>
+      <div class="pie-t"><b>Aviso:</b> la información, señales, indicadores, bots y la IA son herramientas de análisis con fines informativos y educativos; <b>no son asesoramiento financiero, legal ni impositivo</b> ni una recomendación de compra o venta. Operar cripto, acciones y especialmente con apalancamiento tiene alto riesgo y podés perder todo el capital. Los resultados pasados o de prueba no garantizan resultados futuros. Cada decisión es responsabilidad de quien la toma.</div>
+      <div class="pie-t"><b>Datos:</b> precios de Binance, BingX, BYMA y NYSE/NASDAQ vía data912 y Yahoo Finance; tasas de ArgentinaDatos y BCRA. Pueden tener demoras o errores: verificá siempre en tu exchange o broker antes de operar. Las marcas y logos pertenecen a sus dueños; CRIPTO-LIVE no está afiliado a ellos.</div>
+      <div class="pie-t">Tus datos (cuenta, favoritos, operaciones piloteadas) se guardan en tu cuenta y no se venden ni se comparten con terceros.</div>
+    </footer>
   </main>
 </div>
 
@@ -3980,6 +3989,7 @@ setTimeout(()=>{
 },2500);
 /* al tocar un aviso se abre la moneda de la señal */
 function openFromNotif(d){if(!d||!d.sym)return;if(d.m&&d.m!==mode&&SIGCFG[d.m])applyMode(d.m);if(d.tf&&TF_MODE[mode].includes(d.tf)&&tf!==d.tf){tf=d.tf;renderTfs();}select(d.sym);}
+try{$('pieY').textContent=new Date().getFullYear();}catch(e){}
 if(navigator.serviceWorker)navigator.serviceWorker.addEventListener('message',e=>{if(e.data&&e.data.type==='open')openFromNotif(e.data);
   /* la página abrió al instante con la copia guardada y en segundo plano bajó una versión nueva: se ofrece recargar */
   if(e.data&&e.data.type==='nueva'){const b=$('updTop');if(b)b.classList.remove('hide');}});
