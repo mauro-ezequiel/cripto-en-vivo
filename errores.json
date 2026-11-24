@@ -1,0 +1,2787 @@
+{
+ "info": [
+  {
+   "rapidez": {
+    "primera": {
+     "grafico": 1240,
+     "lista": 1503,
+     "dom": 632
+    },
+    "segunda": {
+     "grafico": 309,
+     "lista": 553,
+     "dom": 244
+    },
+    "firebase_cargado": true
+   }
+  },
+  {
+   "rendimiento": {
+    "heap_mb": 26.2,
+    "js_s_por_min": 8.11,
+    "tareas_s_por_min": 42.84,
+    "layouts": 85,
+    "pedidos_por_min": 157,
+    "top": [
+     [
+      "https://fapi.binance.com/fapi/v1/premiumIndex BTCUSDT  ",
+      9
+     ],
+     [
+      "https://api.binance.com/api/v3/klines BTCUSDT 4h 1000",
+      9
+     ],
+     [
+      "https://fapi.binance.com/fapi/v1/premiumIndex 1000BTCUSDT  ",
+      9
+     ],
+     [
+      "https://fapi.binance.com/fapi/v1/premiumIndex 1000000BTCUSDT  ",
+      9
+     ],
+     [
+      "https://api.binance.com/api/v3/depth BTCUSDT  1000",
+      9
+     ],
+     [
+      "https://fapi.binance.com/fapi/v1/premiumIndex *  ",
+      5
+     ],
+     [
+      "https://fapi.binance.com/fapi/v1/ticker/24hr",
+      4
+     ],
+     [
+      "https://fapi.binance.com/futures/data/openInterestHist",
+      2
+     ],
+     [
+      "https://fapi.binance.com/futures/data/takerlongshortRatio",
+      2
+     ],
+     [
+      "https://fapi.binance.com/futures/data/topLongShortPositionRatio",
+      2
+     ],
+     [
+      "https://fapi.binance.com/futures/data/globalLongShortAccountRatio",
+      2
+     ],
+     [
+      "https://api.github.com/repos/mauro-ezequiel/cripto-en-vivo/contents/senales.json",
+      2
+     ],
+     [
+      "https://api.binance.com/api/v3/klines BNBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines PEPEUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines UUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines DOGEUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines TRXUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines SOXSBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines SPCXBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines UNIUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines MMTUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines RWUSDUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines ENAUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines MUBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines LINKUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines SUIUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines ADAUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines LTCUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines XAUTUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines GOOGLBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines WLDUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines TAOUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines LISTAUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines AVAXUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines PAXGUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines SNDKBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines SAHARAUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines WBTCUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines CRCLBUSDT 4h 300",
+      1
+     ],
+     [
+      "https://api.binance.com/api/v3/klines INJUSDT 4h 300",
+      1
+     ]
+    ],
+    "nodos": 3970,
+    "html_kb": 1188,
+    "ls_kb": 209,
+    "carga_ms": 244
+   }
+  },
+  {
+   "m": "medio",
+   "t": "4h",
+   "sym": "BTCUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "medio",
+   "t": "1h",
+   "sym": "ETHUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "medio",
+   "t": "1d",
+   "sym": "SOLUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "tx",
+   "t": "4h",
+   "sym": "XRPUSDT",
+   "velas": 1000,
+   "rango": [
+    800,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "fib",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "x",
+   "t": "15m",
+   "sym": "BTCUSDT",
+   "velas": 1000,
+   "rango": [
+    820,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "bollinger",
+    "vwap",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "x",
+   "t": "5m",
+   "sym": "SOLUSDT",
+   "velas": 1000,
+   "rango": [
+    820,
+    1016
+   ],
+   "chartH": 1063,
+   "chartW": 412,
+   "overlayH": 2126,
+   "overlayCssH": 1063,
+   "ind": [
+    "liq",
+    "sop",
+    "cap",
+    "trend",
+    "canal",
+    "bollinger",
+    "vwap",
+    "smc",
+    "div",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "fig"
+   ]
+  },
+  {
+   "m": "a",
+   "t": "1d",
+   "sym": "JPM",
+   "velas": 501,
+   "rango": [
+    341,
+    517
+   ],
+   "chartH": 1066,
+   "chartW": 412,
+   "overlayH": 2132,
+   "overlayCssH": 1066,
+   "ind": [
+    "liq",
+    "trend",
+    "canal",
+    "supertrend",
+    "ema",
+    "vprofile",
+    "rsi",
+    "adx",
+    "cvd",
+    "kon",
+    "sop",
+    "bollinger",
+    "fib",
+    "smc",
+    "div",
+    "fig"
+   ]
+  },
+  {
+   "paneles": {
+    "antes": {
+     "x": 137.33333333333334,
+     "ys": [
+      921.55,
+      1056.1,
+      1190.65,
+      1325.2
+     ],
+     "os": [
+      "rsi",
+      "kon",
+      "adx",
+      "cvd"
+     ],
+     "h": [
+      0.13,
+      0.13,
+      0.13,
+      0.13
+     ],
+     "ph": 1035
+    },
+    "tras_main": {
+     "os": [
+      "rsi",
+      "kon",
+      "adx",
+      "cvd"
+     ],
+     "h": [
+      0.2465,
+      0.13,
+      0.13,
+      0.13
+     ],
+     "top": [
+      0.36350000000000005,
+      0.6100000000000001,
+      0.7400000000000001,
+      0.8700000000000001
+     ],
+     "block": 0.6365
+    },
+    "final": {
+     "G": {
+      "os": [
+       "rsi",
+       "kon",
+       "adx",
+       "cvd"
+      ],
+      "h": [
+       0.3237,
+       0.0528,
+       0.13,
+       0.13
+      ],
+      "top": [
+       0.36350000000000005,
+       0.6872,
+       0.74,
+       0.87
+      ],
+      "block": 0.6365
+     },
+     "psz": {
+      "rsi": 0.3237,
+      "kon": 0.0528,
+      "adx": 0.13,
+      "cvd": 0.13
+     },
+     "rango": {
+      "from": 800,
+      "to": 1016
+     }
+    }
+   }
+  },
+  {
+   "sri": {
+    "https://unpkg.com/lightweight-charts@4.2.0/dist/lightweight-charts.standalone.production.js": "sha384-OK7vELvjHdhUFi31JYioPIcRHTROLdcDa6ZsNWgvgLaKj+9JqhU0Ad8g4wz3CXjA",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js": "sha384-AQ3POAMqIhwS81FrUH95ekxqBZHeP5tG2JfEL3+7GuTtfRLWnrRh32UxwzM+//A9",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js": "sha384-TnlRYaR4JYz/lpaGuaiU61PjNberSA4vjLjtF+oRC/IkohkJqnWxw5EmDSOt1vA1",
+    "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js": "sha384-qn4Jh88HhJA8dplNQyGjOh9OGI4izVhrfj/qIFgaKcdgOE06pXqIKGlsCILZcLAC"
+   }
+  },
+  {
+   "historia": {
+    "velas": 3387,
+    "desde": "2017-08-17",
+    "noMore": true
+   }
+  },
+  {
+   "sigrsi": {
+    "eth": " 15m 56 1h 46 4h 44 1d 28 1s 34 ",
+    "tarjetas": 1,
+    "con_rsi": 5
+   }
+  },
+  {
+   "hxrsi": " 15m 47 1h 55 4h 43 1d 19 1s 37 "
+  },
+  {
+   "rowrsi": {
+    "filas": 9,
+    "ej": [
+     "RSI:ini 46final 59",
+     "RSI:ini 47final 57",
+     "RSI:ini 54final 41",
+     "RSI:ini 51final 51",
+     "RSI:ini 51final 33",
+     "RSI:ini 46final 30"
+    ],
+    "con_final": [
+     "RSI:ini 46final 59",
+     "RSI:ini 47final 57",
+     "RSI:ini 54final 41",
+     "RSI:ini 51final 51",
+     "RSI:ini 51final 33",
+     "RSI:ini 46final 30",
+     "RSI:ini 46final 69",
+     "RSI:ini 48final 53"
+    ],
+    "final_pend": 0,
+    "ini_pend": 0
+   }
+  },
+  {
+   "rsicx": {
+    "ms": 86,
+    "n": 52,
+    "tf": "4h",
+    "busy": false,
+    "tick": 703,
+    "aviso": "🔕 Avisarme con RSI ≤ 25",
+    "visible": true,
+    "celdas": 52,
+    "fng": "😱 Miedo y codicia 11 · miedo extremo (hace 7 días 12)"
+   }
+  },
+  {
+   "acciones_v7": {
+    "c-rup": {
+     "n": 212,
+     "g": 84,
+     "pnl": 5040,
+     "gana": 40
+    },
+    "c-reb": {
+     "n": 199,
+     "g": 83,
+     "pnl": 8718,
+     "gana": 42
+    },
+    "c-rsi": {
+     "n": 118,
+     "g": 60,
+     "pnl": 2009,
+     "gana": 51
+    }
+   }
+  },
+  {
+   "rsicx_tf": {
+    "tf": "1h",
+    "celdas": 52,
+    "vacias": 0,
+    "ej": [
+     "46,5",
+     "45,7",
+     "48,1",
+     "44,7",
+     "47,5"
+    ],
+    "botones": "1 h|4 h|8 h|12 h|1 día|1 semana|1 mes"
+   }
+  },
+  {
+   "rsicx_tf": {
+    "tf": "8h",
+    "celdas": 52,
+    "vacias": 0,
+    "ej": [
+     "39,0",
+     "39,5",
+     "40,0",
+     "43,3",
+     "44,3"
+    ],
+    "botones": "1 h|4 h|8 h|12 h|1 día|1 semana|1 mes"
+   }
+  },
+  {
+   "rsicx_tf": {
+    "tf": "1M",
+    "celdas": 52,
+    "vacias": 0,
+    "ej": [
+     "42,8",
+     "42,6",
+     "44,8",
+     "41,6",
+     "40,5"
+    ],
+    "botones": "1 h|4 h|8 h|12 h|1 día|1 semana|1 mes"
+   }
+  },
+  {
+   "rsi": {
+    "tf": "h",
+    "celdas": 96,
+    "vacias": 0,
+    "ej": [
+     "49,6",
+     "46,0",
+     "56,6",
+     "54,2",
+     "47,6"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "4h",
+    "celdas": 96,
+    "vacias": 0,
+    "ej": [
+     "41,6",
+     "40,6",
+     "43,1",
+     "44,1",
+     "41,3"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "d",
+    "celdas": 96,
+    "vacias": 0,
+    "ej": [
+     "40,5",
+     "39,4",
+     "42,4",
+     "43,1",
+     "39,2"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "w",
+    "celdas": 96,
+    "vacias": 0,
+    "ej": [
+     "44,0",
+     "40,8",
+     "44,8",
+     "42,6",
+     "37,9"
+    ]
+   }
+  },
+  {
+   "rsi": {
+    "tf": "m",
+    "celdas": 96,
+    "vacias": 0,
+    "ej": [
+     "61,2",
+     "54,6",
+     "59,0",
+     "56,0",
+     "51,2"
+    ]
+   }
+  },
+  {
+   "pilotear": {
+    "min0": 2,
+    "barTxt": [
+     "▸▲AAPL× 1+1,0 %+10 USD✅ DEJÁ CORRER📈",
+     "▸▼BTC× 10+9,9 %+9,9 USD✅ DEJÁ CORRER📈"
+    ],
+    "abiertas": 1,
+    "antes": [
+     {
+      "sym": "AAPL",
+      "tf": "1h",
+      "ok": true,
+      "title": "✅ DEJÁ CORRER",
+      "why": [
+       "Semáforo de entrada 2/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ el S&P 500 a favor · ✗ tendencia alineada · ✓ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✓ 24 h a favor",
+       "tendencia 15 min a favor · 1 h a favor · 4 h neutral",
+       "RSI 1 h 60 · ADX 1 h 12"
+      ]
+     },
+     {
+      "sym": "BTCUSDT",
+      "tf": "15m",
+      "ok": true,
+      "title": "✅ DEJÁ CORRER",
+      "why": [
+       "Semáforo de entrada 3/5 · 🟡 entrada media: en la prueba llegó al objetivo el 68 % · ✓ BTC a favor · ✓ tendencia alineada · ✓ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✗ últimas 6 velas de 1 h a favor",
+       "tendencia 5 min en contra · 15 min a favor · 1 h a favor",
+       "RSI 15 min 53 · ADX 15 min 14"
+      ]
+     }
+    ],
+    "despues": [
+     {
+      "sym": "AAPL",
+      "tf": "1d",
+      "ok": true,
+      "title": "👍 MANTENER",
+      "why": [
+       "Semáforo de entrada 2/5 · 🔴 entrada floja: en la prueba llegó al objetivo el 64–67 % · ✗ el S&P 500 a favor · ✗ tendencia alineada · ✓ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✓ últimas 6 velas de 1 semana a favor",
+       "tendencia 4 h neutral · 1 día a favor · 1 semana neutral",
+       "RSI 1 día 53 · ADX 1 día 16"
+      ]
+     },
+     {
+      "sym": "BTCUSDT",
+      "tf": "15m",
+      "ok": true,
+      "title": "✅ DEJÁ CORRER",
+      "why": [
+       "Semáforo de entrada 3/5 · 🟡 entrada media: en la prueba llegó al objetivo el 68 % · ✓ BTC a favor · ✓ tendencia alineada · ✓ lejos de la EMA 50 · ✗ flujo (CVD) a favor · ✗ últimas 6 velas de 1 h a favor",
+       "tendencia 5 min en contra · 15 min a favor · 1 h a favor",
+       "RSI 15 min 53 · ADX 15 min 14"
+      ]
+     }
+    ],
+    "lista_acciones": [
+     "NVDA",
+     "NVO",
+     "NVS"
+    ],
+    "liq": {
+     "aislado": 66363.5804025,
+     "aislado_mas100": 72424.1813525,
+     "cruzado_sin_saldo": "Infinity",
+     "cruzado_500": 96666.5851525
+    }
+   }
+  },
+  {
+   "pilrsi": [
+    "RSI:ini 46ahora 56",
+    "RSI:ini 51ahora 53"
+   ]
+  },
+  {
+   "versiones": {
+    "versiones": true,
+    "trd": 5,
+    "cards": 13,
+    "bt": true
+   }
+  },
+  {
+   "listas": {
+    "favHead": "ParPrecio24hRSI 1d",
+    "favRows": [
+     "★BTC/USDT 60,005.95-2.33%25"
+    ],
+    "F": [
+     {
+      "f": "★ Favoritos",
+      "filas": [
+       "BTCcripto60,005.95RSI 25✕",
+       "AAPLacción353,79RSI 56✕"
+      ]
+     },
+     {
+      "f": "Prueba",
+      "filas": [
+       "SOLcripto70.00RSI 45✕",
+       "ETHcripto1,684.38RSI 44✕",
+       "KOacción97,69RSI 55✕"
+      ]
+     }
+    ],
+    "msg": "No encontré \"NOEXISTE\". Escribí el código, por ejemplo BTC o AAPL.",
+    "sug": [
+     "GOOG acción · NASDAQ276,54-1.07%",
+     "GOOGL acción · NASDAQ278,94-1.12%",
+     "GOOGLB cripto280.50-1.52%"
+    ],
+    "modos": [
+     "💸 Rendimientos pasivos"
+    ]
+   }
+  },
+  {
+   "rsiorden": {
+    "lab1": "Mejores · 1 de 9",
+    "labL": "Neutrales · 9 de 9",
+    "p1_primeros": [
+     40.5,
+     39.4,
+     42.4,
+     43.1,
+     39.2,
+     29.5,
+     37.8,
+     47.1,
+     21.7,
+     27.9,
+     29.6,
+     31.4,
+     25.2,
+     29,
+     42.2,
+     15.3
+    ],
+    "distancia_media_a_50": {
+     "pagina1": 10.4,
+     "ultima": 19
+    },
+    "ultima_primeros": [
+     29.1,
+     34.8,
+     29.8,
+     24.1,
+     37.3
+    ],
+    "cripto": [
+     "42,8 42,6 44,8 41,6 40,5 37,9 58,3 36,0",
+     "40,5 36,2 50,5 35,5 40,1 37,3 36,8 35,0 44,4 42,2 45,1 40,3",
+     "44,3 46,6 43,5 39,4 40,4 43,8 38,9 30,7 51,7"
+    ]
+   }
+  },
+  {
+   "datos_shot": "locator.screenshot: Timeout 14994.05800000002ms exceeded.\nCall log:\n  - taking element screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n  "
+  },
+  {
+   "datos_shot": "locator.screenshot: Timeout 14989.74199999997ms exceeded.\nCall log:\n  - taking element screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n  "
+  },
+  {
+   "datos_shot": "locator.screenshot: Timeout 14994.800999999978ms exceeded.\nCall log:\n  - taking element screenshot\n  - waiting for fonts to load...\n  - fonts loaded\n "
+  },
+  {
+   "datos": {
+    "SOLUSDT": {
+     "titulo": "📋 Datos del activo · SOL",
+     "chips": [
+      "🪙 Criptomoneda",
+      "Plataforma de contratos inteligentes · Capa 1 (L1)",
+      "Puesto #7 por tamaño",
+      "Vale 41.4 mil millones USD",
+      "1 mes -31 %",
+      "1 año -50 %",
+      "-76 % desde su máximo histórico",
+      "RSI diario 29"
+     ],
+     "resumen": "Solana es una criptomoneda (Plataforma de contratos inteligentes). En el último año bajó 50 %, en el último mes bajó 31 %, está 76 % debajo de su máximo histórico. El RSI diario está en sobreventa: viene muy castigada.",
+     "desc": "¿Qué es Solana (SOL)? La criptomoneda Solana es un blockchain de alto rendimiento basado en el consenso prueba de historial (PoH) y prueba de participación (PoS).",
+     "ultimo": "📰 Lo último: Precio de Solana (SOLUSD): pronóstico para 2026, 2027, 2028–2030 y más allá · LiteFinance · hace 11 h",
+     "ficha": "Nombre | Solana | Rubro | Plataforma de contratos inteligentes, Capa 1 (L1), Prueba de participación (PoS) | En circulación | 592 millones | Máximo histórico | 293.31 USD (ene 2025) | Web | solana.com",
+     "noticias": 8,
+     "icoHead": "https://coin-images.coingecko.com/coins/images/4128/small/solana.png?1718769756",
+     "icoLista": 1,
+     "nerr": ""
+    },
+    "NVDA": {
+     "titulo": "📋 Datos de la empresa · NVDA",
+     "chips": [
+      "🏢 Empresa",
+      "Tecnología",
+      "📍 Estados Unidos",
+      "1 mes -28 %",
+      "1 año -13 %",
+      "-35 % desde su máximo de 52 semanas",
+      "RSI diario 39"
+     ],
+     "resumen": "Nvidia es una empresa del sector Tecnología de Estados Unidos. En el último año bajó 13 %, en el último mes bajó 28 %, está 35 % debajo de su máximo de 52 semanas.",
+     "desc": "NVIDIA Corporation es una empresa tecnológica de software y fabless que desarrolla unidades de procesamientos gráficos (GPU), interfaz de programación de aplicaciones (API) para ciencia de datos y computación de alto ren",
+     "ultimo": "📰 Lo último: “Lamento haberlos hecho pasar por todo esto”: Jensen Huang volvió a Nvidia entre abrazos y ovaciones · Infobae · hace 10 h",
+     "ficha": "Nombre | Nvidia | Fundada | 1993 | Empleados | 42.000 | Sede | Santa Clara | Rubro | Semiconductores | Web | nvidia.com",
+     "noticias": 8,
+     "icoHead": "https://financialmodelingprep.com/image-stock/NVDA.png",
+     "icoLista": 1,
+     "nerr": ""
+    },
+    "YPF": {
+     "titulo": "📋 Datos de la empresa · YPF",
+     "chips": [
+      "🏢 Empresa",
+      "Argentina 🇦🇷",
+      "📍 Argentina",
+      "1 mes -36 %",
+      "1 año -10 %",
+      "-45 % desde su máximo de 52 semanas",
+      "RSI diario 22"
+     ],
+     "resumen": "Yacimientos Petrolíferos Fiscales es una empresa argentina que cotiza en EE. UU. En el último año bajó 10 %, en el último mes bajó 36 %, está 45 % debajo de su máximo de 52 semanas. El RSI diario está en sobreventa: viene muy castigada.",
+     "desc": "YPF, siglas de Yacimientos Petrolíferos Fiscales, S. A., es la empresa argentina de energía dedicada a la exploración, explotación, destilación, distribución y producción de gas, petróleo, energía eléctrica y derivados d",
+     "ultimo": "📰 Lo último: Aprueban el RIGI de YPF para exportar GNL por u$s50.750 millones y será \"la mayor inversión de la historia\" · Energía Online · hace 10 h",
+     "ficha": "Nombre | Yacimientos Petrolíferos Fiscales | Fundada | 1922 | Sede | Buenos Aires | Rubro | industria petrolera | Web | ypf.com/english/Paginas/Home.aspx",
+     "noticias": 8,
+     "icoHead": "https://financialmodelingprep.com/image-stock/YPF.png",
+     "icoLista": 1,
+     "nerr": ""
+    }
+   }
+  },
+  {
+   "bordes": [
+    {
+     "el": ".brand @main",
+     "x": 0,
+     "r": 0,
+     "t": "☰CRIPTO-LIVE⬇ Instalar app🔄 ActualizarEntrar"
+    },
+    {
+     "el": ".hk @sig",
+     "x": 391,
+     "r": 2,
+     "t": "0/3"
+    }
+   ]
+  },
+  {
+   "pilcaptura": {
+    "pre": {
+     "texto": "📷 Lo que leí en la captura🆕 BTC nueva: se agrega a Pilotear.LONG 10x aislado · entrada 100,000.00 · margen 80 USD · liquidación 90,500.00 · incluye 30 USD que sumaste🆕 XRP nueva: se agrega a Pilotear.LONG 5x aislado · entrada 2.000 · margen 50 USD · liquidación 1.620Aplicar (2)Cancelar Revisá antes de aplicar: la lectura de la imagen puede equivocarse en algún número.",
+     "items": [
+      {
+       "k": "new",
+       "sym": "BTCUSDT",
+       "c": {
+        "dir": 1,
+        "lev": 10,
+        "entry": 100000,
+        "base": 50,
+        "extra": 30
+       }
+      },
+      {
+       "k": "new",
+       "sym": "XRPUSDT",
+       "c": {
+        "dir": 1,
+        "lev": 5,
+        "entry": 2,
+        "base": 50,
+        "extra": 0
+       }
+      }
+     ]
+    },
+    "post": [
+     {
+      "sym": "BTCUSDT",
+      "entry": 60606.0095,
+      "lev": 10,
+      "margin": 100,
+      "extra": 0,
+      "liq": 66363.5804025,
+      "prom": 60606.0095,
+      "pnl_a_97500": -608.75
+     },
+     {
+      "sym": "BTCUSDT",
+      "entry": 100000,
+      "lev": 10,
+      "margin": 50,
+      "extra": 30,
+      "qty": 0.005,
+      "liq": 90500,
+      "prom": 100000,
+      "pnl_a_97500": -12.5
+     },
+     {
+      "sym": "XRPUSDT",
+      "entry": 2,
+      "lev": 5,
+      "margin": 50,
+      "extra": 0,
+      "qty": 125,
+      "liq": 1.62,
+      "prom": 2,
+      "pnl_a_97500": 12187250
+     }
+    ],
+    "tfix": {
+     "form_tf": false,
+     "def_tf": "4h",
+     "estimado": "2026-11-23T17:30:00.000Z",
+     "horas_atras": 30
+    }
+   }
+  },
+  {
+   "capitulacion": {
+    "BTCUSDT": {
+     "velas": 2000,
+     "off": false,
+     "senales": [
+      "2022-01-24",
+      "2022-05-12",
+      "2022-06-15",
+      "2023-03-10",
+      "2023-08-21",
+      "2024-07-05",
+      "2025-02-28",
+      "2025-11-19",
+      "2026-06-04",
+      "2026-11-17",
+      "2026-11-21"
+     ]
+    },
+    "ETHUSDT": {
+     "velas": 2000,
+     "off": false,
+     "senales": [
+      "2021-06-26",
+      "2022-01-10",
+      "2022-01-24",
+      "2022-06-14",
+      "2023-08-22",
+      "2025-02-28",
+      "2025-04-07",
+      "2025-11-22",
+      "2026-06-06",
+      "2026-11-17"
+     ]
+    },
+    "SOLUSDT": {
+     "velas": 1050,
+     "off": false,
+     "senales": [
+      "2025-02-25",
+      "2026-02-07"
+     ]
+    },
+    "DOGEUSDT": {
+     "velas": 1050,
+     "off": false,
+     "senales": [
+      "2024-07-05",
+      "2025-02-25",
+      "2025-02-28",
+      "2026-06-06",
+      "2026-06-26",
+      "2026-06-30"
+     ]
+    },
+    "AVAXUSDT": {
+     "velas": 2205,
+     "off": false,
+     "senales": [
+      "2022-05-12",
+      "2023-06-12",
+      "2023-06-15",
+      "2023-08-19",
+      "2023-08-22",
+      "2024-06-24",
+      "2025-02-08",
+      "2025-06-22",
+      "2025-10-10",
+      "2026-06-06",
+      "2026-11-21"
+     ]
+    },
+    "en4h": {
+     "off": 1
+    },
+    "planilla": {
+     "monedas": 52,
+     "caps": [
+      "HBARUSDT:2",
+      "LTCUSDT:2"
+     ],
+     "aviso": "🟩 Capitulación (73 % en las pruebas, sin comisiones y quizás inflado · en vivo: 1 de 9 (11.1 %) · 23 abiertas · todavía son pocas para sacar conclusiones): HBAR · LTC"
+    }
+   }
+  },
+  {
+   "acciones24": {
+    "bolsaAbierta": false,
+    "formato": [
+     "59,024.46",
+     "0.9068",
+     "157.63"
+    ],
+    "bingx": {
+     "NVDA": 154.7,
+     "TSLA": 386.39,
+     "YPF": 31.34,
+     "F": null,
+     "A": null,
+     "BIO": null,
+     "nombres": {
+      "JPM": "NCSKJPM2USD-USDT",
+      "NVDA": "NCSKNVDA2USD-USDT",
+      "YPF": "NCSKYPF2USD-USDT",
+      "TSLA": "NCSKTSLA2USD-USDT"
+     }
+    },
+    "bolsaF": 11.925,
+    "precioF": 11.925,
+    "bolsaTSLA": 384.53,
+    "preciosTSLA": 386.39,
+    "binanceNVDA": null,
+    "bolsa": 155.135,
+    "precio": 154.7,
+    "fuente": "BingX",
+    "cambio": -6.273548844554744,
+    "etiqueta": "● 24 H · BingX",
+    "cambiadas": 4
+   }
+  },
+  {
+   "byma": {
+    "GGAL.BA": {
+     "s": "GGAL.BA",
+     "hist": {
+      "n": 1500,
+      "primera": "2020-09-28",
+      "ultima": "2026-11-24",
+      "cierre": 4617.5
+     },
+     "ultC": 154.7,
+     "cnt": {
+      "US": 483,
+      "AR": 74,
+      "BONO": 161,
+      "LETRA": 21,
+      "ON": 253
+     },
+     "mep": 1690.641430073607,
+     "titulo": "GGAL · BYMA · ARS",
+     "precio": 4617.5,
+     "velas": 501,
+     "ultima": "2026-11-24",
+     "lista": [
+      "Toca la ★ de una moneda para agregarla a tus favoritas."
+     ]
+    },
+    "YPFD.BA": {
+     "s": "YPFD.BA",
+     "hist": {
+      "n": 1500,
+      "primera": "2020-09-25",
+      "ultima": "2026-11-24",
+      "cierre": 5735
+     },
+     "ultC": 4617.5,
+     "cnt": {
+      "US": 483,
+      "AR": 74,
+      "BONO": 161,
+      "LETRA": 21,
+      "ON": 253
+     },
+     "mep": 1690.641430073607,
+     "titulo": "YPFD · BYMA · ARS",
+     "precio": 5735,
+     "velas": 1500,
+     "ultima": "2026-11-24",
+     "lista": [
+      "Toca la ★ de una moneda para agregarla a tus favoritas."
+     ]
+    },
+    "AL30.BA": {
+     "s": "AL30.BA",
+     "hist": {
+      "n": 1265,
+      "primera": "2021-09-16",
+      "ultima": "2026-11-24",
+      "cierre": 80390
+     },
+     "ultC": 80390,
+     "cnt": {
+      "US": 483,
+      "AR": 74,
+      "BONO": 161,
+      "LETRA": 21,
+      "ON": 253
+     },
+     "mep": 1690.641430073607,
+     "titulo": "AL30 · BYMA · bono · ARS",
+     "precio": 80390,
+     "velas": 1265,
+     "ultima": "2026-11-24",
+     "lista": [
+      "Toca la ★ de una moneda para agregarla a tus favoritas."
+     ]
+    },
+    "S29E7.BA": {
+     "s": "S29E7.BA",
+     "hist": {
+      "n": 1,
+      "primera": "2026-11-24",
+      "ultima": "2026-11-24",
+      "cierre": 106.76
+     },
+     "ultC": 106.76,
+     "cnt": {
+      "US": 483,
+      "AR": 74,
+      "BONO": 161,
+      "LETRA": 21,
+      "ON": 253
+     },
+     "mep": 1690.641430073607,
+     "titulo": "S29E7 · BYMA · letra · ARS",
+     "precio": 106.76,
+     "velas": 1,
+     "ultima": "2026-11-24",
+     "lista": [
+      "Toca la ★ de una moneda para agregarla a tus favoritas."
+     ]
+    },
+    "YMCJD.BA": {
+     "s": "YMCJD.BA",
+     "hist": {
+      "n": 1,
+      "primera": "2026-11-24",
+      "ultima": "2026-11-24",
+      "cierre": 96
+     },
+     "ultC": 96,
+     "cnt": {
+      "US": 483,
+      "AR": 74,
+      "BONO": 161,
+      "LETRA": 21,
+      "ON": 253
+     },
+     "mep": 1690.641430073607,
+     "titulo": "YMCJD · BYMA · obligación negociable · USD",
+     "precio": 96,
+     "velas": 1,
+     "ultima": "2026-11-24",
+     "lista": [
+      "Toca la ★ de una moneda para agregarla a tus favoritas."
+     ]
+    }
+   }
+  },
+  {
+   "soportes": {
+    "BTCUSDT 4h": {
+     "velas": 1000,
+     "precio": 60030,
+     "tol": 413.5,
+     "niveles": [
+      "R 81132.8 · 7 toques · 21 falsos · 5 quiebres · fuerza 1.00",
+      "R 64609.8 · 13 toques · 28 falsos · 12 quiebres · fuerza 0.76",
+      "R 65456.7 · 11 toques · 8 falsos · 4 quiebres · fuerza 0.76"
+     ]
+    },
+    "ETHUSDT 1d": {
+     "velas": 1000,
+     "precio": 1683.81,
+     "tol": 37.84,
+     "niveles": [
+      "S 1518.31 · 3 toques · 0 falsos · 0 quiebres · fuerza 0.42",
+      "R 2340.97 · 8 toques · 24 falsos · 8 quiebres · fuerza 1.00",
+      "R 1831.72 · 5 toques · 3 falsos · 2 quiebres · fuerza 0.63",
+      "R 2125.16 · 6 toques · 25 falsos · 9 quiebres · fuerza 0.58"
+     ]
+    },
+    "SOLUSDT 1h": {
+     "velas": 1000,
+     "precio": 69.94,
+     "tol": 0.36,
+     "niveles": [
+      "S 68.655 · 2 toques · 0 falsos · 0 quiebres · fuerza 0.38",
+      "S 67.28 · 2 toques · 2 falsos · 1 quiebres · fuerza 0.31",
+      "R 72.1525 · 4 toques · 16 falsos · 4 quiebres · fuerza 1.00",
+      "R 75.605 · 4 toques · 3 falsos · 1 quiebres · fuerza 0.75",
+      "R 89.82 · 4 toques · 9 falsos · 3 quiebres · fuerza 0.50"
+     ]
+    }
+   }
+  },
+  {
+   "tradfi": {
+    "items": [
+     {
+      "k": "upd",
+      "sym": "NVDAUSDT",
+      "p": "NVDA-stk-prueba"
+     }
+    ],
+    "sym": "NVDAUSDT",
+    "mk": "c",
+    "pnl_a_161_01": -6.5987,
+    "liq": 136.7
+   }
+  },
+  {
+   "bingx_ypf": {
+    "items": [
+     {
+      "k": "new",
+      "sym": "YPF"
+     }
+    ],
+    "src": "bingx",
+    "ref": {
+     "mark": 37.04,
+     "src": 37.74,
+     "t": 1795561859906
+    },
+    "px_cerrado": 31.35,
+    "pnl": -13.8604,
+    "px_abierto": 31.35
+   }
+  },
+  {
+   "walia": {
+    "cargado": true,
+    "reales": 74,
+    "practica": 2526,
+    "en_billetera": 50,
+    "tomadas": 50,
+    "fila": "IA0 abiertas · 50 cerradas+6,3 % · +158,25 USD",
+    "frenadas": []
+   }
+  },
+  {
+   "pasivos": {
+    "pasTop": 6,
+    "favAbierto": true,
+    "pfRaw": [
+     {
+      "entidad": "BANCO DE LA NACION ARGENTINA",
+      "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00011.png",
+      "tnaClientes": 0.1925,
+      "tnaNoClientes": 0,
+      "enlace": null,
+      "tasas": [
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 60,
+        "plazoMaxDias": 60,
+        "tna": 0.2
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 90,
+        "plazoMaxDias": 90,
+        "tna": 0.2025
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 365,
+        "plazoMaxDias": 365,
+        "tna": 0.23
+       }
+      ]
+     },
+     {
+      "entidad": "BANCO DE GALICIA Y BUENOS AIRES S.A.",
+      "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00007.png",
+      "tnaClientes": 0.1825,
+      "tnaNoClientes": 0,
+      "enlace": null,
+      "tasas": [
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 60,
+        "plazoMaxDias": 60,
+        "tna": 0.16
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 90,
+        "plazoMaxDias": 90,
+        "tna": 0.17
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 365,
+        "plazoMaxDias": 365,
+        "tna": 0.205
+       }
+      ]
+     },
+     {
+      "entidad": "BANCO BBVA ARGENTINA S.A.",
+      "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00017.png",
+      "tnaClientes": 0.17,
+      "tnaNoClientes": 0,
+      "enlace": null,
+      "tasas": [
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 60,
+        "plazoMaxDias": 60,
+        "tna": 0.19
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 90,
+        "plazoMaxDias": 90,
+        "tna": 0.19
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 365,
+        "plazoMaxDias": 365,
+        "tna": 0.23
+       }
+      ]
+     },
+     {
+      "entidad": "BANCO SANTANDER ARGENTINA S.A.",
+      "logo": "http://www.bcra.gob.ar/archivos/Imagenes/logosbancos/00072.png",
+      "tnaClientes": 0.18,
+      "tnaNoClientes": 0,
+      "enlace": null,
+      "tasas": [
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 60,
+        "plazoMaxDias": 60,
+        "tna": 0.17
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 90,
+        "plazoMaxDias": 90,
+        "tna": 0.1825
+       },
+       {
+        "montoMinimo": null,
+        "montoMaximo": null,
+        "plazoMinDias": 365,
+        "plazoMaxDias": 365,
+        "tna": 0.175
+       }
+      ]
+     }
+    ],
+    "pfLinks": [
+     "Banco Bica → https://plazofijo.bancobica.com.ar/",
+     "Banco Cmf → https://www.bancocmf.com.ar/plazo-fijo-web-2/",
+     "Banco De Comercio → https://bancodecomercio.com.ar/plazo-fijo-web",
+     "Cocos → https://cocos.capital/",
+     "Banco Provincia De Buenos Aires → https://www.bancoprovincia.com.ar/PlazoFijoWeb/login ",
+     "Banco Hipotecario → https://buhobank.com/onboarding/",
+     "Ualá → https://www.uala.com.ar/inversiones/plazo-fijo",
+     "Banco Macro → https://www.macro.com.ar/personas/inversiones/plazo-fijo",
+     "Banco Nacion Argentina → (sin enlace directo)",
+     "Banco Credicoop Cooperativo Limitado → https://www.bancocredicoop.coop/personas/solicitud-de-plazo-fijo",
+     "Banco De Galicia → (sin enlace directo)",
+     "Banco Santander Argentina → (sin enlace directo)",
+     "ICBC → (sin enlace directo)",
+     "Banco BBVA Argentina → (sin enlace directo)",
+     "Brubank → https://www.tuplazofijo.com.ar/plazos-fijos/bancos/brubank/",
+     "Banco Patagonia → (sin enlace directo)"
+    ],
+    "mio": {
+     "t": "📒 Lo que puse yo · $8.000.000 → $153.570 por mes DóndePuseMe da por mesNaranja XCuenta remunerada · pasaste el tope de $1.000.000$2.000.000$16.5700,83 % al mes✕Plazo fijo UVA (Nación, Provincia, Galicia, Santander…)Ajusta por inflación + ~1 % anual · estimado con la inflación del último mes (2,2 %)$6.000.000$137.0002,28 % al mes✕Total$8.000.000$153.570$1.842.836 al año Bono del Tesoro T31Y7 — BONCAPBono del Tesoro T30J7 — BONCAPBono del Tesoro T30A7 — BONCAPBono del Tesoro TY30P — BONTE (bono a",
+     "n5": 5,
+     "n22": 53,
+     "tot": 53,
+     "falla": "📒 Lo que puse yo (anotá cuánto pusiste en cada lugar) Plazo fijo UVA (Nación, Provincia, Galicia, Santander…) — Ajusta por inflación + ~1 % anualReba — Cuenta "
+    },
+    "drw": true,
+    "fueA": "cic",
+    "sub": "· la mejor hoy: Bono del Tesoro T31Y7 ($24.000 por mes)",
+    "n": 53,
+    "filas": [
+     "1. Bono del Tesoro T31Y7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 6 meses (hasta el 31/5/2027) ✓ Sin tope | $24.000le gana a la inflación ($2.000)",
+     "2. Bono del Tesoro T30J7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 7 meses (hasta el 30/6/2027) ✓ Sin tope | $23.700le gana a la inflación ($1.700)",
+     "3. Bono del Tesoro T30A7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 5 meses (hasta el 30/4/2027) ✓ Sin tope | $23.400le gana a la inflación ($1.400)",
+     "4. Bono del Tesoro TY30P → 🔒 Para este rendimiento hay que congelar la plata mínimo 42 meses (hasta el 30/5/2030) ✓ Sin tope | $23.400le gana a la inflación ($1.400)",
+     "5. Plazo fijo UVA (Nación, Provincia, Galicia, Santander…) → 🔒 Para este rendimiento hay que congelar la plata mínimo 3 meses · estimado ✓ Sin tope | $22.833le gana a la inflación ($833)",
+     "6. Letra del Tesoro S26F7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 3 meses (hasta el 26/2/2027) ✓ Sin tope | $21.900pierde a la inflación (−$100)",
+     "7. Bono del Tesoro T15E7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 51 días (hasta el 15/1/2027) ✓ Sin tope | $21.300pierde a la inflación (−$700)",
+     "8. Letra del Tesoro S29E7 → 🔒 Para este rendimiento hay que congelar la plata mínimo 2 meses (hasta el 29/1/2027) ✓ Sin tope | $20.800pierde a la inflación (−$1.200)",
+     "9. Ualá Plus (nivel 2) →  ⛔ Tope $1.000.000: lo que pasa de ahí no rinde nada | $19.915pierde a la inflación (−$2.085)",
+     "10. Banco Bica →  ✓ Sin tope | $19.726pierde a la inflación (−$2.274)",
+     "11. Banco Cmf →  ✓ Sin tope | $19.726pierde a la inflación (−$2.274)",
+     "12. Banco De Comercio →  ✓ Sin tope | $19.726pierde a la inflación (−$2.274)",
+     "13. Cocos →  ✓ Sin tope | $19.726pierde a la inflación (−$2.274)",
+     "14. Letra del Tesoro S30N6 →  ✓ Sin tope | $19.300pierde a la inflación (−$2.700)",
+     "15. Fiwind →  ⛔ Tope $750.000: lo que pasa de ahí rinde solo 16,8 % — con tu monto ya lo pasás | $19.040pierde a la inflación (−$2.960)",
+     "16. Brubank Cuenta Max Seleccionada →  ⛔ Tope $2.000.000: lo que pasa de ahí no rinde nada | $18.241pierde a la inflación (−$3.759)",
+     "17. Banco Provincia De Buenos Aires →  ✓ Sin tope | $18.082pierde a la inflación (−$3.918)",
+     "18. Banco Hipotecario →  ✓ Sin tope | $18.082pierde a la inflación (−$3.918)",
+     "19. Ualá →  ✓ Sin tope | $18.082pierde a la inflación (−$3.918)",
+     "20. Banco Bica · Cuenta Positiva →  ⛔ Tope por tramos: 22 % hasta $750.000 · 19 % desde $750.000 · 16 % desde $2.250.000 — con tu monto ya lo pasás | $17.615pierde a la inflación (−$4.385)",
+     "21. Reba →  ⛔ Tope $1.000.000: lo que pasa de ahí no rinde nada | $17.405pierde a la inflación (−$4.595)",
+     "22. Lemon →  ✓ Sin tope | $17.238pierde a la inflación (−$4.762)",
+     "23. Banco Carrefour →  ✓ Sin tope | $16.570pierde a la inflación (−$5.430)",
+     "24. Naranja X →  ⛔ Tope $1.000.000: lo que pasa de ahí no rinde nada | $16.570pierde a la inflación (−$5.430)",
+     "25. Ualá Plus (nivel 1) →  ⛔ Tope $1.000.000: lo que pasa de ahí no rinde nada | $16.570pierde a la inflación (−$5.430)",
+     "26. Banco Nación →  ✓ Sin tope | $16.456pierde a la inflación (−$5.544)",
+     "27. Banco Macro →  ✓ Sin tope | $16.027pierde a la inflación (−$5.973)",
+     "28. Ualá →  ✓ Sin tope | $16.002pierde a la inflación (−$5.998)",
+     "29. Banco Nacion Argentina →  ✓ Sin tope | $15.822pierde a la inflación (−$6.178)",
+     "30. Personal Pay →  ✓ Sin tope | $15.818pierde a la inflación (−$6.182)"
+    ],
+    "con5M": [
+     "1. Bono del Tesoro T31Y7 |  | $120.000",
+     "2. Bono del Tesoro T30J7 |  | $118.500",
+     "3. Bono del Tesoro T30A7 |  | $117.000",
+     "4. Bono del Tesoro TY30P |  | $117.000",
+     "5. Plazo fijo UVA (Nación, Provincia, Galicia, Santander…) |  | $114.167",
+     "6. Letra del Tesoro S26F7 |  | $109.500",
+     "7. Bono del Tesoro T15E7 |  | $106.500",
+     "8. Letra del Tesoro S29E7 |  | $104.000",
+     "9. Banco Bica |  | $98.630",
+     "10. Banco Cmf |  | $98.630",
+     "11. Banco De Comercio |  | $98.630",
+     "12. Cocos |  | $98.630",
+     "13. Letra del Tesoro S30N6 |  | $96.500",
+     "14. Banco Provincia De Buenos Aires |  | $90.411",
+     "15. Banco Hipotecario |  | $90.411",
+     "16. Ualá |  | $90.411",
+     "17. Lemon |  | $86.190",
+     "18. Banco Carrefour |  | $82.848",
+     "19. Banco Nación |  | $82.281",
+     "20. Banco Macro |  | $80.137",
+     "21. Ualá |  | $80.012",
+     "22. Banco Nacion Argentina |  | $79.110",
+     "23. Personal Pay |  | $79.092",
+     "24. Belo |  | $78.674",
+     "25. Montemar Pay |  | $78.674",
+     "26. Claro Pay |  | $78.674",
+     "27. Banco Provincia / Cuenta DNI |  | $78.044",
+     "28. Mercado Pago |  | $76.607",
+     "29. Banco Credicoop Cooperativo Limitado |  | $76.027",
+     "30. Banco De Galicia |  | $75.000",
+     "31. Fiwind |  | $74.643",
+     "32. Balanz |  | $74.609",
+     "33. ICBC |  | $74.548",
+     "34. Banco Santander Argentina |  | $73.973",
+     "35. Banco Bica · Cuenta Positiva |  | $73.678",
+     "36. ICBC |  | $73.562",
+     "37. Banco Santander |  | $72.136",
+     "38. Banco Galicia |  | $70.245",
+     "39. Banco BBVA Argentina |  | $69.863",
+     "40. Brubank |  | $69.863",
+     "41. Cocos |  | $69.360",
+     "42. Banco Macro |  | $67.758",
+     "43. Banco Patagonia |  | $65.753",
+     "44. Supervielle Hit IOL |  | $57.855",
+     "45. Brubank Cuenta Max Seleccionada |  | $36.482",
+     "46. Banco Nación (cuenta sueldo) |  | $23.142",
+     "47. Ualá Plus (nivel 2) |  | $19.915",
+     "48. Reba |  | $17.405",
+     "49. Naranja X |  | $16.570",
+     "50. Ualá Plus (nivel 1) |  | $16.570",
+     "51. Brubank Cuenta Max |  | $15.735",
+     "52. Ualá |  | $15.735",
+     "53. Supervielle (plan sueldo) |  | $11.571"
+    ],
+    "nota": "Ganancia en un mes por cada $1.000.000, antes de impuestos. Inflación del último mes publicado: 2,2 % ($22.000 por cada $1.000.000): lo que rinde menos que eso, en realidad pierde poder de compra. \n    🟢 plazo fijo: tasa fija garantizada y con seguro de depósitos · 🟡 fondos, cuentas remuneradas y Letras: muy bajo riesgo pero la tasa cambia · 🔴 dólares/cripto: depende de la plataforma.\n    Impuestos: plazo fijo y cuentas remuneradas en pesos están exentos de Ganancias para personas; fondos y Letras en pesos, en general también. Lo de dólares/cripto (y cualquier plataforma del exterior) paga Ganancias —acá se descuenta un 15 % estimado— y suma para Bienes Personales: consultá a un contador para tu caso.\n    No existe ganancia 100 % segura: esto es información, no una recomendación. Fuentes: BCRA y CNV vía ArgentinaDatos, cuentas remuneradas según 3/11/2026 (iProUP)."
+   }
+  },
+  {
+   "rescate": {
+    "BTCUSDT": {
+     "veredicto": "salir",
+     "sumar": null,
+     "liq": 57563.707835,
+     "nuevaLiq": 57563.707835,
+     "soporte": null,
+     "texto": "🛑 Conviene SALIRNo hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla.Pérdida si cerrás ahora: −56,60 USD.📊 Prueba con 1 año de datos (1.784 operaciones que llegaron a −70 %): cerrar perdió en promedio 64 USD de cada 100 · rescatar sumando margen salió sin pérdida el 40 % de las veces, pero en promedio perdió 72 USD (contando lo agregado) y el 48 % igual terminó liquidada · aguantar sin hacer nada: 72 % liquidadas. El rescate es una apuesta al rebote, no una salida segura.",
+     "estado": "aviso",
+     "ia": "salir",
+     "iaTexto": "🧠 Copiloto (reglas · en prueba)No está probado con historia: mirá cómo le va a la copia simulada antes de hacerle caso con plata.🚪 Retirarse ahora: No hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla. Cada vela que esperás suele costar más.Copia simulada de la IA: −57,58 USD · cerrada · tu operación: −56,60 USD24/11, 23:11 · 🚪 se retiró en 60,005.95",
+     "sim": {
+      "pasos": [
+       "59,405.89:closed liq 57,563.71"
+      ],
+      "acciones": [
+       "🚪 se retiró en 60,005.95"
+      ],
+      "pnl": -57.57547169811326,
+      "usado": 0
+     }
+    },
+    "ETHUSDT": {
+     "veredicto": "salir",
+     "sumar": null,
+     "liq": 1733.7323339999998,
+     "nuevaLiq": 1733.7323339999998,
+     "soporte": null,
+     "texto": "🛑 Conviene SALIRNo hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla.Pérdida si cerrás ahora: −63,83 USD.📊 Prueba con 1 año de datos (1.784 operaciones que llegaron a −70 %): cerrar perdió en promedio 64 USD de cada 100 · rescatar sumando margen salió sin pérdida el 40 % de las veces, pero en promedio perdió 72 USD (contando lo agregado) y el 48 % igual terminó liquidada · aguantar sin hacer nada: 72 % liquidadas. El rescate es una apuesta al rebote, no una salida segura.",
+     "estado": "aviso",
+     "ia": "salir",
+     "iaTexto": "🧠 Copiloto (reglas · en prueba)No está probado con historia: mirá cómo le va a la copia simulada antes de hacerle caso con plata.🚪 Retirarse ahora: No hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla. Cada vela que esperás suele costar más.Copia simulada de la IA: −64,86 USD · cerrada · tu operación: −63,83 USD24/11, 23:11 · 🚪 se retiró en 1,684.38",
+     "sim": {
+      "pasos": [
+       "1,701.22:closed liq 1,733.73"
+      ],
+      "acciones": [
+       "🚪 se retiró en 1,684.38"
+      ],
+      "pnl": -64.86170212765967,
+      "usado": 0
+     }
+    },
+    "SOLUSDT": {
+     "veredicto": "salir",
+     "sumar": null,
+     "liq": 68.8555,
+     "nuevaLiq": 68.8555,
+     "soporte": null,
+     "texto": "🛑 Conviene SALIRNo hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla.Pérdida si cerrás ahora: −58,25 USD.📊 Prueba con 1 año de datos (1.784 operaciones que llegaron a −70 %): cerrar perdió en promedio 64 USD de cada 100 · rescatar sumando margen salió sin pérdida el 40 % de las veces, pero en promedio perdió 72 USD (contando lo agregado) y el 48 % igual terminó liquidada · aguantar sin hacer nada: 72 % liquidadas. El rescate es una apuesta al rebote, no una salida segura.",
+     "estado": "peligro",
+     "ia": "salir",
+     "iaTexto": "🧠 Copiloto (reglas · en prueba)No está probado con historia: mirá cómo le va a la copia simulada antes de hacerle caso con plata.🛑 Retirarse YA: estás muy cerca de la liquidación.Copia simulada de la IA: −60,22 USD · cerrada · tu operación: −58,25 USD24/11, 23:11 · 🚪 se retiró en 70.00",
+     "sim": {
+      "pasos": [
+       "69.30:closed liq 68.86"
+      ],
+      "acciones": [
+       "🚪 se retiró en 70.00"
+      ],
+      "pnl": -60.223300970874014,
+      "usado": 0
+     }
+    },
+    "XRPUSDT": {
+     "veredicto": "ok",
+     "sumar": null,
+     "liq": 0.7239260350000001,
+     "nuevaLiq": 0.7239260350000001,
+     "soporte": null,
+     "texto": "✅ La operación no va perdiendo: no hace falta rescate.",
+     "estado": "asegurar",
+     "ia": "tomar",
+     "iaTexto": "🧠 Copiloto (reglas · en prueba)No está probado con historia: mirá cómo le va a la copia simulada antes de hacerle caso con plata.💰 Tomá ganancia: la tendencia está girando. Cerrá (o al menos la mitad) ahora.Copia simulada de la IA: +14,96 USD · cerrada · tu operación: +15,46 USD24/11, 23:11 · 💰 tomó ganancia en 0.9271",
+     "sim": {
+      "pasos": [
+       "0.9178:closed liq 0.7239"
+      ],
+      "acciones": [
+       "💰 tomó ganancia en 0.9271"
+      ],
+      "pnl": 14.956185567010232,
+      "usado": 0
+     }
+    },
+    "DOGEUSDT": {
+     "veredicto": "salir",
+     "sumar": null,
+     "liq": 0.0576679575,
+     "nuevaLiq": 0.0576679575,
+     "soporte": null,
+     "texto": "🛑 Conviene SALIRNo hay un soporte fuerte cerca (a menos de 3 ATR de 4 h) que pueda frenar la caída. Sin un piso a la vista, sumar plata es tirarla.Pérdida si cerrás ahora: −130,43 USD.📊 Prueba con 1 año de datos (1.784 operaciones que llegaron a −70 %): cerrar perdió en promedio 64 USD de cada 100 · rescatar sumando margen salió sin pérdida el 40 % de las veces, pero en promedio perdió 72 USD (contando lo agregado) y el 48 % igual terminó liquidada · aguantar sin hacer nada: 72 % liquidadas. El rescate es una apuesta al rebote, no una salida segura.",
+     "estado": "liq",
+     "ia": null,
+     "iaTexto": "🧠 Copiloto (reglas · en prueba)No está probado con historia: mirá cómo le va a la copia simulada antes de hacerle caso con plata.Copia simulada de la IA: −100,00 USD · cerrada · tu operación: −130,43 USD24/11, 23:11 · 💥 liquidada",
+     "sim": null
+    }
+   }
+  },
+  {
+   "semaforo": {
+    "visible": true,
+    "texto": "🚦 SemáforoSoportesRSIStoch RSIMACDADXKonkordeCVDEMASupertrendBollingerVWAPIchimoku▼ 5 de 12 a favor de SHORT",
+    "colores_rsi": [
+     "#8a909c",
+     "#26c75a"
+    ],
+    "boton": true
+   }
+  },
+  {
+   "semaforo_off": {
+    "visible": false,
+    "colores_rsi": [
+     "normal"
+    ]
+   }
+  },
+  {
+   "botest": {
+    "medio": "🤖 Estado del bot TRADING · revisado hace 5 min · última señal hace 9 días🚫 DVOL 62 (+4 % en 24 h): bloquea las entradas (máximo 55 y que no caiga más de 10 % en 24 h)✓ BTC ▼ bajista · ADX 46: solo entra en SHORTEsta hora: ninguna moneda armó el patrón de entrada (600) · la entrada iba en contra de BTC (3)",
+    "x": "🤖 Estado del bot SHOOTER · revisado hace 5 min⏸ En pausa. BTC está debajo de su EMA 200 de 4 h."
+   }
+  },
+  {
+   "atras": [
+    [
+     "abre sig",
+     {
+      "v": "sig",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "abre pil",
+     {
+      "v": "pil",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "abre cic",
+     {
+      "v": "cic",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "abre IA",
+     {
+      "v": "cic",
+      "ia": true,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 1",
+     {
+      "v": "cic",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 2",
+     {
+      "v": "pil",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 3",
+     {
+      "v": "sig",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 4",
+     {
+      "v": "main",
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 5",
+     {
+      "v": "main",
+      "ia": false,
+      "trn": false,
+      "toast": true,
+      "url": "0/?bot=estudio&t=1795561452693"
+     }
+    ],
+    [
+     "atrás 6",
+     {
+      "ia": false,
+      "trn": false,
+      "toast": false,
+      "url": "about:blank"
+     }
+    ]
+   ]
+  }
+ ],
+ "errs": [
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/exchangeInfo' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/openInterestHist?symbol=MMTUSDT&period=5m&limit=289' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/takerlongshortRatio?symbol=MMTUSDT&period=5m&limit=12' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/topLongShortPositionRatio?symbol=MMTUSDT&period=5m&limit=1' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=MMTUSDT&period=5m&limit=1' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=MMTUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/openInterestHist?symbol=LISTAUSDT&period=5m&limit=289' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/takerlongshortRatio?symbol=LISTAUSDT&period=5m&limit=12' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/topLongShortPositionRatio?symbol=LISTAUSDT&period=5m&limit=1' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/futures/data/globalLongShortAccountRatio?symbol=LISTAUSDT&period=5m&limit=1' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=LISTAUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/ethusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/ethusdt@kline_1h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/xrpusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_15m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_5m' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.binance.com/api/v3/klines?symbol=AAPL&interval=1h&limit=300' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/btcusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/ethusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/dogeusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/avaxusdt@kline_1d' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/avaxusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.binance.com/api/v3/klines?symbol=AAPL&interval=1h&limit=300' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 404 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000AVAXUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000BTCUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Failed to load resource: the server responded with a status of 429 ()",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.binance.com/api/v3/klines?symbol=NVDAUSDT&interval=4h&limit=120&endTime=1795561859888' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=ETHUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_1h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=XRPUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=DOGEUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/ticker/24hr' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://api.binance.com/api/v3/klines?symbol=AAPL&interval=1h&limit=300' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/!miniTicker@arr' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: WebSocket connection to 'wss://stream.binance.com:9443/ws/solusdt@kline_4h' failed: Error during WebSocket handshake: Unexpected response code: 451",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED",
+  "console: Access to fetch at 'https://fapi.binance.com/fapi/v1/premiumIndex?symbol=1000000SOLUSDT' from origin 'http://localhost:8080' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource.",
+  "console: Failed to load resource: net::ERR_FAILED"
+ ]
+}
