@@ -183,6 +183,11 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         return { s: s2, hist, ultC, cnt, mep: STKMEP, titulo: $('sym').textContent, precio: STK[s2].c, velas: candles.length, ultima: candles.length ? candles.at(-1).date : null, lista: fil }; }, sy); out[sy] = r;
       if (sy === 'GGAL.BA' || sy === 'AL30.BA') try { await pg.screenshot({ path: `capturas/byma-${sy}.png` }); } catch (e) {} }
     info.push({ byma: out }); } catch (e) { info.push({ byma_error: e.message.slice(0, 200) }); }
+  /* zonas roja y verde del RSI */
+  try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1h'], ['SOLUSDT', '1d']]) { out[sy + ' ' + t] = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
+        if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 200 && symbol === sy); k++) await w(250); await w(1500); active.add('rsi'); active.add('esc'); calcInd(true); const E = C.esc; return { z: C.rsiZ, esc: E && { precio: E.c, arriba: E.up.map(x => x.p + '%:' + fp(x.v, sy)), abajo: E.dn.map(x => x.p + '%:' + fp(x.v, sy)) } }; }, [sy, t]);
+      if (sy === 'BTCUSDT') try { await pg.locator('#chart').screenshot({ path: 'capturas/rsi-zonas.png', timeout: 15000 }); } catch (e) {} }
+    info.push({ rsizonas: out }); } catch (e) { info.push({ rsizonas_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
