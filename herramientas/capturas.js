@@ -194,6 +194,10 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         return { sym: $('sym').textContent, nombre: $('symNm').textContent, precio: $('px').textContent, cambio: $('pxCh').textContent, lista: rows }; }, [m, sy]);
       if (sy !== 'GGAL.BA') try { await pg.screenshot({ path: `capturas/encabezado-${sy}.png`, clip: { x: 0, y: 0, width: 412, height: 520 } }); } catch (e) {} }
     info.push({ encabezado: out }); } catch (e) { info.push({ encabezado_error: e.message.slice(0, 200) }); }
+  /* Mis listas: % del día y RSI de acciones que no están en la planilla */
+  try { info.push({ listas: await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await w(500);
+      for (const x of ['BTCUSDT', 'NVDA', 'HUT', 'OKLO', 'GGAL.BA']) favs.add(x); LSTOPEN.fav = 1; LSTTF.fav = '4h'; drawer(true); for (let k = 0; k < 40; k++) { lstRender(); const t = [...document.querySelectorAll('#drwLists .lst-r')].map(r => r.textContent); if (t.length >= 5 && !t.some(x => /RSI …/.test(x))) break; await w(500); }
+      const rows = [...document.querySelectorAll('#drwLists .lst-r')].map(r => r.textContent.replace(/\s+/g, ' ').trim()); drawer(false); return rows; }) }); } catch (e) { info.push({ listas_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
