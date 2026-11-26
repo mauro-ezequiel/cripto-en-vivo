@@ -1,0 +1,155 @@
+{
+ "nota": "frenó = tras tocar el nivel volvió 1 ATR antes de pasarlo 1 ATR. base = niveles al azar a la misma distancia. ventaja = frenó - base (puntos).",
+ "tf": {
+  "1h": {
+   "redondos": {
+    "niveles": 302866,
+    "dist_media_atr": 3.25,
+    "llego": 53.7,
+    "freno": 61.8,
+    "base": 61.6,
+    "ventaja": 0.2
+   },
+   "extremos": {
+    "niveles": 232309,
+    "dist_media_atr": 2.89,
+    "llego": 57.2,
+    "freno": 59.7,
+    "base": 59.8,
+    "ventaja": -0.1
+   },
+   "combo normal": {
+    "niveles": 205016,
+    "dist_media_atr": 3.01,
+    "llego": 56.8,
+    "freno": 61.4,
+    "base": 61.6,
+    "ventaja": -0.2
+   },
+   "pivotes": {
+    "niveles": 407561,
+    "dist_media_atr": 2.98,
+    "llego": 56.8,
+    "freno": 61.8,
+    "base": 61.6,
+    "ventaja": 0.2
+   },
+   "combo fuerte": {
+    "niveles": 95349,
+    "dist_media_atr": 2.88,
+    "llego": 57.2,
+    "freno": 60.2,
+    "base": 60.4,
+    "ventaja": -0.2
+   },
+   "volumen": {
+    "niveles": 206480,
+    "dist_media_atr": 2.97,
+    "llego": 57.4,
+    "freno": 62.9,
+    "base": 62.8,
+    "ventaja": 0.1
+   }
+  },
+  "4h": {
+   "pivotes": {
+    "niveles": 480860,
+    "dist_media_atr": 2.99,
+    "llego": 54.8,
+    "freno": 63.2,
+    "base": 63.2,
+    "ventaja": 0
+   },
+   "volumen": {
+    "niveles": 231565,
+    "dist_media_atr": 2.97,
+    "llego": 56,
+    "freno": 64.1,
+    "base": 63.8,
+    "ventaja": 0.3
+   },
+   "redondos": {
+    "niveles": 353756,
+    "dist_media_atr": 3.25,
+    "llego": 52.5,
+    "freno": 62.6,
+    "base": 63,
+    "ventaja": -0.3
+   },
+   "extremos": {
+    "niveles": 275840,
+    "dist_media_atr": 2.9,
+    "llego": 55.5,
+    "freno": 59.7,
+    "base": 60.6,
+    "ventaja": -0.9
+   },
+   "combo normal": {
+    "niveles": 238391,
+    "dist_media_atr": 2.99,
+    "llego": 55.7,
+    "freno": 62.2,
+    "base": 62.5,
+    "ventaja": -0.2
+   },
+   "combo fuerte": {
+    "niveles": 114320,
+    "dist_media_atr": 2.93,
+    "llego": 53.7,
+    "freno": 61.8,
+    "base": 62,
+    "ventaja": -0.1
+   }
+  },
+  "1d": {
+   "pivotes": {
+    "niveles": 315458,
+    "dist_media_atr": 3,
+    "llego": 54.6,
+    "freno": 59.1,
+    "base": 59.2,
+    "ventaja": -0.2
+   },
+   "volumen": {
+    "niveles": 138585,
+    "dist_media_atr": 2.98,
+    "llego": 55.9,
+    "freno": 62.2,
+    "base": 62,
+    "ventaja": 0.2
+   },
+   "redondos": {
+    "niveles": 229987,
+    "dist_media_atr": 3.25,
+    "llego": 52.3,
+    "freno": 59.5,
+    "base": 60.1,
+    "ventaja": -0.6
+   },
+   "extremos": {
+    "niveles": 180706,
+    "dist_media_atr": 2.87,
+    "llego": 55.4,
+    "freno": 55.1,
+    "base": 55.5,
+    "ventaja": -0.4
+   },
+   "combo normal": {
+    "niveles": 153036,
+    "dist_media_atr": 2.99,
+    "llego": 56.4,
+    "freno": 58.2,
+    "base": 58.3,
+    "ventaja": -0.1
+   },
+   "combo fuerte": {
+    "niveles": 74520,
+    "dist_media_atr": 2.97,
+    "llego": 52.4,
+    "freno": 57.2,
+    "base": 57.7,
+    "ventaja": -0.6
+   }
+  }
+ }
+}
