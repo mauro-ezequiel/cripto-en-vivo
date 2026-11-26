@@ -7,4 +7,4 @@ const lindo = t => String(t).toLowerCase().replace(/\b(inc|corp|corporation|co|l
   const m = {}; for (const k in sec) { const x = sec[k]; m[String(x.ticker).toUpperCase().replace('-', '.')] = lindo(x.title); }
   const U = await (await fetch('https://data912.com/live/usa_stocks')).json(), A = await (await fetch('https://data912.com/live/usa_adrs')).json();
   const out = {}; let falt = []; for (const x of [...U, ...A]) { const s = String(x.symbol); const n = m[s] || m[s.replace('.', '')]; if (n) out[s] = n; else falt.push(s); }
-  fs.writeFileSync('nombres-acciones.json', JSON.stringify(out)); console.log('con nombre', Object.keys(out).length, 'sin', falt.length, falt.slice(0, 60).join(' ')); console.log('MUESTRA', ['MELI', 'NVDA', 'GGAL', 'YPF', 'BRK.B', 'SPY', 'AAPL', 'TSLA'].map(s => s + '=' + out[s]).join(' | ')); })();
+  fs.writeFileSync('nombres.json', JSON.stringify(out)); console.log('con nombre', Object.keys(out).length, 'sin', falt.length, falt.slice(0, 60).join(' ')); console.log('MUESTRA', ['MELI', 'NVDA', 'GGAL', 'YPF', 'BRK.B', 'SPY', 'AAPL', 'TSLA'].map(s => s + '=' + out[s]).join(' | ')); })();
