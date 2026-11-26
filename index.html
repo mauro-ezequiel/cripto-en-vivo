@@ -1051,21 +1051,21 @@ const MODES = {
     desc: 'Operaciones de 4 h a 1 día o 1 semana',
     info: ['Temporalidad inicial: 4H', 'Mapa de liquidaciones (Binance, Bybit, OKX)', 'Supertrend, EMA 21/50/200, RSI 14, ADX, CVD, Perfil de volumen, Fibonacci', 'Termómetro de tendencia 1–100 con manos grandes, funding y flujo'],
     tf: '4h', bars: 200,
-    inds: ['liq','sop','cap','trend','canal','supertrend','ema','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig']
+    inds: ['liq','sop','esc','cap','trend','canal','supertrend','ema','vprofile','fib','smc','div','rsi','adx','cvd','kon','fig']
   },
   x: {
     name: 'SHOOTER', tag: '',
     desc: 'Scalping e intradía de 1 a 30 minutos',
     info: ['Temporalidad inicial: 15m (señales en 15 y 30 min)', 'Señal: rebote tras una caída fuerte (−3 % en 1 h) con la tendencia de 1 h a favor', 'Bollinger, RSI 7, ADX, VWAP, CVD y zonas de liquidación', 'Noticias globales en el termómetro'],
     tf: '15m', bars: 180,
-    inds: ['liq','sop','cap','trend','canal','bollinger','vwap','smc','div','rsi','adx','cvd','kon','fig']
+    inds: ['liq','sop','esc','cap','trend','canal','bollinger','vwap','smc','div','rsi','adx','cvd','kon','fig']
   },
   p: {
     name: 'PERSONALIZADO', tag: 'Tus ajustes',
     desc: 'Como TRADING, pero con tus propios ajustes de indicadores',
     info: ['Parte de los valores de TRADING (4H)', 'Cambia colores, medidas y grosor de línea de cada indicador', 'El termómetro y las señales se recalculan con tus ajustes', 'Señales sin calibrar: NO RECOMENDABLE'],
     tf: '4h', bars: 200,
-    inds: ['liq','sop','cap','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','smc','div','rsi','adx','stochrsi','cvd','kon'],
+    inds: ['liq','sop','esc','cap','trend','canal','supertrend','ema','bollinger','ichimoku','vwap','vprofile','fib','smc','div','rsi','adx','stochrsi','cvd','kon'],
     def: ['liq','cap','trend','canal','supertrend','ema','vprofile','fib','rsi','adx','cvd','kon']
   },
   a: {
@@ -1177,7 +1177,8 @@ const IND = {
   adx:       {name:'ADX / DMI (14)',      color:'#e0e0e0', pane:true},
   smc:       {name:'Zonas Smart Money (FVG y order blocks)', color:'#9575cd', pane:false},
   div:       {name:'Divergencias de RSI', color:'#ffca28', pane:false},
-  cap:       {name:'Capitulación (rebote · vela diaria)', color:'#00e676', pane:false}
+  cap:       {name:'Capitulación (rebote · vela diaria)', color:'#00e676', pane:false},
+  esc:       {name:'Escalones de probabilidad', color:'#20b26c', pane:false}
 };
 let active = new Set();
 let C = {}; // resultados calculados (arrays alineados con candles)
@@ -1341,6 +1342,7 @@ function calcInd(full){
   C.smc=active.has('smc')?calcSMC():null;
   C.div=active.has('div')?calcDiv():null;
   C.cap=active.has('cap')?calcCap():null;
+  C.esc=active.has('esc')?calcEsc():null;
   C.trend=active.has('trend')?calcTrendLine():null;
   C.canal=active.has('canal')?calcCanal():null;
   if(SEMF)try{semCalc();}catch(e){SEMS={};}
@@ -1570,6 +1572,23 @@ function drawCap(ctx,from,to,X,Y,paneW){const D=C.cap;if(!D)return;ctx.font='700
     ctx.beginPath();ctx.moveTo(x,y);ctx.lineTo(x-6,y+9);ctx.lineTo(x+6,y+9);ctx.closePath();ctx.fill();ctx.fillText(v.abierta?'Capitulación? (vela abierta)':'Capitulación '+CAP_WIN,x,y+12);
     if(v.a&&v.i>=candles.length-6){ctx.setLineDash([4,3]);ctx.lineWidth=1;const xe=Math.min(paneW-4,x+120);for(const [pp,col] of [[v.e+1.5*v.a,'#00e676'],[v.e-1.5*v.a,'#ef454a']]){const yy=Y(pp);ctx.strokeStyle=col;ctx.beginPath();ctx.moveTo(x,yy);ctx.lineTo(xe,yy);ctx.stroke();}ctx.setLineDash([]);}
     ctx.globalAlpha=1;}}
+/* ESCALONES DE PROBABILIDAD (noviembre 2026). Con la historia de ESTA moneda y ESTA temporalidad se mide, para cada vela pasada,
+   cuánto subió como máximo y cuánto bajó como máximo en las 12 velas siguientes (en múltiplos de su ATR). Con eso salen los escalones:
+   el nivel al que llegó el 80, 65, 50, 35 y 20 % de las veces, arriba (verde) y abajo (rojo), desde el precio de ahora.
+   Probado fuera de la muestra en 20 criptos (herramientas/investigacion-escalones-prob.js): lo prometido se cumplió con un error medio
+   de 0,6 puntos en 15 min, 1,1 en 1 h, 1,3 en 4 h y 3,6 en 1 día (en diario la tendencia del período pesa más).
+   OJO: dice hasta dónde suele LLEGAR el precio, no que vaya a frenar en esos niveles (eso se midió y no tiene ventaja). */
+const ESC_P=[80,65,50,35,20],ESC_H=12;
+function calcEsc(){const b=candles,n=b.length;if(n<200)return null;const A=[];{let a=0;for(let i=1;i<n;i++){const tr=Math.max(b[i].high-b[i].low,Math.abs(b[i].high-b[i-1].close),Math.abs(b[i].low-b[i-1].close));a=i<=14?a+tr/14:(a*13+tr)/14;A[i]=i>=14?a:null;}}
+  const U=[],D=[];for(let i=20;i<n-ESC_H;i++){const a=A[i];if(!a)continue;let hh=-Infinity,ll=Infinity;for(let j=i+1;j<=i+ESC_H;j++){if(b[j].high>hh)hh=b[j].high;if(b[j].low<ll)ll=b[j].low;}U.push((hh-b[i].close)/a);D.push((b[i].close-ll)/a);}
+  if(U.length<150)return null;U.sort((x,y)=>x-y);D.sort((x,y)=>x-y);const q=(L,p)=>L[Math.min(L.length-1,Math.max(0,Math.floor((1-p/100)*(L.length-1))))];
+  const c=b[n-1].close,a=A[n-1];return{c,a,n:U.length,up:ESC_P.map(p=>({p,v:c+q(U,p)*a})),dn:ESC_P.map(p=>({p,v:c-q(D,p)*a}))};}
+function drawEsc(ctx,from,to,X,Y,paneW){const E=C.esc;if(!E)return;const n=candles.length,x0=Math.max(0,Math.min(paneW-150,(X(n-1)??paneW-150)));
+  ctx.font='600 11px system-ui,sans-serif';ctx.textBaseline='middle';ctx.textAlign='right';
+  for(const [L,col,rgb] of [[E.up,'#20b26c','32,178,108'],[E.dn,'#ef454a','239,69,74']])L.forEach((z,k)=>{const y=Y(z.v);if(y==null)return;const al=.35+.65*z.p/100;
+    ctx.strokeStyle=`rgba(${rgb},${al})`;ctx.lineWidth=z.p===50?2:1.2;ctx.setLineDash(z.p===50?[]:[5,4]);ctx.beginPath();ctx.moveTo(x0,y);ctx.lineTo(paneW-4,y);ctx.stroke();ctx.setLineDash([]);
+    const t=`${z.p} % · ${fp(z.v,symbol)}`,tw=ctx.measureText(t).width+10;ctx.fillStyle='rgba(0,0,0,.72)';ctx.fillRect(paneW-6-tw,y-8,tw,16);ctx.fillStyle=col;ctx.fillText(t,paneW-10,y);});
+  ctx.textAlign='left';ctx.fillStyle='rgba(200,200,200,.75)';ctx.font='11px system-ui,sans-serif';ctx.fillText(`Escalones: hasta dónde llegó el precio en las próximas ${ESC_H} velas (${E.n} casos de este gráfico)`,10,24);}
 function drawDiv(ctx,from,to,X,Y){const D=C.div;if(!D)return;ctx.lineWidth=2;ctx.font='700 11px system-ui,sans-serif';ctx.textAlign='center';
   D.forEach(v=>{if(v.i1<from||v.i0>to)return;const x0=X(v.i0),x1=X(v.i1);if(x0==null||x1==null)return;const y0=Y(v.p0),y1=Y(v.p1),col=v.d>0?'#20b26c':'#ef454a';
     ctx.strokeStyle=col;ctx.setLineDash([5,3]);ctx.beginPath();ctx.moveTo(x0,y0);ctx.lineTo(x1,y1);ctx.stroke();ctx.setLineDash([]);
@@ -1672,6 +1691,7 @@ function drawInd(ctx,w,h){
     if(active.has('smc'))drawSMC(ctx,from,to,X,Y,paneW);
     if(active.has('div'))drawDiv(ctx,from,to,X,Y);
     if(active.has('cap'))drawCap(ctx,from,to,X,Y,paneW);
+    if(active.has('esc'))drawEsc(ctx,from,to,X,Y,paneW);
     if(active.has('fib')){
       const up=loI<hiI,LV=[[0,'#9e9e9e'],[.236,'#ef454a'],[.382,'#ff9800'],[.5,'#4caf50'],[.618,'#e040fb'],[.786,'#29b6f6'],[1,'#9e9e9e']];
       lastFib={up,hi,lo};const x0=X(Math.min(hiI,loI));
@@ -2069,8 +2089,8 @@ chart.subscribeCrosshairMove(p=>{
 
 /* ---- barra de indicadores ---- */
 /* las 3 temporalidades donde más acertó cada indicador (herramientas/investigacion-temporalidades.js, 15 criptos; acierto = +1,5 ATR antes que −1,5 ATR; al azar 50 %) */
-const IND_TF={"trend":[["1D",52],["4h",50],["1h",50]],"sop":[["4h",50],["12h",50],["15m",50]],"cvd":[["4h",52],["1h",51],["12h",51]],"stochrsi":[["1S",56],["15m",50],["4h",49]],"canal":[["1S",56],["15m",50],["12h",49]],"smc":[["15m",50],["12h",50],["4h",50]],"ema":[["1D",56],["4h",52],["12h",51]],"bollinger":[["1S",55],["4h",50],["15m",50]],"kon":[["1S",59],["12h",54],["4h",51]],"vwap":[["1D",52],["12h",52],["4h",51]],"supertrend":[["1D",53],["12h",52],["4h",51]],"ichimoku":[["12h",56],["4h",55],["1D",53]],"rsi":[["12h",50],["15m",49],["4h",48]],"adx":[["1D",50],["4h",50],["1h",50]],"fib":[["4h",50],["1h",49],["15m",49]],"div":[["12h",52],["4h",51],["1D",51]],"cap":[["1D",73]]};
-const indTf=k=>{const L=IND_TF[k];return L?`<small class="ind-tf" title="Temporalidades donde más acertó en las pruebas (de mayor a menor). Acierto = el precio fue 1,5 ATR a favor antes que 1,5 ATR en contra; al azar da 50 %. Por debajo de 55 % (en gris) la diferencia con el azar es chica y puede ser ruido.">${L.map(([t,v])=>`<span class="${v>=55?'tf-ok':'tf-flojo'}">${t} ${v}%</span>`).join(' · ')}</small>`:'';};
+const IND_TF={"trend":[["1D",52],["4h",50],["1h",50]],"sop":[["4h",50],["12h",50],["15m",50]],"cvd":[["4h",52],["1h",51],["12h",51]],"stochrsi":[["1S",56],["15m",50],["4h",49]],"canal":[["1S",56],["15m",50],["12h",49]],"smc":[["15m",50],["12h",50],["4h",50]],"ema":[["1D",56],["4h",52],["12h",51]],"bollinger":[["1S",55],["4h",50],["15m",50]],"kon":[["1S",59],["12h",54],["4h",51]],"vwap":[["1D",52],["12h",52],["4h",51]],"supertrend":[["1D",53],["12h",52],["4h",51]],"ichimoku":[["12h",56],["4h",55],["1D",53]],"rsi":[["12h",50],["15m",49],["4h",48]],"adx":[["1D",50],["4h",50],["1h",50]],"fib":[["4h",50],["1h",49],["15m",49]],"div":[["12h",52],["4h",51],["1D",51]],"cap":[["1D",73]],"esc":[["15m",99],["1h",99],["4h",99]]};
+const indTf=k=>{if(k==='esc')return '<small class="ind-tf" title="Qué tan bien se cumplieron las probabilidades fuera de la muestra (error medio en puntos): 15 min 0,6 · 1 h 1,1 · 4 h 1,3 · 1 día 3,6"><span class="tf-ok">15m · 1h · 4h</span></small>';const L=IND_TF[k];return L?`<small class="ind-tf" title="Temporalidades donde más acertó en las pruebas (de mayor a menor). Acierto = el precio fue 1,5 ATR a favor antes que 1,5 ATR en contra; al azar da 50 %. Por debajo de 55 % (en gris) la diferencia con el azar es chica y puede ser ruido.">${L.map(([t,v])=>`<span class="${v>=55?'tf-ok':'tf-flojo'}">${t} ${v}%</span>`).join(' · ')}</small>`:'';};
 function renderChips(){
   const M=MODES[mode];
   $('inds').classList.toggle('hide',!M.inds.length);
@@ -2112,6 +2132,7 @@ function applyMode(m){try{VERSEL=null;VERBOX=false;}catch(_){}setTimeout(()=>{tr
   try{if(saved&&!saved.includes('canal')&&!localStorage.getItem('cv_cn_'+m)){saved.push('canal');localStorage.setItem('cv_cn_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('kon')&&!localStorage.getItem('cv_kon_'+m)){saved.push('kon');localStorage.setItem('cv_kon_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   try{if(saved&&!saved.includes('cap')&&M.inds.includes('cap')&&!localStorage.getItem('cv_cap_'+m)){saved.push('cap');localStorage.setItem('cv_cap_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
+  try{if(saved&&!saved.includes('esc')&&M.inds.includes('esc')&&!localStorage.getItem('cv_esc_'+m)){saved.push('esc');localStorage.setItem('cv_esc_'+m,'1');localStorage.setItem('cv_ind4_'+m,JSON.stringify(saved));}}catch(e){}
   active=new Set((indUser()||saved||(M.def||M.inds).filter(k=>k!=='fig')).filter(k=>M.inds.includes(k))); // las figuras arrancan apagadas: se prenden desde Indicadores
   renderChips();layout();
   document.querySelectorAll('#modeSeg [data-mode]').forEach(b=>b.classList.toggle('on',b.dataset.mode===m));
@@ -6564,6 +6585,7 @@ const TL={ // lecciones: t título, g grupo, b qué es, h cómo usarlo para entr
  sop:{g:'Indicadores',t:'🧱 Soportes y resistencias fuertes',ind:'sop',b:'Estudia todas las velas de la temporalidad elegida y marca los niveles donde el precio llegó varias veces y se frenó: soportes (verde, debajo del precio) y resistencias (rojo, arriba). Cuenta los toques y los falsos quiebres (la mecha pasa pero la vela vuelve). Más grueso = más fuerte.',h:['Un soporte con muchos toques es buen lugar para buscar LONG; si se quiebra con cierre, suele volverse resistencia.','Poné el stop un poco más allá de la franja, no justo en la línea: los falsos quiebres barren esos stops.'],x:[]},
  vprofile:{g:'Indicadores',t:'📊 Perfil de volumen',ind:'vprofile',b:'Barras horizontales con el volumen operado en cada precio. El nivel con más volumen (POC) actúa como imán y soporte o resistencia.',h:['Zonas de mucho volumen frenan el precio: buenos lugares para entrar o tomar ganancia.','Zonas de poco volumen se atraviesan rápido: no pongas el stop en el medio de una.'],x:['q_vp']},
  smc:{g:'Indicadores',t:'🟪 Zonas Smart Money',ind:'smc',b:'FVG: huecos que dejó un movimiento muy rápido; el precio suele volver a llenarlos. Order block: la última vela en contra antes de un impulso fuerte; suele frenar al precio cuando vuelve.',h:['Verde / violeta = zona de compra (soporte). Rojo / naranja = zona de venta (resistencia).','Sirven para ubicar la entrada o el stop, no para entrar solas.'],x:[]},
+ esc:{g:'Indicadores',t:'🪜 Escalones de probabilidad',ind:'esc',b:'Marca escalones arriba (verdes) y abajo (rojos) desde el precio de ahora, con la probabilidad de que el precio LLEGUE a cada uno en las próximas 12 velas. Sale de la historia de esta misma moneda y temporalidad: por ejemplo "65 %" quiere decir que, en el pasado, el precio llegó hasta ahí 65 de cada 100 veces.',h:['Probado fuera de la muestra en 20 criptos: lo prometido se cumplió casi exacto en 15 min (error medio 0,6 puntos) y 1 h (1,1); en 4 h 1,3 y en 1 día 3,6 (ahí pesa más si el mercado viene en tendencia).','Dice hasta dónde suele llegar, NO que el precio vaya a frenar ahí: eso lo medimos con soportes, volumen y números redondos y no tiene ventaja.','Los dos lados se miran por separado: que el verde de 50 % y el rojo de 50 % sean igual de probables no dice cuál pasa primero.'],x:[]},
  cap:{g:'Indicadores',t:'🟩 Capitulación (rebote)',ind:'cap',b:'Indicador propio de CRIPTO-LIVE. Marca la vela DIARIA donde el pánico se agota: RSI 14 por debajo de 30, el precio muy por debajo de su promedio (Bollinger −1,5) y una mecha larga abajo (los compradores la levantaron desde el mínimo). Probado en 30 criptos de 2020 a 2026: 73 % de las veces el precio subió 1,5 ATR antes de bajar 1,5 ATR (lo normal es 50 %); en el peor año, 65 %. Ojo: salió de comparar unas 700 combinaciones, son solo 155 señales y no descuenta comisiones, así que en vivo probablemente acierte menos. Desde el 17/11/2026 se anota cada señal real para medirlo.',h:['Aparece poco: unas 2 o 3 veces por año en cada moneda. Funciona en vela de 1 día y en cripto; en 4 h o 12 h no sirve.','Las líneas punteadas son el objetivo (+1,5 ATR, verde) y el stop (−1,5 ATR, rojo). No acierta siempre: 1 de cada 4 sale mal, usá stop.'],x:[]},
  div:{g:'Indicadores',t:'🟨 Divergencias de RSI',ind:'div',b:'El precio hace un mínimo (o máximo) nuevo, pero el RSI no lo acompaña: el movimiento pierde fuerza y puede girar.',h:['div ▲ verde: la caída pierde fuerza (posible rebote).','div ▼ roja: la suba pierde fuerza. Aparecen 3 velas después del giro, para confirmarlo.'],x:[]},
  fib:{g:'Indicadores',t:'🌀 Fibonacci automático',ind:'fib',b:'Marca retrocesos de la última gran onda: 38,2 %, 50 % y 61,8 % son los más usados.',h:['En tendencia, esperá que el precio retroceda a 50–61,8 % y entrá a favor con el stop debajo del 78,6 %.','Si rompe el 78,6 %, la onda probablemente terminó.'],x:['q_fib']},
