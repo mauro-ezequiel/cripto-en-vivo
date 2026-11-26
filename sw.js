@@ -1,6 +1,6 @@
 /* CRIPTO-LIVE · service worker: permite instalar la app, abrirla sin conexión y tocar los avisos */
 const C='cl-v5';
-const SHELL=['./','manifest.json','icon-192.png','icon-512.png','ia-core.js','herramientas/macro-lib.js'];
+const SHELL=['./','manifest.json','icon-192.png','icon-512.png','ia-core.js','herramientas/macro-lib.js','nombres-acciones.json'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C).then(c=>Promise.all(SHELL.map(u=>fetch(u,{cache:'reload'}).then(r=>r.ok&&c.put(u,r)).catch(()=>{})))));self.skipWaiting();});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==C).map(x=>caches.delete(x)))).then(()=>self.clients.claim()));});
 /* 20/11/2026 · aviso de actualización, versión 3 (la anterior se trababa):

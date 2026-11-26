@@ -188,6 +188,12 @@ const fs = require('fs'), { chromium } = require('playwright-core');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 200 && symbol === sy); k++) await w(250); await w(1500); active.add('rsi'); active.add('esc'); calcInd(true); const E = C.esc; return { z: C.rsiZ, esc: E && { precio: E.c, arriba: E.up.map(x => x.p + '%:' + fp(x.v, sy)), abajo: E.dn.map(x => x.p + '%:' + fp(x.v, sy)) } }; }, [sy, t]);
       if (sy === 'BTCUSDT') try { await pg.locator('#chart').screenshot({ path: 'capturas/rsi-zonas.png', timeout: 15000 }); } catch (e) {} }
     info.push({ rsizonas: out }); } catch (e) { info.push({ rsizonas_error: e.message.slice(0, 200) }); }
+  /* encabezado: % al lado del precio y nombre completo debajo del ticker */
+  try { const out = {}; for (const [m, sy] of [['medio', 'BTCUSDT'], ['a', 'MELI'], ['a', 'GGAL.BA']]) { out[sy] = await pg.evaluate(async ([m, sy]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode(m); setView('main'); for (let k = 0; k < 40 && m === 'a' && !stkReady; k++) await w(500);
+        select(sy); await w(2500); updateTop(); const rows = [...document.querySelectorAll('#list .row')].slice(0, 3).map(r => r.textContent.replace(/\s+/g, ' ').trim().slice(0, 80));
+        return { sym: $('sym').textContent, nombre: $('symNm').textContent, precio: $('px').textContent, cambio: $('pxCh').textContent, lista: rows }; }, [m, sy]);
+      if (sy !== 'GGAL.BA') try { await pg.screenshot({ path: `capturas/encabezado-${sy}.png`, clip: { x: 0, y: 0, width: 412, height: 520 } }); } catch (e) {} }
+    info.push({ encabezado: out }); } catch (e) { info.push({ encabezado_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
