@@ -787,6 +787,7 @@ button.lp-p{cursor:pointer}.lp-p.on{border-color:#20b26c;box-shadow:0 0 0 2px rg
 .pie{flex:none;margin:18px 12px 8px;padding:14px 16px;border-top:1px solid var(--line);color:var(--mut);font-size:11px;line-height:1.5;display:flex;flex-direction:column;gap:6px}
 .pie b{color:#c3c6cc}.pie-l{font-size:12px}
 @media (min-width:901px){.pie{margin:0;padding:12px 16px 16px}}
+.sym-nm{display:block;font-size:11.5px;color:var(--mut);font-weight:500;margin-top:1px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}.px-w{display:flex;align-items:baseline;gap:8px;flex-wrap:wrap}.px-ch{font-size:13px;font-weight:700}.row-nm{display:block;font-style:normal;font-size:10px;color:var(--mut);font-weight:400;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px;line-height:1.2}
 /* ===== Estética oscura tipo exchange (negro puro, azul intenso, píldoras) ===== */
 :root{--bg:#000;--panel:#111113;--line:#232328;--txt:#f2f3f5;--mut:#8a8f99;--up:#20b26c;--dn:#ef454a;--acc:#1a6bff;--card:#141416;--card2:#1c1c20}
 html,body{background:#000;-webkit-font-smoothing:antialiased}
@@ -841,8 +842,8 @@ input,select,textarea{border-radius:12px}
   </aside>
   <main>
     <div class="top">
-      <div><div class="sym"><img id="symIco" class="ico" alt="" hidden referrerpolicy="no-referrer"><span id="sym">BTC/USDT</span></div></div>
-      <div class="px" id="px">—</div>
+      <div><div class="sym"><img id="symIco" class="ico" alt="" hidden referrerpolicy="no-referrer"><span id="sym">BTC/USDT</span></div><small class="sym-nm" id="symNm"></small></div>
+      <div class="px-w"><div class="px" id="px">—</div><span class="px-ch" id="pxCh"></span></div>
       <span id="hdLive" style="font-size:11px;font-weight:700;color:#fff;background:var(--dn);padding:3px 8px;border-radius:4px;letter-spacing:.05em">● EN VIVO</span>
       <div class="stat">Cambio 24h<b id="s-ch">—</b></div>
       <div class="stat">Máx 24h<b id="s-hi">—</b></div>
@@ -2581,7 +2582,7 @@ function renderList(){
   const rf=favOnly&&typeof lstRsi==='function',rtf=(typeof LSTTF!=='undefined'&&LSTTF.fav)||'1d';$('list').classList.toggle('wr',rf);$('lhead').classList.toggle('wr',rf);
   $('lhead').innerHTML=`<span>Par</span><span>Precio</span><span>24h</span>${rf?`<span>RSI ${rtf==='1w'?'1 sem':rtf}</span>`:''}`;
   $('list').innerHTML=arr.map(t=>`<div class="row${t.s===symbol?' active':''}" data-s="${t.s}">
-    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.n||t.s.replace('USDT','')}</b><small>${t.kind?' '+(t.ex||'NYSE')+(t.kind==='BONO'?' bono':t.kind==='LETRA'?' letra':t.kind==='ON'?' ON':''):t.fut?'/USDT · perp':'/USDT'}</small></span>
+    <span><i class="star${favs.has(t.s)?' on':''}" data-star="${t.s}" title="Favorita">★</i>${icoHTML(t.s)}<b>${t.n||t.s.replace('USDT','')}</b>${nomDe(t.s)?`<em class="row-nm">${esc(nomDe(t.s))}</em>`:''}<small>${t.kind?' '+(t.ex||'NYSE')+(t.kind==='BONO'?' bono':t.kind==='LETRA'?' letra':t.kind==='ON'?' ON':''):t.fut?'/USDT · perp':'/USDT'}</small></span>
     <span data-c>${fp(t.c,t.s)}</span><span data-p class="${t.p>=0?'up':'dn'}">${fpct(t.p)}</span>${rf?(v=>v==null?'<span class="rsx xs mut">…</span>':`<span class="rsx xs" style="background:${rsiColor(v)}" title="RSI 14 de ${rtf} (se cambia en el menú ☰ › Mis listas › Favoritos)">${Math.round(v)}</span>`)(lstRsi(t.s,rtf)):''}</div>`).join('')
     ||`<div style="padding:16px;color:var(--mut)">${favOnly?'Toca la ★ de una moneda para agregarla a tus favoritas.':'Sin resultados'}</div>`;
   ROWS=new Map();for(const r of $('list').children)if(r.dataset.s)ROWS.set(r.dataset.s,r);
@@ -2619,6 +2620,7 @@ function updateTop(){
   const t=tickers[symbol];if(!t)return;
   $('sym').textContent=t.kind?(t.n||symbol)+' · '+(t.ex||'NYSE')+(t.kind==='BONO'?' · bono':t.kind==='LETRA'?' · letra':t.kind==='ON'?' · obligación negociable':'')+' · '+(t.cur||'USD'):symbol.replace('USDT','')+(t.fut?'/USDT · futuros perpetuos':'/USDT');
   $('px').textContent=fp(t.c,symbol);$('px').className='px '+(t.p>=0?'up':'dn');
+  {const e=$('pxCh');if(e){e.textContent=(t.p>=0?'▲ ':'▼ ')+fpct(t.p).replace(/^[+-]/,'');e.className='px-ch '+(t.p>=0?'up':'dn');e.title=t.kind?'Cambio del día':'Cambio en 24 h';}const n=$('symNm');if(n)n.textContent=nomDe(symbol)||'';}
   $('s-ch').textContent=fpct(t.p);$('s-ch').className=t.p>=0?'up':'dn';
   $('s-hi').textContent=fp(t.h,symbol);$('s-lo').textContent=fp(t.l,symbol);$('s-vol').textContent=fv(t.q);
   document.title=`${fp(t.c,symbol)} ${symbol.replace('USDT','')} · CRIPTO-LIVE`;
@@ -3548,9 +3550,15 @@ const icoBase=s=>s.replace(/USDT$/,'').replace(/^1000000|^1000/,'');
 function icoUrl(s){if(!s)return null;if(!/USDT$/.test(s))return `https://financialmodelingprep.com/image-stock/${encodeURIComponent(s.replace('.','-'))}.png`;const c=ICO.c[icoBase(s)];return c?c[0]:null;}
 function icoHTML(s){const u=icoUrl(s);return u?`<img class="ico" src="${esc(u)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">`:'';}
 function icoHead(){const im=$('symIco');if(!im)return;const u=icoUrl(symbol);if(!u){im.hidden=true;im.removeAttribute('src');return;}if(im.getAttribute('src')!==u){im.hidden=false;im.onerror=()=>{im.hidden=true;};im.src=u;}}
-async function icoLoad(){if(Date.now()-ICO.t<7*864e5&&Object.keys(ICO.c).length>50)return;
+/* nombre completo del activo, chiquito debajo del ticker (26/11/2026): cripto desde CoinGecko, acciones desde la lista de la SEC
+   (nombres-acciones.json) y las de BYMA a mano */
+var NOMS={};fetch('nombres-acciones.json').then(r=>r.ok?r.json():{}).then(j=>{NOMS=j||{};try{renderList();updateTop();}catch(e){}}).catch(()=>{});
+function nomDe(s){if(!s)return '';if(/USDT$/.test(s)&&!(typeof STK!=='undefined'&&STK[s])){const c=ICO.c[icoBase(s)];return c&&c[2]||'';}
+  const q=typeof STK!=='undefined'&&STK[s];if(q&&q.kind==='BONO')return 'Bono';if(q&&q.kind==='LETRA')return 'Letra del Tesoro';if(q&&q.kind==='ON')return 'Obligación negociable';
+  return NOMS[s]||(typeof ETF_ES!=='undefined'&&ETF_ES[s]&&ETF_ES[s][0])||'';}
+async function icoLoad(){const sinNom=Object.values(ICO.c).slice(0,5).some(x=>!x||x.length<3);if(!sinNom&&Date.now()-ICO.t<7*864e5&&Object.keys(ICO.c).length>50)return;
   try{const P=await Promise.all([1,2].map(p=>getJ(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=250&page=${p}`,15000).catch(()=>[])));const c={};
-    for(const L of P)for(const x of (Array.isArray(L)?L:[])){const k=String(x.symbol||'').toUpperCase();if(k&&!c[k]&&x.image)c[k]=[String(x.image).replace('/large/','/small/'),x.id];}
+    for(const L of P)for(const x of (Array.isArray(L)?L:[])){const k=String(x.symbol||'').toUpperCase();if(k&&!c[k]&&x.image)c[k]=[String(x.image).replace('/large/','/small/'),x.id,x.name||''];}
     if(Object.keys(c).length>50){ICO={c,t:Date.now()};try{localStorage.setItem('cv_ico',JSON.stringify(ICO));}catch(e){}try{renderList();}catch(e){}icoHead();}}catch(e){}}
 setTimeout(icoLoad,2500);
 setInterval(()=>{if(symbol&&symbol!==DATCUR&&!document.hidden){try{icoHead();datShow();}catch(e){}}},3000);
