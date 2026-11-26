@@ -1326,7 +1326,7 @@ function calcInd(full){
   if(!candles.length) return;
   liqDirty=true;
   if(full)for(const k in OS)if(!active.has(k))for(const s in OS[k])OS[k][s].setData([]);
-  if(active.has('rsi')) C.rsi=calcRSI(PRM[mode].rsi);
+  if(active.has('rsi')){C.rsi=calcRSI(PRM[mode].rsi);try{C.rsiZ=rsiZonas(C.rsi);}catch(e){C.rsiZ=null;}}
   if(active.has('macd')) C.macd=calcMACD(...(PRM[mode].macd||[]));
   if(active.has('kon')) C.kon=calcKon();
   if(active.has('adx')) C.adx=calcADX(PRM[mode].adx||14);
@@ -1524,6 +1524,17 @@ function calcSMC(){const b=candles,n=b.length,A=wilder(trArr(),14),F=[],O=[];if(
 /* ---------- 🟨 DIVERGENCIAS DE RSI ----------
    Alcista: el precio hace un mínimo más bajo pero el RSI 14 un mínimo más alto (la caída pierde fuerza). Bajista: al revés en los máximos.
    Se confirman con 3 velas a cada lado del giro (por eso aparecen 3 velas después). */
+/* ZONAS DEL RSI (noviembre 2026): roja arriba y verde abajo, a la medida de cada moneda y temporalidad.
+   El límite no es el 70/30 fijo: es donde estuvo el RSI solo el 10 % más alto (rojo) y el 10 % más bajo (verde) de su propia historia.
+   Además se cuenta qué pasó de verdad cuando el RSI SALIÓ de cada zona en este gráfico: si bajó 1,5 ATR antes de subir 1,5 ATR
+   (zona roja) o al revés (zona verde), dentro de 30 velas. Ese porcentaje se muestra: no se promete que "siempre" se dé vuelta. */
+function rsiZonas(R){const b=candles,n=b.length;if(n<120)return null;const v=R.filter(x=>x!=null).sort((a,c)=>a-c);if(v.length<100)return null;
+  const hi=Math.min(85,Math.max(65,v[Math.floor(v.length*.9)])),lo=Math.max(15,Math.min(35,v[Math.floor(v.length*.1)]));
+  const A=[];{let a=0;for(let i=1;i<n;i++){const tr=Math.max(b[i].high-b[i].low,Math.abs(b[i].high-b[i-1].close),Math.abs(b[i].low-b[i-1].close));a=i<=14?a+tr/14:(a*13+tr)/14;A[i]=i>=14?a:null;}}
+  const res=(i,d)=>{const e=b[i].close,a=A[i];if(!a)return null;const tp=e+d*1.5*a,sl=e-d*1.5*a;for(let j=i+1;j<Math.min(n,i+31);j++){const x=b[j];if(d>0?x.low<=sl:x.high>=sl)return 0;if(d>0?x.high>=tp:x.low<=tp)return 1;}return null;};
+  let rw=0,rn=0,gw=0,gn=0;for(let i=15;i<n-1;i++){if(R[i-1]==null||R[i]==null)continue;
+    if(R[i-1]>=hi&&R[i]<hi){const o=res(i,-1);if(o!=null){rw+=o;rn++;}}if(R[i-1]<=lo&&R[i]>lo){const o=res(i,1);if(o!=null){gw+=o;gn++;}}}
+  return{hi:Math.round(hi),lo:Math.round(lo),r:rn?Math.round(100*rw/rn):null,rn,g:gn?Math.round(100*gw/gn):null,gn};}
 function calcDiv(){const b=candles,n=b.length,R=calcRSI(14),L=[],H=[],D=[],k=3;
   for(let i=k;i<n-k;i++){let lo=true,hi=true;for(let j=1;j<=k;j++){if(b[i].low>b[i-j].low||b[i].low>b[i+j].low)lo=false;if(b[i].high<b[i-j].high||b[i].high<b[i+j].high)hi=false;}
     if(lo&&R[i]!=null){const p=L[L.length-1];if(p&&i-p<=40&&b[i].low<b[p].low&&R[i]>R[p]+1&&R[p]<45)D.push({d:1,i0:p,i1:i,p0:b[p].low,p1:b[i].low});L.push(i);}
@@ -1674,11 +1685,16 @@ function drawInd(ctx,w,h){
 
   // paneles inferiores: separadores y etiquetas
   const i=candles.length-1;
+  /* zonas roja y verde del RSI (franjas) */
+  if(os.includes('rsi')&&C.rsiZ&&OS.rsi&&OS.rsi.rsi){const se=OS.rsi.rsi,n=os.indexOf('rsi'),top=paneH*PG.top[n],bot=top+paneH*PG.h[n],Z=C.rsiZ;
+    const yy=v=>{const y=se.priceToCoordinate(v);return y==null?null:Math.max(top,Math.min(bot,y));};const y100=yy(100),yhi=yy(Z.hi),ylo=yy(Z.lo),y0=yy(0);
+    if(y100!=null&&yhi!=null){ctx.fillStyle='rgba(239,69,74,.2)';ctx.fillRect(0,y100,paneW,yhi-y100);ctx.strokeStyle='rgba(239,69,74,.75)';ctx.setLineDash([4,3]);ctx.beginPath();ctx.moveTo(0,yhi);ctx.lineTo(paneW,yhi);ctx.stroke();}
+    if(ylo!=null&&y0!=null){ctx.fillStyle='rgba(32,178,108,.2)';ctx.fillRect(0,ylo,paneW,y0-ylo);ctx.strokeStyle='rgba(32,178,108,.75)';ctx.beginPath();ctx.moveTo(0,ylo);ctx.lineTo(paneW,ylo);ctx.stroke();}ctx.setLineDash([]);}
   os.forEach((k,n)=>{const y=paneH*PG.top[n];
     ctx.strokeStyle=PDRAG&&PDRAG.n===n?'#f0b90b':'#3a4254';ctx.lineWidth=PDRAG&&PDRAG.n===n?2:1;ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();
     /* agarradera para arrastrar */ctx.fillStyle=PDRAG&&PDRAG.n===n?'#f0b90b':'#4a5366';const gx=paneW/2;ctx.fillRect(gx-14,y-2,28,4);
     let txt=IND[k].name;
-    if(k==='rsi'&&C.rsi)txt+='  '+(C.rsi[i]??0).toFixed(1);
+    if(k==='rsi'&&C.rsi){txt+='  '+(C.rsi[i]??0).toFixed(1);const Z=C.rsiZ;if(Z)txt+=`  · 🔴 >${Z.hi}: al salir bajó ${Z.r??'—'} %${Z.rn?` (${Z.rn})`:''} · 🟢 <${Z.lo}: al salir subió ${Z.g??'—'} %${Z.gn?` (${Z.gn})`:''}`;}
     if(k==='macd'&&C.macd)txt+=`  ${(C.macd.macd[i]??0).toPrecision(4)} / señal ${(C.macd.sig[i]??0).toPrecision(4)}`;
     if(k==='kon'&&C.kon)txt+=`  azul ${(C.kon.marron[i]??0).toFixed(1)}  roja ${(C.kon.media[i]??0).toFixed(1)}  · manos fuertes ${(C.kon.azul[i]??0)>=0?'compran':'venden'}`;
     if(k==='stochrsi'&&C.srsi)txt+=`  K ${(C.srsi.k[i]??0).toFixed(1)}  D ${(C.srsi.d[i]??0).toFixed(1)}`;
@@ -1688,7 +1704,7 @@ function drawInd(ctx,w,h){
   /* octubre 2026: la escala de precios del gráfico principal seguía hacia abajo por los paneles (RSI, MACD, ADX, CVD) con precios que no tienen
      nada que ver. Se tapa esa parte y cada panel muestra su propio valor actual y sus niveles de referencia (RSI 70/30, Stoch 80/20, ADX 25) */
   if(os.length){const yT=paneH*(1-block),aw=w-paneW;if(aw>8){ctx.fillStyle='#000000';ctx.fillRect(paneW+1,yT,aw,paneH-yT);ctx.strokeStyle='#26262b';ctx.lineWidth=1;ctx.beginPath();ctx.moveTo(paneW+.5,yT);ctx.lineTo(paneW+.5,paneH);ctx.stroke();
-    const S={rsi:[OS.rsi.rsi,C.rsi&&C.rsi[i],'#b388ff',[70,30]],stochrsi:[OS.stochrsi.k,C.srsi&&C.srsi.k[i],'#26c6da',[80,20]],macd:[OS.macd.macd,C.macd&&C.macd.macd[i],'#1a6bff',[]],
+    const S={rsi:[OS.rsi.rsi,C.rsi&&C.rsi[i],'#b388ff',C.rsiZ?[C.rsiZ.hi,C.rsiZ.lo]:[70,30]],stochrsi:[OS.stochrsi.k,C.srsi&&C.srsi.k[i],'#26c6da',[80,20]],macd:[OS.macd.macd,C.macd&&C.macd.macd[i],'#1a6bff',[]],
       kon:[OS.kon.marron,C.kon&&C.kon.marron[i],'#1a6bff',[]],adx:[OS.adx.adx,C.adx&&C.adx.adx[i],'#e0e0e0',[25]],cvd:[OS.cvd.cvd,C.cvd&&C.cvd[i],'#ffd166',[]]};
     ctx.font='11px system-ui,sans-serif';ctx.textAlign='left';ctx.textBaseline='middle';
     os.forEach((k,n)=>{const s=S[k];if(!s)return;const [se,v,col,refs]=s,top=paneH*PG.top[n],bot=top+paneH*PG.h[n];
