@@ -2389,7 +2389,10 @@ function snapAt(x,y,mag=MAG){const ts=chart.timeScale();let l=ts.coordinateToLog
   if(mag&&candles.length){const R=coarse()?40:22,x0=ts.logicalToCoordinate(Math.round(l)),x1=ts.logicalToCoordinate(Math.round(l)+1),bw=Math.max(1,Math.abs((x1??(x0||0)+6)-(x0||0))),k=Math.min(30,Math.ceil(R/bw)+1);
     let best=null,bd=1e9;const c0=Math.round(l);
     for(let i=Math.max(0,c0-k);i<=Math.min(candles.length-1,c0+k);i++){const b=candles[i],xx=ts.logicalToCoordinate(i);if(xx==null||Math.abs(xx-x)>R)continue;
-      for(const [v,w] of [[b.high,1],[b.low,1],[b.open,1.5],[b.close,1.5]]){const yy=series.priceToCoordinate(v);if(yy==null)continue;const d=Math.hypot(xx-x,yy-y)*w;if(d<bd){bd=d;best={i,v};}}}
+      /* las puntas que son máximo o mínimo de su zona (más alta/baja que 2 velas a cada lado) tienen prioridad: es donde se apoyan las líneas */
+      const piv=(f,cmp)=>{for(let q=1;q<=2;q++){const A=candles[i-q],Z=candles[i+q];if((A&&!cmp(b[f],A[f]))||(Z&&!cmp(b[f],Z[f])))return false;}return true;};
+      const yh=series.priceToCoordinate(b.high),yl=series.priceToCoordinate(b.low),dentro=yh!=null&&yl!=null&&y>=yh&&y<=yl;
+      for(const [v,w] of [[b.high,piv('high',(u,v)=>u>=v)?.65:1],[b.low,piv('low',(u,v)=>u<=v)?.65:1],[b.open,dentro?1.5:9],[b.close,dentro?1.5:9]]){const yy=series.priceToCoordinate(v);if(yy==null)continue;const d=Math.hypot(xx-x,yy-y)*w;if(d<bd){bd=d;best={i,v};}}}
     if(best&&bd<=R){p=best.v;l=best.i;}}
   return {t:lToT(l),p,l,x:ts.logicalToCoordinate(l),y:series.priceToCoordinate(p)};}
 const tls=()=>TLN[symbol]||(TLN[symbol]=[]);

@@ -198,14 +198,6 @@ const fs = require('fs'), { chromium } = require('playwright-core');
   try { info.push({ listas: await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('a'); for (let k = 0; k < 40 && !stkReady; k++) await w(500);
       for (const x of ['BTCUSDT', 'NVDA', 'HUT', 'OKLO', 'GGAL.BA']) favs.add(x); LSTOPEN.fav = 1; LSTTF.fav = '4h'; drawer(true); for (let k = 0; k < 40; k++) { lstRender(); const t = [...document.querySelectorAll('#drwLists .lst-r')].map(r => r.textContent); if (t.length >= 5 && !t.some(x => /RSI …/.test(x))) break; await w(500); }
       const rows = [...document.querySelectorAll('#drwLists .lst-r')].map(r => r.textContent.replace(/\s+/g, ' ').trim()); drawer(false); return rows; }) }); } catch (e) { info.push({ listas_error: e.message.slice(0, 200) }); }
-  /* imán de los dibujos: tocar cerca de la punta de una vela tiene que pegar exacto en el máximo o mínimo */
-  try { info.push({ iman: await pg.evaluate(async () => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main'); select('BTCUSDT'); if (tf !== '4h') { tf = '4h'; renderTfs(); loadChart(); } for (let k = 0; k < 40 && candles.length < 200; k++) await w(250); await w(1200);
-      MAG = true; const ts = chart.timeScale(), n = candles.length; chart.applyOptions({ timeScale: { barSpacing: 10, rightOffset: 2 } }); ts.scrollToRealTime(); await w(800); let ok = 0, tot = 0; const fallos = [];
-      for (let i = n - 40; i < n - 2; i += 3) { const b = candles[i], x = ts.logicalToCoordinate(i); if (x == null) continue;
-        for (const [campo, dy] of [['high', -10], ['high', 6], ['low', 10], ['low', -6]]) for (const dx of [-8, 0, 9]) { const y = series.priceToCoordinate(b[campo]); if (y == null) continue; const q = snapAt(x + dx, y + dy); tot++;
-          if (q && Math.abs(q.p - b[campo]) < 1e-9) ok++; else if (fallos.length < 6) fallos.push({ i, campo, dx, dy, dio: q && q.p, quiero: b[campo] }); } }
-      const lejos = snapAt(ts.logicalToCoordinate(n - 10), series.priceToCoordinate(candles[n - 10].high) - 120);
-      return { probadas: tot, pegaron_exacto: ok, ancho_vela_px: +(ts.logicalToCoordinate(n - 1) - ts.logicalToCoordinate(n - 2)).toFixed(1), fallos, lejos_queda_libre: lejos && Math.abs(lejos.p - candles[n - 10].high) > 1e-9 }; }) }); } catch (e) { info.push({ iman_error: e.message.slice(0, 200) }); }
   /* soportes y resistencias fuertes */
   try { const out = {}; for (const [sy, t] of [['BTCUSDT', '4h'], ['ETHUSDT', '1d'], ['SOLUSDT', '1h']]) { const r = await pg.evaluate(async ([sy, t]) => { const w = ms => new Promise(z => setTimeout(z, ms)); applyMode('medio'); setView('main');
         if (symbol !== sy) select(sy); if (tf !== t) { tf = t; renderTfs(); loadChart(); } for (let k = 0; k < 40 && !(candles.length > 100 && symbol === sy); k++) await w(250); await w(1500);
