@@ -2380,10 +2380,17 @@ function tToL(t){const n=candles.length;if(!n)return null;const s=tfSeconds();if
   let lo=0,hi=n-1;while(hi-lo>1){const m=(lo+hi)>>1;if(candles[m].time<=t)lo=m;else hi=m;}return lo+(t-candles[lo].time)/((candles[hi].time-candles[lo].time)||1);}
 function lToT(l){const n=candles.length,s=tfSeconds();if(!n)return 0;if(l<=0)return candles[0].time+l*s;if(l>=n-1)return candles[n-1].time+(l-(n-1))*s;const i=Math.floor(l);return candles[i].time+(l-i)*(candles[i+1].time-candles[i].time);}
 const ptXY=q=>{const l=tToL(q.t);if(l==null)return null;const x=chart.timeScale().logicalToCoordinate(l),y=series.priceToCoordinate(q.p);return x==null||y==null?null:{x,y};};
-/* imán: precio (y vela) más cercano entre máximo, mínimo, apertura y cierre */
+/* imán (27/11/2026, como el "imán fuerte" de TradingView): antes miraba solo la vela que quedaba justo debajo del dedo y solo en vertical,
+   así que si no apuntabas exacto no agarraba la punta. Ahora busca en las velas vecinas (radio de ~40 px con el dedo, ~22 px con mouse)
+   el MÁXIMO o MÍNIMO más cercano en distancia real (x e y); apertura y cierre también valen pero con menos prioridad.
+   Si no hay ninguna punta cerca, el punto queda libre. Mientras dibujás, un círculo marca dónde se va a pegar. */
+var SNAPPT=null;
 function snapAt(x,y,mag=MAG){const ts=chart.timeScale();let l=ts.coordinateToLogical(x),p=series.coordinateToPrice(y);if(l==null||p==null)return null;
-  if(mag){const i=Math.round(l),b=candles[i];if(b){let best=null,bd=1e9;for(const v of [b.high,b.low,b.open,b.close]){const yy=series.priceToCoordinate(v);if(yy==null)continue;const d=Math.abs(yy-y);if(d<bd){bd=d;best=v;}}
-    if(bd<=(coarse()?30:16)){p=best;l=i;}}}
+  if(mag&&candles.length){const R=coarse()?40:22,x0=ts.logicalToCoordinate(Math.round(l)),x1=ts.logicalToCoordinate(Math.round(l)+1),bw=Math.max(1,Math.abs((x1??(x0||0)+6)-(x0||0))),k=Math.min(30,Math.ceil(R/bw)+1);
+    let best=null,bd=1e9;const c0=Math.round(l);
+    for(let i=Math.max(0,c0-k);i<=Math.min(candles.length-1,c0+k);i++){const b=candles[i],xx=ts.logicalToCoordinate(i);if(xx==null||Math.abs(xx-x)>R)continue;
+      for(const [v,w] of [[b.high,1],[b.low,1],[b.open,1.5],[b.close,1.5]]){const yy=series.priceToCoordinate(v);if(yy==null)continue;const d=Math.hypot(xx-x,yy-y)*w;if(d<bd){bd=d;best={i,v};}}}
+    if(best&&bd<=R){p=best.v;l=best.i;}}
   return {t:lToT(l),p,l,x:ts.logicalToCoordinate(l),y:series.priceToCoordinate(p)};}
 const tls=()=>TLN[symbol]||(TLN[symbol]=[]);
 function saveTL(){try{localStorage.setItem('cv_tl',JSON.stringify(TLN));localStorage.setItem('cv_lines_t',String(Date.now()));}catch(e){}try{cloudSave(true);}catch(_){}}
@@ -2411,8 +2418,8 @@ function drgMove(x,y){if(!DRG)return;if(Math.hypot(x-DRG.x0,y-DRG.y0)>3)DRG.move
 function drgEnd(){if(!DRG)return;const h=DRG.h;DRG=null;scrollLock(false);if(h.k==='h')saveLines();else saveTL();noClick=performance.now()+400;ovReq();}
 /* crear una línea de tendencia */
 function tlStart(x,y){const q=snapAt(x,y);if(!q)return;if(TLnew&&TLnew.wait){TLnew.b={t:q.t,p:q.p};tlDone();return;}TLnew={a:{t:q.t,p:q.p},b:{t:q.t,p:q.p},x0:x,y0:y,moved:false};scrollLock(true);ovReq();}
-function tlMove(x,y){if(!TLnew)return;if(Math.hypot(x-TLnew.x0,y-TLnew.y0)>6)TLnew.moved=true;const q=snapAt(x,y);if(q)TLnew.b={t:q.t,p:q.p};ovReq();}
-function tlUp(){if(!TLnew)return;if(TLnew.moved||TLnew.wait)tlDone();else{TLnew.wait=true;scrollLock(false);}}
+function tlMove(x,y){if(!TLnew)return;if(Math.hypot(x-TLnew.x0,y-TLnew.y0)>6)TLnew.moved=true;const q=snapAt(x,y);if(q){TLnew.b={t:q.t,p:q.p};SNAPPT=MAG&&q.x!=null&&q.y!=null?{x:q.x,y:q.y}:null;}ovReq();}
+function tlUp(){SNAPPT=null;if(!TLnew)return;if(TLnew.moved||TLnew.wait)tlDone();else{TLnew.wait=true;scrollLock(false);}}
 function tlDone(){const L={a:TLnew.a,b:TLnew.b};TLnew=null;scrollLock(false);noClick=performance.now()+500;if(Math.abs(L.a.t-L.b.t)<1&&Math.abs(L.a.p-L.b.p)<1e-12){ovReq();return;}
   tls().push(L);saveTL();setTool('cursor');selSet({k:'t',i:tls().length-1});}
 /* eventos: mouse (pointer) y dedo (touch), antes que el gráfico */
@@ -2443,7 +2450,8 @@ const tUp=e=>{if(DRG){e.preventDefault();e.stopPropagation();drgEnd();return;}if
   const c=tapC;tapC=null;if(!c||tool!=='cursor'||performance.now()-c.t>450)return;const h=hitAt(c.x,c.y);
   if(h){selSet({k:h.k,i:h.i});noClick=performance.now()+400;}else if(SEL)selSet(null);};
 chartEl.addEventListener('touchend',tUp,{capture:true,passive:false});chartEl.addEventListener('touchcancel',tUp,{capture:true,passive:false});
-chart.subscribeCrosshairMove(p=>{if(TLnew&&TLnew.wait&&p.point){const q=snapAt(p.point.x,p.point.y);if(q){TLnew.b={t:q.t,p:q.p};ovReq();}}});
+chart.subscribeCrosshairMove(p=>{if(TLnew&&TLnew.wait&&p.point){const q=snapAt(p.point.x,p.point.y);if(q){TLnew.b={t:q.t,p:q.p};ovReq();}}
+  const dib=tool==='tline'||tool==='hline'||tool==='ruler';const n=dib&&MAG&&p.point?snapAt(p.point.x,p.point.y):null;const prev=SNAPPT;SNAPPT=n&&n.x!=null&&n.y!=null?{x:n.x,y:n.y}:null;if(prev||SNAPPT)ovReq();});
 /* barra del dibujo elegido: borrar o soltar */
 {const b=document.createElement('div');b.id='drwBar';b.hidden=true;b.innerHTML='<button type="button" data-d="del" title="Borrar este dibujo">🗑 Borrar</button><button type="button" data-d="x" title="Soltar">✕</button>';
   chartEl.appendChild(b);b.onclick=e=>{e.stopPropagation();const d=e.target.closest('[data-d]');if(!d)return;if(d.dataset.d==='del')selDel();else selSet(null);};
@@ -2456,7 +2464,8 @@ function tagP(c,y,p,bg){const ps=chart.priceScale('right').width();if(!ps||y==nu
 function tagT(c,x,t,bg){const th=chart.timeScale().height();if(!th||x==null)return;const W=chartEl.clientWidth-chart.priceScale('right').width(),H=chartEl.clientHeight;if(x<0||x>W)return;
   const s=new Date(t*1000).toLocaleString('es-AR',{timeZone:'UTC',weekday:'short',day:'2-digit',month:'short',hour:'2-digit',minute:'2-digit'});
   c.font='600 11px system-ui,sans-serif';const tw=c.measureText(s).width+12,bx=Math.max(0,Math.min(W-tw,x-tw/2));c.fillStyle=bg;c.fillRect(bx,H-th,tw,th);c.fillStyle='#fff';c.textAlign='center';c.textBaseline='middle';c.fillText(s,bx+tw/2,H-th/2);}
-function drawDrawings(c){const all=tls().map((L,i)=>[L,i]);if(TLnew)all.push([TLnew,-1]);
+function drawDrawings(c){if(SNAPPT&&MAG&&(tool==='tline'||tool==='hline'||tool==='ruler')){c.save();c.strokeStyle='#ffca28';c.lineWidth=2;c.beginPath();c.arc(SNAPPT.x,SNAPPT.y,6,0,7);c.stroke();c.fillStyle='rgba(255,202,40,.35)';c.fill();c.restore();}
+  const all=tls().map((L,i)=>[L,i]);if(TLnew)all.push([TLnew,-1]);
   for(const [L,i] of all){const a=ptXY(L.a),b=ptXY(L.b);if(!a||!b)continue;const sel=(SEL&&SEL.k==='t'&&SEL.i===i)||i<0,col=sel?'#64b5f6':'#1a6bff';
     c.strokeStyle=col;c.lineWidth=sel?2.5:1.6;c.beginPath();c.moveTo(a.x,a.y);c.lineTo(b.x,b.y);c.stroke();
     for(const q of [a,b]){c.beginPath();c.arc(q.x,q.y,sel?(coarse()?7:5):3,0,Math.PI*2);c.fillStyle=sel?'#0b1220':col;c.fill();c.lineWidth=2;c.strokeStyle=col;c.stroke();}
